@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Race Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            margin: 20px auto;
+            background-color: #555;
+            overflow: hidden;
+        }
+        
+        #road {
+            position: absolute;
+            width: 300px;
+            height: 100%;
+            left: 50px;
+            background-color: #444;
+            border-left: 10px dashed #fff;
+            border-right: 10px dashed #fff;
+        }
+        
+        #player-car {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            bottom: 50px;
+            left: 175px;
+            background-color: red;
+            z-index: 10;
+        }
+        
+        .enemy-car {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            background-color: blue;
+        }
+        
+        #score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            z-index: 100;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 40px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+        }
+        
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 200px;
+            z-index: 200;
+        }
+        
+        #start-button {
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="road"></div>
+        <div id="player-car"></div>
+        <div id="score">Score: 0</div>
+        <div id="game-over">
+            Game Over!<br>
+            <span id="final-score">Score: 0</span><br>
+            <button id="restart-button">Play Again</button>
+        </div>
+        <div id="start-screen">
+            <h1>Car Race Game</h1>
+            <p>Use arrow keys to move your car</p>
+            <p>Avoid the blue cars</p>
+            <button id="start-button">Start Game</button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        const playerCar = document.getElementById('player-car');
+        const gameContainer = document.getElementById('game-container');
+        const road = document.getElementById('road');
+        const scoreElement = document.getElementById('score');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreElement = document.getElementById('final-score');
+        const restartButton = document.getElementById('restart-button');
+        const startScreen = document.getElementById('start-screen');
+        const startButton = document.getElementById('start-button');
+        
+        let playerX = 175;
+        let playerY = 470;
+        let score = 0;
+        let gameSpeed = 2;
+        let enemySpeed = 2;
+        let enemySpawnRate = 1000; // ms
+        let gameRunning = false;
+        let enemies = [];
+        let gameLoop;
+        let enemySpawner;
+        
+        // Event listeners
+        document.addEventListener('keydown', movePlayer);
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+        
+        // Player movement
+        function movePlayer(e) {
+            if (!gameRunning) return;
+            
+            const moveAmount = 25;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                    if (playerX > 50) {
+                        playerX -= moveAmount;
+                        playerCar.style.left = playerX + 'px';
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (playerX < 300) {
+                        playerX += moveAmount;
+                        playerCar.style.left = playerX + 'px';
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (playerY > 0) {
+                        playerY -= moveAmount;
+                        playerCar.style.bottom = (600 - playerY - 80) + 'px';
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (playerY < 470) {
+                        playerY += moveAmount;
+                        playerCar.style.bottom = (600 - playerY - 80) + 'px';
+                    }
+                    break;
+            }
+        }
+        
+        // Create enemy car
+        function createEnemy() {
+            if (!gameRunning) return;
+            
+            const enemy = document.createElement('div');
+            enemy.className = 'enemy-car';
+            
+            // Random lane (1, 2, or 3)
+            const lane = Math.floor(Math.random() * 3);
+            let xPos;
+            
+            if (lane === 0) xPos = 75;
+            else if (lane === 1) xPos = 175;
+            else xPos = 275;
+            
+            enemy.style.left = xPos + 'px';
+            enemy.style.top = '-80px';
+            
+            gameContainer.appendChild(enemy);
+            
+            enemies.push({
+                element: enemy,
+                x: xPos,
+                y: -80,
+                speed: enemySpeed + Math.random() * 2
+            });
+        }
+        
+        // Update game state
+        function updateGame() {
+            if (!gameRunning) return;
+            
+            // Move enemies
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const enemy = enemies[i];
+                enemy.y += enemy.speed;
+                enemy.element.style.top = enemy.y + 'px';
+                
+                // Check if enemy is off screen
+                if (enemy.y > 600) {
+                    gameContainer.removeChild(enemy.element);
+                    enemies.splice(i, 1);
+                    score++;
+                    scoreElement.textContent = 'Score: ' + score;
+                    
+                    // Increase difficulty
+                    if (score % 5 === 0) {
+                        enemySpeed += 0.5;
+                        if (enemySpawnRate > 300) {
+                            enemySpawnRate -= 100;
+                            clearInterval(enemySpawner);
+                            enemySpawner = setInterval(createEnemy, enemySpawnRate);
+                        }
+                    }
+                }
+                
+                // Check collision
+                if (
+                    playerX < enemy.x + 50 &&
+                    playerX + 50 > enemy.x &&
+                    playerY < enemy.y + 80 &&
+                    playerY + 80 > enemy.y
+                ) {
+                    endGame();
+                    return;
+                }
+            }
+        }
+        
+        // Start game
+        function startGame() {
+            // Reset game state
+            score = 0;
+            playerX = 175;
+            playerY = 470;
+            enemySpeed = 2;
+            enemySpawnRate = 1000;
+            
+            // Clear enemies
+            enemies.forEach(enemy => {
+                if (enemy.element.parentNode) {
+                    gameContainer.removeChild(enemy.element);
+                }
+            });
+            enemies = [];
+            
+            // Reset player position
+            playerCar.style.left = playerX + 'px';
+            playerCar.style.bottom = (600 - playerY - 80) + 'px';
+            
+            // Update UI
+            scoreElement.textContent = 'Score: 0';
+            gameOverScreen.style.display = 'none';
+            startScreen.style.display = 'none';
+            
+            // Start game loops
+            gameRunning = true;
+            gameLoop = setInterval(updateGame, 16);
+            enemySpawner = setInterval(createEnemy, enemySpawnRate);
+        }
+        
+        // End game
+        function endGame() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            clearInterval(enemySpawner);
+            
+            finalScoreElement.textContent = 'Score: ' + score;
+            gameOverScreen.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
