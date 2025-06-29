@@ -1,0 +1,138 @@
+import random
+import time
+
+class TariffWarGame:
+    def __init__(self):
+        self.us_economy = 100
+        self.china_economy = 100
+        self.us_public_support = 50
+        self.china_public_support = 50
+        self.round = 1
+        self.game_over = False
+        
+    def display_status(self):
+        print(f"\n--- Round {self.round} ---")
+        print("USA - Economy: {}/100, Public Support: {}/100".format(self.us_economy, self.us_public_support))
+        print("China - Economy: {}/100, Public Support: {}/100".format(self.china_economy, self.china_public_support))
+        
+    def us_turn(self):
+        print("\nUSA's Turn:")
+        print("1. Impose tariffs on Chinese goods (10-25%)")
+        print("2. Negotiate trade deal (50% chance of success)")
+        print("3. Subsidize domestic industries (+economy, -public support)")
+        print("4. Do nothing (small random effects)")
+        
+        choice = input("Choose action (1-4): ")
+        
+        if choice == "1":
+            tariff = random.randint(10, 25)
+            self.china_economy -= tariff//5
+            self.us_economy += tariff//10
+            print(f"USA imposed {tariff}% tariffs on Chinese goods!")
+            print(f"China's economy weakened slightly, USA gained some economic benefit.")
+            
+        elif choice == "2":
+            if random.random() > 0.5:
+                deal = random.randint(5, 15)
+                self.us_economy += deal
+                self.china_economy += deal
+                self.us_public_support += 5
+                self.china_public_support += 5
+                print(f"Successful negotiation! Both economies gain +{deal}.")
+            else:
+                self.us_public_support -= 5
+                print("Negotiations failed. Public support decreased.")
+                
+        elif choice == "3":
+            subsidy = random.randint(8, 15)
+            self.us_economy += subsidy
+            self.us_public_support -= subsidy//2
+            print(f"USA subsidized domestic industries. Economy +{subsidy}, Public Support -{subsidy//2}")
+            
+        elif choice == "4":
+            effect = random.randint(-3, 3)
+            self.us_economy += effect
+            print(f"USA took no action. Random economic effect: {effect}")
+            
+        else:
+            print("Invalid choice. USA does nothing this turn.")
+            
+    def china_turn(self):
+        print("\nChina's Turn:")
+        print("1. Retaliate with matching tariffs")
+        print("2. Devalue currency to boost exports")
+        print("3. Stimulate domestic consumption")
+        print("4. Do nothing (small random effects)")
+        
+        # AI makes random choice for China
+        choice = str(random.randint(1, 4))
+        time.sleep(1)  # pause for realism
+        
+        if choice == "1":
+            tariff = random.randint(10, 25)
+            self.us_economy -= tariff//5
+            self.china_economy -= tariff//10  # Retaliation has some cost
+            print(f"China retaliated with {tariff}% tariffs on US goods!")
+            print(f"USA's economy weakened slightly, China also suffers minor economic cost.")
+            
+        elif choice == "2":
+            devalue = random.randint(5, 10)
+            self.china_economy += devalue
+            self.us_economy -= devalue//2
+            self.china_public_support -= 3
+            print(f"China devalued currency. Economy +{devalue}, USA economy -{devalue//2}, Public Support -3")
+            
+        elif choice == "3":
+            stimulus = random.randint(8, 12)
+            self.china_economy += stimulus
+            self.china_public_support += 3
+            print(f"China stimulated domestic consumption. Economy +{stimulus}, Public Support +3")
+            
+        elif choice == "4":
+            effect = random.randint(-3, 3)
+            self.china_economy += effect
+            print(f"China took no action. Random economic effect: {effect}")
+            
+    def check_win_conditions(self):
+        if self.us_economy <= 0 or self.us_public_support <= 0:
+            print("\nChina wins the trade war! USA economy collapsed or lost public support.")
+            self.game_over = True
+        elif self.china_economy <= 0 or self.china_public_support <= 0:
+            print("\nUSA wins the trade war! China's economy collapsed or lost public support.")
+            self.game_over = True
+        elif self.round >= 10:
+            print("\nTrade war ended in stalemate after 10 rounds.")
+            if self.us_economy > self.china_economy:
+                print("USA comes out slightly ahead economically.")
+            elif self.china_economy > self.us_economy:
+                print("China comes out slightly ahead economically.")
+            else:
+                print("Both nations are equally affected.")
+            self.game_over = True
+            
+    def play_round(self):
+        self.display_status()
+        self.us_turn()
+        self.check_win_conditions()
+        if not self.game_over:
+            self.china_turn()
+            self.check_win_conditions()
+            self.round += 1
+            time.sleep(2)  # pause between rounds
+
+def main():
+    print("CHINA-USA TARIFF WAR GAME")
+    print("Manage the US economy and public support through 10 rounds of trade war.")
+    print("Try to weaken China's economy without collapsing your own!")
+    print("-----------------------------------------\n")
+    
+    game = TariffWarGame()
+    
+    while not game.game_over:
+        game.play_round()
+    
+    print("\nGame over! Final stats:")
+    game.display_status()
+
+if __name__ == "__main__":
+    main()

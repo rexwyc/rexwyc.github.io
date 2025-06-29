@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>China-USA Tariff War Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .game-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .status-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .country-status {
+            width: 48%;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        #us-status {
+            background-color: #e6f2ff;
+            border: 1px solid #b3d1ff;
+        }
+        #china-status {
+            background-color: #ffe6e6;
+            border: 1px solid #ffb3b3;
+        }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        #us-actions button {
+            background-color: #0056b3;
+            color: white;
+        }
+        #message-log {
+            height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .progress-container {
+            margin-bottom: 5px;
+        }
+        progress {
+            width: 100%;
+            height: 20px;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+        #round-counter {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .flag-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>China-USA Tariff War Game</h1>
+        <p>Manage the US economy and public support through 10 rounds of trade war. Try to weaken China's economy without collapsing your own!</p>
+        
+        <div id="round-counter">Round 1 of 10</div>
+        
+        <div class="status-container">
+            <div class="country-status" id="us-status">
+                <h3><img src="https://flagcdn.com/w20/us.png" class="flag-icon"> United States</h3>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Economy</span>
+                        <span id="us-economy-value">100</span>
+                    </div>
+                    <progress id="us-economy" value="100" max="100"></progress>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Public Support</span>
+                        <span id="us-support-value">50</span>
+                    </div>
+                    <progress id="us-support" value="50" max="100"></progress>
+                </div>
+            </div>
+            
+            <div class="country-status" id="china-status">
+                <h3><img src="https://flagcdn.com/w20/cn.png" class="flag-icon"> China</h3>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Economy</span>
+                        <span id="china-economy-value">100</span>
+                    </div>
+                    <progress id="china-economy" value="100" max="100"></progress>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Public Support</span>
+                        <span id="china-support-value">50</span>
+                    </div>
+                    <progress id="china-support" value="50" max="100"></progress>
+                </div>
+            </div>
+        </div>
+        
+        <div id="message-log"></div>
+        
+        <h3>US Actions:</h3>
+        <div class="action-buttons" id="us-actions">
+            <button onclick="takeAction(1)">Impose Tariffs (10-25%)</button>
+            <button onclick="takeAction(2)">Negotiate Trade Deal</button>
+            <button onclick="takeAction(3)">Subsidize Industries</button>
+            <button onclick="takeAction(4)">Do Nothing</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            usEconomy: 100,
+            chinaEconomy: 100,
+            usSupport: 50,
+            chinaSupport: 50,
+            round: 1,
+            gameOver: false
+        };
+
+        // DOM elements
+        const messageLog = document.getElementById('message-log');
+        const roundCounter = document.getElementById('round-counter');
+
+        // Update the visual status bars
+        function updateStatus() {
+            // US status
+            document.getElementById('us-economy').value = gameState.usEconomy;
+            document.getElementById('us-support').value = gameState.usSupport;
+            document.getElementById('us-economy-value').textContent = gameState.usEconomy;
+            document.getElementById('us-support-value').textContent = gameState.usSupport;
+            
+            // China status
+            document.getElementById('china-economy').value = gameState.chinaEconomy;
+            document.getElementById('china-support').value = gameState.chinaSupport;
+            document.getElementById('china-economy-value').textContent = gameState.chinaEconomy;
+            document.getElementById('china-support-value').textContent = gameState.chinaSupport;
+            
+            // Round counter
+            roundCounter.textContent = `Round ${gameState.round} of 10`;
+        }
+
+        // Add a message to the log
+        function addMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageLog.appendChild(messageElement);
+            messageLog.scrollTop = messageLog.scrollHeight;
+        }
+
+        // Check if the game should end
+        function checkWinConditions() {
+            if (gameState.usEconomy <= 0 || gameState.usSupport <= 0) {
+                addMessage("✪ China wins the trade war! USA economy collapsed or lost public support.");
+                gameState.gameOver = true;
+                disableButtons();
+            } else if (gameState.chinaEconomy <= 0 || gameState.chinaSupport <= 0) {
+                addMessage("✪ USA wins the trade war! China's economy collapsed or lost public support.");
+                gameState.gameOver = true;
+                disableButtons();
+            } else if (gameState.round > 10) {
+                addMessage("✪ Trade war ended in stalemate after 10 rounds.");
+                if (gameState.usEconomy > gameState.chinaEconomy) {
+                    addMessage("USA comes out slightly ahead economically.");
+                } else if (gameState.chinaEconomy > gameState.usEconomy) {
+                    addMessage("China comes out slightly ahead economically.");
+                } else {
+                    addMessage("Both nations are equally affected.");
+                }
+                gameState.gameOver = true;
+                disableButtons();
+            }
+        }
+
+        // Disable buttons when game is over
+        function disableButtons() {
+            const buttons = document.querySelectorAll('#us-actions button');
+            buttons.forEach(button => {
+                button.disabled = true;
+                button.style.opacity = '0.6';
+            });
+        }
+
+        // US player takes an action
+        function takeAction(choice) {
+            if (gameState.gameOver) return;
+            
+            addMessage(`\n--- Round ${gameState.round} ---`);
+            
+            // US action
+            if (choice === 1) {
+                const tariff = Math.floor(Math.random() * 16) + 10; // 10-25%
+                gameState.chinaEconomy -= Math.floor(tariff / 5);
+                gameState.usEconomy += Math.floor(tariff / 10);
+                addMessage(`USA imposed ${tariff}% tariffs on Chinese goods!`);
+                addMessage(`China's economy weakened slightly, USA gained some economic benefit.`);
+            } 
+            else if (choice === 2) {
+                if (Math.random() > 0.5) {
+                    const deal = Math.floor(Math.random() * 11) + 5; // 5-15
+                    gameState.usEconomy += deal;
+                    gameState.chinaEconomy += deal;
+                    gameState.usSupport += 5;
+                    gameState.chinaSupport += 5;
+                    addMessage(`Successful negotiation! Both economies gain +${deal}.`);
+                } else {
+                    gameState.usSupport -= 5;
+                    addMessage("Negotiations failed. Public support decreased.");
+                }
+            } 
+            else if (choice === 3) {
+                const subsidy = Math.floor(Math.random() * 8) + 8; // 8-15
+                gameState.usEconomy += subsidy;
+                gameState.usSupport -= Math.floor(subsidy / 2);
+                addMessage(`USA subsidized domestic industries. Economy +${subsidy}, Public Support -${Math.floor(subsidy/2)}`);
+            } 
+            else if (choice === 4) {
+                const effect = Math.floor(Math.random() * 7) - 3; // -3 to +3
+                gameState.usEconomy += effect;
+                addMessage(`USA took no action. Random economic effect: ${effect > 0 ? '+' : ''}${effect}`);
+            }
+            
+            // Ensure values stay within bounds
+            gameState.usEconomy = Math.min(100, Math.max(0, gameState.usEconomy));
+            gameState.usSupport = Math.min(100, Math.max(0, gameState.usSupport));
+            
+            updateStatus();
+            checkWinConditions();
+            if (gameState.gameOver) return;
+            
+            // China's turn (AI)
+            setTimeout(() => {
+                chinaTurn();
+            }, 1000);
+        }
+
+        // China's AI response
+        function chinaTurn() {
+            const choice = Math.floor(Math.random() * 4) + 1; // 1-4
+            
+            if (choice === 1) {
+                const tariff = Math.floor(Math.random() * 16) + 10; // 10-25%
+                gameState.usEconomy -= Math.floor(tariff / 5);
+                gameState.chinaEconomy -= Math.floor(tariff / 10);
+                addMessage(`China retaliated with ${tariff}% tariffs on US goods!`);
+                addMessage(`USA's economy weakened slightly, China also suffers minor economic cost.`);
+            } 
+            else if (choice === 2) {
+                const devalue = Math.floor(Math.random() * 6) + 5; // 5-10
+                gameState.chinaEconomy += devalue;
+                gameState.usEconomy -= Math.floor(devalue / 2);
+                gameState.chinaSupport -= 3;
+                addMessage(`China devalued currency. Economy +${devalue}, USA economy -${Math.floor(devalue/2)}, Public Support -3`);
+            } 
+            else if (choice === 3) {
+                const stimulus = Math.floor(Math.random() * 5) + 8; // 8-12
+                gameState.chinaEconomy += stimulus;
+                gameState.chinaSupport += 3;
+                addMessage(`China stimulated domestic consumption. Economy +${stimulus}, Public Support +3`);
+            } 
+            else if (choice === 4) {
+                const effect = Math.floor(Math.random() * 7) - 3; // -3 to +3
+                gameState.chinaEconomy += effect;
+                addMessage(`China took no action. Random economic effect: ${effect > 0 ? '+' : ''}${effect}`);
+            }
+            
+            // Ensure values stay within bounds
+            gameState.chinaEconomy = Math.min(100, Math.max(0, gameState.chinaEconomy));
+            gameState.chinaSupport = Math.min(100, Math.max(0, gameState.chinaSupport));
+            
+            updateStatus();
+            gameState.round++;
+            checkWinConditions();
+        }
+
+        // Initialize the game
+        updateStatus();
+        addMessage("Welcome to the China-USA Tariff War Game!");
+        addMessage("As the US leader, choose actions to manage the trade war.");
+    </script>
+</body>
+</html>
