@@ -10,8 +10,10 @@ div {
 	background-color: black;
 	animation-iteration-count: infinite;
 	animation-name: example;
-	animation-duration: 0.1s;
-}
+	animation-duration: 1s;
+    }
+
+
 #div2 {
 	margin: 150px;
 	width: 300px;
@@ -19,18 +21,17 @@ div {
 	background-color: red;
 	animation-iteration-count: infinite;
 	animation-name: example2;
-	animation-duration: 0.1s;
+	animation-duration: 1s;
 	position: absolute;
 }
 
 @keyframes example {
-	from {background-color: black;}
-	to {background-color: red}
+	from {background-color: black;width: 0px;}
+	to {background-color: red;width: 200px;}
 }
-
 @keyframes example2 {
 	from {background-color: red;}
-	to {background-color: black}
+	to {background-color: black;}
 }
 </style>
 </head>
