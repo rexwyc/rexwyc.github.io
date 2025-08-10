@@ -15,12 +15,12 @@
 	}
 
 	a:hover{
-	color: gold: crimson;
+	color: crimson;
 	background-color: white;
 	}
 
 	html{
-		background-color: #FF033E;
+		background-color: #008080;
 		text-align: center;
 		padding-top: 250px;
 		color: #FFFFFF;
@@ -31,12 +31,12 @@
 
 		<script>
 			function startTime() {
-				var today =new date();
+				var today =new Date();
 				var d = today.getDate();
-				var n = today.getmonth()+1;
+				var n = today.getMonth()+1;
 				var y = today.getFullYear();
 				var h = today.getHours();
-				var m = today.getminutes();
+				var m = today.getMinutes();
 				var s = today.getSeconds();
 				m = checkTime(m);
 				s = checkTime(s);
@@ -44,8 +44,8 @@
 				d = checkTime(d);
 				n = checkTime(n);
 
-				document.getElementById('txt').innerHTML =d +"/"+ n +"/"+ y +"&ndsp" + h + ":" + m + ":" + s ;
-				var t =setTimeout(startTime, 500);
+				document.getElementById('txt').innerHTML =d +"/"+ n +"/"+ y +"&nbsp" + h + ":" + m + ":" + s ;
+				var t = setTimeout(startTime, 500);
 			}
 			function checkTime(i) {
 				if (i < 10) {i = "0" + i}; // add zero in front of number < 10
@@ -55,7 +55,8 @@
 		 </head>
 
 		 <body onload="startTime()">
-		 </body> 
+		 	<div id="txt"></div>
+		 	<p>***HK TIME (GMT+08) <a herf="https://www.timeanddate.com/time/map">Click Me To Know More About Time Zone</a> ***</p>
 		 </html>
 
 	
