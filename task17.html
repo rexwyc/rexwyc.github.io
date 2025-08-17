@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My botton game </title>
+	<link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+	<link rel="icon" href="images/Hitler.jpg" type="images/jpg" sizes="=16x16">
+	<style>
+
+		html{
+			background-color: red;
+			text-align: center;
+			padding: 200px;
+			color: #FFFFFF;
+		}
+
+		button{
+			width: 75px;
+			height: 25px;
+			background-color: black;
+			border: none;
+			color: white;
+			border-radius: 100px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			cursor: pointer;
+		}
+
+		p
+		{
+			font-family: 'Nunito', sans-serif;
+		}
+
+		h2
+
+
+		{
+			font-family: 'Lobster', cursive;
+		}
+
+		.bitton{
+			border: none;
+		}
+
+	</style>
+</head>
+<body>
+	<h2>Hitler learning Game</h2>
+
+	<p id="Q1">When did world war 2 start?</p>
+
+	<button class="button" type="button" onclick='document.getElementById("Q1").innerHTML="1941 &nbsp;&nbsp;&nbsp;Wrong"'>1941</button>
+
+	<button type="button" onclick='document.getElementById("Q1").innerHTML="1945 &nbsp;&nbsp;&nbsp;Wrong"'>1945</button>
+
+	<button type="button" onclick='document.getElementById("Q1").innerHTML="1939  &nbsp;&nbsp;&nbsp;correct"'>1939</button>
+
+	<button type="button" onclick='document.getElementById("Q1").innerHTML="1940  &nbsp;&nbsp;&nbsp;Wrong"'>1940</button>
+
+	<p id="Q2">When did world war 2 end</p>
+
+	<button class="button" type="button" onclick='document.getElementById("Q2").innerHTML="1944 &nbsp;&nbsp;&nbsp;Wrong"'>1941</button>
+
+	<button type="button" onclick='document.getElementById("Q2").innerHTML="1945 &nbsp;&nbsp;&nbsp;correct"'>1945</button>
+
+	<button type="button" onclick='document.getElementById("Q2").innerHTML="1945 &nbsp;&nbsp;&nbsp;Wrong"'>1950</button>
+
+	<button type="button" onclick='document.getElementById("Q2").innerHTML="1945 &nbsp;&nbsp;&nbsp;Wrong"'>1960</button>
+
+	<p id="Q3">When was Hitler born?</p>
+
+	<button class="button" type="button" onclick='document.getElementById("Q3").innerHTML="1889 &nbsp;&nbsp;&nbsp;correct"'>1889</button>
+
+	<button type="button" onclick='document.getElementById("Q3").innerHTML="1890 &nbsp;&nbsp;&nbsp;Wrong"'>1890</button>
+
+	<button type="button" onclick='document.getElementById("Q3").innerHTML="1895 &nbsp;&nbsp;&nbsp;Wrong"'>1895</button>
+
+	<button type="button" onclick='document.getElementById("Q3").innerHTML="1900 &nbsp;&nbsp;&nbsp;Wrong"'>1900</button>
+
+	<p id="Q4">When did Hitler die?</p>
+
+	<button class="button" type="button" onclick='document.getElementById("Q4").innerHTML="1889 &nbsp;&nbsp;&nbsp;Wrong"'>1889</button>
+
+	<button type="button" onclick='document.getElementById("Q4").innerHTML="1945 &nbsp;&nbsp;&nbsp;correct"'>1945</button>
+
+	<button type="button" onclick='document.getElementById("Q4").innerHTML="1980 &nbsp;&nbsp;&nbsp;Wrong"'>1980</button>
+
+	<button type="button" onclick='document.getElementById("Q4").innerHTML="1947 &nbsp;&nbsp;&nbsp;Wrong"'>1947</button>
