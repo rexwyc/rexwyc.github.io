@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Song Generator</title>
+    <title>Random leader Generator</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background-color: red;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -55,7 +55,7 @@
         }
         
         .button {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
+            background-color: darkred;
             color: white;
             border: none;
             border-radius: 50px;
@@ -133,32 +133,45 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎵 Random Song Generator 🎵</h1>
+        <h1>🙋🏾Random Leader Generator🙋🏾</h1>
         
         <div class="song-display" id="songDisplay">
-            Click the button to find a song!
+            Click the button to find a leader!
         </div>
         
-        <button class="button" onclick="findSong()">Discover Random Music</button>
+        <button class="button" onclick="findSong();playAudio()">Discover Ramdom Leader</button>
+
+        <div class="player">
+       
+        <audio id="myAudio" src="music/german.mp3"></audio>
+    </div>
         
         <div class="history">
-            <h2>Recently Played</h2>
+            <h2>Recently Generated(There's a 10% chance of drawing Hitler.)</h2>
             <ul class="history-list" id="historyList"></ul>
         </div>
     </div>
 
-    <script>
+    <script> 
+   function playAudio() { 
+        var a = document.getElementById("myAudio");
+    
+        if (a.paused) {
+            a.play();
+        }
+        
+        };
         const songs = [
-            "Bohemian Rhapsody - Queen",
-            "Blinding Lights - The Weeknd",
-            "Shape of You - Ed Sheeran",
-            "Billie Jean - Michael Jackson",
-            "Hotel California - Eagles",
-            "Sweet Child O' Mine - Guns N' Roses",
-            "Dance Monkey - Tones and I",
-            "Uptown Funk - Mark Ronson ft. Bruno Mars",
-            "Bad Guy - Billie Eilish",
-            "Levitating - Dua Lipa"
+            "Xi Jinping",
+            "Donald Trump",
+            "Mao Zedong",
+            "Kim Jong Un",
+            "Barack Obama",
+            "Vladimir Putin",
+            "Volodymyr Zelenskyy",
+            "Adolf Hitler",
+            "Joe Biden",
+            "Emperor Taizong"
         ];
         
         let history = [];
