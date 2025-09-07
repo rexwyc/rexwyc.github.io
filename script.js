@@ -4,7 +4,7 @@ let minutes = 0;
 let hours= 0;
 //Define vars to hold "display"value
 let displaySeconds = 0;
-let displayMinutes = ;
+let displayMinutes = 0;
 let displayHours = 0;
 //Define vars to hold setInterval() function
 let interval= null;
@@ -23,8 +23,8 @@ function stopWatch(){
 		}
 	}
 	//IF seconds/minutes/hours are only one dight, add a leading 0 to the value
-		if (second<10){	
-			displaySeconds = "0" + second.toString();
+		if (seconds<10){	
+			displaySeconds = "0" + seconds.toString();
 		}
 		else{
 			displaySeconds = seconds;
@@ -39,20 +39,26 @@ function stopWatch(){
 			displayHours = "0" + hours.toString();
 		}
 		else{
-			displayHours=house;
+			displayHours=hours;
 		}
 		//Display update time values to user
-		document.getElementById("display").innerHTML = displayHours + ":" + displaySeconds;
+		document.getElementById("display").innerHTML = displayHours + ":" + displayMinutes + ":" + displaySeconds;
 	}
 	function startStop(){
 		if (status === "stopped"){
 			//starts the stopwatch (by calling the setInterval()function)
 			interval = window.setInterval(stopWatch,10);
 			document.getElementById("startStop").innerHTML = "STOP";
-			status = "stopped"
+			status = "started";
+		}
+		  else{
+		  	window.clearInterval(interval);
+		  	document.getElementById("startStop").innerHTML = "START";
+		  	status = "stopped";
+		  }
+		
 
 		}
-	}
 	//Function to reset the stopwatch
 	function reset(){
 		window.clearInterval(interval);

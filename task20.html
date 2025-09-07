@@ -34,8 +34,8 @@
 
 		html{
 			text-align: center;
-			background-color: #33CAFF;
-		}
+			 background-image: url('images/Hitler.jpg');
+			 background-size: cover;
 
 	</style>
 
@@ -43,14 +43,25 @@
 
 	<div class="container">
 
-		<div id="diaplay">
+		<div id="display">
 			00:00:00
 		</div>
 
-		<div class="bottons">
-			<button id="startStop" onclick="startStop()">START</button> <button id="reset" onclick="reset()">RESET</button>
+		<div class="buttons">
+			 <audio id="myAudio" src="music/german.mp3"></audio>
+   
+			<button id="startStop" onclick="startStop();playAudio()">START</button> <button id="reset" onclick="reset()">RESET</button>
 		</div>
-
+  <script> 
+   function playAudio() { 
+        var a = document.getElementById("myAudio");
+    
+        if (a.paused) {
+            a.play();
+        }
+        
+        };
+    </script>
 	</div>
 
 	</body>
