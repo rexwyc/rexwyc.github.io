@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" herf="images/Celandar.webp" type="images/webp" sizes="32x32">
+	<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans&display=swap" rel="stylesheet">
+	<title> Today is ...</title>
+</head>
+<body>
+
+	<style>
+		html{
+			background-image: url('images/Hitler celender.png');
+			 background-repeat: none;
+			 background-size: cover;
+			 text-align: center;
+			 color: #FF006B;
+			 padding-top: 200px;
+			 font-size: 100px;
+			 font-family: 'Quicksand', sans-serif;
+
+		}
+
+</style>
+
+<span id="text"></span> <span id="day"></span>
+
+
+<script>
+	var day;
+	switch (new Date().getDay()) {
+	case 0:
+		day = "Sunday";
+		document.getElementById("day").style.color = "red"
+		break;
+	case 1:
+		day = "Monday";
+		document.getElementById("day").style.color = "orange"
+		break;
+	case 2:
+		day = "Tuesday";
+		document.getElementById("day").style.color = "yellow"
+		break;
+	case 3:
+		day = "Wednesday";
+		document.getElementById("day").style.color = "green"
+		break;
+	case 4:
+		day = "Thursday";
+		document.getElementById("day").style.color = "blue"
+		break;
+	case 5:
+		day = "Friday";
+		document.getElementById("day").style.color = "blackred"
+		break;
+	case 6:
+		day = "Saturday";
+		document.getElementById("day").style.color = "black"
+		break;
+	}
+
+		document.getElementById("text").innerHTML = "Today is ";
+		document.getElementById("day").innerHTML = day;
+
+
+	</script>
+	
