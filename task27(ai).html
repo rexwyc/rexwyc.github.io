@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CHANGE WITH YOUR KEYBOARD</title>
+    <link rel="icon" href="images/keyboard.jpeg" type="images/jpeg" sizes="32x32">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-keyboard"></i>
+            <h1>CHANGE WITH YOUR KEYBOARD</h1>
+        </div>
+        
+        <div class="instruction">
+            <p>Type something in the box</p>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="demo" onkeydown="keydownFunction()" onkeyup="keyupFunction()" placeholder="Start typing here...">
+            <div class="wave-effect"></div>
+        </div>
+        
+        <div class="key-history">
+            <h2>Key Press History</h2>
+            <div id="keyHistory"></div>
+        </div>
+        
+        <div class="hint">
+            <p><i class="fas fa-lightbulb"></i> Press any key to see the magic happen!</p>
+        </div>
+
+        <div class="keydownFunction">
+            <audio id="myAudio" src="music/Putin Walking.mp3"></audio>
+        </div>
+    </div>
+
+    <script>
+        let keyCount = 0;
+        const keyHistory = document.getElementById('keyHistory');
+        const audio = document.getElementById('myAudio');
+        
+        function keydownFunction() {
+            const input = document.getElementById("demo");
+            input.style.backgroundColor = "yellow";
+            input.style.transform = "scale(1.05)";
+            input.style.boxShadow = "0 0 20px rgba(73, 0, 117, 0.5)";
+            
+            // Add a subtle animation to the container
+            document.querySelector('.container').classList.add('active');
+            
+            // Play audio on keydown
+            if (audio.paused) {
+                audio.currentTime = 0; // Reset to start for immediate playback
+                audio.play().catch(error => {
+                    console.log("Audio playback failed:", error);
+                });
+            }
+        }
+        
+        function keyupFunction() {
+            const input = document.getElementById("demo");
+            input.style.backgroundColor = "lightblue";
+            input.style.transform = "scale(1)";
+            input.style.boxShadow = "0 4px 12px rgba(73, 0, 117, 0.3)";
+            
+            // Create wave effect
+            const wave = document.querySelector('.wave-effect');
+            wave.style.animation = 'none';
+            setTimeout(() => {
+                wave.style.animation = 'waveAnimation 0.5s ease-out';
+            }, 10);
+            
+            // Add to key history
+            if (input.value.length > 0) {
+                keyCount++;
+                const keyElement = document.createElement('div');
+                keyElement.className = 'key-item';
+                keyElement.innerHTML = `<span>${keyCount}.</span> ${input.value.charAt(input.value.length - 1)}`;
+                keyHistory.appendChild(keyElement);
+                
+                // Keep only the last 10 entries
+                if (keyHistory.children.length > 10) {
+                    keyHistory.removeChild(keyHistory.firstChild);
+                }
+            }
+            
+            // Remove container animation
+            setTimeout(() => {
+                document.querySelector('.container').classList.remove('active');
+            }, 100);
+        }
+        
+        // Add initial animation
+        window.addEventListener('load', () => {
+            document.querySelector('.container').style.opacity = 1;
+        });
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('images/putin.jpeg');
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #490075;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(73, 0, 117, 0.2);
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        
+        .container.active {
+            transform: translateY(-5px);
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header i {
+            font-size: 48px;
+            color: #490075;
+            margin-bottom: 10px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instruction p {
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .input-container {
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        #demo {
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 22px;
+            border: none;
+            border-radius: 50px;
+            background: #D2691E;
+            color: #490075;
+            box-shadow: 0 4px 12px rgba(73, 0, 117, 0.3);
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        #demo:focus {
+            box-shadow: 0 0 20px rgba(73, 0, 117, 0.5);
+        }
+        
+        #demo::placeholder {
+            color: rgba(73, 0, 117, 0.5);
+        }
+        
+        .wave-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(182, 232, 255, 0.5) 0%, transparent 70%);
+            border-radius: 50px;
+            opacity: 0;
+            z-index: -1;
+        }
+        
+        .key-history {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+        }
+        
+        .key-history h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        #keyHistory {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .key-item {
+            background: #490075;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 18px;
+            animation: popIn 0.3s ease;
+        }
+        
+        .key-item span {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .hint {
+            margin-top: 20px;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .hint i {
+            margin-right: 8px;
+        }
+        
+        @keyframes waveAnimation {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+        }
+        
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .header h1 {
+                font-size: 26px;
+            }
+            
+            .instruction p {
+                font-size: 22px;
+            }
+            
+            #demo {
+                padding: 14px 20px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</body>
+</html>
