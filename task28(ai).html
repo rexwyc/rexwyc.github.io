@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>President Keyboard Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff90b0 0%, #5a93e2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .key {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .key:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .key.active {
+            transform: scale(1.1);
+            background: #FFCAD9;
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 202, 217, 0.8);
+        }
+
+        .key-label {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .key-name {
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .president-container {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            margin-top: 30px;
+        }
+
+        .president-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .president-card.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .president-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .president-info {
+            padding: 20px;
+        }
+
+        .president-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .president-details {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .audio-controls button {
+            padding: 8px 16px;
+            background: #5a93e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.3s;
+        }
+
+        .audio-controls button:hover {
+            background: #4a83d2;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: #FFCAD9;
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: #FEFBFC;
+            transform: translateY(-3px);
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .key {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .key-label {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>President Keyboard Gallery</h1>
+        <p class="subtitle">Press a key to reveal a president</p>
+        
+        <div class="keyboard">
+            <!-- Keys will be generated by JavaScript -->
+        </div>
+        
+        <div class="instructions">
+            <p>Click on a key or press A-W on your keyboard to reveal a president</p>
+        </div>
+        
+        <div class="president-container">
+            <!-- President cards will be inserted here -->
+        </div>
+        
+        <div class="navigation">
+            <a href="task27.html" class="nav-btn">Back</a>
+            <a href="task29.html" class="nav-btn">Next</a>
+        </div>
+    </div>
+
+    <!-- Audio elements -->
+    <audio id="erikaSong" src="https://www.mfiles.co.uk/mp3-downloads/beethoven-symphony7-2-poco-sostenuto-vivace.mp3"></audio>
+    <audio id="deniseSong" src="https://www.mfiles.co.uk/mp3-downloads/mussorgsky-pictures-at-an-exhibition-promenade1.mp3"></audio>
+    <audio id="trumpSong" src="https://www.mfiles.co.uk/mp3-downloads/handel-messiah-hallelujah-chorus.mp3"></audio>
+
+    <script>
+        // Presidents data
+        const presidents = {
+            'a': {
+                name: 'Donald Trump',
+                details: '45th President of the United States (2017-2021)',
+                color: '#5a93e2',
+                audio: 'trumpSong',
+                image: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Donald_Trump_official_portrait.jpg'
+            },
+            'b': {
+                name: 'Adolf Hitler',
+                details: 'Leader of Nazi Germany (1933-1945)',
+                color: '#e25a5a',
+                audio: 'erikaSong',
+                image: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Hitler_portrait_crop.jpg'
+            },
+            'c': {
+                name: 'Vladimir Putin',
+                details: 'President of Russia (2000-2008, 2012-present)',
+                color: '#5ae2a3',
+                audio: 'deniseSong',
+                image: 'https://upload.wikimedia.org/wikipedia/commons/8/8d/Vladimir_Putin_%282023-09-29%29.jpg'
+            },
+            'd': {
+                name: 'Barack Obama',
+                details: '44th President of the United States (2009-2017)',
+                color: '#e2d45a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg'
+            },
+            'e': {
+                name: 'George Washington',
+                details: '1st President of the United States (1789-1797)',
+                color: '#a35ae2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Gilbert_Stuart_Williamstown_Portrait_of_George_Washington.jpg'
+            },
+            'f': {
+                name: 'Abraham Lincoln',
+                details: '16th President of the United States (1861-1865)',
+                color: '#5ae2d4',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg'
+            },
+            'g': {
+                name: 'Franklin D. Roosevelt',
+                details: '32nd President of the United States (1933-1945)',
+                color: '#e25a93',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/4/42/FDR_1944_Color_Portrait.jpg'
+            },
+            'h': {
+                name: 'Theodore Roosevelt',
+                details: '26th President of the United States (1901-1909)',
+                color: '#5a93e2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/President_Roosevelt_-_Pach_Bros.jpg'
+            },
+            'i': {
+                name: 'John F. Kennedy',
+                details: '35th President of the United States (1961-1963)',
+                color: '#e2a35a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg'
+            },
+            'j': {
+                name: 'Ronald Reagan',
+                details: '40th President of the United States (1981-1989)',
+                color: '#93e25a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/1/16/Official_Portrait_of_President_Reagan_1981.jpg'
+            },
+            'k': {
+                name: 'Thomas Jefferson',
+                details: '3rd President of the United States (1801-1809)',
+                color: '#e25a5a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Official_Presidential_portrait_of_Thomas_Jefferson_%28by_Rembrandt_Peale%2C_1800%29%28cropped%29.jpg'
+            },
+            'l': {
+                name: 'Harry S. Truman',
+                details: '33rd President of the United States (1945-1953)',
+                color: '#5a5ae2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Harry_S_Truman%2C_bw_photo_portrait%2C_1945.jpg'
+            },
+            'm': {
+                name: 'Dwight D. Eisenhower',
+                details: '34th President of the United States (1953-1961)',
+                color: '#e25ae2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Dwight_D._Eisenhower%2C_official_photo_portrait%2C_May_29%2C_1959.jpg'
+            },
+            'n': {
+                name: 'Woodrow Wilson',
+                details: '28th President of the United States (1913-1921)',
+                color: '#5ae293',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Woodrow_Wilson_1919.jpg'
+            },
+            'o': {
+                name: 'James Madison',
+                details: '4th President of the United States (1809-1817)',
+                color: '#e2935a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/2/20/James_Madison%28cropped%29%28c%29.jpg'
+            },
+            'p': {
+                name: 'Andrew Jackson',
+                details: '7th President of the United States (1829-1837)',
+                color: '#935ae2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Andrew_jackson_head.jpg'
+            },
+            'q': {
+                name: 'Ulysses S. Grant',
+                details: '18th President of the United States (1869-1877)',
+                color: '#5ae2e2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Ulysses_S._Grant_1870-1880.jpg'
+            },
+            'r': {
+                name: 'John Adams',
+                details: '2nd President of the United States (1797-1801)',
+                color: '#e2e25a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/John_Adams%2C_Gilbert_Stuart%2C_c1800_1815.jpg'
+            },
+            's': {
+                name: 'James Monroe',
+                details: '5th President of the United States (1817-1825)',
+                color: '#5a5ae2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/James_Monroe_White_House_portrait_1819.jpg'
+            },
+            't': {
+                name: 'Calvin Coolidge',
+                details: '30th President of the United States (1923-1929)',
+                color: '#e25a93',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Calvin_Coolidge_cph.3g10777_%28cropped%29.jpg'
+            },
+            'u': {
+                name: 'Herbert Hoover',
+                details: '31st President of the United States (1929-1933)',
+                color: '#5ae25a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/5/57/President_Hoover_portrait.jpg'
+            },
+            'v': {
+                name: 'Lyndon B. Johnson',
+                details: '36th President of the United States (1963-1969)',
+                color: '#e25a5a',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/37_Lyndon_Johnson_3x4.jpg'
+            },
+            'w': {
+                name: 'Richard Nixon',
+                details: '37th President of the United States (1969-1974)',
+                color: '#5a93e2',
+                audio: null,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Richard_Nixon_presidential_portrait_%281%29.jpg'
+            }
+        };
+
+        let currentAudio = null;
+        let currentCard = null;
+
+        // Generate keyboard
+        const keyboard = document.querySelector('.keyboard');
+        const presidentContainer = document.querySelector('.president-container');
+
+        Object.keys(presidents).forEach(key => {
+            const keyElement = document.createElement('div');
+            keyElement.className = 'key';
+            keyElement.innerHTML = `
+                <div class="key-label">${key.toUpperCase()}</div>
+                <div class="key-name">${presidents[key].name.split(' ')[0]}</div>
+            `;
+            keyElement.addEventListener('click', () => showPresident(key));
+            keyboard.appendChild(keyElement);
+        });
+
+        // Create president cards
+        Object.keys(presidents).forEach(key => {
+            const president = presidents[key];
+            const card = document.createElement('div');
+            card.className = 'president-card';
+            card.id = `president-${key}`;
+            card.innerHTML = `
+                <div class="president-image" style="background-image: url('${president.image}')"></div>
+                <div class="president-info">
+                    <h2 class="president-name">${president.name}</h2>
+                    <p class="president-details">${president.details}</p>
+                    ${president.audio ? `
+                    <div class="audio-controls">
+                        <button onclick="playAudio('${president.audio}')">Play</button>
+                        <button onclick="pauseAudio()">Pause</button>
+                        <button onclick="stopAudio()">Stop</button>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            presidentContainer.appendChild(card);
+        });
+
+        // Keyboard event listener
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toLowerCase();
+            if (presidents[key]) {
+                showPresident(key);
+            }
+        });
+
+        function showPresident(key) {
+            // Reset active states
+            document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+            document.querySelectorAll('.president-card').forEach(c => c.classList.remove('active'));
+            
+            // Set new active states
+            document.querySelector(`.key:nth-child(${Object.keys(presidents).indexOf(key) + 1})`).classList.add('active');
+            
+            // Hide current card with animation
+            if (currentCard) {
+                currentCard.classList.remove('active');
+            }
+            
+            // Show new president card with pop effect
+            const president = presidents[key];
+            const card = document.getElementById(`president-${key}`);
+            
+            setTimeout(() => {
+                card.classList.add('active');
+                currentCard = card;
+                
+                // Change background color
+                document.body.style.background = `linear-gradient(135deg, ${president.color} 0%, #ff90b0 100%)`;
+                
+                // Play audio if available
+                if (president.audio) {
+                    playAudio(president.audio);
+                }
+            }, 300);
+        }
+
+        function playAudio(audioId) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            currentAudio = document.getElementById(audioId);
+            currentAudio.play();
+        }
+
+        function pauseAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+        }
+
+        function stopAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CHANGE WITH YOUR KEYBOAD</title>
+	<link rel="icon" href="images/lamchan.jpeg" type="images/jpeg" sizes="32x32">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<body><meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+	<style>
+		p{
+			font-family: 'Poppins', sans-serif;
+			font-size: 50px;
+		}
+		html{
+			padding-top: 200px;
+			text-align: center;
+			background-color: #ff90B0;
+		}
+
+		#next,#back{
+			padding: 100% 10px 100% 10px;
+			background-color: #FFCAD9;
+			color: #000000;
+			text-decoration: none;
+		}
+		#next{
+			position: absolute;
+			top: 50%;
+			right: 0px;
+		}
+
+		#back{
+			position: absolute;
+			top: 50%;
+			left: 0px;
+		}
+
+		a:hover {
+			background-color: #FEFBFC;
+		}
+
+	
+		</style>
+
+
+		<p>try to press "A to C on your key board"</p>
+		<input type="text" size="40" onkeydown="myFunction(event)">
+		<script>
+			function myFunction(event) {
+				var x = event.key;
+				// if the pressed keyboard button is "a" or "A" (using caps lock or shift), 
+				if (x == "a"|| x =="A"){
+					document.getElementById("myDiv").style.backgroundColor = "#5a93e2"alert ("you pressed 'a' for Trump");
+				}
+				if (x == "b"|| x =="B"){
+					document.getElementById("myDiv").style.backgroundColor = "#5a93e2"alert ("you pressed 'a' for Hitler");
+				}
+
+				if (x == "c"|| x =="C"){
+					document.getElementById("myDiv").style.backgroundColor = "#5a93e2"alert ("you pressed 'a' for Putin");
+				}
+			}
+			
+</script>
+<a id="back" href="task27.html">Back</a>
+<a id="next" href="task29.html">Next</a>
+</body>
+</head>
+
+
+		
