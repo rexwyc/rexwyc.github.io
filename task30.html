@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Control Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image:url(https://i.ytimg.com/vi/N3QG3135Jqc/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGH8gEygbMA8=&rs=AOn4CLB5wJXTZ0KpFi_oAJqtR9lF1mNf0A);
+            background-repeat: no-repeat;
+			background-size: cover;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #AFB4E0;
+            text-shadow: 0 0 10px rgba(175, 180, 224, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        canvas {
+            border: 3px solid #4F0067;
+            background-color: #0f3460;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .score-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .controls-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .arrow-btn {
+            width: 80px;
+            height: 80px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #4F0067, #3a0050);
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arrow-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .arrow-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .arrow-btn:hover:before {
+            opacity: 1;
+        }
+
+        .arrow-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .arrow-btn:active:before {
+            opacity: 0.3;
+        }
+
+        .center-btn {
+            background: linear-gradient(145deg, #AFB4E0, #8f94c2);
+            font-size: 24px;
+        }
+
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .music-btn {
+            background: linear-gradient(145deg, #4F0067, #3a0050);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .music-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instructions h2 {
+            color: #AFB4E0;
+            margin-bottom: 15px;
+        }
+
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background-color: #AFB4E0;
+            color: #000;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background-color: #FEFBFC;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .key-hint {
+            font-size: 0.8rem;
+            color: #AFB4E0;
+            margin-top: 5px;
+        }
+
+        .music-status {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #AFB4E0;
+        }
+
+        @media (max-width: 600px) {
+            .arrow-btn {
+                width: 70px;
+                height: 70px;
+                margin: 0 5px;
+                font-size: 24px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Audio element for background music -->
+        <audio id="backgroundMusic" loop>
+            <!-- Fallback audio source - you can replace this with your actual music file -->
+            <source src="music/Red Hitler.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        
+        <header>
+            <h1>Hitler landmind game</h1>
+            <div class="subtitle">Use the arrow controls to move the player</div>
+        </header>
+
+        <div class="game-area">
+            <canvas id="gameCanvas" width="480" height="270"></canvas>
+            <div class="score-display">Score: <span id="score">0</span></div>
+        </div>
+
+        <div class="controls-container">
+            <div class="control-row">
+                <button class="arrow-btn" onmousedown="moveupleft()" onmouseup="stopMovement()" title="Up-Left">
+                    ↖
+                    <div class="key-hint">Q</div>
+                </button>
+                <button class="arrow-btn" onmousedown="moveup()" onmouseup="stopMovement()" title="Up">
+                    ↑
+                    <div class="key-hint">W</div>
+                </button>
+                <button class="arrow-btn" onmousedown="moveupright()" onmouseup="stopMovement()" title="Up-Right">
+                    ↗
+                    <div class="key-hint">E</div>
+                </button>
+            </div>
+            <div class="control-row">
+                <button class="arrow-btn" onmousedown="moveleft()" onmouseup="stopMovement()" title="Left">
+                    ←
+                    <div class="key-hint">A</div>
+                </button>
+                <button class="arrow-btn center-btn" onmousedown="stopMovement()" title="Stop">
+                    ●
+                    <div class="key-hint">S</div>
+                </button>
+                <button class="arrow-btn" onmousedown="moveright()" onmouseup="stopMovement()" title="Right">
+                    →
+                    <div class="key-hint">D</div>
+                </button>
+            </div>
+            <div class="control-row">
+                <button class="arrow-btn" onmousedown="movedownleft()" onmouseup="stopMovement()" title="Down-Left">
+                    ↙
+                    <div class="key-hint">Z</div>
+                </button>
+                <button class="arrow-btn" onmousedown="movedown()" onmouseup="stopMovement()" title="Down">
+                    ↓
+                    <div class="key-hint">X</div>
+                </button>
+                <button class="arrow-btn" onmousedown="movedownright()" onmouseup="stopMovement()" title="Down-Right">
+                    ↘
+                    <div class="key-hint">C</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="music-controls">
+            <button class="music-btn" onclick="playMusic()">
+                <span>▶</span> Play Music
+            </button>
+            <button class="music-btn" onclick="pauseMusic()">
+                <span>⏸</span> Pause Music
+            </button>
+            <button class="music-btn" onclick="stopMusic()">
+                <span>⏹</span> Stop Music
+            </button>
+        </div>
+        <div class="music-status" id="musicStatus">Music: Stopped</div>
+
+        <div class="instructions">
+            <h2>How to Play</h2>
+            <p>• Click and hold the arrow buttons to move the player in that direction</p>
+            <p>• Release the button to stop movement</p>
+            <p>• You can also use keyboard keys (WASD, QE, ZC) for movement</p>
+            <p>• Collect the blue targets to increase your score</p>
+        </div>
+
+        <div class="navigation">
+            <a href="task29.html" class="nav-btn">← Back</a>
+            <a href="task31.html" class="nav-btn">Next →</a>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let player = {
+            x: canvas.width / 2 - 15,
+            y: canvas.height / 2 - 15,
+            width: 30,
+            height: 30,
+            speedX: 0,
+            speedY: 0,
+            color: '#AFB4E0'
+        };
+        
+        let targets = [];
+        let backgroundMusic;
+
+        // Initialize the game
+        function init() {
+            // Create initial targets
+            for (let i = 0; i < 5; i++) {
+                createTarget();
+            }
+            
+            // Start game loop
+            gameLoop();
+            
+            // Initialize background music
+            backgroundMusic = document.getElementById('backgroundMusic');
+            backgroundMusic.volume = 0.5; // Set volume to 50%
+            
+            // Update music status
+            updateMusicStatus();
+        }
+
+        // Create a new target
+        function createTarget() {
+            targets.push({
+                x: Math.random() * (canvas.width - 20),
+                y: Math.random() * (canvas.height - 20),
+                width: 20,
+                height: 20,
+                color: '#000000'
+            });
+        }
+
+        // Game loop
+        function gameLoop() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background
+            ctx.fillStyle = '#0f3460';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Update player position
+            player.x += player.speedX;
+            player.y += player.speedY;
+            
+            // Keep player within bounds
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            if (player.y < 0) player.y = 0;
+            if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+            
+            // Draw player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            // Draw and check targets
+            for (let i = 0; i < targets.length; i++) {
+                const target = targets[i];
+                
+                // Draw target
+                ctx.fillStyle = target.color;
+                ctx.fillRect(target.x, target.y, target.width, target.height);
+                
+                // Draw target center
+                ctx.fillStyle = 'red';
+                ctx.fillRect(target.x + 5, target.y + 5, target.width - 10, target.height - 10);
+                
+                // Check collision
+                if (
+                    player.x < target.x + target.width &&
+                    player.x + player.width > target.x &&
+                    player.y < target.y + target.height &&
+                    player.y + player.height > target.y
+                ) {
+                    // Remove target and increase score
+                    targets.splice(i, 1);
+                    score++;
+                    document.getElementById('score').textContent = score;
+                    
+                    // Create new target
+                    createTarget();
+                }
+            }
+            
+            // Continue game loop
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Movement functions
+        function moveup() {
+            player.speedY = -4;
+        }
+
+        function movedown() {
+            player.speedY = 4;
+        }
+
+        function moveleft() {
+            player.speedX = -4;
+        }
+
+        function moveright() {
+            player.speedX = 4;
+        }
+
+        function moveupleft() {
+            player.speedX = -4;
+            player.speedY = -4;
+        }
+
+        function moveupright() {
+            player.speedX = 4;
+            player.speedY = -4;
+        }
+
+        function movedownleft() {
+            player.speedX = -4;
+            player.speedY = 4;
+        }
+
+        function movedownright() {
+            player.speedX = 4;
+            player.speedY = 4;
+        }
+
+        function stopMovement() {
+            player.speedX = 0;
+            player.speedY = 0;
+        }
+
+        // Music control functions
+        function playMusic() {
+            backgroundMusic.play();
+            updateMusicStatus();
+        }
+
+        function pauseMusic() {
+            backgroundMusic.pause();
+            updateMusicStatus();
+        }
+
+        function stopMusic() {
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
+            updateMusicStatus();
+        }
+
+        // Update music status display
+        function updateMusicStatus() {
+            const statusElement = document.getElementById('musicStatus');
+            if (backgroundMusic.paused) {
+                statusElement.textContent = "Music: Stopped";
+            } else {
+                statusElement.textContent = "Music: Playing";
+            }
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(event) {
+            switch(event.key.toLowerCase()) {
+                case 'w':
+                    moveup();
+                    break;
+                case 's':
+                    movedown();
+                    break;
+                case 'a':
+                    moveleft();
+                    break;
+                case 'd':
+                    moveright();
+                    break;
+                case 'q':
+                    moveupleft();
+                    break;
+                case 'e':
+                    moveupright();
+                    break;
+                case 'z':
+                    movedownleft();
+                    break;
+                case 'c':
+                    movedownright();
+                    break;
+                case 'arrowup':
+                    moveup();
+                    break;
+                case 'arrowdown':
+                    movedown();
+                    break;
+                case 'arrowleft':
+                    moveleft();
+                    break;
+                case 'arrowright':
+                    moveright();
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', function(event) {
+            if (['w', 's', 'a', 'd', 'q', 'e', 'z', 'c', 
+                 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(event.key.toLowerCase())) {
+                stopMovement();
+            }
+        });
+
+        // Start the game when page loads
+        window.onload = init;
+    </script>
+</body>
+</html>

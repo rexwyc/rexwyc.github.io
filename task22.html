@@ -23,7 +23,12 @@
 </style>
 
 <span id="text"></span> <span id="day"></span>
-
+// Draw target image
+if (targetImage.complete) {
+    ctx.drawImage(targetImage, target.x, target.y, target.width, target.height);
+} else {
+    // Fallback placeholder if image isn't loaded
+}
 
 <script>
 	var day;
