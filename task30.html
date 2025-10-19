@@ -371,15 +371,18 @@
         }
 
         // Create a new target
-        function createTarget() {
-            targets.push({
-                x: Math.random() * (canvas.width - 20),
-                y: Math.random() * (canvas.height - 20),
-                width: 20,
-                height: 20,
-                color: '#000000'
-            });
-        }
+function createTarget() {
+    let targetImg = new Image();
+    targetImg.src = 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Adol_f_Hitler_-_Nazismo.png';
+    
+    targets.push({
+        x: Math.random() * (canvas.width - 20),
+        y: Math.random() * (canvas.height - 20),
+        width: 20,
+        height: 20,
+        image: targetImg  // Store the image object
+    });
+}
 
         // Game loop
         function gameLoop() {

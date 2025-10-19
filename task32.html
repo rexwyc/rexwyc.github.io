@@ -1,0 +1,90 @@
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+	body{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    margin:0px;
+    height: 100vh;
+}
+
+button{
+    height: 100vh;
+    width: 100%;
+    font-size: 100px;
+    color: white;
+    border-radius: 0px;
+    border-style: none;
+    outline: none;
+    padding-top: 0px;
+}
+
+#next,#back{
+    padding: 50vh 10px 50vh 10px;
+    background-color:#AFB4E0 ;
+    color:#000000 ;
+    text-decoration: none;
+}
+
+#next{
+    position: absolute;
+    top: 0%;
+    right: 0px;
+}
+
+#back{
+    position: absolute;
+    top: 0%;
+    left: 0px;
+}
+
+a:hover {
+    background-color: #FEFBFC;
+}
+
+</style>
+</head>
+<body>
+	<audio id="myAudio" src="music/red sun.mp3"></audio>
+
+	<script type="text/javascript">
+
+
+		function playAudio() {
+			
+        var a = document.getElementById("myAudio");
+    
+        if (a.paused) {
+            a.play();
+        }
+		}
+		var click = 0;
+		function onClick() {
+			click += 1;
+			document.getElementById("clicks").innerHTML = click;
+		}
+
+		function random_bg_color() {
+			var x = Math.floor(Math.random() * 256);
+			var y = Math.floor(Math.random() * 256);
+			var z = Math.floor(Math.random() * 256);
+			var bgColor = "rgb(" +x+ "," +y+ "," +z+ ")";
+
+			document.getElementById("clicks").style.backgroundColor = bgColor;
+		}
+		
+		
+	</script>
+
+	<button id="clicks" type="button" onClick="onClick();random_bg_color();playAudio();"><a> Social credit </a></button>
+
+
+	<a id="back" href="task31.html">Back</a>
+	<a id="next" href="task33.html">Next</a>
+	<a id="back2" href="task31.html"><</a>
+	<a id="next2" href="task33.html">></a>
+</body>
+</html>
