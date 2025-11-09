@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Arabic Numbers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e5799, #207cca, #2989d8);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(to right, #d4af37, #f7ef8a);
+            border-radius: 15px;
+            color: #333;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #f0f8ff;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #555;
+        }
+        
+        .tab.active {
+            background: #1e5799;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .content-section {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1e5799;
+            font-size: 1.8rem;
+        }
+        
+        .numbers-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .number-card {
+            background: linear-gradient(135deg, #1e5799, #2989d8);
+            height: 120px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .number-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .number-card:active {
+            transform: scale(0.95);
+        }
+        
+        .arabic-number {
+            font-size: 3.5rem;
+            margin-bottom: 5px;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .number-name {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .sound-btn {
+            padding: 10px 20px;
+            background: #d4af37;
+            color: #333;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        .sound-btn:hover {
+            background: #e6c34d;
+            transform: translateY(-3px);
+        }
+        
+        .writing-practice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .writing-area {
+            width: 300px;
+            height: 300px;
+            background: #f9f9f9;
+            border: 3px dashed #1e5799;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            touch-action: none;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .writing-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .practice-btn {
+            background: #1e5799;
+            color: white;
+        }
+        
+        .clear-btn {
+            background: #d4af37;
+            color: #333;
+        }
+        
+        .current-number {
+            font-size: 5rem;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .quiz-question {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-option {
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .quiz-option:hover {
+            background: #e1f0fa;
+            transform: translateY(-3px);
+        }
+        
+        .quiz-option.correct {
+            background: #a8e6cf;
+        }
+        
+        .quiz-option.incorrect {
+            background: #ffaaa5;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #1e5799, #2989d8);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .feedback {
+            font-size: 1.5rem;
+            margin: 10px 0;
+            text-align: center;
+            min-height: 40px;
+        }
+        
+        .positive-feedback {
+            color: #4CAF50;
+        }
+        
+        .negative-feedback {
+            color: #F44336;
+        }
+        
+        .completion-message {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .number-info {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .numbers-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .number-card {
+                height: 100px;
+            }
+            
+            .arabic-number {
+                font-size: 2.8rem;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .writing-area {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Learn Arabic Numbers</h1>
+            <p class="subtitle">Master Arabic numerals with interactive lessons</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="learn">Learn Numbers</button>
+            <button class="tab" data-tab="practice">Writing Practice</button>
+            <button class="tab" data-tab="quiz">Number Quiz</button>
+        </div>
+        
+        <div id="learn" class="content-section active">
+            <h2 class="section-title">Arabic Numbers 0-9</h2>
+            <p class="number-info">Click on any number to hear its pronunciation</p>
+            
+            <div class="numbers-container" id="numbers-container">
+                <!-- Numbers will be generated by JavaScript -->
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="sound-btn" id="play-all-sounds">Play All Numbers</button>
+            </div>
+        </div>
+        
+        <div id="practice" class="content-section">
+            <h2 class="section-title">Writing Practice</h2>
+            <p class="number-info">Practice writing Arabic numbers. Try to copy the number shown below.</p>
+            
+            <div class="current-number" id="current-number">
+                <!-- Current number to practice will appear here -->
+            </div>
+            
+            <div class="writing-area" id="writing-area">
+                <!-- Drawing canvas will be here -->
+                <canvas id="writing-canvas" width="300" height="300"></canvas>
+            </div>
+            
+            <div class="writing-controls">
+                <button class="control-btn practice-btn" id="new-number">New Number</button>
+                <button class="control-btn clear-btn" id="clear-canvas">Clear</button>
+            </div>
+        </div>
+        
+        <div id="quiz" class="content-section">
+            <h2 class="section-title">Arabic Numbers Quiz</h2>
+            <p class="number-info">Test your knowledge of Arabic numbers!</p>
+            
+            <div class="quiz-container">
+                <div class="quiz-question" id="quiz-question">
+                    <!-- Quiz question will appear here -->
+                </div>
+                
+                <div class="quiz-options" id="quiz-options">
+                    <!-- Quiz options will appear here -->
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="quiz-progress"></div>
+                </div>
+                
+                <div class="feedback" id="quiz-feedback">
+                    <!-- Feedback will appear here -->
+                </div>
+                
+                <button class="sound-btn" id="next-question" style="display: none;">Next Question</button>
+                
+                <div class="completion-message" id="completion-message">
+                    <!-- Completion message will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Arabic numbers data
+        const arabicNumbers = [
+            { digit: '٠', latin: '0', name: 'Sifr', pronunciation: 'sifr' },
+            { digit: '١', latin: '1', name: 'Wahid', pronunciation: 'waahid' },
+            { digit: '٢', latin: '2', name: 'Ithnan', pronunciation: 'ith-naan' },
+            { digit: '٣', latin: '3', name: 'Thalatha', pronunciation: 'tha-la-tha' },
+            { digit: '٤', latin: '4', name: 'Arbaʿa', pronunciation: 'ar-ba-a' },
+            { digit: '٥', latin: '5', name: 'Khamsa', pronunciation: 'kham-sa' },
+            { digit: '٦', latin: '6', name: 'Sitta', pronunciation: 'sit-ta' },
+            { digit: '٧', latin: '7', name: 'Sabʿa', pronunciation: 'sab-a' },
+            { digit: '٨', latin: '8', name: 'Thamaniya', pronunciation: 'tha-ma-ni-ya' },
+            { digit: '٩', latin: '9', name: 'Tisʿa', pronunciation: 'tis-a' }
+        ];
+
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "What is the Arabic numeral for 5?",
+                options: ['٤', '٥', '٦', '٧'],
+                answer: '٥'
+            },
+            {
+                question: "Which number is 'Thalatha'?",
+                options: ['١', '٢', '٣', '٤'],
+                answer: '٣'
+            },
+            {
+                question: "What is the name for Arabic numeral ٧?",
+                options: ['Sitta', 'Sabʿa', 'Thamaniya', 'Tisʿa'],
+                answer: 'Sabʿa'
+            },
+            {
+                question: "Which of these is the Arabic numeral for 2?",
+                options: ['١', '٢', '٣', '٤'],
+                answer: '٢'
+            },
+            {
+                question: "What number does 'Khamsa' represent?",
+                options: ['3', '4', '5', '6'],
+                answer: '5'
+            },
+            {
+                question: "Which Arabic numeral represents zero?",
+                options: ['٠', '١', '٥', '٩'],
+                answer: '٠'
+            },
+            {
+                question: "What is the Arabic numeral for 9?",
+                options: ['٦', '٧', '٨', '٩'],
+                answer: '٩'
+            },
+            {
+                question: "Which number is 'Arbaʿa'?",
+                options: ['2', '3', '4', '5'],
+                answer: '4'
+            }
+        ];
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const contentSections = document.querySelectorAll('.content-section');
+        const numbersContainer = document.getElementById('numbers-container');
+        const playAllSoundsBtn = document.getElementById('play-all-sounds');
+        const currentNumberEl = document.getElementById('current-number');
+        const writingCanvas = document.getElementById('writing-canvas');
+        const newNumberBtn = document.getElementById('new-number');
+        const clearCanvasBtn = document.getElementById('clear-canvas');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const quizProgress = document.getElementById('quiz-progress');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const completionMessage = document.getElementById('completion-message');
+
+        // Game state
+        let currentQuizIndex = 0;
+        let correctAnswers = 0;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let ctx = writingCanvas.getContext('2d');
+
+        // Initialize the application
+        function init() {
+            setupTabs();
+            generateNumberCards();
+            setupWritingPractice();
+            setupQuiz();
+            
+            // Set up event listeners
+            playAllSoundsBtn.addEventListener('click', playAllSounds);
+            newNumberBtn.addEventListener('click', generateRandomNumber);
+            clearCanvasBtn.addEventListener('click', clearCanvas);
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            
+            // Initialize with a random number for writing practice
+            generateRandomNumber();
+        }
+
+        // Set up tab functionality
+        function setupTabs() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and sections
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding section
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // Generate number cards for the learn section
+        function generateNumberCards() {
+            arabicNumbers.forEach(numberData => {
+                const numberCard = document.createElement('div');
+                numberCard.className = 'number-card';
+                
+                numberCard.innerHTML = `
+                    <div class="arabic-number">${numberData.digit}</div>
+                    <div class="number-name">${numberData.latin} - ${numberData.name}</div>
+                `;
+                
+                numberCard.addEventListener('click', () => {
+                    playNumberSound(numberData);
+                    // Add visual feedback
+                    numberCard.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        numberCard.style.transform = '';
+                    }, 200);
+                });
+                
+                numbersContainer.appendChild(numberCard);
+            });
+        }
+
+        // Play a number sound
+        function playNumberSound(numberData) {
+            // In a real application, you would use the Web Speech API or pre-recorded sounds
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(numberData.name);
+                utterance.rate = 0.7;
+                speechSynthesis.speak(utterance);
+            } else {
+                // Fallback alert
+                alert(`The Arabic number ${numberData.digit} is ${numberData.latin} and is pronounced "${numberData.pronunciation}"`);
+            }
+        }
+
+        // Play all number sounds in sequence
+        function playAllSounds() {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                // Speak each number with a delay
+                arabicNumbers.forEach((numberData, index) => {
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance(numberData.name);
+                        utterance.rate = 0.6;
+                        speechSynthesis.speak(utterance);
+                    }, index * 1000);
+                });
+            } else {
+                alert("Your browser doesn't support text-to-speech functionality.");
+            }
+        }
+
+        // Set up writing practice
+        function setupWritingPractice() {
+            // Set up canvas
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#1e5799';
+            
+            // Mouse events
+            writingCanvas.addEventListener('mousedown', startDrawing);
+            writingCanvas.addEventListener('mousemove', draw);
+            writingCanvas.addEventListener('mouseup', stopDrawing);
+            writingCanvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile devices
+            writingCanvas.addEventListener('touchstart', handleTouchStart);
+            writingCanvas.addEventListener('touchmove', handleTouchMove);
+            writingCanvas.addEventListener('touchend', stopDrawing);
+        }
+
+        // Start drawing
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        // Handle touch start
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = writingCanvas.getBoundingClientRect();
+            const offsetX = touch.clientX - rect.left;
+            const offsetY = touch.clientY - rect.top;
+            
+            isDrawing = true;
+            [lastX, lastY] = [offsetX, offsetY];
+        }
+
+        // Handle touch move
+        function handleTouchMove(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = writingCanvas.getBoundingClientRect();
+            const offsetX = touch.clientX - rect.left;
+            const offsetY = touch.clientY - rect.top;
+            
+            draw({ offsetX, offsetY });
+        }
+
+        // Draw on canvas
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        // Stop drawing
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // Generate a random number for writing practice
+        function generateRandomNumber() {
+            const randomIndex = Math.floor(Math.random() * arabicNumbers.length);
+            currentNumberEl.textContent = arabicNumbers[randomIndex].digit;
+            clearCanvas();
+            
+            // Speak the number name
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(arabicNumbers[randomIndex].name);
+                utterance.rate = 0.7;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Clear the canvas
+        function clearCanvas() {
+            ctx.clearRect(0, 0, writingCanvas.width, writingCanvas.height);
+        }
+
+        // Set up the quiz
+        function setupQuiz() {
+            currentQuizIndex = 0;
+            correctAnswers = 0;
+            showQuestion();
+            updateProgress();
+        }
+
+        // Show the current quiz question
+        function showQuestion() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                showCompletionMessage();
+                return;
+            }
+            
+            const question = quizQuestions[currentQuizIndex];
+            quizQuestion.textContent = question.question;
+            
+            // Clear previous options
+            quizOptions.innerHTML = '';
+            quizFeedback.textContent = '';
+            nextQuestionBtn.style.display = 'none';
+            
+            // Add new options
+            question.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                
+                // Check if option is an Arabic numeral or text
+                if (option.length === 1 && option >= '٠' && option <= '٩') {
+                    optionElement.textContent = option;
+                    optionElement.style.fontSize = '3rem';
+                } else {
+                    optionElement.textContent = option;
+                    optionElement.style.fontSize = '1.5rem';
+                }
+                
+                optionElement.addEventListener('click', () => checkAnswer(option, question.answer, optionElement));
+                quizOptions.appendChild(optionElement);
+            });
+        }
+
+        // Check the selected answer
+        function checkAnswer(selected, correct, element) {
+            // Disable all options
+            const allOptions = document.querySelectorAll('.quiz-option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (selected === correct) {
+                element.classList.add('correct');
+                quizFeedback.textContent = 'Correct! Well done!';
+                quizFeedback.className = 'feedback positive-feedback';
+                correctAnswers++;
+            } else {
+                element.classList.add('incorrect');
+                quizFeedback.textContent = `Incorrect. The correct answer is "${correct}".`;
+                quizFeedback.className = 'feedback negative-feedback';
+                
+                // Highlight the correct answer
+                allOptions.forEach(opt => {
+                    if (opt.textContent === correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            nextQuestionBtn.style.display = 'block';
+            updateProgress();
+        }
+
+        // Move to the next question
+        function nextQuestion() {
+            currentQuizIndex++;
+            showQuestion();
+        }
+
+        // Update the quiz progress
+        function updateProgress() {
+            const progress = (currentQuizIndex / quizQuestions.length) * 100;
+            quizProgress.style.width = `${progress}%`;
+        }
+
+        // Show completion message
+        function showCompletionMessage() {
+            quizQuestion.style.display = 'none';
+            quizOptions.style.display = 'none';
+            nextQuestionBtn.style.display = 'none';
+            quizFeedback.textContent = '';
+            
+            const score = Math.round((correctAnswers / quizQuestions.length) * 100);
+            completionMessage.innerHTML = `
+                <h3>Quiz Complete!</h3>
+                <p>You scored ${correctAnswers} out of ${quizQuestions.length} (${score}%)</p>
+                <p>${score >= 80 ? 'Excellent job!' : score >= 60 ? 'Good work!' : 'Keep practicing!'}</p>
+                <button class="sound-btn" onclick="setupQuiz()">Try Again</button>
+            `;
+            completionMessage.style.display = 'block';
+        }
+
+        // Initialize the application when the page loads
+        window.onload = init;
+    </script>
+</body>
+</html>

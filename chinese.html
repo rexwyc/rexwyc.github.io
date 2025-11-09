@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Simple Chinese Characters</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #c62828, #e53935);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(to right, #ff9800, #ffc107);
+            border-radius: 15px;
+            color: #333;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #fff3e0;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #555;
+        }
+        
+        .tab.active {
+            background: #e53935;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .content-section {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #c62828;
+            font-size: 1.8rem;
+        }
+        
+        .characters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .character-card {
+            background: linear-gradient(135deg, #ff9800, #ffc107);
+            height: 140px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .character-card:active {
+            transform: scale(0.95);
+        }
+        
+        .chinese-char {
+            font-size: 3.5rem;
+            margin-bottom: 5px;
+            font-family: 'SimSun', 'STKaiti', serif;
+        }
+        
+        .character-name {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .sound-btn {
+            padding: 10px 20px;
+            background: #c62828;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        .sound-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-3px);
+        }
+        
+        .writing-practice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .writing-area {
+            width: 300px;
+            height: 300px;
+            background: #f9f9f9;
+            border: 3px dashed #c62828;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            touch-action: none;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .writing-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .practice-btn {
+            background: #c62828;
+            color: white;
+        }
+        
+        .clear-btn {
+            background: #ff9800;
+            color: #333;
+        }
+        
+        .current-character {
+            font-size: 5rem;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'SimSun', 'STKaiti', serif;
+        }
+        
+        .character-info {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .stroke-order {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .stroke {
+            width: 40px;
+            height: 40px;
+            background: #ffecb3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stroke.active {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .quiz-question {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-option {
+            padding: 15px;
+            background: #fff3e0;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: 'SimSun', 'STKaiti', serif;
+        }
+        
+        .quiz-option:hover {
+            background: #ffecb3;
+            transform: translateY(-3px);
+        }
+        
+        .quiz-option.correct {
+            background: #a5d6a7;
+        }
+        
+        .quiz-option.incorrect {
+            background: #ef9a9a;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #c62828, #e53935);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .feedback {
+            font-size: 1.5rem;
+            margin: 10px 0;
+            text-align: center;
+            min-height: 40px;
+        }
+        
+        .positive-feedback {
+            color: #4CAF50;
+        }
+        
+        .negative-feedback {
+            color: #F44336;
+        }
+        
+        .completion-message {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .character-details {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .characters-container {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .character-card {
+                height: 120px;
+            }
+            
+            .chinese-char {
+                font-size: 2.8rem;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .writing-area {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Learn Simple Chinese Characters</h1>
+            <p class="subtitle">Master characters with fewer than 5 strokes</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="learn">Learn Characters</button>
+            <button class="tab" data-tab="practice">Writing Practice</button>
+            <button class="tab" data-tab="quiz">Character Quiz</button>
+        </div>
+        
+        <div id="learn" class="content-section active">
+            <h2 class="section-title">Simple Chinese Characters</h2>
+            <p class="character-info">Click on any character to hear its pronunciation</p>
+            
+            <div class="characters-container" id="characters-container">
+                <!-- Characters will be generated by JavaScript -->
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="sound-btn" id="play-all-sounds">Play All Pronunciations</button>
+            </div>
+        </div>
+        
+        <div id="practice" class="content-section">
+            <h2 class="section-title">Writing Practice</h2>
+            <p class="character-info">Practice writing Chinese characters. Try to follow the stroke order shown below.</p>
+            
+            <div class="current-character" id="current-character">
+                <!-- Current character to practice will appear here -->
+            </div>
+            
+            <div class="character-details" id="character-details">
+                <!-- Character details will appear here -->
+            </div>
+            
+            <div class="stroke-order" id="stroke-order">
+                <!-- Stroke order indicators will appear here -->
+            </div>
+            
+            <div class="writing-area" id="writing-area">
+                <!-- Drawing canvas will be here -->
+                <canvas id="writing-canvas" width="300" height="300"></canvas>
+            </div>
+            
+            <div class="writing-controls">
+                <button class="control-btn practice-btn" id="new-character">New Character</button>
+                <button class="control-btn clear-btn" id="clear-canvas">Clear</button>
+            </div>
+        </div>
+        
+        <div id="quiz" class="content-section">
+            <h2 class="section-title">Chinese Characters Quiz</h2>
+            <p class="character-info">Test your knowledge of simple Chinese characters!</p>
+            
+            <div class="quiz-container">
+                <div class="quiz-question" id="quiz-question">
+                    <!-- Quiz question will appear here -->
+                </div>
+                
+                <div class="quiz-options" id="quiz-options">
+                    <!-- Quiz options will appear here -->
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="quiz-progress"></div>
+                </div>
+                
+                <div class="feedback" id="quiz-feedback">
+                    <!-- Feedback will appear here -->
+                </div>
+                
+                <button class="sound-btn" id="next-question" style="display: none;">Next Question</button>
+                
+                <div class="completion-message" id="completion-message">
+                    <!-- Completion message will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chinese characters data (less than 5 strokes)
+        const chineseCharacters = [
+            { char: '一', pinyin: 'yī', meaning: 'one', strokes: 1, strokeOrder: ['一'] },
+            { char: '二', pinyin: 'èr', meaning: 'two', strokes: 2, strokeOrder: ['一', '一'] },
+            { char: '三', pinyin: 'sān', meaning: 'three', strokes: 3, strokeOrder: ['一', '一', '一'] },
+            { char: '十', pinyin: 'shí', meaning: 'ten', strokes: 2, strokeOrder: ['一', '丨'] },
+            { char: '人', pinyin: 'rén', meaning: 'person', strokes: 2, strokeOrder: ['丿', '㇏'] },
+            { char: '口', pinyin: 'kǒu', meaning: 'mouth', strokes: 3, strokeOrder: ['丨', '𠃍', '一'] },
+            { char: '日', pinyin: 'rì', meaning: 'sun/day', strokes: 4, strokeOrder: ['丨', '𠃍', '一', '一'] },
+            { char: '月', pinyin: 'yuè', meaning: 'moon/month', strokes: 4, strokeOrder: ['丿', '𠃌', '一', '一'] },
+            { char: '木', pinyin: 'mù', meaning: 'tree/wood', strokes: 4, strokeOrder: ['一', '丨', '丿', '㇏'] },
+            { char: '水', pinyin: 'shuǐ', meaning: 'water', strokes: 4, strokeOrder: ['亅', '𠄌', '丿', '㇏'] },
+            { char: '火', pinyin: 'huǒ', meaning: 'fire', strokes: 4, strokeOrder: ['丶', '丿', '丿', '㇏'] },
+            { char: '山', pinyin: 'shān', meaning: 'mountain', strokes: 3, strokeOrder: ['丨', '𠃊', '丨'] },
+            { char: '大', pinyin: 'dà', meaning: 'big', strokes: 3, strokeOrder: ['一', '丿', '㇏'] },
+            { char: '小', pinyin: 'xiǎo', meaning: 'small', strokes: 3, strokeOrder: ['亅', '丿', '丶'] },
+            { char: '上', pinyin: 'shàng', meaning: 'up/above', strokes: 3, strokeOrder: ['丨', '一', '一'] },
+            { char: '下', pinyin: 'xià', meaning: 'down/below', strokes: 3, strokeOrder: ['一', '丨', '丶'] },
+            { char: '工', pinyin: 'gōng', meaning: 'work', strokes: 3, strokeOrder: ['一', '丨', '一'] },
+            { char: '土', pinyin: 'tǔ', meaning: 'earth/soil', strokes: 3, strokeOrder: ['一', '丨', '一'] }
+        ];
+
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "Which character means 'person'?",
+                options: ['一', '人', '口', '日'],
+                answer: '人'
+            },
+            {
+                question: "What is the pinyin for 水?",
+                options: ['shuǐ', 'huǒ', 'mù', 'shān'],
+                answer: 'shuǐ'
+            },
+            {
+                question: "Which character represents 'fire'?",
+                options: ['水', '火', '木', '山'],
+                answer: '火'
+            },
+            {
+                question: "How many strokes does 月 have?",
+                options: ['2', '3', '4', '5'],
+                answer: '4'
+            },
+            {
+                question: "What does 日 mean?",
+                options: ['moon', 'sun', 'water', 'mountain'],
+                answer: 'sun'
+            },
+            {
+                question: "Which character is pronounced 'èr'?",
+                options: ['一', '二', '三', '十'],
+                answer: '二'
+            },
+            {
+                question: "What is the meaning of 大?",
+                options: ['small', 'big', 'up', 'down'],
+                answer: 'big'
+            },
+            {
+                question: "Which character has the fewest strokes?",
+                options: ['一', '二', '三', '十'],
+                answer: '一'
+            }
+        ];
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const contentSections = document.querySelectorAll('.content-section');
+        const charactersContainer = document.getElementById('characters-container');
+        const playAllSoundsBtn = document.getElementById('play-all-sounds');
+        const currentCharacterEl = document.getElementById('current-character');
+        const characterDetailsEl = document.getElementById('character-details');
+        const strokeOrderEl = document.getElementById('stroke-order');
+        const writingCanvas = document.getElementById('writing-canvas');
+        const newCharacterBtn = document.getElementById('new-character');
+        const clearCanvasBtn = document.getElementById('clear-canvas');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const quizProgress = document.getElementById('quiz-progress');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const completionMessage = document.getElementById('completion-message');
+
+        // Game state
+        let currentQuizIndex = 0;
+        let correctAnswers = 0;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let ctx = writingCanvas.getContext('2d');
+        let currentPracticeChar = null;
+
+        // Initialize the application
+        function init() {
+            setupTabs();
+            generateCharacterCards();
+            setupWritingPractice();
+            setupQuiz();
+            
+            // Set up event listeners
+            playAllSoundsBtn.addEventListener('click', playAllSounds);
+            newCharacterBtn.addEventListener('click', generateRandomCharacter);
+            clearCanvasBtn.addEventListener('click', clearCanvas);
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            
+            // Initialize with a random character for writing practice
+            generateRandomCharacter();
+        }
+
+        // Set up tab functionality
+        function setupTabs() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and sections
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding section
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // Generate character cards for the learn section
+        function generateCharacterCards() {
+            chineseCharacters.forEach(charData => {
+                const characterCard = document.createElement('div');
+                characterCard.className = 'character-card';
+                
+                characterCard.innerHTML = `
+                    <div class="chinese-char">${charData.char}</div>
+                    <div class="character-name">${charData.pinyin} - ${charData.meaning}</div>
+                `;
+                
+                characterCard.addEventListener('click', () => {
+                    playCharacterSound(charData);
+                    // Add visual feedback
+                    characterCard.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        characterCard.style.transform = '';
+                    }, 200);
+                });
+                
+                charactersContainer.appendChild(characterCard);
+            });
+        }
+
+        // Play a character sound
+        function playCharacterSound(charData) {
+            // In a real application, you would use the Web Speech API or pre-recorded sounds
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(charData.pinyin);
+                utterance.rate = 0.7;
+                speechSynthesis.speak(utterance);
+                
+                // Also say the meaning after a short delay
+                setTimeout(() => {
+                    const meaningUtterance = new SpeechSynthesisUtterance(charData.meaning);
+                    meaningUtterance.rate = 0.7;
+                    speechSynthesis.speak(meaningUtterance);
+                }, 800);
+            } else {
+                // Fallback alert
+                alert(`The character ${charData.char} is pronounced "${charData.pinyin}" and means "${charData.meaning}"`);
+            }
+        }
+
+        // Play all character sounds in sequence
+        function playAllSounds() {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                // Speak each character with a delay
+                chineseCharacters.forEach((charData, index) => {
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance(charData.pinyin);
+                        utterance.rate = 0.6;
+                        speechSynthesis.speak(utterance);
+                    }, index * 1200);
+                });
+            } else {
+                alert("Your browser doesn't support text-to-speech functionality.");
+            }
+        }
+
+        // Set up writing practice
+        function setupWritingPractice() {
+            // Set up canvas
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#c62828';
+            
+            // Mouse events
+            writingCanvas.addEventListener('mousedown', startDrawing);
+            writingCanvas.addEventListener('mousemove', draw);
+            writingCanvas.addEventListener('mouseup', stopDrawing);
+            writingCanvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile devices
+            writingCanvas.addEventListener('touchstart', handleTouchStart);
+            writingCanvas.addEventListener('touchmove', handleTouchMove);
+            writingCanvas.addEventListener('touchend', stopDrawing);
+        }
+
+        // Start drawing
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        // Handle touch start
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = writingCanvas.getBoundingClientRect();
+            const offsetX = touch.clientX - rect.left;
+            const offsetY = touch.clientY - rect.top;
+            
+            isDrawing = true;
+            [lastX, lastY] = [offsetX, offsetY];
+        }
+
+        // Handle touch move
+        function handleTouchMove(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = writingCanvas.getBoundingClientRect();
+            const offsetX = touch.clientX - rect.left;
+            const offsetY = touch.clientY - rect.top;
+            
+            draw({ offsetX, offsetY });
+        }
+
+        // Draw on canvas
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        // Stop drawing
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // Generate a random character for writing practice
+        function generateRandomCharacter() {
+            const randomIndex = Math.floor(Math.random() * chineseCharacters.length);
+            currentPracticeChar = chineseCharacters[randomIndex];
+            
+            currentCharacterEl.textContent = currentPracticeChar.char;
+            characterDetailsEl.innerHTML = `
+                <strong>Pinyin:</strong> ${currentPracticeChar.pinyin} | 
+                <strong>Meaning:</strong> ${currentPracticeChar.meaning} | 
+                <strong>Strokes:</strong> ${currentPracticeChar.strokes}
+            `;
+            
+            // Generate stroke order indicators
+            strokeOrderEl.innerHTML = '';
+            currentPracticeChar.strokeOrder.forEach((stroke, index) => {
+                const strokeEl = document.createElement('div');
+                strokeEl.className = 'stroke';
+                strokeEl.textContent = index + 1;
+                strokeOrderEl.appendChild(strokeEl);
+            });
+            
+            clearCanvas();
+            
+            // Speak the character
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(currentPracticeChar.pinyin);
+                utterance.rate = 0.7;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Clear the canvas
+        function clearCanvas() {
+            ctx.clearRect(0, 0, writingCanvas.width, writingCanvas.height);
+        }
+
+        // Set up the quiz
+        function setupQuiz() {
+            currentQuizIndex = 0;
+            correctAnswers = 0;
+            showQuestion();
+            updateProgress();
+        }
+
+        // Show the current quiz question
+        function showQuestion() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                showCompletionMessage();
+                return;
+            }
+            
+            const question = quizQuestions[currentQuizIndex];
+            quizQuestion.textContent = question.question;
+            
+            // Clear previous options
+            quizOptions.innerHTML = '';
+            quizFeedback.textContent = '';
+            nextQuestionBtn.style.display = 'none';
+            
+            // Add new options
+            question.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                
+                // Check if option is a Chinese character or text
+                if (option.length === 1) {
+                    optionElement.textContent = option;
+                    optionElement.style.fontSize = '3rem';
+                } else {
+                    optionElement.textContent = option;
+                    optionElement.style.fontSize = '1.5rem';
+                }
+                
+                optionElement.addEventListener('click', () => checkAnswer(option, question.answer, optionElement));
+                quizOptions.appendChild(optionElement);
+            });
+        }
+
+        // Check the selected answer
+        function checkAnswer(selected, correct, element) {
+            // Disable all options
+            const allOptions = document.querySelectorAll('.quiz-option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (selected === correct) {
+                element.classList.add('correct');
+                quizFeedback.textContent = 'Correct! Well done!';
+                quizFeedback.className = 'feedback positive-feedback';
+                correctAnswers++;
+            } else {
+                element.classList.add('incorrect');
+                quizFeedback.textContent = `Incorrect. The correct answer is "${correct}".`;
+                quizFeedback.className = 'feedback negative-feedback';
+                
+                // Highlight the correct answer
+                allOptions.forEach(opt => {
+                    if (opt.textContent === correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            nextQuestionBtn.style.display = 'block';
+            updateProgress();
+        }
+
+        // Move to the next question
+        function nextQuestion() {
+            currentQuizIndex++;
+            showQuestion();
+        }
+
+        // Update the quiz progress
+        function updateProgress() {
+            const progress = (currentQuizIndex / quizQuestions.length) * 100;
+            quizProgress.style.width = `${progress}%`;
+        }
+
+        // Show completion message
+        function showCompletionMessage() {
+            quizQuestion.style.display = 'none';
+            quizOptions.style.display = 'none';
+            nextQuestionBtn.style.display = 'none';
+            quizFeedback.textContent = '';
+            
+            const score = Math.round((correctAnswers / quizQuestions.length) * 100);
+            completionMessage.innerHTML = `
+                <h3>Quiz Complete!</h3>
+                <p>You scored ${correctAnswers} out of ${quizQuestions.length} (${score}%)</p>
+                <p>${score >= 80 ? 'Excellent job!' : score >= 60 ? 'Good work!' : 'Keep practicing!'}</p>
+                <button class="sound-btn" onclick="setupQuiz()">Try Again</button>
+            `;
+            completionMessage.style.display = 'block';
+        }
+
+        // Initialize the application when the page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
