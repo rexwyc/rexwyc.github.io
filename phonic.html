@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phonics Fun - Learn Letter Sounds</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6ecbf5, #059ee3);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 15px 0;
+            background: linear-gradient(to right, #ff6b6b, #ff8e53);
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #f0f8ff;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #555;
+        }
+        
+        .tab.active {
+            background: #4d9fff;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .content-section {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+        
+        .letters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .letter-card {
+            background: linear-gradient(135deg, #ffcc5c, #ff9e5c);
+            height: 80px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .letter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .letter-card:active {
+            transform: scale(0.95);
+        }
+        
+        .vowel {
+            background: linear-gradient(135deg, #6ecbf5, #4d9fff);
+        }
+        
+        .consonant {
+            background: linear-gradient(135deg, #a8e6cf, #6ecb9c);
+        }
+        
+        .sound-btn {
+            padding: 10px 20px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sound-btn:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+        }
+        
+        .word-builder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .word-display {
+            font-size: 3rem;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #f0f8ff;
+            border-radius: 15px;
+            width: 100%;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            letter-spacing: 10px;
+        }
+        
+        .word-image {
+            width: 200px;
+            height: 200px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 5rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .speak-btn {
+            background: #6ecbf5;
+            color: white;
+        }
+        
+        .clear-btn {
+            background: #ffcc5c;
+            color: #333;
+        }
+        
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .quiz-question {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-option {
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quiz-option:hover {
+            background: #e1f0fa;
+            transform: translateY(-3px);
+        }
+        
+        .quiz-option.correct {
+            background: #a8e6cf;
+        }
+        
+        .quiz-option.incorrect {
+            background: #ffaaa5;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #6ecbf5, #4d9fff);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .feedback {
+            font-size: 1.5rem;
+            margin: 10px 0;
+            text-align: center;
+            min-height: 40px;
+        }
+        
+        .positive-feedback {
+            color: #4CAF50;
+        }
+        
+        .negative-feedback {
+            color: #F44336;
+        }
+        
+        .completion-message {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .letters-container {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+            
+            .letter-card {
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Phonics Fun</h1>
+            <p class="subtitle">Learn letter sounds and build words!</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="letters">Letter Sounds</button>
+            <button class="tab" data-tab="words">Word Builder</button>
+            <button class="tab" data-tab="quiz">Phonics Quiz</button>
+        </div>
+        
+        <div id="letters" class="content-section active">
+            <h2 class="section-title">Learn Letter Sounds</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Click on a letter to hear its sound!</p>
+            
+            <div class="letters-container" id="letters-container">
+                <!-- Letters will be generated by JavaScript -->
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="sound-btn" id="play-all-sounds">Play All Sounds</button>
+            </div>
+        </div>
+        
+        <div id="words" class="content-section">
+            <h2 class="section-title">Word Builder</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Click letters to build words and hear how they sound!</p>
+            
+            <div class="word-display" id="word-display">
+                <!-- Built word will appear here -->
+            </div>
+            
+            <div class="word-image" id="word-image">
+                <!-- Word image will appear here -->
+            </div>
+            
+            <div class="letters-container" id="word-letters">
+                <!-- Letters for word building will be generated by JavaScript -->
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn speak-btn" id="speak-word">Speak Word</button>
+                <button class="control-btn clear-btn" id="clear-word">Clear</button>
+            </div>
+        </div>
+        
+        <div id="quiz" class="content-section">
+            <h2 class="section-title">Phonics Quiz</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Test your phonics knowledge!</p>
+            
+            <div class="quiz-container">
+                <div class="quiz-question" id="quiz-question">
+                    <!-- Quiz question will appear here -->
+                </div>
+                
+                <div class="quiz-options" id="quiz-options">
+                    <!-- Quiz options will appear here -->
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="quiz-progress"></div>
+                </div>
+                
+                <div class="feedback" id="quiz-feedback">
+                    <!-- Feedback will appear here -->
+                </div>
+                
+                <button class="sound-btn" id="next-question" style="display: none;">Next Question</button>
+                
+                <div class="completion-message" id="completion-message">
+                    <!-- Completion message will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Phonics data
+        const phonicsData = {
+            letters: [
+                { letter: 'A', sound: 'a', type: 'vowel', example: 'apple' },
+                { letter: 'B', sound: 'b', type: 'consonant', example: 'ball' },
+                { letter: 'C', sound: 'k', type: 'consonant', example: 'cat' },
+                { letter: 'D', sound: 'd', type: 'consonant', example: 'dog' },
+                { letter: 'E', sound: 'e', type: 'vowel', example: 'egg' },
+                { letter: 'F', sound: 'f', type: 'consonant', example: 'fish' },
+                { letter: 'G', sound: 'g', type: 'consonant', example: 'goat' },
+                { letter: 'H', sound: 'h', type: 'consonant', example: 'hat' },
+                { letter: 'I', sound: 'i', type: 'vowel', example: 'igloo' },
+                { letter: 'J', sound: 'j', type: 'consonant', example: 'jam' },
+                { letter: 'K', sound: 'k', type: 'consonant', example: 'kite' },
+                { letter: 'L', sound: 'l', type: 'consonant', example: 'lion' },
+                { letter: 'M', sound: 'm', type: 'consonant', example: 'monkey' },
+                { letter: 'N', sound: 'n', type: 'consonant', example: 'nest' },
+                { letter: 'O', sound: 'o', type: 'vowel', example: 'orange' },
+                { letter: 'P', sound: 'p', type: 'consonant', example: 'pig' },
+                { letter: 'Q', sound: 'kw', type: 'consonant', example: 'queen' },
+                { letter: 'R', sound: 'r', type: 'consonant', example: 'rabbit' },
+                { letter: 'S', sound: 's', type: 'consonant', example: 'sun' },
+                { letter: 'T', sound: 't', type: 'consonant', example: 'tiger' },
+                { letter: 'U', sound: 'u', type: 'vowel', example: 'umbrella' },
+                { letter: 'V', sound: 'v', type: 'consonant', example: 'violin' },
+                { letter: 'W', sound: 'w', type: 'consonant', example: 'water' },
+                { letter: 'X', sound: 'ks', type: 'consonant', example: 'xylophone' },
+                { letter: 'Y', sound: 'y', type: 'consonant', example: 'yoyo' },
+                { letter: 'Z', sound: 'z', type: 'consonant', example: 'zebra' }
+            ],
+            words: [
+                { word: 'CAT', image: '🐱' },
+                { word: 'DOG', image: '🐶' },
+                { word: 'SUN', image: '☀️' },
+                { word: 'FISH', image: '🐠' },
+                { word: 'BALL', image: '⚽' },
+                { word: 'HAT', image: '🎩' },
+                { word: 'JUMP', image: '🤸' },
+                { word: 'RED', image: '🔴' },
+                { word: 'BLUE', image: '🔵' },
+                { word: 'STAR', image: '⭐' }
+            ],
+            quiz: [
+                {
+                    question: "Which letter makes the 'b' sound?",
+                    options: ['D', 'B', 'P', 'T'],
+                    answer: 'B'
+                },
+                {
+                    question: "What sound does the letter 'S' make?",
+                    options: ['z', 'sh', 's', 'ch'],
+                    answer: 's'
+                },
+                {
+                    question: "Which word starts with the 'm' sound?",
+                    options: ['Nest', 'Moon', 'Leaf', 'Kite'],
+                    answer: 'Moon'
+                },
+                {
+                    question: "Which of these is a vowel?",
+                    options: ['B', 'C', 'D', 'E'],
+                    answer: 'E'
+                },
+                {
+                    question: "What sound does 'CH' make in 'chair'?",
+                    options: ['sh', 'ch', 'k', 's'],
+                    answer: 'ch'
+                }
+            ]
+        };
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const contentSections = document.querySelectorAll('.content-section');
+        const lettersContainer = document.getElementById('letters-container');
+        const wordDisplay = document.getElementById('word-display');
+        const wordImage = document.getElementById('word-image');
+        const wordLettersContainer = document.getElementById('word-letters');
+        const speakWordBtn = document.getElementById('speak-word');
+        const clearWordBtn = document.getElementById('clear-word');
+        const playAllSoundsBtn = document.getElementById('play-all-sounds');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const quizProgress = document.getElementById('quiz-progress');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const completionMessage = document.getElementById('completion-message');
+
+        // Game state
+        let currentWord = '';
+        let currentQuizIndex = 0;
+        let correctAnswers = 0;
+
+        // Initialize the application
+        function init() {
+            setupTabs();
+            generateLetters();
+            generateWordLetters();
+            setupQuiz();
+            
+            // Set up event listeners
+            speakWordBtn.addEventListener('click', speakWord);
+            clearWordBtn.addEventListener('click', clearWord);
+            playAllSoundsBtn.addEventListener('click', playAllSounds);
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+        }
+
+        // Set up tab functionality
+        function setupTabs() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and sections
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding section
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // Generate letter cards for the letters section
+        function generateLetters() {
+            phonicsData.letters.forEach(letterData => {
+                const letterCard = document.createElement('div');
+                letterCard.className = `letter-card ${letterData.type}`;
+                letterCard.textContent = letterData.letter;
+                letterCard.setAttribute('data-sound', letterData.sound);
+                letterCard.setAttribute('data-example', letterData.example);
+                
+                letterCard.addEventListener('click', () => {
+                    playLetterSound(letterData.sound, letterData.example);
+                    // Add visual feedback
+                    letterCard.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        letterCard.style.transform = '';
+                    }, 200);
+                });
+                
+                lettersContainer.appendChild(letterCard);
+            });
+        }
+
+        // Generate letter cards for the word builder
+        function generateWordLetters() {
+            // Clear existing letters
+            wordLettersContainer.innerHTML = '';
+            
+            // Add a subset of letters for word building
+            const wordLetters = ['C', 'A', 'T', 'D', 'O', 'G', 'S', 'U', 'N', 'F', 'I', 'H', 'B', 'L', 'R', 'E'];
+            
+            wordLetters.forEach(letter => {
+                const letterCard = document.createElement('div');
+                letterCard.className = 'letter-card';
+                letterCard.textContent = letter;
+                
+                letterCard.addEventListener('click', () => {
+                    currentWord += letter;
+                    updateWordDisplay();
+                    
+                    // Add visual feedback
+                    letterCard.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        letterCard.style.transform = '';
+                    }, 200);
+                });
+                
+                wordLettersContainer.appendChild(letterCard);
+            });
+        }
+
+        // Play a letter sound
+        function playLetterSound(sound, example) {
+            // In a real application, you would use the Web Speech API or pre-recorded sounds
+            // For this demo, we'll use text-to-speech if available
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(sound);
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+                
+                // Also say the example word after a short delay
+                setTimeout(() => {
+                    const exampleUtterance = new SpeechSynthesisUtterance(example);
+                    exampleUtterance.rate = 0.8;
+                    speechSynthesis.speak(exampleUtterance);
+                }, 600);
+            } else {
+                // Fallback alert
+                alert(`The sound for this letter is "${sound}" as in "${example}"`);
+            }
+        }
+
+        // Play all letter sounds in sequence
+        function playAllSounds() {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                // Speak each letter sound with a delay
+                phonicsData.letters.forEach((letterData, index) => {
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance(letterData.sound);
+                        utterance.rate = 0.7;
+                        speechSynthesis.speak(utterance);
+                    }, index * 800);
+                });
+            } else {
+                alert("Your browser doesn't support text-to-speech functionality.");
+            }
+        }
+
+        // Update the word display
+        function updateWordDisplay() {
+            wordDisplay.textContent = currentWord;
+            
+            // Check if the word matches any in our list
+            const matchedWord = phonicsData.words.find(w => w.word === currentWord);
+            if (matchedWord) {
+                wordImage.textContent = matchedWord.image;
+                wordImage.style.backgroundColor = '#e8f5e9';
+            } else {
+                wordImage.textContent = '?';
+                wordImage.style.backgroundColor = '#f9f9f9';
+            }
+        }
+
+        // Speak the current word
+        function speakWord() {
+            if (currentWord && 'speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(currentWord);
+                utterance.rate = 0.7;
+                speechSynthesis.speak(utterance);
+            } else if (currentWord) {
+                alert(`The word is "${currentWord}"`);
+            } else {
+                alert("Please build a word first!");
+            }
+        }
+
+        // Clear the current word
+        function clearWord() {
+            currentWord = '';
+            updateWordDisplay();
+        }
+
+        // Set up the quiz
+        function setupQuiz() {
+            currentQuizIndex = 0;
+            correctAnswers = 0;
+            showQuestion();
+            updateProgress();
+        }
+
+        // Show the current quiz question
+        function showQuestion() {
+            if (currentQuizIndex >= phonicsData.quiz.length) {
+                showCompletionMessage();
+                return;
+            }
+            
+            const question = phonicsData.quiz[currentQuizIndex];
+            quizQuestion.textContent = question.question;
+            
+            // Clear previous options
+            quizOptions.innerHTML = '';
+            quizFeedback.textContent = '';
+            nextQuestionBtn.style.display = 'none';
+            
+            // Add new options
+            question.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => checkAnswer(option, question.answer, optionElement));
+                quizOptions.appendChild(optionElement);
+            });
+        }
+
+        // Check the selected answer
+        function checkAnswer(selected, correct, element) {
+            // Disable all options
+            const allOptions = document.querySelectorAll('.quiz-option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (selected === correct) {
+                element.classList.add('correct');
+                quizFeedback.textContent = 'Correct! Well done!';
+                quizFeedback.className = 'feedback positive-feedback';
+                correctAnswers++;
+            } else {
+                element.classList.add('incorrect');
+                quizFeedback.textContent = `Incorrect. The correct answer is "${correct}".`;
+                quizFeedback.className = 'feedback negative-feedback';
+                
+                // Highlight the correct answer
+                allOptions.forEach(opt => {
+                    if (opt.textContent === correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            nextQuestionBtn.style.display = 'block';
+            updateProgress();
+        }
+
+        // Move to the next question
+        function nextQuestion() {
+            currentQuizIndex++;
+            showQuestion();
+        }
+
+        // Update the quiz progress
+        function updateProgress() {
+            const progress = (currentQuizIndex / phonicsData.quiz.length) * 100;
+            quizProgress.style.width = `${progress}%`;
+        }
+
+        // Show completion message
+        function showCompletionMessage() {
+            quizQuestion.style.display = 'none';
+            quizOptions.style.display = 'none';
+            nextQuestionBtn.style.display = 'none';
+            quizFeedback.textContent = '';
+            
+            const score = Math.round((correctAnswers / phonicsData.quiz.length) * 100);
+            completionMessage.innerHTML = `
+                <h3>Quiz Complete!</h3>
+                <p>You scored ${correctAnswers} out of ${phonicsData.quiz.length} (${score}%)</p>
+                <p>${score >= 80 ? 'Excellent job!' : score >= 60 ? 'Good work!' : 'Keep practicing!'}</p>
+                <button class="sound-btn" onclick="setupQuiz()">Try Again</button>
+            `;
+            completionMessage.style.display = 'block';
+        }
+
+        // Initialize the application when the page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
