@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure Quest: The Lost Artifact</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e6e6e6;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .game-container {
+            width: 900px;
+            height: 600px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: 1fr auto;
+            gap: 15px;
+            padding: 20px;
+            border: 2px solid #4f46e5;
+        }
+        
+        .scene-container {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 20px;
+            grid-row: 1;
+            grid-column: 1;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scene-image {
+            width: 100%;
+            height: 70%;
+            background: #1e293b;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 24px;
+            border: 1px solid #475569;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .scene-description {
+            height: 25%;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            line-height: 1.5;
+            border: 1px solid #475569;
+            overflow-y: auto;
+        }
+        
+        .actions-container {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 15px;
+            grid-row: 2;
+            grid-column: 1;
+            border: 1px solid #334155;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+        
+        .action-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .info-container {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 20px;
+            grid-row: 1 / span 2;
+            grid-column: 2;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .player-stats {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #475569;
+        }
+        
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .stat-value {
+            color: #4f46e5;
+            font-weight: bold;
+        }
+        
+        .inventory {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #475569;
+            flex-grow: 1;
+        }
+        
+        .inventory-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+            border-bottom: 1px solid #475569;
+            padding-bottom: 5px;
+        }
+        
+        .inventory-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .inventory-item {
+            background: #334155;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #475569;
+        }
+        
+        .game-log {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #475569;
+            height: 150px;
+            overflow-y: auto;
+        }
+        
+        .log-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+            border-bottom: 1px solid #475569;
+            padding-bottom: 5px;
+        }
+        
+        .log-entry {
+            font-size: 14px;
+            margin-bottom: 5px;
+            padding-left: 10px;
+            border-left: 2px solid #4f46e5;
+        }
+        
+        .game-title {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 10px #4f46e5, 0 0 20px #4f46e5;
+            letter-spacing: 1px;
+        }
+        
+        .game-subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #cbd5e1;
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 10;
+            border-radius: 15px;
+        }
+        
+        .start-screen {
+            background: radial-gradient(circle, #1e293b, #0f172a);
+        }
+        
+        .game-over-screen {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+        }
+        
+        .message {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 10px #4f46e5;
+        }
+        
+        .sub-message {
+            font-size: 18px;
+            color: #cbd5e1;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .health-bar {
+            width: 100%;
+            height: 10px;
+            background: #334155;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        
+        .puzzle-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #4f46e5;
+            z-index: 20;
+            width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .puzzle-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+            text-align: center;
+        }
+        
+        .puzzle-description {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .puzzle-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .puzzle-option {
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .puzzle-option:hover {
+            background: #475569;
+            border-color: #4f46e5;
+        }
+        
+        .close-puzzle {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        @media (max-width: 950px) {
+            .game-container {
+                width: 95vw;
+                height: 80vh;
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+            
+            .info-container {
+                grid-row: 3;
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="game-title">ADVENTURE QUEST</h1>
+    <p class="game-subtitle">The Lost Artifact of Eldoria</p>
+    
+    <div class="game-container">
+        <div class="scene-container">
+            <div class="scene-image" id="sceneImage">
+                <!-- Scene image will be set via JavaScript -->
+            </div>
+            <div class="scene-description" id="sceneDescription">
+                <!-- Scene description will be set via JavaScript -->
+            </div>
+        </div>
+        
+        <div class="actions-container" id="actionsContainer">
+            <!-- Action buttons will be generated via JavaScript -->
+        </div>
+        
+        <div class="info-container">
+            <div class="player-stats">
+                <div class="stat">
+                    <span>Health:</span>
+                    <span class="stat-value" id="healthValue">100%</span>
+                </div>
+                <div class="health-bar">
+                    <div class="health-fill" id="healthBar" style="width: 100%;"></div>
+                </div>
+                <div class="stat">
+                    <span>Location:</span>
+                    <span class="stat-value" id="locationValue">Forest Entrance</span>
+                </div>
+                <div class="stat">
+                    <span>Progress:</span>
+                    <span class="stat-value" id="progressValue">0%</span>
+                </div>
+            </div>
+            
+            <div class="inventory">
+                <div class="inventory-title">INVENTORY</div>
+                <div class="inventory-items" id="inventoryItems">
+                    <!-- Inventory items will be generated via JavaScript -->
+                </div>
+            </div>
+            
+            <div class="game-log">
+                <div class="log-title">GAME LOG</div>
+                <div class="log-entries" id="logEntries">
+                    <!-- Log entries will be generated via JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="screen start-screen" id="startScreen">
+            <div class="message">ADVENTURE QUEST</div>
+            <div class="sub-message">
+                The ancient artifact of Eldoria has been lost for centuries. 
+                Legends say it holds immense power that could save or destroy the world. 
+                As a brave adventurer, you must journey through dangerous lands, 
+                solve puzzles, and face challenges to find the artifact before it falls into the wrong hands.
+            </div>
+            <button class="btn" id="startBtn">BEGIN JOURNEY</button>
+        </div>
+        
+        <div class="screen game-over-screen" id="gameOverScreen">
+            <div class="message" id="gameOverMessage">GAME OVER</div>
+            <div class="sub-message" id="gameOverSubmessage">
+                <!-- Game over message will be set via JavaScript -->
+            </div>
+            <button class="btn" id="restartBtn">PLAY AGAIN</button>
+        </div>
+        
+        <div class="puzzle-container" id="puzzleContainer">
+            <div class="puzzle-title" id="puzzleTitle">Ancient Riddle</div>
+            <div class="puzzle-description" id="puzzleDescription">
+                <!-- Puzzle description will be set via JavaScript -->
+            </div>
+            <div class="puzzle-options" id="puzzleOptions">
+                <!-- Puzzle options will be generated via JavaScript -->
+            </div>
+            <button class="close-puzzle" id="closePuzzle">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Game elements
+        const sceneImage = document.getElementById('sceneImage');
+        const sceneDescription = document.getElementById('sceneDescription');
+        const actionsContainer = document.getElementById('actionsContainer');
+        const healthValue = document.getElementById('healthValue');
+        const healthBar = document.getElementById('healthBar');
+        const locationValue = document.getElementById('locationValue');
+        const progressValue = document.getElementById('progressValue');
+        const inventoryItems = document.getElementById('inventoryItems');
+        const logEntries = document.getElementById('logEntries');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const gameOverMessage = document.getElementById('gameOverMessage');
+        const gameOverSubmessage = document.getElementById('gameOverSubmessage');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const puzzleContainer = document.getElementById('puzzleContainer');
+        const puzzleTitle = document.getElementById('puzzleTitle');
+        const puzzleDescription = document.getElementById('puzzleDescription');
+        const puzzleOptions = document.getElementById('puzzleOptions');
+        const closePuzzle = document.getElementById('closePuzzle');
+
+        // Game state
+        let gameActive = false;
+        let player = {
+            health: 100,
+            location: 'forestEntrance',
+            inventory: [],
+            progress: 0
+        };
+
+        // Game locations data
+        const locations = {
+            forestEntrance: {
+                name: "Forest Entrance",
+                description: "You stand at the edge of an ancient forest. The trees loom tall and dark, their branches creating a canopy that blocks most of the sunlight. A narrow path leads deeper into the woods. You feel a mysterious energy emanating from within.",
+                image: "🌲",
+                actions: [
+                    { text: "Enter the Forest", target: "deepForest", condition: null },
+                    { text: "Search the area", target: "forestSearch", condition: null },
+                    { text: "Check your map", target: "checkMap", condition: "hasMap" }
+                ]
+            },
+            deepForest: {
+                name: "Deep Forest",
+                description: "You're now deep within the forest. The air is thick with mist, and strange sounds echo through the trees. You notice an old stone structure partially covered by vines to your left, and the path continues forward.",
+                image: "🌳",
+                actions: [
+                    { text: "Continue forward", target: "ancientRuins", condition: null },
+                    { text: "Investigate the stone structure", target: "stoneStructure", condition: null },
+                    { text: "Return to forest entrance", target: "forestEntrance", condition: null },
+                    { text: "Search for herbs", target: "searchHerbs", condition: null }
+                ]
+            },
+            stoneStructure: {
+                name: "Ancient Stone Structure",
+                description: "You've found an ancient stone archway covered in mysterious runes. In the center, there's a pedestal with three symbols: a moon, a sun, and a star. It appears to be some kind of puzzle.",
+                image: "🪨",
+                actions: [
+                    { text: "Examine the runes", target: "examineRunes", condition: null },
+                    { text: "Try to solve the puzzle", target: "symbolPuzzle", condition: null },
+                    { text: "Return to the forest", target: "deepForest", condition: null }
+                ]
+            },
+            symbolPuzzle: {
+                name: "Symbol Puzzle",
+                description: "You stand before the pedestal with three symbols. The runes on the archway seem to provide a clue: 'The light that follows darkness, the heat that follows cold, the guide in the night sky.'",
+                image: "🧩",
+                actions: [
+                    { text: "Press the moon symbol", target: "puzzleFail", condition: null },
+                    { text: "Press the sun symbol", target: "puzzleSuccess", condition: null },
+                    { text: "Press the star symbol", target: "puzzleFail", condition: null },
+                    { text: "Step away from the puzzle", target: "stoneStructure", condition: null }
+                ]
+            },
+            puzzleSuccess: {
+                name: "Puzzle Solved",
+                description: "As you press the sun symbol, the archway glows with a bright light. The runes rearrange themselves, revealing a hidden compartment containing an ancient map!",
+                image: "🗺️",
+                actions: [
+                    { text: "Take the map", target: "takeMap", condition: null },
+                    { text: "Continue exploring", target: "stoneStructure", condition: null }
+                ]
+            },
+            puzzleFail: {
+                name: "Puzzle Failed",
+                description: "Nothing happens when you press the symbol. It seems your choice was incorrect. The runes remain unchanged.",
+                image: "❌",
+                actions: [
+                    { text: "Try another symbol", target: "symbolPuzzle", condition: null },
+                    { text: "Step away from the puzzle", target: "stoneStructure", condition: null }
+                ]
+            },
+            takeMap: {
+                name: "Ancient Map Acquired",
+                description: "You carefully take the ancient map. It shows the layout of the forest and marks several important locations, including the ruins you're heading toward and a hidden cave system.",
+                image: "🗺️",
+                actions: [
+                    { text: "Study the map", target: "studyMap", condition: null },
+                    { text: "Continue to the ruins", target: "ancientRuins", condition: null }
+                ]
+            },
+            ancientRuins: {
+                name: "Ancient Ruins",
+                description: "You arrive at the ancient ruins mentioned in the legends. Crumbling stone structures covered in moss and vines surround a central courtyard. In the center stands a large stone altar with strange markings.",
+                image: "🏛️",
+                actions: [
+                    { text: "Examine the altar", target: "examineAltar", condition: null },
+                    { text: "Search the surrounding buildings", target: "searchRuins", condition: null },
+                    { text: "Use the map to find hidden paths", target: "useMap", condition: "hasMap" },
+                    { text: "Return to the forest", target: "deepForest", condition: null }
+                ]
+            },
+            examineAltar: {
+                name: "Stone Altar",
+                description: "The stone altar is covered in intricate carvings depicting a battle between ancient beings. At the base of the altar, you find a small, locked metal box with a combination lock.",
+                image: "⚱️",
+                actions: [
+                    { text: "Try to open the box", target: "combinationPuzzle", condition: null },
+                    { text: "Search for clues to the combination", target: "searchClues", condition: null },
+                    { text: "Return to exploring the ruins", target: "ancientRuins", condition: null }
+                ]
+            },
+            combinationPuzzle: {
+                name: "Combination Lock",
+                description: "The lock has three dials with numbers from 1 to 9. The carvings on the altar might hold the clue to the combination. What numbers will you try?",
+                image: "🔒",
+                actions: [
+                    { text: "Try 3-6-9 (multiples of 3)", target: "puzzleFail", condition: null },
+                    { text: "Try 7-5-3 (descending odd numbers)", target: "puzzleSuccess2", condition: null },
+                    { text: "Try 2-4-8 (doubling sequence)", target: "puzzleFail", condition: null },
+                    { text: "Step away from the box", target: "examineAltar", condition: null }
+                ]
+            },
+            puzzleSuccess2: {
+                name: "Box Opened",
+                description: "The lock clicks open! Inside the box, you find a glowing crystal shard - one piece of the lost artifact! This is a major discovery in your quest.",
+                image: "💎",
+                actions: [
+                    { text: "Take the crystal shard", target: "takeCrystal", condition: null },
+                    { text: "Continue exploring", target: "ancientRuins", condition: null }
+                ]
+            },
+            takeCrystal: {
+                name: "Artifact Fragment Found",
+                description: "You carefully take the crystal shard. It pulses with a soft, warm light in your hand. According to the legends, there are three more fragments to find before you can reassemble the complete artifact.",
+                image: "💎",
+                actions: [
+                    { text: "Continue your quest", target: "ancientRuins", condition: null }
+                ]
+            }
+        };
+
+        // Initialize game
+        function init() {
+            // Reset player state
+            player = {
+                health: 100,
+                location: 'forestEntrance',
+                inventory: [],
+                progress: 0
+            };
+            
+            // Update UI
+            updateLocation('forestEntrance');
+            updateStats();
+            updateInventory();
+            addLogEntry("Your adventure begins at the edge of the ancient forest.");
+            
+            // Start game
+            gameActive = true;
+            startScreen.style.display = 'none';
+        }
+
+        // Update current location
+        function updateLocation(locationId) {
+            const location = locations[locationId];
+            player.location = locationId;
+            
+            // Update scene
+            sceneImage.textContent = location.image;
+            sceneDescription.textContent = location.description;
+            locationValue.textContent = location.name;
+            
+            // Update actions
+            updateActions(location.actions);
+        }
+
+        // Update available actions
+        function updateActions(actions) {
+            // Clear existing actions
+            actionsContainer.innerHTML = '';
+            
+            // Add new actions
+            actions.forEach(action => {
+                // Check if action condition is met
+                let disabled = false;
+                if (action.condition) {
+                    disabled = !checkCondition(action.condition);
+                }
+                
+                const button = document.createElement('button');
+                button.className = 'action-btn';
+                button.textContent = action.text;
+                button.disabled = disabled;
+                
+                if (!disabled) {
+                    button.addEventListener('click', () => {
+                        handleAction(action.target);
+                    });
+                }
+                
+                actionsContainer.appendChild(button);
+            });
+        }
+
+        // Handle player action
+        function handleAction(target) {
+            // Special cases
+            if (target === 'takeMap') {
+                player.inventory.push('Ancient Map');
+                addLogEntry("You acquired an Ancient Map!");
+                updateInventory();
+                player.progress += 25;
+            } else if (target === 'takeCrystal') {
+                player.inventory.push('Crystal Shard');
+                addLogEntry("You found a Crystal Shard - a fragment of the lost artifact!");
+                updateInventory();
+                player.progress += 25;
+            } else if (target === 'searchHerbs') {
+                // Random outcome for searching herbs
+                const outcomes = [
+                    { health: 10, message: "You found some medicinal herbs and restored 10% health." },
+                    { health: -15, message: "You accidentally touched a poisonous plant and lost 15% health." },
+                    { health: 0, message: "You didn't find anything useful." }
+                ];
+                
+                const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+                player.health = Math.max(0, Math.min(100, player.health + outcome.health));
+                addLogEntry(outcome.message);
+                
+                if (player.health <= 0) {
+                    gameOver("You succumbed to your injuries in the forest.");
+                    return;
+                }
+            } else if (target === 'studyMap') {
+                showPuzzle(
+                    "Map Study",
+                    "The map reveals several important locations:\n\n- The Ancient Ruins (your current destination)\n- A Hidden Cave System (to the northeast)\n- The Whispering Falls (to the west)\n- The Crystal Peaks (far to the north)\n\nIt also shows safe paths through the forest.",
+                    ["Continue"]
+                );
+                return;
+            }
+            
+            // Update location if it exists
+            if (locations[target]) {
+                updateLocation(target);
+            }
+            
+            // Update stats
+            updateStats();
+        }
+
+        // Check condition for action availability
+        function checkCondition(condition) {
+            switch(condition) {
+                case 'hasMap':
+                    return player.inventory.includes('Ancient Map');
+                default:
+                    return false;
+            }
+        }
+
+        // Update player stats
+        function updateStats() {
+            healthValue.textContent = `${player.health}%`;
+            healthBar.style.width = `${player.health}%`;
+            progressValue.textContent = `${player.progress}%`;
+        }
+
+        // Update inventory display
+        function updateInventory() {
+            inventoryItems.innerHTML = '';
+            
+            if (player.inventory.length === 0) {
+                inventoryItems.innerHTML = '<div class="inventory-item">Empty</div>';
+            } else {
+                player.inventory.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'inventory-item';
+                    itemElement.textContent = item;
+                    inventoryItems.appendChild(itemElement);
+                });
+            }
+        }
+
+        // Add entry to game log
+        function addLogEntry(text) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = text;
+            logEntries.appendChild(entry);
+            
+            // Scroll to bottom
+            logEntries.scrollTop = logEntries.scrollHeight;
+        }
+
+        // Show puzzle popup
+        function showPuzzle(title, description, options) {
+            puzzleTitle.textContent = title;
+            puzzleDescription.textContent = description;
+            
+            // Clear existing options
+            puzzleOptions.innerHTML = '';
+            
+            // Add new options
+            options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'puzzle-option';
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => {
+                    puzzleContainer.style.display = 'none';
+                    addLogEntry(`You selected: ${option}`);
+                });
+                puzzleOptions.appendChild(optionElement);
+            });
+            
+            puzzleContainer.style.display = 'block';
+        }
+
+        // Game over
+        function gameOver(message, submessage = "") {
+            gameActive = false;
+            gameOverMessage.textContent = message;
+            gameOverSubmessage.textContent = submessage || `You progressed ${player.progress}% in your quest.`;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', init);
+        
+        restartBtn.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            init();
+        });
+        
+        closePuzzle.addEventListener('click', () => {
+            puzzleContainer.style.display = 'none';
+        });
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            // Add initial log entry
+            addLogEntry("Welcome to Adventure Quest: The Lost Artifact of Eldoria");
+        });
+    </script>
+</body>
+</html>
