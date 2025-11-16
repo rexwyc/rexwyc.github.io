@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Guide to Grammar Connectives</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .connective-types {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+        
+        .exercise-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+        
+        .category {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .category:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .category h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category h2::before {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .addition h2::before { content: "➕"; }
+        .contrast h2::before { content: "🔄"; }
+        .cause-effect h2::before { content: "⚡"; }
+        .time-sequence h2::before { content: "⏰"; }
+        .example h2::before { content: "🔍"; }
+        .conclusion h2::before { content: "🎯"; }
+        .condition h2::before { content: "❓"; }
+        .emphasis h2::before { content: "❗"; }
+        .comparison h2::before { content: "⚖️"; }
+        .concession h2::before { content: "🤝"; }
+        
+        .connective-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .connective-item {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+        }
+        
+        .connective-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #e8f4fd;
+        }
+        
+        .connective-item strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .connective-item .usage {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .instructions {
+            background-color: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #2c3e50;
+        }
+        
+        .instructions h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions h2::before {
+            content: "📝";
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .passage {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .blank {
+            display: inline-block;
+            width: 180px;
+            margin: 0 5px;
+            position: relative;
+        }
+        
+        .blank input {
+            width: 100%;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            outline: none;
+            text-align: center;
+            font-size: 16px;
+            padding: 8px 5px;
+            transition: all 0.3s;
+        }
+        
+        .blank input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 5px rgba(44, 62, 80, 0.5);
+        }
+        
+        .blank.correct input {
+            border-color: #27ae60;
+            background-color: #e8f8ef;
+        }
+        
+        .blank.incorrect input {
+            border-color: #e74c3c;
+            background-color: #fdedec;
+        }
+        
+        .feedback {
+            margin-top: 5px;
+            font-size: 14px;
+            min-height: 20px;
+            text-align: center;
+        }
+        
+        .correct .feedback {
+            color: #27ae60;
+        }
+        
+        .incorrect .feedback {
+            color: #e74c3c;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        button {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .score-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .score-perfect {
+            color: #27ae60;
+        }
+        
+        .score-good {
+            color: #3498db;
+        }
+        
+        .score-poor {
+            color: #e74c3c;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+        
+        .connective-summary {
+            background-color: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 5px solid #f39c12;
+        }
+        
+        .connective-summary h2 {
+            color: #e67e22;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .connective-summary h2::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .connective-summary p {
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .blank {
+                width: 140px;
+            }
+            
+            .passage {
+                font-size: 16px;
+            }
+            
+            .connective-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .blank {
+                width: 120px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .connective-types, .exercise-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Complete Guide to Grammar Connectives</h1>
+            <p class="subtitle">Master the use of cohesive devices to improve your writing flow and clarity</p>
+        </header>
+        
+        <div class="content-container">
+            <div class="connective-types">
+                <div class="category addition">
+                    <h2>Addition & Amplification</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>Furthermore</strong>
+                            <div class="usage">Adds information</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Moreover</strong>
+                            <div class="usage">Adds stronger point</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>In addition</strong>
+                            <div class="usage">Adds another point</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Additionally</strong>
+                            <div class="usage">Adds extra information</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Also</strong>
+                            <div class="usage">Adds similar point</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Besides</strong>
+                            <div class="usage">Adds another reason</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Likewise</strong>
+                            <div class="usage">Adds similar idea</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Similarly</strong>
+                            <div class="usage">Shows similarity</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category contrast">
+                    <h2>Contrast & Comparison</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>However</strong>
+                            <div class="usage">Shows contrast</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Nevertheless</strong>
+                            <div class="usage">Despite previous point</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>On the other hand</strong>
+                            <div class="usage">Shows alternative view</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Whereas</strong>
+                            <div class="usage">Compares differences</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>While</strong>
+                            <div class="usage">Shows difference</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Although</strong>
+                            <div class="usage">Introduces contrast</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Even though</strong>
+                            <div class="usage">Strong contrast</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Despite</strong>
+                            <div class="usage">In spite of</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>In contrast</strong>
+                            <div class="usage">Shows difference</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Conversely</strong>
+                            <div class="usage">Opposite view</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category cause-effect">
+                    <h2>Cause & Effect</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>Therefore</strong>
+                            <div class="usage">Shows result</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Consequently</strong>
+                            <div class="usage">As a result</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>As a result</strong>
+                            <div class="usage">Shows outcome</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Thus</strong>
+                            <div class="usage">Therefore</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Hence</strong>
+                            <div class="usage">For this reason</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Accordingly</strong>
+                            <div class="usage">In accordance with</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>So</strong>
+                            <div class="usage">Therefore</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Because</strong>
+                            <div class="usage">Gives reason</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Since</strong>
+                            <div class="usage">Because</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Due to</strong>
+                            <div class="usage">Because of</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category time-sequence">
+                    <h2>Time & Sequence</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>Meanwhile</strong>
+                            <div class="usage">At the same time</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Subsequently</strong>
+                            <div class="usage">Afterwards</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Finally</strong>
+                            <div class="usage">In the end</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Previously</strong>
+                            <div class="usage">Before now</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Initially</strong>
+                            <div class="usage">At first</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Eventually</strong>
+                            <div class="usage">In the end</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Simultaneously</strong>
+                            <div class="usage">At the same time</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Next</strong>
+                            <div class="usage">Following this</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Then</strong>
+                            <div class="usage">After that</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Firstly, Secondly</strong>
+                            <div class="usage">Enumerates points</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category example">
+                    <h2>Examples & Illustration</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>For example</strong>
+                            <div class="usage">Gives example</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>For instance</strong>
+                            <div class="usage">Provides instance</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Such as</strong>
+                            <div class="usage">Like</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Namely</strong>
+                            <div class="usage">Specifically</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>In particular</strong>
+                            <div class="usage">Specifically</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>To illustrate</strong>
+                            <div class="usage">Shows example</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category conclusion">
+                    <h2>Conclusion & Summary</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>In conclusion</strong>
+                            <div class="usage">To sum up</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>To summarize</strong>
+                            <div class="usage">In summary</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Overall</strong>
+                            <div class="usage">Taking everything into account</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Ultimately</strong>
+                            <div class="usage">In the end</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>In summary</strong>
+                            <div class="usage">To conclude</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>To conclude</strong>
+                            <div class="usage">Finally</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category condition">
+                    <h2>Condition</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>If</strong>
+                            <div class="usage">On condition that</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Unless</strong>
+                            <div class="usage">Except if</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Provided that</strong>
+                            <div class="usage">On condition that</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>As long as</strong>
+                            <div class="usage">Provided that</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Otherwise</strong>
+                            <div class="usage">Or else</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category emphasis">
+                    <h2>Emphasis</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>Indeed</strong>
+                            <div class="usage">In fact</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Certainly</strong>
+                            <div class="usage">Without doubt</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Undoubtedly</strong>
+                            <div class="usage">Without question</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Obviously</strong>
+                            <div class="usage">Clearly</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>In fact</strong>
+                            <div class="usage">Actually</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category comparison">
+                    <h2>Comparison</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>Equally</strong>
+                            <div class="usage">In the same way</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Likewise</strong>
+                            <div class="usage">Similarly</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>In the same way</strong>
+                            <div class="usage">Similarly</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Just as</strong>
+                            <div class="usage">In the same way as</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category concession">
+                    <h2>Concession</h2>
+                    <div class="connective-list">
+                        <div class="connective-item">
+                            <strong>Admittedly</strong>
+                            <div class="usage">It must be admitted</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Granted</strong>
+                            <div class="usage">It is true that</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Of course</strong>
+                            <div class="usage">Naturally</div>
+                        </div>
+                        <div class="connective-item">
+                            <strong>Naturally</strong>
+                            <div class="usage">As expected</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise-container">
+                <div class="instructions">
+                    <h2>Practice Exercise</h2>
+                    <ul>
+                        <li>Fill in each blank with the most appropriate connective</li>
+                        <li>Use the reference list to help you choose</li>
+                        <li>After completing all blanks, click "Check Answers"</li>
+                        <li>Use "Reset" to clear all answers and try again</li>
+                    </ul>
+                </div>
+                
+                <div class="passage">
+                    <p>Remote work has become increasingly common in recent years. <span class="blank" data-answer="Initially"><input type="text" id="blank1"><div class="feedback"></div></span>, many companies were hesitant to adopt this model. <span class="blank" data-answer="However"><input type="text" id="blank2"><div class="feedback"></div></span>, the pandemic forced organizations to reconsider their approach. <span class="blank" data-answer="Consequently"><input type="text" id="blank3"><div class="feedback"></div></span>, remote work policies were implemented worldwide. <span class="blank" data-answer="Furthermore"><input type="text" id="blank4"><div class="feedback"></div></span>, studies have shown that remote work can increase productivity. <span class="blank" data-answer="For example"><input type="text" id="blank5"><div class="feedback"></div></span>, a recent survey found that 65% of remote workers report higher job satisfaction. <span class="blank" data-answer="Meanwhile"><input type="text" id="blank6"><div class="feedback"></div></span>, companies are investing in digital collaboration tools. <span class="blank" data-answer="Nevertheless"><input type="text" id="blank7"><div class="feedback"></div></span>, some challenges remain, <span class="blank" data-answer="such as"><input type="text" id="blank8"><div class="feedback"></div></span> maintaining team cohesion. <span class="blank" data-answer="Therefore"><input type="text" id="blank9"><div class="feedback"></div></span>, organizations must develop strategies to address these issues. <span class="blank" data-answer="In conclusion"><input type="text" id="blank10"><div class="feedback"></div></span>, remote work represents a significant shift in how we approach employment.</p>
+                </div>
+                
+                <div class="controls">
+                    <button id="checkButton">Check Answers</button>
+                    <button id="resetButton">Reset</button>
+                </div>
+                
+                <div class="score-container hidden" id="scoreDisplay"></div>
+                
+                <div class="connective-summary">
+                    <h2>Using Connectives Effectively</h2>
+                    <p>Connectives (also called transition words or cohesive devices) are essential for creating smooth, logical flow in writing. They help readers follow your argument and understand the relationships between your ideas.</p>
+                    <p><strong>Tips for using connectives:</strong></p>
+                    <ul>
+                        <li>Choose connectives that accurately reflect the relationship between ideas</li>
+                        <li>Vary your connectives to avoid repetition</li>
+                        <li>Place connectives at the beginning of sentences or clauses for maximum impact</li>
+                        <li>Ensure the connective matches the formality of your writing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Complete Grammar Connectives Reference &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkButton = document.getElementById('checkButton');
+            const resetButton = document.getElementById('resetButton');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const blanks = document.querySelectorAll('.blank');
+            
+            checkButton.addEventListener('click', checkAnswers);
+            resetButton.addEventListener('click', resetExercise);
+            
+            function checkAnswers() {
+                let correctCount = 0;
+                const totalBlanks = blanks.length;
+                
+                blanks.forEach(blank => {
+                    const input = blank.querySelector('input');
+                    const feedback = blank.querySelector('.feedback');
+                    const correctAnswer = blank.getAttribute('data-answer');
+                    const userAnswer = input.value.trim().toLowerCase();
+                    
+                    if (userAnswer === correctAnswer.toLowerCase()) {
+                        // Correct answer
+                        blank.classList.remove('incorrect');
+                        blank.classList.add('correct');
+                        feedback.textContent = 'Correct!';
+                        correctCount++;
+                    } else {
+                        // Incorrect answer
+                        blank.classList.remove('correct');
+                        blank.classList.add('incorrect');
+                        feedback.textContent = `Correct answer: ${correctAnswer}`;
+                    }
+                });
+                
+                // Calculate and display score
+                const percentage = Math.round((correctCount / totalBlanks) * 100);
+                scoreDisplay.textContent = `Your score: ${correctCount}/${totalBlanks} (${percentage}%)`;
+                scoreDisplay.classList.remove('hidden');
+                
+                // Apply score styling based on performance
+                scoreDisplay.classList.remove('score-perfect', 'score-good', 'score-poor');
+                if (percentage === 100) {
+                    scoreDisplay.classList.add('score-perfect');
+                } else if (percentage >= 70) {
+                    scoreDisplay.classList.add('score-good');
+                } else {
+                    scoreDisplay.classList.add('score-poor');
+                }
+            }
+            
+            function resetExercise() {
+                blanks.forEach(blank => {
+                    const input = blank.querySelector('input');
+                    const feedback = blank.querySelector('.feedback');
+                    
+                    input.value = '';
+                    blank.classList.remove('correct', 'incorrect');
+                    feedback.textContent = '';
+                });
+                
+                scoreDisplay.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
