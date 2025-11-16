@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Discovery Assistant</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --gray: #6c757d;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+        
+        .progress-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .question-container {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .question-number {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .option-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #e9ecef;
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #dee2e6;
+        }
+        
+        .btn:disabled {
+            background-color: #e9ecef;
+            color: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .results-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .results-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .results-description {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .action-steps {
+            text-align: left;
+            background-color: rgba(67, 97, 238, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-steps h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .action-steps ol {
+            padding-left: 20px;
+        }
+        
+        .action-steps li {
+            margin-bottom: 10px;
+        }
+        
+        .start-screen {
+            text-align: center;
+        }
+        
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Problem Discovery Assistant</h1>
+            <p class="subtitle">Answer a few questions to uncover and understand your challenges</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Progress: <span id="progress-percent">0%</span></span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+        
+        <div class="card start-screen" id="start-screen">
+            <h2>Ready to Discover Your Problem?</h2>
+            <p>This step-by-step guide will help you identify the root cause of what's bothering you through thoughtful questions.</p>
+            <p>Take your time and answer honestly for the best results.</p>
+            <button class="btn btn-primary start-btn" id="start-btn">Begin Discovery</button>
+        </div>
+        
+        <div class="card question-container" id="question-container" style="display: none;">
+            <div>
+                <div class="question-number" id="question-number">Question 1 of 8</div>
+                <div class="question-text" id="question-text">How would you describe your general mood lately?</div>
+                
+                <div class="options" id="options">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>Previous</button>
+                <button class="btn btn-primary" id="next-btn" disabled>Next</button>
+            </div>
+        </div>
+        
+        <div class="card results" id="results">
+            <div class="results-icon">🔍</div>
+            <h2 class="results-title" id="results-title">Problem Identified</h2>
+            <p class="results-description" id="results-description">Based on your answers, we've identified the core issue you're facing.</p>
+            
+            <div class="action-steps">
+                <h3>Recommended Action Steps</h3>
+                <ol id="action-steps">
+                    <!-- Action steps will be inserted here by JavaScript -->
+                </ol>
+            </div>
+            
+            <button class="btn btn-primary" id="restart-btn">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        // Questions data
+        const questions = [
+            {
+                question: "How would you describe your general mood lately?",
+                options: [
+                    { text: "Mostly positive and content", value: "positive" },
+                    { text: "Neutral, not particularly good or bad", value: "neutral" },
+                    { text: "Somewhat negative or irritable", value: "negative" },
+                    { text: "Overwhelmed or anxious", value: "overwhelmed" }
+                ]
+            },
+            {
+                question: "What area of your life feels most challenging right now?",
+                options: [
+                    { text: "Work or career", value: "work" },
+                    { text: "Relationships", value: "relationships" },
+                    { text: "Personal growth or self-esteem", value: "personal" },
+                    { text: "Health or wellness", value: "health" },
+                    { text: "Finances", value: "finances" }
+                ]
+            },
+            {
+                question: "How long have you been feeling this way?",
+                options: [
+                    { text: "A few days", value: "days" },
+                    { text: "A few weeks", value: "weeks" },
+                    { text: "Several months", value: "months" },
+                    { text: "A year or more", value: "year" }
+                ]
+            },
+            {
+                question: "When do you notice these feelings most intensely?",
+                options: [
+                    { text: "In the morning", value: "morning" },
+                    { text: "During work hours", value: "work" },
+                    { text: "In the evening", value: "evening" },
+                    { text: "When I'm alone", value: "alone" },
+                    { text: "When I'm with specific people", value: "people" }
+                ]
+            },
+            {
+                question: "What thoughts frequently go through your mind?",
+                options: [
+                    { text: "I'm not good enough", value: "self-doubt" },
+                    { text: "I'm overwhelmed by responsibilities", value: "overwhelmed" },
+                    { text: "I'm worried about the future", value: "future" },
+                    { text: "I feel stuck in my current situation", value: "stuck" },
+                    { text: "I'm comparing myself to others", value: "comparison" }
+                ]
+            },
+            {
+                question: "How is this affecting your daily life?",
+                options: [
+                    { text: "It's mildly annoying but manageable", value: "mild" },
+                    { text: "It's affecting my productivity", value: "productivity" },
+                    { text: "It's impacting my relationships", value: "relationships" },
+                    { text: "It's affecting my sleep or appetite", value: "health" },
+                    { text: "It's significantly impacting my quality of life", value: "severe" }
+                ]
+            },
+            {
+                question: "What have you tried to address this so far?",
+                options: [
+                    { text: "Talking to friends or family", value: "talking" },
+                    { text: "Trying to ignore it", value: "ignore" },
+                    { text: "Making lifestyle changes", value: "lifestyle" },
+                    { text: "Seeking professional help", value: "professional" },
+                    { text: "Nothing yet", value: "nothing" }
+                ]
+            },
+            {
+                question: "What would you most like to change?",
+                options: [
+                    { text: "My mindset or perspective", value: "mindset" },
+                    { text: "My circumstances or environment", value: "circumstances" },
+                    { text: "My habits or routines", value: "habits" },
+                    { text: "My relationships", value: "relationships" },
+                    { text: "My work situation", value: "work" }
+                ]
+            }
+        ];
+
+        // Results mapping based on answer patterns
+        const resultsMap = {
+            workStress: {
+                title: "Work-Related Stress",
+                description: "Your responses suggest you're experiencing significant stress related to your work or career. This might include workload pressures, lack of fulfillment, or challenges with colleagues.",
+                steps: [
+                    "Identify specific work stressors - is it the workload, environment, or something else?",
+                    "Set clearer boundaries between work and personal time",
+                    "Discuss concerns with a supervisor or HR if appropriate",
+                    "Consider professional development opportunities to increase job satisfaction",
+                    "Practice stress-management techniques like mindfulness or exercise"
+                ]
+            },
+            relationshipIssues: {
+                title: "Relationship Challenges",
+                description: "It appears you're facing difficulties in your personal relationships. This could involve communication problems, unmet needs, or conflicts with important people in your life.",
+                steps: [
+                    "Reflect on which relationships are causing the most stress",
+                    "Practice active listening and assertive communication",
+                    "Consider relationship counseling if appropriate",
+                    "Set healthy boundaries in demanding relationships",
+                    "Nurture supportive connections that bring you joy"
+                ]
+            },
+            selfEsteem: {
+                title: "Self-Esteem and Personal Growth",
+                description: "Your answers indicate challenges with self-worth and personal development. You might be struggling with self-criticism, comparison to others, or feeling stuck in your growth.",
+                steps: [
+                    "Practice self-compassion and challenge negative self-talk",
+                    "Set small, achievable goals to build confidence",
+                    "Limit social media use if it triggers comparison",
+                    "Explore new hobbies or skills that interest you",
+                    "Consider working with a therapist or coach on self-esteem issues"
+                ]
+            },
+            anxiety: {
+                title: "Anxiety and Overwhelm",
+                description: "Your responses suggest you're dealing with anxiety or feelings of being overwhelmed. This might manifest as constant worry, difficulty relaxing, or physical symptoms of stress.",
+                steps: [
+                    "Practice deep breathing or meditation daily",
+                    "Break large tasks into smaller, manageable steps",
+                    "Limit caffeine and ensure adequate sleep",
+                    "Create a worry journal to externalize anxious thoughts",
+                    "Consider speaking with a mental health professional"
+                ]
+            },
+            lifeTransition: {
+                title: "Life Transition Challenges",
+                description: "You seem to be navigating a significant life transition. This could involve career changes, relationship shifts, or personal identity evolution that's creating uncertainty.",
+                steps: [
+                    "Acknowledge that transitions are naturally challenging",
+                    "Focus on what you can control in the situation",
+                    "Seek support from others who've gone through similar changes",
+                    "Be patient with yourself during this adjustment period",
+                    "Create a vision for what you want after this transition"
+                ]
+            }
+        };
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const questionContainer = document.getElementById('question-container');
+        const resultsContainer = document.getElementById('results');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const progressBar = document.getElementById('progress');
+        const progressPercent = document.getElementById('progress-percent');
+        const resultsTitle = document.getElementById('results-title');
+        const resultsDescription = document.getElementById('results-description');
+        const actionSteps = document.getElementById('action-steps');
+
+        // State variables
+        let currentQuestion = 0;
+        let answers = [];
+        let selectedOption = null;
+
+        // Initialize the app
+        function init() {
+            startBtn.addEventListener('click', startQuestionnaire);
+            prevBtn.addEventListener('click', previousQuestion);
+            nextBtn.addEventListener('click', nextQuestion);
+            restartBtn.addEventListener('click', restartQuestionnaire);
+            
+            updateProgress();
+        }
+
+        // Start the questionnaire
+        function startQuestionnaire() {
+            startScreen.style.display = 'none';
+            questionContainer.style.display = 'flex';
+            showQuestion();
+        }
+
+        // Show current question
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionNumber.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            questionText.textContent = question.question;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Add new options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.innerHTML = `
+                    <span class="option-icon">${getOptionIcon(index)}</span>
+                    <span>${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement, option.value));
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = true;
+            
+            // Reset selected option
+            selectedOption = null;
+            
+            // Add fade-in animation
+            questionContainer.classList.add('fade-in');
+            setTimeout(() => {
+                questionContainer.classList.remove('fade-in');
+            }, 500);
+        }
+
+        // Get icon for option based on index
+        function getOptionIcon(index) {
+            const icons = ['A', 'B', 'C', 'D', 'E'];
+            return icons[index] || '•';
+        }
+
+        // Select an option
+        function selectOption(optionElement, value) {
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            
+            // Enable next button
+            nextBtn.disabled = false;
+            
+            // Store selected value
+            selectedOption = value;
+        }
+
+        // Go to next question
+        function nextQuestion() {
+            if (selectedOption) {
+                // Save answer
+                answers[currentQuestion] = selectedOption;
+                
+                // Move to next question or show results
+                if (currentQuestion < questions.length - 1) {
+                    currentQuestion++;
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+                
+                updateProgress();
+            }
+        }
+
+        // Go to previous question
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                
+                // Restore previous selection if exists
+                if (answers[currentQuestion]) {
+                    const options = document.querySelectorAll('.option');
+                    options.forEach(option => {
+                        if (option.textContent.includes(questions[currentQuestion].options.find(opt => opt.value === answers[currentQuestion]).text)) {
+                            option.classList.add('selected');
+                            nextBtn.disabled = false;
+                        }
+                    });
+                }
+                
+                updateProgress();
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+
+        // Show results
+        function showResults() {
+            questionContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Determine result based on answers
+            const result = analyzeAnswers();
+            
+            // Display result
+            resultsTitle.textContent = result.title;
+            resultsDescription.textContent = result.description;
+            
+            // Clear previous action steps
+            actionSteps.innerHTML = '';
+            
+            // Add action steps
+            result.steps.forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step;
+                actionSteps.appendChild(li);
+            });
+            
+            // Add fade-in animation
+            resultsContainer.classList.add('fade-in');
+            setTimeout(() => {
+                resultsContainer.classList.remove('fade-in');
+            }, 500);
+        }
+
+        // Analyze answers to determine result
+        function analyzeAnswers() {
+            // Simple analysis based on answer patterns
+            // In a real application, this would be more sophisticated
+            
+            if (answers[1] === 'work' && (answers[5] === 'productivity' || answers[5] === 'severe')) {
+                return resultsMap.workStress;
+            } else if (answers[1] === 'relationships' && (answers[5] === 'relationships' || answers[4] === 'comparison')) {
+                return resultsMap.relationshipIssues;
+            } else if (answers[4] === 'self-doubt' || answers[4] === 'comparison') {
+                return resultsMap.selfEsteem;
+            } else if (answers[0] === 'overwhelmed' || answers[5] === 'health') {
+                return resultsMap.anxiety;
+            } else {
+                return resultsMap.lifeTransition;
+            }
+        }
+
+        // Restart questionnaire
+        function restartQuestionnaire() {
+            currentQuestion = 0;
+            answers = [];
+            selectedOption = null;
+            
+            resultsContainer.style.display = 'none';
+            startScreen.style.display = 'block';
+            
+            updateProgress();
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
