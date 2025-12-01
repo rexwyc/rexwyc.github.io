@@ -1,0 +1,779 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Hub: India & Grammar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 2rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Main Content */
+        main {
+            padding-bottom: 3rem;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        /* India Section */
+        .india-flag {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to bottom, #ff9933 33%, white 33%, white 66%, #138808 66%);
+            border-radius: 8px;
+            position: relative;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .india-flag-wheel {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #000080;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .india-flag-wheel::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: #000080;
+            border-radius: 50%;
+        }
+
+        .india-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .info-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .cultural-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .cultural-item {
+            background-color: #f8f9fa;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 500;
+            color: var(--dark-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Grammar Section */
+        .noun-explanation {
+            background-color: #f0f7ff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .noun-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .noun-type {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .noun-type.common {
+            border-top: 4px solid var(--success-color);
+        }
+
+        .noun-type.proper {
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .noun-type h3 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .noun-icon {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+
+        .examples-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .examples-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .examples-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .examples-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .examples-table tr:hover {
+            background-color: #f0f7ff;
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .quiz-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--secondary-color);
+            background-color: #f0f7ff;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--success-color);
+            background-color: #e8f6ef;
+        }
+
+        .quiz-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .noun-types {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap logo-icon"></i>
+                    Learning Hub
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#india"><i class="fas fa-monument"></i> India</a></li>
+                        <li><a href="#grammar"><i class="fas fa-book"></i> Grammar</a></li>
+                        <li><a href="#quiz"><i class="fas fa-question-circle"></i> Quiz</a></li>
+                        <li><a href="#resources"><i class="fas fa-link"></i> Resources</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Explore India & Master English Grammar</h1>
+            <p>Discover the rich culture and heritage of India while learning the fundamental rules of English grammar through interactive lessons and quizzes.</p>
+            <div style="margin-top: 2rem;">
+                <a href="#india" style="background-color: var(--accent-color); color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: 600; margin-right: 1rem;">Explore India</a>
+                <a href="#grammar" style="background-color: white; color: var(--primary-color); padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: 600;">Learn Grammar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- India Section -->
+        <section id="india" class="section">
+            <h2 class="section-title">
+                <i class="fas fa-flag section-title-icon"></i>
+                Incredible India
+            </h2>
+            
+            <div class="india-flag">
+                <div class="india-flag-wheel"></div>
+            </div>
+            
+            <p>India, officially the Republic of India, is a country in South Asia. It is the seventh-largest country by area, the second-most populous country, and the most populous democracy in the world.</p>
+            
+            <div class="india-info-grid">
+                <div class="info-card">
+                    <h3><i class="fas fa-landmark"></i> Capital</h3>
+                    <p>New Delhi</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-users"></i> Population</h3>
+                    <p>Over 1.4 billion people</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-language"></i> Languages</h3>
+                    <p>22 official languages including Hindi and English</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-map"></i> Area</h3>
+                    <p>3.287 million km²</p>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2rem; color: var(--primary-color);">Cultural Heritage</h3>
+            <div class="cultural-items">
+                <span class="cultural-item"><i class="fas fa-utensils"></i> Diverse Cuisine</span>
+                <span class="cultural-item"><i class="fas fa-place-of-worship"></i> Multiple Religions</span>
+                <span class="cultural-item"><i class="fas fa-music"></i> Classical Arts</span>
+                <span class="cultural-item"><i class="fas fa-archway"></i> Historical Monuments</span>
+                <span class="cultural-item"><i class="fas fa-tshirt"></i> Traditional Clothing</span>
+                <span class="cultural-item"><i class="fas fa-hands-praying"></i> Festivals</span>
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background-color: #f0f8ff; border-radius: 8px;">
+                <h4 style="color: var(--primary-color); margin-bottom: 1rem;"><i class="fas fa-lightbulb"></i> Did You Know?</h4>
+                <p>India is home to the world's largest family of languages (the Indo-European family) and has a cultural history spanning more than 4,500 years. The concept of zero as a number was invented in India by the mathematician Aryabhata.</p>
+            </div>
+        </section>
+
+        <!-- Grammar Section -->
+        <section id="grammar" class="section">
+            <h2 class="section-title">
+                <i class="fas fa-language section-title-icon"></i>
+                Common vs. Proper Nouns
+            </h2>
+            
+            <div class="noun-explanation">
+                <p>Nouns are words that name people, places, things, or ideas. They are divided into two main categories: <strong>Common Nouns</strong> and <strong>Proper Nouns</strong>. Understanding the difference between these two types of nouns is fundamental to proper English grammar.</p>
+            </div>
+            
+            <div class="noun-types">
+                <div class="noun-type common">
+                    <h3><i class="fas fa-globe-americas noun-icon"></i> Common Nouns</h3>
+                    <p>Common nouns are general names for people, places, things, or ideas. They are not capitalized unless they begin a sentence.</p>
+                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                        <li>Refer to general items, not specific ones</li>
+                        <li>Usually not capitalized</li>
+                        <li>Examples: city, country, river, book</li>
+                    </ul>
+                </div>
+                
+                <div class="noun-type proper">
+                    <h3><i class="fas fa-map-marker-alt noun-icon"></i> Proper Nouns</h3>
+                    <p>Proper nouns are specific names for particular people, places, things, or ideas. They are always capitalized.</p>
+                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                        <li>Refer to specific, unique items</li>
+                        <li>Always capitalized</li>
+                        <li>Examples: Mumbai, India, Ganges River, Harry Potter</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2rem; color: var(--primary-color);">Examples Comparison</h3>
+            <table class="examples-table">
+                <thead>
+                    <tr>
+                        <th>Common Noun</th>
+                        <th>Proper Noun</th>
+                        <th>Explanation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>country</td>
+                        <td>India</td>
+                        <td>"Country" is a general term, while "India" is a specific country name</td>
+                    </tr>
+                    <tr>
+                        <td>river</td>
+                        <td>Ganges</td>
+                        <td>"River" is a common noun, "Ganges" is the name of a specific river</td>
+                    </tr>
+                    <tr>
+                        <td>city</td>
+                        <td>Mumbai</td>
+                        <td>"City" is general, "Mumbai" is a specific city in India</td>
+                    </tr>
+                    <tr>
+                        <td>monument</td>
+                        <td>Taj Mahal</td>
+                        <td>"Monument" is common, "Taj Mahal" is a specific monument</td>
+                    </tr>
+                    <tr>
+                        <td>language</td>
+                        <td>Hindi</td>
+                        <td>"Language" is common, "Hindi" is a specific language</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background-color: #fff8e1; border-radius: 8px;">
+                <h4 style="color: var(--warning-color); margin-bottom: 1rem;"><i class="fas fa-exclamation-circle"></i> Important Rule</h4>
+                <p>Proper nouns are always capitalized. This includes the names of people, places, organizations, and specific things. Common nouns are only capitalized when they appear at the beginning of a sentence.</p>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="section">
+            <h2 class="section-title">
+                <i class="fas fa-brain section-title-icon"></i>
+                Interactive Quiz
+            </h2>
+            <p>Test your knowledge about India and grammar with this interactive quiz!</p>
+            
+            <div class="quiz-container">
+                <div class="quiz-question" id="question1">
+                    <h4>1. Is "Mumbai" a common noun or a proper noun?</h4>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-question="1" data-answer="common">Common Noun</div>
+                        <div class="quiz-option" data-question="1" data-answer="proper">Proper Noun</div>
+                    </div>
+                </div>
+                
+                <div class="quiz-question" id="question2">
+                    <h4>2. What is the capital of India?</h4>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-question="2" data-answer="mumbai">Mumbai</div>
+                        <div class="quiz-option" data-question="2" data-answer="delhi">New Delhi</div>
+                        <div class="quiz-option" data-question="2" data-answer="kolkata">Kolkata</div>
+                        <div class="quiz-option" data-question="2" data-answer="chennai">Chennai</div>
+                    </div>
+                </div>
+                
+                <div class="quiz-question" id="question3">
+                    <h4>3. Which of these is a common noun?</h4>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-question="3" data-answer="india">India</div>
+                        <div class="quiz-option" data-question="3" data-answer="ganges">Ganges River</div>
+                        <div class="quiz-option" data-question="3" data-answer="city">City</div>
+                        <div class="quiz-option" data-question="3" data-answer="tajmahal">Taj Mahal</div>
+                    </div>
+                </div>
+                
+                <div class="quiz-question" id="question4">
+                    <h4>4. How many official languages does India have?</h4>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-question="4" data-answer="1">1</div>
+                        <div class="quiz-option" data-question="4" data-answer="2">2</div>
+                        <div class="quiz-option" data-question="4" data-answer="22">22</div>
+                        <div class="quiz-option" data-question="4" data-answer="50">50</div>
+                    </div>
+                </div>
+                
+                <button class="quiz-button" id="submitQuiz">Check Your Answers</button>
+                <div id="quizResult" style="margin-top: 1.5rem; padding: 1rem; border-radius: 8px; display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources" class="section">
+            <h2 class="section-title">
+                <i class="fas fa-link section-title-icon"></i>
+                Learning Resources
+            </h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div style="background-color: #f0f7ff; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;"><i class="fas fa-book-open"></i> Further Reading</h4>
+                    <ul style="list-style-type: none;">
+                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: var(--secondary-color); text-decoration: none;">History of India</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: var(--secondary-color); text-decoration: none;">English Grammar Guide</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: var(--secondary-color); text-decoration: none;">Indian Culture & Traditions</a></li>
+                    </ul>
+                </div>
+                
+                <div style="background-color: #f0f7ff; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;"><i class="fas fa-video"></i> Educational Videos</h4>
+                    <ul style="list-style-type: none;">
+                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: var(--secondary-color); text-decoration: none;">Documentary: Incredible India</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: var(--secondary-color); text-decoration: none;">Grammar Lessons: Nouns</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: var(--secondary-color); text-decoration: none;">Indian Heritage Sites</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Learning Hub</h3>
+                    <p>An educational platform combining geography and language learning through interactive content.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#india">Explore India</a></li>
+                        <li><a href="#grammar">Grammar Guide</a></li>
+                        <li><a href="#quiz">Interactive Quiz</a></li>
+                        <li><a href="#resources">Learning Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> info@learninghub.com</li>
+                        <li><i class="fas fa-globe"></i> www.learninghub.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Learning Hub. All rights reserved. | Combined project: India & Common vs. Proper Nouns</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const quizOptions = document.querySelectorAll('.quiz-option');
+            const submitButton = document.getElementById('submitQuiz');
+            const quizResult = document.getElementById('quizResult');
+            
+            let selectedAnswers = {
+                1: null,
+                2: null,
+                3: null,
+                4: null
+            };
+            
+            // Correct answers
+            const correctAnswers = {
+                1: 'proper',
+                2: 'delhi',
+                3: 'city',
+                4: '22'
+            };
+            
+            // Add click event to quiz options
+            quizOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionNum = this.getAttribute('data-question');
+                    const answer = this.getAttribute('data-answer');
+                    
+                    // Remove selected class from all options in this question
+                    const questionOptions = document.querySelectorAll(`[data-question="${questionNum}"]`);
+                    questionOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Store the selected answer
+                    selectedAnswers[questionNum] = answer;
+                });
+            });
+            
+            // Submit quiz
+            submitButton.addEventListener('click', function() {
+                let score = 0;
+                const totalQuestions = Object.keys(correctAnswers).length;
+                
+                // Check each answer
+                for (let i = 1; i <= totalQuestions; i++) {
+                    if (selectedAnswers[i] === correctAnswers[i]) {
+                        score++;
+                    }
+                }
+                
+                // Display result
+                const percentage = (score / totalQuestions) * 100;
+                let message = `<h3>Quiz Result: ${score}/${totalQuestions} (${percentage}%)</h3>`;
+                
+                if (percentage >= 80) {
+                    message += `<p style="color: var(--success-color);"><i class="fas fa-trophy"></i> Excellent! You have a great understanding of India and grammar!</p>`;
+                } else if (percentage >= 60) {
+                    message += `<p style="color: var(--warning-color);"><i class="fas fa-star"></i> Good job! You know quite a bit about both topics.</p>`;
+                } else {
+                    message += `<p style="color: var(--accent-color);"><i class="fas fa-book"></i> Keep learning! Review the material and try again.</p>`;
+                }
+                
+                quizResult.innerHTML = message;
+                quizResult.style.display = 'block';
+                quizResult.style.backgroundColor = percentage >= 80 ? '#e8f6ef' : percentage >= 60 ? '#fff8e1' : '#ffeaea';
+                
+                // Scroll to result
+                quizResult.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
