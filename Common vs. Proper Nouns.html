@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common vs. Proper Nouns - Multiple Choice Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .instructions {
+            background-color: #f0e6ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 30px;
+            border-left: 5px solid #764ba2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+        }
+        
+        .instructions h3::before {
+            content: "🎯";
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+        
+        .instruction-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .instruction-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .common-instruction {
+            background-color: #ffeaa7;
+            border: 3px solid #fdcb6e;
+        }
+        
+        .proper-instruction {
+            background-color: #a29bfe;
+            border: 3px solid #6c5ce7;
+        }
+        
+        .instruction-box h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .content {
+            padding: 0 30px 30px;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .timer {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .quiz-stats {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 10px 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            min-width: 120px;
+        }
+        
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #667eea;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .quiz-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .quiz-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .quiz-question {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #eef2f7;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .quiz-question:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .quiz-question.answered {
+            border-color: #a29bfe;
+        }
+        
+        .quiz-question.correct {
+            border-color: #00b894;
+            background-color: #f9fffd;
+        }
+        
+        .quiz-question.incorrect {
+            border-color: #d63031;
+            background-color: #fff5f5;
+        }
+        
+        .question-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-top: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .noun-highlight {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin: 0 5px;
+        }
+        
+        .common-noun {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+        
+        .proper-noun {
+            background-color: #a29bfe;
+            color: #2d3436;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 18px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background-color: #f5f5f5;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            border-width: 3px;
+            transform: translateX(10px);
+        }
+        
+        .option.common-option.selected {
+            border-color: #fdcb6e;
+            background-color: #fff8e1;
+        }
+        
+        .option.proper-option.selected {
+            border-color: #6c5ce7;
+            background-color: #f0eeff;
+        }
+        
+        .option.correct-answer {
+            border-color: #00b894;
+            background-color: #d4f4e9;
+        }
+        
+        .option.incorrect-answer {
+            border-color: #d63031;
+            background-color: #ffdfdf;
+        }
+        
+        .option-letter {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 40px 0 30px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #check-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4);
+        }
+        
+        #check-btn:hover {
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.5);
+        }
+        
+        #reset-btn {
+            background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+            box-shadow: 0 6px 15px rgba(99, 110, 114, 0.4);
+        }
+        
+        #reset-btn:hover {
+            box-shadow: 0 10px 20px rgba(99, 110, 114, 0.5);
+        }
+        
+        .results {
+            display: none;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .results h2 {
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score-display {
+            font-size: 4.5rem;
+            font-weight: bold;
+            margin: 25px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 8px solid white;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        
+        .feedback {
+            font-size: 1.4rem;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .performance-chart {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .chart-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            min-width: 150px;
+        }
+        
+        .chart-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .chart-label {
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            background-color: #f8f9fa;
+            color: #666;
+            margin-top: 40px;
+            font-size: 0.95rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+            font-size: 1rem;
+            color: #555;
+            border-left: 4px solid #667eea;
+        }
+        
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .explanation-icon {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background-color: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            margin-right: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .time-up {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { background-color: #ff7675; }
+            50% { background-color: #d63031; }
+            100% { background-color: #ff7675; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Common vs. Proper Nouns Quiz</h1>
+            <p class="subtitle">20 Multiple Choice Questions - Test Your Grammar Skills</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>Quiz Instructions</h3>
+            <p>For each question, identify whether the highlighted word is a <span class="highlight">Common Noun</span> or <span class="highlight">Proper Noun</span>. Select the correct answer by clicking on it.</p>
+            
+            <div class="instruction-content">
+                <div class="instruction-box common-instruction">
+                    <h4>📚 Common Noun</h4>
+                    <p>General name for a person, place, thing, or idea<br><strong>Examples:</strong> city, teacher, book, dog</p>
+                </div>
+                <div class="instruction-box proper-instruction">
+                    <h4>🏛️ Proper Noun</h4>
+                    <p>Specific name for a particular person, place, thing, or idea (Always capitalized)<br><strong>Examples:</strong> Paris, Mr. Johnson, "Moby Dick", Rover</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="quiz-header">
+                <div class="timer-container">
+                    <span style="font-weight: bold; color: #2c3e50;">Time:</span>
+                    <div class="timer" id="timer">10:00</div>
+                </div>
+                
+                <div class="quiz-stats">
+                    <div class="stat-box">
+                        <div class="stat-number" id="answered-count">0</div>
+                        <div class="stat-label">Answered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="correct-count">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="remaining-count">20</div>
+                        <div class="stat-label">Remaining</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-container" id="quiz-container">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+            
+            <div class="buttons">
+                <button id="check-btn">
+                    <span>✅</span> Check Answers
+                </button>
+                <button id="reset-btn">
+                    <span>🔄</span> Restart Quiz
+                </button>
+            </div>
+            
+            <div class="results" id="results-container">
+                <h2>Quiz Complete!</h2>
+                
+                <div class="score-circle">
+                    <div class="score-display" id="score-display">0/20</div>
+                </div>
+                
+                <div class="feedback" id="feedback-message"></div>
+                
+                <div class="performance-chart">
+                    <div class="chart-item">
+                        <div class="chart-value" id="chart-correct">0</div>
+                        <div class="chart-label">Correct Answers</div>
+                    </div>
+                    <div class="chart-item">
+                        <div class="chart-value" id="chart-incorrect">0</div>
+                        <div class="chart-label">Incorrect Answers</div>
+                    </div>
+                    <div class="chart-item">
+                        <div class="chart-value" id="chart-time">0:00</div>
+                        <div class="chart-label">Time Taken</div>
+                    </div>
+                    <div class="chart-item">
+                        <div class="chart-value" id="chart-percentage">0%</div>
+                        <div class="chart-label">Score Percentage</div>
+                    </div>
+                </div>
+                
+                <div class="results-buttons">
+                    <button id="review-btn">
+                        <span>📖</span> Review Answers
+                    </button>
+                    <button id="retry-btn">
+                        <span>🔄</span> Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>Common vs. Proper Nouns Multiple Choice Quiz</strong> | Created for Educational Purposes</p>
+            <p>Remember: <span class="highlight">Common nouns</span> are general and not capitalized unless starting a sentence. 
+            <span class="highlight">Proper nouns</span> are specific names and always capitalized.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Quiz data - 20 multiple choice questions
+        const quizData = [
+            {
+                id: 1,
+                noun: "dog",
+                sentence: "The ___ chased the ball in the park.",
+                correctType: "common",
+                explanation: "Dog is a common noun because it refers to any dog, not a specific one."
+            },
+            {
+                id: 2,
+                noun: "Eiffel Tower",
+                sentence: "We visited the ___ during our trip to Paris.",
+                correctType: "proper",
+                explanation: "Eiffel Tower is a proper noun because it's the specific name of a famous landmark in Paris."
+            },
+            {
+                id: 3,
+                noun: "teacher",
+                sentence: "Our ___ explained the lesson very clearly.",
+                correctType: "common",
+                explanation: "Teacher is a common noun because it refers to any teacher, not a specific one."
+            },
+            {
+                id: 4,
+                noun: "Amazon",
+                sentence: "The ___ is the largest river in South America.",
+                correctType: "proper",
+                explanation: "Amazon is a proper noun because it's the specific name of a river."
+            },
+            {
+                id: 5,
+                noun: "city",
+                sentence: "Living in a ___ can be very exciting.",
+                correctType: "common",
+                explanation: "City is a common noun because it refers to any city, not a specific one."
+            },
+            {
+                id: 6,
+                noun: "Monday",
+                sentence: "We have a meeting scheduled for next ___.",
+                correctType: "proper",
+                explanation: "Monday is a proper noun because it's the specific name of a day of the week."
+            },
+            {
+                id: 7,
+                noun: "book",
+                sentence: "I borrowed a ___ from the library.",
+                correctType: "common",
+                explanation: "Book is a common noun because it refers to any book, not a specific one."
+            },
+            {
+                id: 8,
+                noun: "Mount Everest",
+                sentence: "___ is the highest mountain in the world.",
+                correctType: "proper",
+                explanation: "Mount Everest is a proper noun because it's the specific name of a mountain."
+            },
+            {
+                id: 9,
+                noun: "restaurant",
+                sentence: "We found a nice ___ near our hotel.",
+                correctType: "common",
+                explanation: "Restaurant is a common noun because it refers to any restaurant, not a specific one."
+            },
+            {
+                id: 10,
+                noun: "Shakespeare",
+                sentence: "___ wrote many famous plays and sonnets.",
+                correctType: "proper",
+                explanation: "Shakespeare is a proper noun because it's the specific name of a person."
+            },
+            {
+                id: 11,
+                noun: "car",
+                sentence: "My father drives a red ___ to work.",
+                correctType: "common",
+                explanation: "Car is a common noun because it refers to any car, not a specific one."
+            },
+            {
+                id: 12,
+                noun: "Pacific Ocean",
+                sentence: "The ___ covers about one-third of the Earth's surface.",
+                correctType: "proper",
+                explanation: "Pacific Ocean is a proper noun because it's the specific name of an ocean."
+            },
+            {
+                id: 13,
+                noun: "doctor",
+                sentence: "You should see a ___ if you're feeling sick.",
+                correctType: "common",
+                explanation: "Doctor is a common noun because it refers to any doctor, not a specific one."
+            },
+            {
+                id: 14,
+                noun: "Christmas",
+                sentence: "We celebrate ___ on December 25th.",
+                correctType: "proper",
+                explanation: "Christmas is a proper noun because it's the specific name of a holiday."
+            },
+            {
+                id: 15,
+                noun: "river",
+                sentence: "The ___ flows through the valley.",
+                correctType: "common",
+                explanation: "River is a common noun because it refers to any river, not a specific one."
+            },
+            {
+                id: 16,
+                noun: "Microsoft",
+                sentence: "___ is a leading technology company.",
+                correctType: "proper",
+                explanation: "Microsoft is a proper noun because it's the specific name of a company."
+            },
+            {
+                id: 17,
+                noun: "computer",
+                sentence: "I use my ___ for work and entertainment.",
+                correctType: "common",
+                explanation: "Computer is a common noun because it refers to any computer, not a specific one."
+            },
+            {
+                id: 18,
+                noun: "New York Times",
+                sentence: "I read the news in the ___ every morning.",
+                correctType: "proper",
+                explanation: "New York Times is a proper noun because it's the specific name of a newspaper."
+            },
+            {
+                id: 19,
+                noun: "university",
+                sentence: "She was accepted to a prestigious ___.",
+                correctType: "common",
+                explanation: "University is a common noun because it refers to any university, not a specific one."
+            },
+            {
+                id: 20,
+                noun: "Harry Potter",
+                sentence: "___ is a popular book and movie series.",
+                correctType: "proper",
+                explanation: "Harry Potter is a proper noun because it's the specific name of a book/movie series."
+            }
+        ];
+
+        // DOM elements
+        const quizContainer = document.getElementById('quiz-container');
+        const checkBtn = document.getElementById('check-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const reviewBtn = document.getElementById('review-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const answeredCountElement = document.getElementById('answered-count');
+        const correctCountElement = document.getElementById('correct-count');
+        const remainingCountElement = document.getElementById('remaining-count');
+        const timerElement = document.getElementById('timer');
+        const chartCorrect = document.getElementById('chart-correct');
+        const chartIncorrect = document.getElementById('chart-incorrect');
+        const chartTime = document.getElementById('chart-time');
+        const chartPercentage = document.getElementById('chart-percentage');
+
+        // Quiz state variables
+        let selectedAnswers = {};
+        let quizStarted = false;
+        let timerInterval;
+        let timeLeft = 600; // 10 minutes in seconds
+        let timeUsed = 0;
+
+        // Initialize quiz
+        function initializeQuiz() {
+            // Clear the quiz container
+            quizContainer.innerHTML = '';
+            
+            // Reset state
+            selectedAnswers = {};
+            quizStarted = false;
+            clearInterval(timerInterval);
+            timeLeft = 600;
+            timeUsed = 0;
+            timerElement.textContent = '10:00';
+            timerElement.classList.remove('time-up');
+            
+            // Create HTML for each question
+            quizData.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'quiz-question';
+                questionElement.id = `question-${question.id}`;
+                
+                // Create highlighted noun
+                const nounClass = question.correctType === 'common' ? 'common-noun' : 'proper-noun';
+                
+                questionElement.innerHTML = `
+                    <div class="question-number">${question.id}</div>
+                    <div class="question-text">
+                        ${question.sentence.replace('___', `<span class="noun-highlight ${nounClass}">${question.noun}</span>`)}
+                    </div>
+                    <div class="options">
+                        <div class="option common-option" data-question-id="${question.id}" data-type="common">
+                            <span class="option-letter">A</span>
+                            Common Noun
+                        </div>
+                        <div class="option proper-option" data-question-id="${question.id}" data-type="proper">
+                            <span class="option-letter">B</span>
+                            Proper Noun
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <span class="explanation-icon" data-question-id="${question.id}">?</span>
+                        <span style="font-weight: bold; color: #666;">Click for explanation</span>
+                    </div>
+                    <div class="explanation" id="explanation-${question.id}">
+                        ${question.explanation}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionElement);
+                
+                // Add event listeners to options
+                const options = questionElement.querySelectorAll('.option');
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        if (!quizStarted) {
+                            startTimer();
+                            quizStarted = true;
+                        }
+                        selectAnswer(this);
+                    });
+                });
+                
+                // Add event listener to explanation icon
+                const explanationIcon = questionElement.querySelector('.explanation-icon');
+                explanationIcon.addEventListener('click', function() {
+                    const questionId = this.getAttribute('data-question-id');
+                    const explanationElement = document.getElementById(`explanation-${questionId}`);
+                    explanationElement.classList.toggle('show');
+                });
+            });
+            
+            // Reset stats and UI
+            updateStats();
+            resultsContainer.style.display = 'none';
+            checkBtn.disabled = true;
+        }
+
+        // Start the timer
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeUsed++;
+                
+                // Update timer display
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                
+                // Change color when less than 1 minute left
+                if (timeLeft <= 60) {
+                    timerElement.classList.add('time-up');
+                }
+                
+                // Time's up
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    checkAllAnswers();
+                }
+            }, 1000);
+        }
+
+        // Select an answer for a question
+        function selectAnswer(optionElement) {
+            const questionId = optionElement.getAttribute('data-question-id');
+            const selectedType = optionElement.getAttribute('data-type');
+            
+            // Get the question element
+            const questionElement = document.getElementById(`question-${questionId}`);
+            
+            // Remove selected class from all options in this question
+            const options = questionElement.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            
+            // Store the selected answer
+            selectedAnswers[questionId] = {
+                selectedType: selectedType,
+                element: optionElement
+            };
+            
+            // Mark question as answered
+            questionElement.classList.add('answered');
+            
+            // Update stats
+            updateStats();
+        }
+
+        // Update stats
+        function updateStats() {
+            const answeredCount = Object.keys(selectedAnswers).length;
+            let correctCount = 0;
+            
+            // Count correct answers
+            for (const questionId in selectedAnswers) {
+                const question = quizData.find(q => q.id == questionId);
+                if (question && selectedAnswers[questionId].selectedType === question.correctType) {
+                    correctCount++;
+                }
+            }
+            
+            // Update display
+            answeredCountElement.textContent = answeredCount;
+            correctCountElement.textContent = correctCount;
+            remainingCountElement.textContent = quizData.length - answeredCount;
+            
+            // Enable check button if all questions are answered
+            checkBtn.disabled = answeredCount !== quizData.length;
+        }
+
+        // Check all answers
+        function checkAllAnswers() {
+            clearInterval(timerInterval);
+            
+            let correctCount = 0;
+            
+            // Check each question
+            quizData.forEach(question => {
+                const questionElement = document.getElementById(`question-${question.id}`);
+                const selectedAnswer = selectedAnswers[question.id];
+                
+                if (selectedAnswer) {
+                    const isCorrect = selectedAnswer.selectedType === question.correctType;
+                    
+                    // Mark question as correct/incorrect
+                    if (isCorrect) {
+                        correctCount++;
+                        questionElement.classList.add('correct');
+                        questionElement.classList.remove('incorrect');
+                        selectedAnswer.element.classList.add('correct-answer');
+                    } else {
+                        questionElement.classList.add('incorrect');
+                        questionElement.classList.remove('correct');
+                        selectedAnswer.element.classList.add('incorrect-answer');
+                        
+                        // Highlight the correct answer
+                        const correctOption = questionElement.querySelector(`.option[data-type="${question.correctType}"]`);
+                        correctOption.classList.add('correct-answer');
+                    }
+                }
+            });
+            
+            // Show results
+            showResults(correctCount);
+        }
+
+        // Show results
+        function showResults(correctCount) {
+            const totalQuestions = quizData.length;
+            const incorrectCount = totalQuestions - correctCount;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Calculate time used
+            const minutesUsed = Math.floor(timeUsed / 60);
+            const secondsUsed = timeUsed % 60;
+            const timeUsedFormatted = `${minutesUsed}:${secondsUsed < 10 ? '0' : ''}${secondsUsed}`;
+            
+            // Update results display
+            scoreDisplay.textContent = `${correctCount}/${totalQuestions}`;
+            chartCorrect.textContent = correctCount;
+            chartIncorrect.textContent = incorrectCount;
+            chartTime.textContent = timeUsedFormatted;
+            chartPercentage.textContent = `${percentage}%`;
+            
+            // Update feedback message
+            let feedback;
+            if (percentage === 100) {
+                feedback = "Perfect score! You're a noun expert! 🎉";
+            } else if (percentage >= 80) {
+                feedback = "Excellent! You have a strong understanding of common and proper nouns!";
+            } else if (percentage >= 60) {
+                feedback = "Good job! You understand the difference between common and proper nouns.";
+            } else if (percentage >= 40) {
+                feedback = "Not bad! Review the explanations to improve your understanding.";
+            } else {
+                feedback = "Keep practicing! Remember: Common nouns are general, proper nouns are specific and always capitalized.";
+            }
+            
+            feedbackMessage.textContent = feedback;
+            
+            // Show results container
+            resultsContainer.style.display = 'block';
+            
+            // Scroll to results
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Review answers - show all explanations
+        function reviewAnswers() {
+            quizData.forEach(question => {
+                const explanationElement = document.getElementById(`explanation-${question.id}`);
+                explanationElement.classList.add('show');
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Event listeners
+        checkBtn.addEventListener('click', checkAllAnswers);
+        resetBtn.addEventListener('click', initializeQuiz);
+        retryBtn.addEventListener('click', initializeQuiz);
+        reviewBtn.addEventListener('click', reviewAnswers);
+
+        // Initialize the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html>
