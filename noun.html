@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noun Grammar Guide - Complete Reference</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            flex: 1;
+            min-width: 280px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .nav-list {
+            list-style-type: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 12px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            border-left-color: #3498db;
+        }
+        
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .nav-item a:hover {
+            background-color: #e8f4fc;
+            color: #2980b9;
+            transform: translateX(5px);
+        }
+        
+        .nav-item a i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-item.active a {
+            background-color: #e8f4fc;
+            color: #2980b9;
+            font-weight: 600;
+            border-left-color: #3498db;
+        }
+        
+        .main-content {
+            flex: 3;
+            min-width: 300px;
+        }
+        
+        .noun-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-top: 5px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+        
+        .noun-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .noun-card h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .noun-card h2 i {
+            color: #3498db;
+        }
+        
+        .definition {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .examples {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .examples h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .example-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .example-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+        }
+        
+        .example-item strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .tip {
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .tip i {
+            color: #3498db;
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .nav-button.prev {
+            background-color: #2c3e50;
+        }
+        
+        .nav-button.prev:hover {
+            background-color: #1a252f;
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media print {
+            .sidebar, .page-navigation, footer {
+                display: none;
+            }
+            
+            .noun-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-book-open"></i> Noun Grammar Guide</h1>
+            <p class="subtitle">A comprehensive reference for understanding and using different types of nouns in English grammar</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <h2><i class="fas fa-list"></i> Content</h2>
+                <ul class="nav-list">
+                    <li class="nav-item active"><a href="#common-proper"><i class="fas fa-arrow-right"></i> Common vs. Proper Nouns</a></li>
+                    <li class="nav-item"><a href="#concrete-abstract"><i class="fas fa-cube"></i> Concrete vs. Abstract Nouns</a></li>
+                    <li class="nav-item"><a href="#countable-uncountable"><i class="fas fa-calculator"></i> Countable vs. Uncountable Nouns</a></li>
+                    <li class="nav-item"><a href="#singular-plural"><i class="fas fa-layer-group"></i> Singular and Plural Nouns</a></li>
+                    <li class="nav-item"><a href="#possessive"><i class="fas fa-asterisk"></i> Possessive Nouns</a></li>
+                    <li class="nav-item"><a href="#collective"><i class="fas fa-users"></i> Collective Nouns</a></li>
+                    <li class="nav-item"><a href="#compound"><i class="fas fa-link"></i> Compound Nouns</a></li>
+                </ul>
+            </nav>
+            
+            <main class="main-content">
+                <!-- Common vs Proper Nouns -->
+                <section id="common-proper" class="noun-card">
+                    <h2><i class="fas fa-arrow-right"></i> Common vs. Proper Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Common nouns</strong> are general names for people, places, things, or ideas. <strong>Proper nouns</strong> are specific names for particular people, places, or things and are always capitalized.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>Common Nouns:</strong>
+                                <span>city, woman, company, river</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Proper Nouns:</strong>
+                                <span>Paris, Maria, Google, Amazon River</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> Proper nouns always begin with a capital letter, regardless of where they appear in a sentence. Common nouns are only capitalized at the beginning of a sentence.
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Concrete vs Abstract Nouns -->
+                <section id="concrete-abstract" class="noun-card">
+                    <h2><i class="fas fa-cube"></i> Concrete vs. Abstract Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Concrete nouns</strong> refer to things we can perceive with our five senses (see, hear, touch, taste, smell). <strong>Abstract nouns</strong> refer to ideas, qualities, or states that cannot be perceived through the senses.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>Concrete Nouns:</strong>
+                                <span>apple, music, rain, perfume</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Abstract Nouns:</strong>
+                                <span>love, freedom, happiness, justice</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> If you can experience it with at least one of your five senses, it's a concrete noun. If it's an idea, concept, or feeling, it's an abstract noun.
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Countable vs Uncountable Nouns -->
+                <section id="countable-uncountable" class="noun-card">
+                    <h2><i class="fas fa-calculator"></i> Countable vs. Uncountable Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Countable nouns</strong> refer to things that can be counted as individual units and have both singular and plural forms. <strong>Uncountable nouns</strong> refer to substances, concepts, or masses that cannot be counted as separate items.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>Countable Nouns:</strong>
+                                <span>book (books), child (children), idea (ideas)</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Uncountable Nouns:</strong>
+                                <span>water, information, rice, advice</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> Uncountable nouns don't have plural forms and are used with singular verbs. You can use quantifiers like "some," "much," or "a lot of" with uncountable nouns.
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Singular and Plural Nouns -->
+                <section id="singular-plural" class="noun-card">
+                    <h2><i class="fas fa-layer-group"></i> Singular and Plural Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Singular nouns</strong> refer to one person, place, thing, or idea. <strong>Plural nouns</strong> refer to more than one. Most nouns form their plurals by adding -s or -es, but there are many irregular forms.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>Regular Plurals:</strong>
+                                <span>cat → cats, box → boxes, city → cities</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Irregular Plurals:</strong>
+                                <span>child → children, foot → feet, mouse → mice</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Unchanged Plurals:</strong>
+                                <span>deer → deer, sheep → sheep, series → series</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> For nouns ending in -y preceded by a consonant, change -y to -ies (baby → babies). For nouns ending in -f or -fe, often change to -ves (knife → knives), but there are exceptions (roof → roofs).
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Possessive Nouns -->
+                <section id="possessive" class="noun-card">
+                    <h2><i class="fas fa-asterisk"></i> Possessive Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Possessive nouns</strong> show ownership or possession. They are formed by adding an apostrophe and -s ('s) to singular nouns and just an apostrophe (') to most plural nouns.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>Singular Possessive:</strong>
+                                <span>the dog's bone, Maria's book, the child's toy</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Plural Possessive:</strong>
+                                <span>the dogs' bones, the students' desks, the children's toys</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Irregular Plural Possessive:</strong>
+                                <span>the women's shoes, the mice's cheese</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> For singular nouns ending in -s, you can add either 's or just an apostrophe (James's book or James' book). For plural nouns that don't end in -s, add 's (children's toys).
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Collective Nouns -->
+                <section id="collective" class="noun-card">
+                    <h2><i class="fas fa-users"></i> Collective Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Collective nouns</strong> refer to groups of people, animals, or things. They can take either singular or plural verbs depending on whether the group is acting as a single unit or as individuals.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>People Groups:</strong>
+                                <span>team, family, committee, audience</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Animal Groups:</strong>
+                                <span>herd (cattle), flock (birds), pack (wolves), school (fish)</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Thing Groups:</strong>
+                                <span>bunch (grapes), set (tools), fleet (ships)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> In American English, collective nouns usually take singular verbs when the group acts as one unit ("The team is winning"). Use a plural verb when emphasizing individual members ("The team are arguing among themselves").
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Compound Nouns -->
+                <section id="compound" class="noun-card">
+                    <h2><i class="fas fa-link"></i> Compound Nouns</h2>
+                    <div class="definition">
+                        <p><strong>Compound nouns</strong> are formed by combining two or more words to create a new noun with its own meaning. They can be written as one word, hyphenated, or as separate words.</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Examples</h3>
+                        <div class="example-list">
+                            <div class="example-item">
+                                <strong>One Word:</strong>
+                                <span>toothpaste, bedroom, sunlight</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Hyphenated:</strong>
+                                <span>mother-in-law, check-in, well-being</span>
+                            </div>
+                            <div class="example-item">
+                                <strong>Separate Words:</strong>
+                                <span>post office, swimming pool, full moon</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <strong>Tip:</strong> There's no consistent rule for when to hyphenate compound nouns, so it's best to check a dictionary. Generally, compound nouns become one word over time as they become more commonly used (e.g., "web site" became "website").
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Page Navigation -->
+                <div class="page-navigation">
+                    <a href="index.html" class="nav-button prev"><i class="fas fa-arrow-left"></i> Back to Main</a>
+                    <a href="grammar1.html" class="nav-button">Next: Verb Tenses <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Noun Grammar Guide &copy; 2023 | Created for rexwyc.github.io</p>
+            <p>Comprehensive reference for English language learners and teachers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update active nav item
+                    document.querySelectorAll('.nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    this.parentElement.classList.add('active');
+                }
+            });
+        });
+        
+        // Highlight current section while scrolling
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.noun-card');
+            const navItems = document.querySelectorAll('.nav-item a');
+            
+            let currentSectionId = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                
+                if(window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    currentSectionId = '#' + section.getAttribute('id');
+                }
+            });
+            
+            navItems.forEach(item => {
+                item.parentElement.classList.remove('active');
+                if(item.getAttribute('href') === currentSectionId) {
+                    item.parentElement.classList.add('active');
+                }
+            });
+        });
+        
+        // Print-friendly feature
+        document.addEventListener('keydown', function(e) {
+            if(e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                alert("Tip: For best printing results, use the browser's print preview and select 'Save as PDF' to create a printable reference.");
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
