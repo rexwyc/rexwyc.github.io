@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countable vs. Uncountable Nouns Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background-color: #2a3f8f;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content-area {
+            padding: 25px;
+        }
+        
+        /* Screens */
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* Start Screen */
+        .instructions {
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .instructions h2 {
+            color: #2a3f8f;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .examples {
+            background-color: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #4a6bff;
+        }
+        
+        .example-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .example-type {
+            font-weight: bold;
+            min-width: 120px;
+        }
+        
+        .countable {
+            color: #2e7d32;
+        }
+        
+        .uncountable {
+            color: #c62828;
+        }
+        
+        /* Game Screen */
+        .noun-display {
+            background-color: #f5f9ff;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #e1edff;
+            position: relative;
+        }
+        
+        .noun-text {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #1a2980;
+            margin-bottom: 5px;
+        }
+        
+        .hint {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .option-btn {
+            padding: 20px 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option-btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+        
+        .option-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .countable-btn {
+            background: linear-gradient(to right, #2e7d32, #4caf50);
+        }
+        
+        .uncountable-btn {
+            background: linear-gradient(to right, #c62828, #f44336);
+        }
+        
+        .option-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        /* Feedback Area */
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .correct {
+            background-color: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        
+        .incorrect {
+            background-color: #ffebee;
+            border: 2px solid #f44336;
+        }
+        
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .feedback-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .correct .feedback-icon {
+            color: #2e7d32;
+        }
+        
+        .incorrect .feedback-icon {
+            color: #c62828;
+        }
+        
+        .explanation {
+            line-height: 1.6;
+            color: #333;
+            padding-left: 10px;
+            border-left: 3px solid #4a6bff;
+        }
+        
+        .explanation strong {
+            color: #1a2980;
+        }
+        
+        /* Next Button */
+        .next-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .next-btn:hover {
+            background: linear-gradient(to right, #15225e, #1fb5b3);
+        }
+        
+        /* Results Screen */
+        .results {
+            text-align: center;
+        }
+        
+        .score-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score-percent {
+            font-size: 2.8rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .score-label {
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+        
+        .results-message {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a2980;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .correct-stat .stat-value {
+            color: #2e7d32;
+        }
+        
+        .incorrect-stat .stat-value {
+            color: #c62828;
+        }
+        
+        /* Action Buttons */
+        .action-btn {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .play-again-btn {
+            background: linear-gradient(to right, #2e7d32, #4caf50);
+            color: white;
+        }
+        
+        .play-again-btn:hover {
+            background: linear-gradient(to right, #27632a, #3d8b40);
+        }
+        
+        .menu-btn {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+        }
+        
+        .menu-btn:hover {
+            background: linear-gradient(to right, #15225e, #1fb5b3);
+        }
+        
+        /* Infinite Mode Toggle */
+        .infinite-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 25px 0;
+            padding: 15px;
+            background-color: #f5f9ff;
+            border-radius: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-left: 15px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: .4s;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        
+        input:checked + .toggle-slider {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        /* Game Info (for infinite mode) */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #1a2980;
+        }
+        
+        .score-display-small {
+            font-size: 1.2rem;
+        }
+        
+        .infinite-indicator {
+            background-color: #e1edff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .game-container {
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .noun-text {
+                font-size: 2rem;
+            }
+            
+            .option-btn {
+                padding: 18px 10px;
+                font-size: 1.1rem;
+            }
+            
+            .score-display {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .score-percent {
+                font-size: 2.2rem;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>Countable vs. Uncountable Nouns</h1>
+            <div class="subtitle">Test your grammar knowledge with 20 challenging questions</div>
+        </div>
+        
+        <div class="content-area">
+            <!-- Start Screen -->
+            <div id="start-screen" class="screen active">
+                <div class="instructions">
+                    <h2>How to Play</h2>
+                    <p>Determine whether each noun is <strong>countable</strong> or <strong>uncountable</strong>.</p>
+                    
+                    <div class="examples">
+                        <div class="example-item">
+                            <div class="example-type countable">Countable Nouns:</div>
+                            <div>Can be counted (one apple, two apples, three apples). Have singular and plural forms.</div>
+                        </div>
+                        <div class="example-item">
+                            <div class="example-type uncountable">Uncountable Nouns:</div>
+                            <div>Cannot be counted (*one rice, *two rices). Usually have only one form.</div>
+                        </div>
+                    </div>
+                    
+                    <p><strong>Countable nouns</strong> refer to things that can be counted as separate items (book, chair, idea).</p>
+                    <p><strong>Uncountable nouns</strong> refer to substances, concepts, or masses that can't be divided into separate elements (water, information, rice).</p>
+                    <p>You'll get instant feedback with an explanation after each answer. Try to complete all 20 questions!</p>
+                </div>
+                
+                <div class="infinite-toggle">
+                    <span>Infinite Mode:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="infinite-mode">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <button id="start-btn" class="next-btn" style="display: block;">Start Game</button>
+            </div>
+            
+            <!-- Game Screen -->
+            <div id="game-screen" class="screen">
+                <div class="game-info">
+                    <div class="score-display-small">Score: <span id="current-score">0</span></div>
+                    <div id="infinite-indicator" class="infinite-indicator">Infinite Mode</div>
+                </div>
+                
+                <div class="noun-display">
+                    <div class="noun-text" id="noun-text">book</div>
+                    <div class="hint" id="hint-text">Is this noun countable or uncountable?</div>
+                </div>
+                
+                <div class="options">
+                    <button class="option-btn countable-btn" id="countable-btn">
+                        <i class="fas fa-list-ol"></i> Countable
+                        <span class="option-label">Can be counted (one, two, three...)</span>
+                    </button>
+                    <button class="option-btn uncountable-btn" id="uncountable-btn">
+                        <i class="fas fa-infinity"></i> Uncountable
+                        <span class="option-label">Cannot be counted</span>
+                    </button>
+                </div>
+                
+                <div id="feedback" class="feedback">
+                    <div class="feedback-header">
+                        <div class="feedback-icon" id="feedback-icon"></div>
+                        <div id="feedback-text"></div>
+                    </div>
+                    <div id="explanation" class="explanation"></div>
+                </div>
+                
+                <button id="next-btn" class="next-btn">Next Question</button>
+            </div>
+            
+            <!-- Results Screen -->
+            <div id="results-screen" class="screen">
+                <h2>Game Complete!</h2>
+                
+                <div class="score-display">
+                    <div class="score-percent" id="score-percent">85%</div>
+                    <div class="score-label">Your Score</div>
+                </div>
+                
+                <div class="results-message" id="results-message">
+                    Great job! You have a good understanding of countable and uncountable nouns.
+                </div>
+                
+                <div class="stats">
+                    <div class="stat correct-stat">
+                        <div class="stat-value" id="correct-count">17</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="total-questions">20</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat incorrect-stat">
+                        <div class="stat-value" id="incorrect-count">3</div>
+                        <div class="stat-label">Incorrect</div>
+                    </div>
+                </div>
+                
+                <button id="play-again-btn" class="action-btn play-again-btn">Play Again</button>
+                <button id="menu-btn" class="action-btn menu-btn">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game data - 20 questions with answers and detailed explanations
+        const questions = [
+            { 
+                noun: "book", 
+                answer: "countable", 
+                explanation: "<strong>Book</strong> is countable because you can have one book, two books, three books, etc. It has both singular and plural forms."
+            },
+            { 
+                noun: "water", 
+                answer: "uncountable", 
+                explanation: "<strong>Water</strong> is uncountable because it's a substance. You can't say 'one water, two waters' when referring to the substance itself. You can count containers of water (glasses of water) but not water itself."
+            },
+            { 
+                noun: "chair", 
+                answer: "countable", 
+                explanation: "<strong>Chair</strong> is countable because you can have one chair, two chairs, etc. It refers to individual items that can be counted."
+            },
+            { 
+                noun: "information", 
+                answer: "uncountable", 
+                explanation: "<strong>Information</strong> is uncountable because it's an abstract concept. You can't say 'one information, two informations'. Instead, you say 'a piece of information' or 'some information'."
+            },
+            { 
+                noun: "apple", 
+                answer: "countable", 
+                explanation: "<strong>Apple</strong> is countable because you can have one apple, two apples, etc. It refers to individual fruits that can be counted."
+            },
+            { 
+                noun: "rice", 
+                answer: "uncountable", 
+                explanation: "<strong>Rice</strong> is uncountable because it consists of many small grains that aren't usually counted individually. You can say 'a grain of rice' or 'a bowl of rice' but not 'one rice, two rices'."
+            },
+            { 
+                noun: "idea", 
+                answer: "countable", 
+                explanation: "<strong>Idea</strong> is countable because you can have one idea, two ideas, etc. Even though ideas are abstract, they can be counted as individual concepts."
+            },
+            { 
+                noun: "furniture", 
+                answer: "uncountable", 
+                explanation: "<strong>Furniture</strong> is uncountable because it's a collective noun for items like chairs, tables, and beds. You can say 'a piece of furniture' or 'some furniture' but not 'one furniture, two furnitures'."
+            },
+            { 
+                noun: "car", 
+                answer: "countable", 
+                explanation: "<strong>Car</strong> is countable because you can have one car, two cars, etc. It refers to individual vehicles that can be counted."
+            },
+            { 
+                noun: "advice", 
+                answer: "uncountable", 
+                explanation: "<strong>Advice</strong> is uncountable because it's an abstract concept. You can't say 'one advice, two advices'. Instead, you say 'a piece of advice' or 'some advice'."
+            },
+            { 
+                noun: "child", 
+                answer: "countable", 
+                explanation: "<strong>Child</strong> is countable because you can have one child, two children, etc. People and animals are generally countable nouns."
+            },
+            { 
+                noun: "money", 
+                answer: "uncountable", 
+                explanation: "<strong>Money</strong> is uncountable because it's a substance/medium. You can count currency units (dollars, euros) but not money itself. You say 'some money' or 'a lot of money'."
+            },
+            { 
+                noun: "problem", 
+                answer: "countable", 
+                explanation: "<strong>Problem</strong> is countable because you can have one problem, two problems, etc. Issues and difficulties are generally countable."
+            },
+            { 
+                noun: "bread", 
+                answer: "uncountable", 
+                explanation: "<strong>Bread</strong> is uncountable because it's a food substance. You can say 'a loaf of bread' or 'a slice of bread' but not 'one bread, two breads' (unless referring to different types of bread)."
+            },
+            { 
+                noun: "city", 
+                answer: "countable", 
+                explanation: "<strong>City</strong> is countable because you can have one city, two cities, etc. Places are generally countable nouns."
+            },
+            { 
+                noun: "homework", 
+                answer: "uncountable", 
+                explanation: "<strong>Homework</strong> is uncountable because it refers to an assignment task. You can say 'a piece of homework' or 'some homework' but not 'one homework, two homeworks'."
+            },
+            { 
+                noun: "dog", 
+                answer: "countable", 
+                explanation: "<strong>Dog</strong> is countable because you can have one dog, two dogs, etc. Animals are generally countable nouns."
+            },
+            { 
+                noun: "weather", 
+                answer: "uncountable", 
+                explanation: "<strong>Weather</strong> is uncountable because it's a natural phenomenon. You can't say 'one weather, two weathers'. You describe weather but don't count it."
+            },
+            { 
+                noun: "song", 
+                answer: "countable", 
+                explanation: "<strong>Song</strong> is countable because you can have one song, two songs, etc. Individual creative works are generally countable."
+            },
+            { 
+                noun: "knowledge", 
+                answer: "uncountable", 
+                explanation: "<strong>Knowledge</strong> is uncountable because it's an abstract concept. You can't say 'one knowledge, two knowledges'. You have 'knowledge' or 'a lot of knowledge'."
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestions = questions.length;
+        let infiniteMode = false;
+        let questionsAnswered = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const countableBtn = document.getElementById('countable-btn');
+        const uncountableBtn = document.getElementById('uncountable-btn');
+        const nounText = document.getElementById('noun-text');
+        const hintText = document.getElementById('hint-text');
+        const feedback = document.getElementById('feedback');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackText = document.getElementById('feedback-text');
+        const explanation = document.getElementById('explanation');
+        const currentScoreSpan = document.getElementById('current-score');
+        const scorePercent = document.getElementById('score-percent');
+        const resultsMessage = document.getElementById('results-message');
+        const correctCountSpan = document.getElementById('correct-count');
+        const incorrectCountSpan = document.getElementById('incorrect-count');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const infiniteModeToggle = document.getElementById('infinite-mode');
+        const infiniteIndicator = document.getElementById('infinite-indicator');
+        
+        // Initialize game
+        function initGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questionsAnswered = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            updateScore();
+            
+            // Show/hide infinite indicator
+            if (infiniteMode) {
+                infiniteIndicator.style.display = 'block';
+            } else {
+                infiniteIndicator.style.display = 'none';
+            }
+            
+            loadQuestion();
+        }
+        
+        // Load current question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            nounText.textContent = currentQuestion.noun;
+            hintText.textContent = "Is this noun countable or uncountable?";
+            feedback.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // Enable buttons
+            countableBtn.disabled = false;
+            uncountableBtn.disabled = false;
+            countableBtn.style.opacity = '1';
+            uncountableBtn.style.opacity = '1';
+        }
+        
+        // Check answer
+        function checkAnswer(selectedAnswer) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === currentQuestion.answer;
+            
+            // Disable buttons after answer is selected
+            countableBtn.disabled = true;
+            uncountableBtn.disabled = true;
+            countableBtn.style.opacity = '0.7';
+            uncountableBtn.style.opacity = '0.7';
+            
+            // Update score and stats
+            if (isCorrect) {
+                score += 5; // 5 points per correct answer
+                correctCount++;
+                feedback.className = 'feedback correct';
+                feedbackIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                feedbackText.textContent = 'Correct!';
+            } else {
+                incorrectCount++;
+                feedback.className = 'feedback incorrect';
+                feedbackIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                feedbackText.textContent = 'Incorrect!';
+            }
+            
+            // Show explanation
+            explanation.innerHTML = currentQuestion.explanation;
+            feedback.style.display = 'block';
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+            
+            // Update UI
+            updateScore();
+            questionsAnswered++;
+            
+            // Update hint with answer
+            hintText.textContent = `This noun is ${currentQuestion.answer}.`;
+        }
+        
+        // Update score display
+        function updateScore() {
+            currentScoreSpan.textContent = score;
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (infiniteMode && currentQuestionIndex >= totalQuestions) {
+                // In infinite mode, reset to first question (shuffled)
+                shuffleQuestions();
+                currentQuestionIndex = 0;
+            }
+            
+            if (currentQuestionIndex < totalQuestions) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Show results screen
+        function showResults() {
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.add('active');
+            
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            scorePercent.textContent = `${percentage}%`;
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            totalQuestionsSpan.textContent = totalQuestions;
+            
+            // Set results message based on score
+            let message = "";
+            if (percentage >= 90) {
+                message = "Outstanding! You're a grammar expert! You have excellent understanding of countable and uncountable nouns.";
+            } else if (percentage >= 75) {
+                message = "Great job! You have a solid understanding of countable and uncountable nouns. Keep practicing to master the exceptions!";
+            } else if (percentage >= 60) {
+                message = "Good work! You understand the basics. Review the explanations to improve your knowledge of tricky nouns.";
+            } else {
+                message = "Keep practicing! Pay attention to the explanations to better understand which nouns are countable vs. uncountable.";
+            }
+            
+            resultsMessage.textContent = message;
+        }
+        
+        // Return to start menu
+        function backToMenu() {
+            resultsScreen.classList.remove('active');
+            startScreen.classList.add('active');
+        }
+        
+        // Shuffle questions for variety in infinite mode
+        function shuffleQuestions() {
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            initGame();
+        });
+        
+        countableBtn.addEventListener('click', () => {
+            checkAnswer('countable');
+        });
+        
+        uncountableBtn.addEventListener('click', () => {
+            checkAnswer('uncountable');
+        });
+        
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        playAgainBtn.addEventListener('click', () => {
+            resultsScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            initGame();
+        });
+        
+        menuBtn.addEventListener('click', backToMenu);
+        
+        infiniteModeToggle.addEventListener('change', () => {
+            infiniteMode = infiniteModeToggle.checked;
+            
+            // If infinite mode is enabled, shuffle questions for variety
+            if (infiniteMode) {
+                shuffleQuestions();
+            }
+        });
+        
+        // Initialize with first question loaded
+        initGame();
+    </script>
+</body>
+</html>

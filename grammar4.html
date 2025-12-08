@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Possessive Nouns Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        h1 {
+            color: #4a6baf;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .question-container {
+            background-color: #f9fbff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e6eeff;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-number {
+            font-size: 1rem;
+            color: #4a6baf;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .example {
+            font-size: 1rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+            background-color: #f0f4ff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            padding: 18px 20px;
+            background-color: #f0f4ff;
+            border: 2px solid #dce4f7;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .option:hover {
+            background-color: #e1e8ff;
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            background-color: #c3d3ff;
+            border-color: #4a6baf;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: none;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        #submit-btn {
+            background-color: #4a6baf;
+            color: white;
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+        
+        #submit-btn:hover {
+            background-color: #3a5a9f;
+        }
+        
+        #next-btn {
+            background-color: #34a853;
+            color: white;
+            flex-grow: 1;
+        }
+        
+        #next-btn:hover {
+            background-color: #2a8c44;
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4a6baf;
+            width: 5%;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+        
+        .score-container {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4a6baf;
+        }
+        
+        .rules {
+            background-color: #f0f4ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .rules h3 {
+            color: #4a6baf;
+            margin-bottom: 10px;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+        }
+        
+        .rules li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.3rem;
+            }
+            
+            .option {
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            #submit-btn, #next-btn {
+                margin-right: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> Possessive Nouns Game</h1>
+            <p class="subtitle">Identify the correct possessive form for each sentence</p>
+        </header>
+        
+        <div class="game-info">
+            <div class="score">Score: <span id="score">0</span>/<span id="total">0</span></div>
+            <div class="question-count">Question: <span id="current-question">1</span>/20</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-container">
+            <div class="question-number" id="question-number">Question 1 of 20</div>
+            <div class="question-text" id="question-text">Loading question...</div>
+            <div class="example" id="question-example"></div>
+        </div>
+        
+        <div class="options-container" id="options-container">
+            <!-- Options will be dynamically inserted here -->
+        </div>
+        
+        <div class="feedback" id="feedback">
+            <!-- Feedback will be shown here -->
+        </div>
+        
+        <div class="controls">
+            <button id="submit-btn" disabled>Submit Answer</button>
+            <button id="next-btn" disabled>Next Question</button>
+        </div>
+        
+        <div class="score-container">
+            <p>Correct Answers: <span id="correct-answers">0</span> | Incorrect Answers: <span id="incorrect-answers">0</span></p>
+        </div>
+        
+        <div class="rules">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <ul>
+                <li>Select the correct possessive form for each sentence</li>
+                <li>Click "Submit Answer" to check your answer</li>
+                <li>You'll get instant feedback with an explanation</li>
+                <li>Click "Next Question" to continue (game loops infinitely)</li>
+                <li>Try to get as many correct as possible!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Game data - 20 possessive noun questions
+        const questions = [
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ tail was fluffy.",
+                options: ["cat's", "cats'", "cats", "cat"],
+                correct: 0,
+                explanation: "For a singular noun (cat), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ toys were scattered everywhere.",
+                options: ["childrens", "childrens'", "children's", "childrens's"],
+                correct: 2,
+                explanation: "For irregular plural nouns that don't end in 's' (children), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "My _____ car is parked outside.",
+                options: ["parents", "parents'", "parent's", "parents's"],
+                correct: 1,
+                explanation: "For a plural noun ending in 's' (parents), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ meeting is at 3 PM.",
+                options: ["bosses", "boss's", "bosses'", "boss'"],
+                correct: 1,
+                explanation: "For a singular noun ending in 's' (boss), you can add 's to make it possessive, though some style guides also accept just an apostrophe."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "All the _____ uniforms were clean.",
+                options: ["players", "player's", "players'", "players's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (players), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "This is my _____ house.",
+                options: ["grandparents", "grandparent's", "grandparents'", "grandparents's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (grandparents), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ decisions affect us all.",
+                options: ["committees", "committee's", "committees'", "committees's"],
+                correct: 1,
+                explanation: "For a singular noun (committee), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "We admired the _____ artwork.",
+                options: ["artists", "artist's", "artists'", "artists's"],
+                correct: 1,
+                explanation: "For a singular noun (artist), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ voices echoed in the hall.",
+                options: ["singers", "singer's", "singers'", "singers's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (singers), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "I need to buy _____ groceries.",
+                options: ["today's", "todays'", "todays", "today"],
+                correct: 0,
+                explanation: "For time expressions like 'today', add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ engine was making a strange noise.",
+                options: ["cars", "car's", "cars'", "cars's"],
+                correct: 1,
+                explanation: "For a singular noun (car), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "All the _____ names were listed on the board.",
+                options: ["students", "student's", "students'", "students's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (students), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ surface was smooth.",
+                options: ["tables", "table's", "tables'", "tables's"],
+                correct: 1,
+                explanation: "For a singular noun (table), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ opinions varied greatly.",
+                options: ["witnesses", "witness's", "witnesses'", "witnesses's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (witnesses), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "My _____ birthday is next week.",
+                options: ["sisters", "sister's", "sisters'", "sisters's"],
+                correct: 1,
+                explanation: "For a singular noun (sister), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ windows were all open.",
+                options: ["classrooms", "classroom's", "classrooms'", "classrooms's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (classrooms), add only an apostrophe to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ instructions were unclear.",
+                options: ["manuals", "manual's", "manuals'", "manuals's"],
+                correct: 1,
+                explanation: "For a singular noun (manual), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "We visited the _____ new exhibit.",
+                options: ["museums", "museum's", "museums'", "museums's"],
+                correct: 1,
+                explanation: "For a singular noun (museum), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ leaves were changing color.",
+                options: ["trees", "tree's", "trees'", "trees's"],
+                correct: 1,
+                explanation: "For a singular noun (tree), add 's to make it possessive."
+            },
+            {
+                question: "Which is the correct possessive form?",
+                sentence: "The _____ reports were due yesterday.",
+                options: ["managers", "manager's", "managers'", "managers's"],
+                correct: 2,
+                explanation: "For a plural noun ending in 's' (managers), add only an apostrophe to make it possessive."
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestionsAnswered = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let selectedOption = null;
+        let isAnswered = false;
+
+        // DOM elements
+        const questionNumberElement = document.getElementById('question-number');
+        const questionTextElement = document.getElementById('question-text');
+        const questionExampleElement = document.getElementById('question-example');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackElement = document.getElementById('feedback');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const scoreElement = document.getElementById('score');
+        const totalElement = document.getElementById('total');
+        const currentQuestionElement = document.getElementById('current-question');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const incorrectAnswersElement = document.getElementById('incorrect-answers');
+        const progressBar = document.getElementById('progress-bar');
+
+        // Initialize the game
+        function initGame() {
+            displayQuestion();
+            updateProgressBar();
+            updateStats();
+            
+            // Add event listeners
+            submitButton.addEventListener('click', checkAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+        }
+
+        // Display the current question
+        function displayQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // Update question display
+            questionNumberElement.textContent = `Question ${currentQuestionIndex + 1} of 20`;
+            questionTextElement.textContent = question.question;
+            questionExampleElement.textContent = question.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Add new options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reset UI state
+            feedbackElement.className = 'feedback';
+            feedbackElement.style.display = 'none';
+            submitButton.disabled = true;
+            nextButton.disabled = true;
+            selectedOption = null;
+            isAnswered = false;
+            
+            // Update progress bar
+            updateProgressBar();
+        }
+
+        // Select an option
+        function selectOption(optionElement) {
+            if (isAnswered) return;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            selectedOption = parseInt(optionElement.dataset.index);
+            
+            // Enable submit button
+            submitButton.disabled = false;
+        }
+
+        // Check the answer
+        function checkAnswer() {
+            if (selectedOption === null || isAnswered) return;
+            
+            const question = questions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const selectedOptionElement = options[selectedOption];
+            
+            isAnswered = true;
+            totalQuestionsAnswered++;
+            
+            // Check if answer is correct
+            if (selectedOption === question.correct) {
+                // Correct answer
+                selectedOptionElement.classList.add('correct');
+                feedbackElement.textContent = `Correct! ${question.explanation}`;
+                feedbackElement.className = 'feedback correct';
+                score++;
+                correctAnswers++;
+            } else {
+                // Incorrect answer
+                selectedOptionElement.classList.add('incorrect');
+                // Also show the correct answer
+                options[question.correct].classList.add('correct');
+                feedbackElement.textContent = `Incorrect. ${question.explanation}`;
+                feedbackElement.className = 'feedback incorrect';
+                incorrectAnswers++;
+            }
+            
+            // Update UI
+            submitButton.disabled = true;
+            nextButton.disabled = false;
+            updateStats();
+        }
+
+        // Move to the next question
+        function nextQuestion() {
+            // Move to next question (loop back to start if at the end)
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+            
+            // Update display
+            displayQuestion();
+            updateStats();
+        }
+
+        // Update the progress bar
+        function updateProgressBar() {
+            const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        // Update game statistics
+        function updateStats() {
+            scoreElement.textContent = score;
+            totalElement.textContent = totalQuestionsAnswered;
+            correctAnswersElement.textContent = correctAnswers;
+            incorrectAnswersElement.textContent = incorrectAnswers;
+        }
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singular and Plural Nouns Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background-color: #5a0bb3;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content-area {
+            padding: 25px;
+        }
+        
+        /* Screens */
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* Start Screen */
+        .instructions {
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .instructions h2 {
+            color: #5a0bb3;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .rules {
+            background-color: #f5f0ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #8a2be2;
+        }
+        
+        .rule-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .rule-icon {
+            min-width: 30px;
+            color: #5a0bb3;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .rule-text {
+            flex: 1;
+        }
+        
+        .examples {
+            background-color: #eef7ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #2575fc;
+        }
+        
+        .example-item {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        
+        .example-type {
+            font-weight: bold;
+            min-width: 120px;
+            color: #2575fc;
+        }
+        
+        /* Game Screen */
+        .noun-display {
+            background-color: #f8f7ff;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #e6e1ff;
+            position: relative;
+        }
+        
+        .noun-text {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #5a0bb3;
+            margin-bottom: 10px;
+        }
+        
+        .task-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .input-container {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 15px;
+        }
+        
+        .plural-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            text-align: center;
+            color: #333;
+            transition: all 0.3s;
+        }
+        
+        .plural-input:focus {
+            outline: none;
+            border-color: #5a0bb3;
+            box-shadow: 0 0 0 3px rgba(90, 11, 179, 0.1);
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .option-btn {
+            padding: 20px 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option-btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+        
+        .option-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .singular-btn {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+        }
+        
+        .plural-btn {
+            background: linear-gradient(to right, #ff8a00, #da1b60);
+        }
+        
+        .option-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        /* Feedback Area */
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .correct {
+            background-color: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        
+        .incorrect {
+            background-color: #ffebee;
+            border: 2px solid #f44336;
+        }
+        
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .feedback-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .correct .feedback-icon {
+            color: #2e7d32;
+        }
+        
+        .incorrect .feedback-icon {
+            color: #c62828;
+        }
+        
+        .explanation {
+            line-height: 1.6;
+            color: #333;
+            padding-left: 10px;
+            border-left: 3px solid #8a2be2;
+        }
+        
+        .explanation strong {
+            color: #5a0bb3;
+        }
+        
+        /* Next Button */
+        .next-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, #5a0bb3, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .next-btn:hover {
+            background: linear-gradient(to right, #4a0996, #1c64e8);
+        }
+        
+        /* Results Screen */
+        .results {
+            text-align: center;
+        }
+        
+        .score-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5a0bb3, #2575fc);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score-percent {
+            font-size: 2.8rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .score-label {
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+        
+        .results-message {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #5a0bb3;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .correct-stat .stat-value {
+            color: #2e7d32;
+        }
+        
+        .incorrect-stat .stat-value {
+            color: #c62828;
+        }
+        
+        /* Action Buttons */
+        .action-btn {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .play-again-btn {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+        }
+        
+        .play-again-btn:hover {
+            background: linear-gradient(to right, #1c64e8, #5a0bb3);
+        }
+        
+        .menu-btn {
+            background: linear-gradient(to right, #ff8a00, #da1b60);
+            color: white;
+        }
+        
+        .menu-btn:hover {
+            background: linear-gradient(to right, #e57c00, #c2185b);
+        }
+        
+        /* Infinite Mode Toggle */
+        .infinite-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 25px 0;
+            padding: 15px;
+            background-color: #f5f0ff;
+            border-radius: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-left: 15px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: .4s;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        
+        input:checked + .toggle-slider {
+            background: linear-gradient(to right, #5a0bb3, #2575fc);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        /* Game Info (for infinite mode) */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #5a0bb3;
+        }
+        
+        .score-display-small {
+            font-size: 1.2rem;
+        }
+        
+        .infinite-indicator {
+            background-color: #e6e1ff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        /* Question Types */
+        .question-type {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        /* Game Mode Toggle */
+        .game-mode {
+            display: flex;
+            background-color: #f0f5ff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background-color: transparent;
+            color: #666;
+        }
+        
+        .mode-btn.active {
+            background-color: #5a0bb3;
+            color: white;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .game-container {
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .noun-text {
+                font-size: 2rem;
+            }
+            
+            .option-btn {
+                padding: 18px 10px;
+                font-size: 1.1rem;
+            }
+            
+            .score-display {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .score-percent {
+                font-size: 2.2rem;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .plural-input {
+                font-size: 1.1rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>Singular and Plural Nouns Game</h1>
+            <div class="subtitle">Test your knowledge of noun forms with 20 challenging questions</div>
+        </div>
+        
+        <div class="content-area">
+            <!-- Start Screen -->
+            <div id="start-screen" class="screen active">
+                <div class="instructions">
+                    <h2>How to Play</h2>
+                    <p>Identify whether nouns are singular or plural, or provide the correct plural form.</p>
+                    
+                    <div class="rules">
+                        <div class="rule-item">
+                            <div class="rule-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="rule-text"><strong>Singular nouns</strong> refer to one person, place, thing, or idea (e.g., cat, city, child).</div>
+                        </div>
+                        <div class="rule-item">
+                            <div class="rule-icon"><i class="fas fa-users"></i></div>
+                            <div class="rule-text"><strong>Plural nouns</strong> refer to more than one (e.g., cats, cities, children).</div>
+                        </div>
+                        <div class="rule-item">
+                            <div class="rule-icon"><i class="fas fa-lightbulb"></i></div>
+                            <div class="rule-text">Some nouns have irregular plural forms that don't follow standard rules.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>Common Plural Rules:</h3>
+                        <div class="example-item">
+                            <div class="example-type">Add -s:</div>
+                            <div>cat → cats, book → books</div>
+                        </div>
+                        <div class="example-item">
+                            <div class="example-type">Add -es:</div>
+                            <div>box → boxes, church → churches</div>
+                        </div>
+                        <div class="example-item">
+                            <div class="example-type">Change y to ies:</div>
+                            <div>city → cities, baby → babies</div>
+                        </div>
+                        <div class="example-item">
+                            <div class="example-type">Irregular:</div>
+                            <div>child → children, mouse → mice</div>
+                        </div>
+                    </div>
+                    
+                    <p>You'll get instant feedback with explanations after each answer. Try to complete all 20 questions!</p>
+                </div>
+                
+                <div class="game-mode">
+                    <button id="mode-identify" class="mode-btn active">Identify Mode</button>
+                    <button id="mode-convert" class="mode-btn">Convert Mode</button>
+                </div>
+                
+                <div class="infinite-toggle">
+                    <span>Infinite Mode:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="infinite-mode">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <button id="start-btn" class="next-btn" style="display: block;">Start Game</button>
+            </div>
+            
+            <!-- Game Screen -->
+            <div id="game-screen" class="screen">
+                <div class="game-info">
+                    <div class="score-display-small">Score: <span id="current-score">0</span></div>
+                    <div id="infinite-indicator" class="infinite-indicator">Infinite Mode</div>
+                </div>
+                
+                <div class="noun-display">
+                    <div class="question-type" id="question-type">Identify if this noun is singular or plural</div>
+                    <div class="noun-text" id="noun-text">book</div>
+                    <div class="task-text" id="task-text">Is this noun singular or plural?</div>
+                    
+                    <div id="input-container" class="input-container" style="display: none;">
+                        <input type="text" id="plural-input" class="plural-input" placeholder="Type plural form..." autocomplete="off">
+                    </div>
+                </div>
+                
+                <div id="options-container" class="options">
+                    <button class="option-btn singular-btn" id="singular-btn">
+                        <i class="fas fa-1"></i> Singular
+                        <span class="option-label">Refers to one</span>
+                    </button>
+                    <button class="option-btn plural-btn" id="plural-btn">
+                        <i class="fas fa-infinity"></i> Plural
+                        <span class="option-label">Refers to many</span>
+                    </button>
+                </div>
+                
+                <div id="feedback" class="feedback">
+                    <div class="feedback-header">
+                        <div class="feedback-icon" id="feedback-icon"></div>
+                        <div id="feedback-text"></div>
+                    </div>
+                    <div id="explanation" class="explanation"></div>
+                </div>
+                
+                <button id="next-btn" class="next-btn">Next Question</button>
+            </div>
+            
+            <!-- Results Screen -->
+            <div id="results-screen" class="screen">
+                <h2>Game Complete!</h2>
+                
+                <div class="score-display">
+                    <div class="score-percent" id="score-percent">85%</div>
+                    <div class="score-label">Your Score</div>
+                </div>
+                
+                <div class="results-message" id="results-message">
+                    Great job! You have a good understanding of singular and plural nouns.
+                </div>
+                
+                <div class="stats">
+                    <div class="stat correct-stat">
+                        <div class="stat-value" id="correct-count">17</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="total-questions">20</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat incorrect-stat">
+                        <div class="stat-value" id="incorrect-count">3</div>
+                        <div class="stat-label">Incorrect</div>
+                    </div>
+                </div>
+                
+                <button id="play-again-btn" class="action-btn play-again-btn">Play Again</button>
+                <button id="menu-btn" class="action-btn menu-btn">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game data - 20 questions with answers and detailed explanations
+        const questions = [
+            { 
+                noun: "book", 
+                answer: "singular", 
+                pluralForm: "books",
+                explanation: "<strong>Book</strong> is singular (refers to one). The plural form is <strong>books</strong> (add -s)."
+            },
+            { 
+                noun: "children", 
+                answer: "plural", 
+                pluralForm: "children",
+                explanation: "<strong>Children</strong> is plural (refers to more than one). The singular form is <strong>child</strong>. This is an irregular plural."
+            },
+            { 
+                noun: "city", 
+                answer: "singular", 
+                pluralForm: "cities",
+                explanation: "<strong>City</strong> is singular. The plural form is <strong>cities</strong> (change y to i and add -es)."
+            },
+            { 
+                noun: "mice", 
+                answer: "plural", 
+                pluralForm: "mice",
+                explanation: "<strong>Mice</strong> is plural. The singular form is <strong>mouse</strong>. This is an irregular plural (mouse → mice)."
+            },
+            { 
+                noun: "box", 
+                answer: "singular", 
+                pluralForm: "boxes",
+                explanation: "<strong>Box</strong> is singular. The plural form is <strong>boxes</strong> (add -es for words ending in x, s, sh, ch, z)."
+            },
+            { 
+                noun: "women", 
+                answer: "plural", 
+                pluralForm: "women",
+                explanation: "<strong>Women</strong> is plural. The singular form is <strong>woman</strong>. This is an irregular plural (woman → women)."
+            },
+            { 
+                noun: "baby", 
+                answer: "singular", 
+                pluralForm: "babies",
+                explanation: "<strong>Baby</strong> is singular. The plural form is <strong>babies</strong> (change y to i and add -es)."
+            },
+            { 
+                noun: "feet", 
+                answer: "plural", 
+                pluralForm: "feet",
+                explanation: "<strong>Feet</strong> is plural. The singular form is <strong>foot</strong>. This is an irregular plural (foot → feet)."
+            },
+            { 
+                noun: "church", 
+                answer: "singular", 
+                pluralForm: "churches",
+                explanation: "<strong>Church</strong> is singular. The plural form is <strong>churches</strong> (add -es for words ending in ch)."
+            },
+            { 
+                noun: "geese", 
+                answer: "plural", 
+                pluralForm: "geese",
+                explanation: "<strong>Geese</strong> is plural. The singular form is <strong>goose</strong>. This is an irregular plural (goose → geese)."
+            },
+            { 
+                noun: "fox", 
+                answer: "singular", 
+                pluralForm: "foxes",
+                explanation: "<strong>Fox</strong> is singular. The plural form is <strong>foxes</strong> (add -es for words ending in x)."
+            },
+            { 
+                noun: "teeth", 
+                answer: "plural", 
+                pluralForm: "teeth",
+                explanation: "<strong>Teeth</strong> is plural. The singular form is <strong>tooth</strong>. This is an irregular plural (tooth → teeth)."
+            },
+            { 
+                noun: "knife", 
+                answer: "singular", 
+                pluralForm: "knives",
+                explanation: "<strong>Knife</strong> is singular. The plural form is <strong>knives</strong> (change f to v and add -es)."
+            },
+            { 
+                noun: "cities", 
+                answer: "plural", 
+                pluralForm: "cities",
+                explanation: "<strong>Cities</strong> is plural. The singular form is <strong>city</strong>. This follows the rule: change y to i and add -es."
+            },
+            { 
+                noun: "potato", 
+                answer: "singular", 
+                pluralForm: "potatoes",
+                explanation: "<strong>Potato</strong> is singular. The plural form is <strong>potatoes</strong> (add -es for words ending in o)."
+            },
+            { 
+                noun: "sheep", 
+                answer: "both", 
+                pluralForm: "sheep",
+                explanation: "<strong>Sheep</strong> can be both singular and plural. It has the same form for singular and plural (one sheep, many sheep)."
+            },
+            { 
+                noun: "man", 
+                answer: "singular", 
+                pluralForm: "men",
+                explanation: "<strong>Man</strong> is singular. The plural form is <strong>men</strong>. This is an irregular plural (man → men)."
+            },
+            { 
+                noun: "cacti", 
+                answer: "plural", 
+                pluralForm: "cacti",
+                explanation: "<strong>Cacti</strong> is plural. The singular form is <strong>cactus</strong>. This is an irregular plural from Latin (cactus → cacti)."
+            },
+            { 
+                noun: "leaf", 
+                answer: "singular", 
+                pluralForm: "leaves",
+                explanation: "<strong>Leaf</strong> is singular. The plural form is <strong>leaves</strong> (change f to v and add -es)."
+            },
+            { 
+                noun: "people", 
+                answer: "plural", 
+                pluralForm: "people",
+                explanation: "<strong>People</strong> is plural. The singular form is <strong>person</strong>. This is an irregular plural (person → people)."
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestions = questions.length;
+        let infiniteMode = false;
+        let gameMode = "identify"; // "identify" or "convert"
+        let questionsAnswered = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const singularBtn = document.getElementById('singular-btn');
+        const pluralBtn = document.getElementById('plural-btn');
+        const nounText = document.getElementById('noun-text');
+        const taskText = document.getElementById('task-text');
+        const questionType = document.getElementById('question-type');
+        const inputContainer = document.getElementById('input-container');
+        const pluralInput = document.getElementById('plural-input');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackText = document.getElementById('feedback-text');
+        const explanation = document.getElementById('explanation');
+        const currentScoreSpan = document.getElementById('current-score');
+        const scorePercent = document.getElementById('score-percent');
+        const resultsMessage = document.getElementById('results-message');
+        const correctCountSpan = document.getElementById('correct-count');
+        const incorrectCountSpan = document.getElementById('incorrect-count');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const infiniteModeToggle = document.getElementById('infinite-mode');
+        const infiniteIndicator = document.getElementById('infinite-indicator');
+        const modeIdentifyBtn = document.getElementById('mode-identify');
+        const modeConvertBtn = document.getElementById('mode-convert');
+        
+        // Initialize game
+        function initGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questionsAnswered = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            updateScore();
+            
+            // Show/hide infinite indicator
+            if (infiniteMode) {
+                infiniteIndicator.style.display = 'block';
+            } else {
+                infiniteIndicator.style.display = 'none';
+            }
+            
+            loadQuestion();
+        }
+        
+        // Load current question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            nounText.textContent = currentQuestion.noun;
+            pluralInput.value = "";
+            
+            if (gameMode === "identify") {
+                // Identify mode: show options to choose singular/plural
+                questionType.textContent = "Identify if this noun is singular or plural";
+                taskText.textContent = `Is "${currentQuestion.noun}" singular or plural?`;
+                inputContainer.style.display = "none";
+                optionsContainer.style.display = "grid";
+            } else {
+                // Convert mode: ask for plural form
+                questionType.textContent = "Convert this noun to its plural form";
+                taskText.textContent = `What is the plural form of "${currentQuestion.noun}"?`;
+                inputContainer.style.display = "block";
+                optionsContainer.style.display = "none";
+                pluralInput.focus();
+            }
+            
+            feedback.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // Enable buttons
+            singularBtn.disabled = false;
+            pluralBtn.disabled = false;
+            singularBtn.style.opacity = '1';
+            pluralBtn.style.opacity = '1';
+        }
+        
+        // Check answer for identify mode
+        function checkIdentifyAnswer(selectedAnswer) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === currentQuestion.answer;
+            
+            // Disable buttons after answer is selected
+            singularBtn.disabled = true;
+            pluralBtn.disabled = true;
+            singularBtn.style.opacity = '0.7';
+            pluralBtn.style.opacity = '0.7';
+            
+            // Update score and stats
+            if (isCorrect) {
+                score += 5; // 5 points per correct answer
+                correctCount++;
+                feedback.className = 'feedback correct';
+                feedbackIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                feedbackText.textContent = 'Correct!';
+            } else {
+                incorrectCount++;
+                feedback.className = 'feedback incorrect';
+                feedbackIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                feedbackText.textContent = 'Incorrect!';
+            }
+            
+            // Show explanation
+            explanation.innerHTML = currentQuestion.explanation;
+            feedback.style.display = 'block';
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+            
+            // Update UI
+            updateScore();
+            questionsAnswered++;
+        }
+        
+        // Check answer for convert mode
+        function checkConvertAnswer() {
+            const userAnswer = pluralInput.value.trim().toLowerCase();
+            const currentQuestion = questions[currentQuestionIndex];
+            const correctAnswer = currentQuestion.pluralForm.toLowerCase();
+            const isCorrect = userAnswer === correctAnswer;
+            
+            // Disable input after answer is submitted
+            pluralInput.disabled = true;
+            
+            // Update score and stats
+            if (isCorrect) {
+                score += 5; // 5 points per correct answer
+                correctCount++;
+                feedback.className = 'feedback correct';
+                feedbackIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                feedbackText.textContent = 'Correct!';
+            } else {
+                incorrectCount++;
+                feedback.className = 'feedback incorrect';
+                feedbackIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                feedbackText.textContent = `Incorrect! The correct plural is "${currentQuestion.pluralForm}"`;
+            }
+            
+            // Show explanation
+            explanation.innerHTML = currentQuestion.explanation;
+            feedback.style.display = 'block';
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+            
+            // Update UI
+            updateScore();
+            questionsAnswered++;
+        }
+        
+        // Update score display
+        function updateScore() {
+            currentScoreSpan.textContent = score;
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            // Re-enable input for next question
+            pluralInput.disabled = false;
+            
+            currentQuestionIndex++;
+            
+            if (infiniteMode && currentQuestionIndex >= totalQuestions) {
+                // In infinite mode, reset to first question (shuffled)
+                shuffleQuestions();
+                currentQuestionIndex = 0;
+            }
+            
+            if (currentQuestionIndex < totalQuestions) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Show results screen
+        function showResults() {
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.add('active');
+            
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            scorePercent.textContent = `${percentage}%`;
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            totalQuestionsSpan.textContent = totalQuestions;
+            
+            // Set results message based on score
+            let message = "";
+            if (percentage >= 90) {
+                message = "Outstanding! You're a noun forms expert! You've mastered singular and plural nouns, including irregular forms.";
+            } else if (percentage >= 75) {
+                message = "Great job! You have a solid understanding of singular and plural nouns. Keep practicing to master all the irregular forms!";
+            } else if (percentage >= 60) {
+                message = "Good work! You understand the basics of noun forms. Review the explanations to improve your knowledge of tricky plurals.";
+            } else {
+                message = "Keep practicing! Pay attention to the explanations to better understand how nouns change from singular to plural.";
+            }
+            
+            resultsMessage.textContent = message;
+        }
+        
+        // Return to start menu
+        function backToMenu() {
+            resultsScreen.classList.remove('active');
+            startScreen.classList.add('active');
+        }
+        
+        // Shuffle questions for variety in infinite mode
+        function shuffleQuestions() {
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            initGame();
+        });
+        
+        singularBtn.addEventListener('click', () => {
+            checkIdentifyAnswer('singular');
+        });
+        
+        pluralBtn.addEventListener('click', () => {
+            checkIdentifyAnswer('plural');
+        });
+        
+        // Handle Enter key in input field
+        pluralInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkConvertAnswer();
+            }
+        });
+        
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        playAgainBtn.addEventListener('click', () => {
+            resultsScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            initGame();
+        });
+        
+        menuBtn.addEventListener('click', backToMenu);
+        
+        infiniteModeToggle.addEventListener('change', () => {
+            infiniteMode = infiniteModeToggle.checked;
+            
+            // If infinite mode is enabled, shuffle questions for variety
+            if (infiniteMode) {
+                shuffleQuestions();
+            }
+        });
+        
+        // Game mode switching
+        modeIdentifyBtn.addEventListener('click', () => {
+            gameMode = "identify";
+            modeIdentifyBtn.classList.add('active');
+            modeConvertBtn.classList.remove('active');
+        });
+        
+        modeConvertBtn.addEventListener('click', () => {
+            gameMode = "convert";
+            modeConvertBtn.classList.add('active');
+            modeIdentifyBtn.classList.remove('active');
+        });
+        
+        // Initialize with first question loaded
+        initGame();
+    </script>
+</body>
+</html>

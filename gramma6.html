@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compound Nouns Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        h1 {
+            color: #4a6fa5;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .game-description {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f0f4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #4a6fa5;
+        }
+        
+        .game-area {
+            transition: all 0.3s ease;
+        }
+        
+        .question-container {
+            background-color: #f9faff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4a6fa5;
+        }
+        
+        .question-number {
+            font-size: 1rem;
+            color: #6c8bc7;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        @media (min-width: 480px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background-color: white;
+            border: 2px solid #e1e8ff;
+            border-radius: 10px;
+            padding: 18px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .option:hover {
+            background-color: #f0f4ff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .option.selected {
+            background-color: #d4e2ff;
+            border-color: #4a6fa5;
+        }
+        
+        .option.correct {
+            background-color: #d4ffd4;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+        
+        .option.incorrect {
+            background-color: #ffd4d4;
+            border-color: #c62828;
+            color: #c62828;
+        }
+        
+        .feedback-container {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .feedback-correct {
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            color: #2e7d32;
+        }
+        
+        .feedback-incorrect {
+            background-color: #ffebee;
+            border-left: 5px solid #c62828;
+            color: #c62828;
+        }
+        
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .explanation {
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 16px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #submit-btn {
+            background-color: #4a6fa5;
+            color: white;
+        }
+        
+        #submit-btn:hover {
+            background-color: #3a5a85;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(74, 111, 165, 0.3);
+        }
+        
+        #next-btn {
+            background-color: #5cb85c;
+            color: white;
+            display: none;
+        }
+        
+        #next-btn:hover {
+            background-color: #4cae4c;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(92, 184, 92, 0.3);
+        }
+        
+        #restart-btn {
+            background-color: #f0ad4e;
+            color: white;
+        }
+        
+        #restart-btn:hover {
+            background-color: #eea236;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(240, 173, 78, 0.3);
+        }
+        
+        .progress-container {
+            margin-top: 25px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4a6fa5;
+            width: 5%;
+            transition: width 0.5s ease;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.5rem;
+            }
+            
+            .option {
+                padding: 15px 10px;
+                font-size: 1.1rem;
+            }
+            
+            button {
+                padding: 14px 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Compound Nouns Quiz</h1>
+            <p class="game-description">Test your knowledge of compound nouns. Select the correct compound noun for each question.</p>
+        </header>
+        
+        <div class="game-stats">
+            <div class="stat">Questions: <span id="total-questions">20</span></div>
+            <div class="stat">Correct: <span id="correct-count">0</span></div>
+            <div class="stat">Incorrect: <span id="incorrect-count">0</span></div>
+        </div>
+        
+        <div class="game-area">
+            <div class="question-container">
+                <div class="question-number">Question <span id="current-question">1</span> of 20</div>
+                <div class="question-text" id="question-text">Loading question...</div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="feedback-container" id="feedback-container">
+                <div class="feedback-title" id="feedback-title"></div>
+                <div class="explanation" id="feedback-text"></div>
+            </div>
+            
+            <div class="controls">
+                <button id="submit-btn">Submit Answer</button>
+                <button id="next-btn">Next Question</button>
+                <button id="restart-btn">Restart Game</button>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Compound Nouns Quiz Game &bull; Infinite loop &bull; Instant feedback</p>
+        </footer>
+    </div>
+
+    <script>
+        // Compound nouns quiz data - 20 questions
+        const quizData = [
+            {
+                question: "What do you call a machine that washes dishes?",
+                options: ["Dishcleaner", "Dishwasher", "Platewasher", "Kitchencleaner"],
+                correctAnswer: 1,
+                explanation: "A 'dishwasher' is a compound noun combining 'dish' and 'washer'."
+            },
+            {
+                question: "Which compound noun refers to a light from the sun?",
+                options: ["Sunbeam", "Moonlight", "Starlight", "Skylight"],
+                correctAnswer: 0,
+                explanation: "A 'sunbeam' is a ray of sunlight, combining 'sun' and 'beam'."
+            },
+            {
+                question: "What do you call a book with recipes?",
+                options: ["Foodbook", "Cookbook", "Recipebook", "Kitchenbook"],
+                correctAnswer: 1,
+                explanation: "A 'cookbook' is a book containing recipes and cooking instructions."
+            },
+            {
+                question: "Which compound noun describes a person who writes news for a newspaper?",
+                options: ["Newsman", "Newswriter", "Journalist", "Reporter"],
+                correctAnswer: 0,
+                explanation: "'Newsman' is a compound noun combining 'news' and 'man' (though 'journalist' or 'reporter' are also correct, they're not compound nouns)."
+            },
+            {
+                question: "What is the term for a board used for surfing?",
+                options: ["Waveboard", "Surfboard", "Waterboard", "Oceanboard"],
+                correctAnswer: 1,
+                explanation: "A 'surfboard' is a compound noun made from 'surf' and 'board'."
+            },
+            {
+                question: "Which compound noun refers to a room where you sleep?",
+                options: ["Restroom", "Sleeproom", "Bedroom", "Dreamroom"],
+                correctAnswer: 2,
+                explanation: "A 'bedroom' combines 'bed' and 'room' to describe a sleeping room."
+            },
+            {
+                question: "What do you call a light that you carry in your hand?",
+                options: ["Handlight", "Flashlight", "Torch", "Pocketlight"],
+                correctAnswer: 1,
+                explanation: "A 'flashlight' (or 'torch' in British English) is a portable hand-held light."
+            },
+            {
+                question: "Which compound noun describes a place where airplanes land and take off?",
+                options: ["Airfield", "Runway", "Airport", "Flightpark"],
+                correctAnswer: 2,
+                explanation: "An 'airport' combines 'air' and 'port' for a facility where aircraft operate."
+            },
+            {
+                question: "What is the term for a box that contains your lunch?",
+                options: ["Foodbox", "Mealbox", "Lunchbox", "Sandwichbox"],
+                correctAnswer: 2,
+                explanation: "A 'lunchbox' is a container for carrying a meal, typically lunch."
+            },
+            {
+                question: "Which compound noun refers to a storm with thunder and lightning?",
+                options: ["Rainstorm", "Thunderstorm", "Lightningstorm", "Electricstorm"],
+                correctAnswer: 1,
+                explanation: "A 'thunderstorm' combines 'thunder' and 'storm'."
+            },
+            {
+                question: "What do you call a person who delivers mail?",
+                options: ["Mailman", "Postman", "Lettercarrier", "All of these"],
+                correctAnswer: 3,
+                explanation: "All are compound nouns for someone who delivers mail! 'Mailman', 'postman', and 'letter carrier' are all valid."
+            },
+            {
+                question: "Which compound noun describes a place where films are shown?",
+                options: ["Moviehouse", "Filmtheater", "Cinema", "All of these"],
+                correctAnswer: 3,
+                explanation: "All are compound nouns for a movie theater! 'Moviehouse', 'film theater', and 'cinema' are all valid."
+            },
+            {
+                question: "What is the term for a card that identifies you?",
+                options: ["Namecard", "Identitycard", "IDcard", "Personcard"],
+                correctAnswer: 2,
+                explanation: "An 'ID card' (identification card) is a compound noun."
+            },
+            {
+                question: "Which compound noun refers to a book that tells a story?",
+                options: ["Storybook", "Talebook", "Novel", "Fictionbook"],
+                correctAnswer: 0,
+                explanation: "A 'storybook' is a book containing stories, especially for children."
+            },
+            {
+                question: "What do you call a machine that tells time?",
+                options: ["Timemachine", "Clock", "Hourmeter", "Chronometer"],
+                correctAnswer: 1,
+                explanation: "A 'clock' is a timekeeping device. While not obviously compound, it comes from 'clocca' (bell) indicating it was originally a bell that announced time."
+            },
+            {
+                question: "Which compound noun describes a person who fights fires?",
+                options: ["Firefighter", "Fireman", "Blazefighter", "Both 1 and 2"],
+                correctAnswer: 3,
+                explanation: "Both 'firefighter' and 'fireman' are compound nouns for someone who extinguishes fires."
+            },
+            {
+                question: "What is the term for a board you write on with chalk?",
+                options: ["Writeboard", "Chalkboard", "Blackboard", "Both 2 and 3"],
+                correctAnswer: 3,
+                explanation: "Both 'chalkboard' and 'blackboard' are compound nouns for a reusable writing surface."
+            },
+            {
+                question: "Which compound noun refers to a light on the street?",
+                options: ["Streetlight", "Roadlight", "Lamplight", "Pathlight"],
+                correctAnswer: 0,
+                explanation: "A 'streetlight' is a light on a pole along a street."
+            },
+            {
+                question: "What do you call a room where you take a bath or shower?",
+                options: ["Washroom", "Bathroom", "Showerroom", "All of these"],
+                correctAnswer: 3,
+                explanation: "All are compound nouns for a room with bathing facilities!"
+            },
+            {
+                question: "Which compound noun describes a bird that sings?",
+                options: ["Songbird", "Singbird", "Musicbird", "Chirpbird"],
+                correctAnswer: 0,
+                explanation: "A 'songbird' is a bird known for its musical vocalizations."
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let incorrectAnswers = 0;
+        let selectedOption = null;
+        let answerSubmitted = false;
+        let questionOrder = [...Array(quizData.length).keys()]; // Array of indices
+
+        // DOM elements
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainerElement = document.getElementById('options-container');
+        const feedbackContainerElement = document.getElementById('feedback-container');
+        const feedbackTitleElement = document.getElementById('feedback-title');
+        const feedbackTextElement = document.getElementById('feedback-text');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const currentQuestionElement = document.getElementById('current-question');
+        const correctCountElement = document.getElementById('correct-count');
+        const incorrectCountElement = document.getElementById('incorrect-count');
+        const progressBarElement = document.getElementById('progress-bar');
+
+        // Shuffle array function for random question order
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize the game
+        function initGame() {
+            // Reset game state
+            currentQuestionIndex = 0;
+            score = 0;
+            incorrectAnswers = 0;
+            answerSubmitted = false;
+            
+            // Shuffle the question order for infinite loop variety
+            questionOrder = shuffleArray([...Array(quizData.length).keys()]);
+            
+            // Update UI
+            updateStats();
+            loadQuestion();
+            
+            // Show/hide buttons
+            submitButton.style.display = 'flex';
+            nextButton.style.display = 'none';
+            feedbackContainerElement.style.display = 'none';
+            
+            // Update progress bar
+            updateProgressBar();
+        }
+
+        // Load the current question
+        function loadQuestion() {
+            const questionIndex = questionOrder[currentQuestionIndex];
+            const questionData = quizData[questionIndex];
+            
+            // Update question text and number
+            questionTextElement.textContent = questionData.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous options
+            optionsContainerElement.innerHTML = '';
+            
+            // Reset selected option
+            selectedOption = null;
+            answerSubmitted = false;
+            
+            // Create option elements
+            questionData.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement));
+                
+                optionsContainerElement.appendChild(optionElement);
+            });
+            
+            // Reset button states
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Answer';
+            feedbackContainerElement.style.display = 'none';
+        }
+
+        // Select an option
+        function selectOption(optionElement) {
+            if (answerSubmitted) return;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            selectedOption = parseInt(optionElement.dataset.index);
+            
+            // Enable submit button
+            submitButton.disabled = false;
+        }
+
+        // Submit the answer
+        function submitAnswer() {
+            if (selectedOption === null || answerSubmitted) return;
+            
+            const questionIndex = questionOrder[currentQuestionIndex];
+            const questionData = quizData[questionIndex];
+            const isCorrect = selectedOption === questionData.correctAnswer;
+            
+            // Mark the correct and incorrect answers
+            document.querySelectorAll('.option').forEach((opt, index) => {
+                if (index === questionData.correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (index === selectedOption && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+                
+                // Disable further clicks
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Update score
+            if (isCorrect) {
+                score++;
+                feedbackContainerElement.className = 'feedback-container feedback-correct';
+                feedbackTitleElement.textContent = 'Correct!';
+                feedbackTextElement.textContent = questionData.explanation;
+            } else {
+                incorrectAnswers++;
+                feedbackContainerElement.className = 'feedback-container feedback-incorrect';
+                feedbackTitleElement.textContent = 'Incorrect!';
+                feedbackTextElement.textContent = questionData.explanation + ` The correct answer was: ${questionData.options[questionData.correctAnswer]}`;
+            }
+            
+            // Update stats
+            updateStats();
+            
+            // Show feedback
+            feedbackContainerElement.style.display = 'block';
+            
+            // Update button visibility
+            submitButton.style.display = 'none';
+            nextButton.style.display = 'flex';
+            
+            answerSubmitted = true;
+        }
+
+        // Move to the next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            // If we've reached the end, loop back to the beginning
+            if (currentQuestionIndex >= quizData.length) {
+                // Reshuffle for the next loop
+                questionOrder = shuffleArray([...Array(quizData.length).keys()]);
+                currentQuestionIndex = 0;
+            }
+            
+            // Load the next question
+            loadQuestion();
+            
+            // Update progress bar
+            updateProgressBar();
+        }
+
+        // Update the score and stats display
+        function updateStats() {
+            correctCountElement.textContent = score;
+            incorrectCountElement.textContent = incorrectAnswers;
+        }
+
+        // Update the progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            progressBarElement.style.width = `${progress}%`;
+        }
+
+        // Event listeners
+        submitButton.addEventListener('click', submitAnswer);
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', initGame);
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
