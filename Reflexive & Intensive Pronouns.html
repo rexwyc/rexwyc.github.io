@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflexive & Intensive Pronouns Quiz - 20 Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f8ff 100%);
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 35px 30px;
+            background: linear-gradient(to right, #0077b6, #0096c7);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 119, 182, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 2%, transparent 2%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 2%, transparent 2%);
+            background-size: 50px 50px;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            max-width: 900px;
+            margin: 0 auto 15px;
+            position: relative;
+            font-weight: 300;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+            padding: 25px 35px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-left: 10px solid #0077b6;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        
+        .header-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .header-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #0077b6;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+        
+        .header-label {
+            font-size: 1.1rem;
+            color: #666;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .progress-section {
+            margin-bottom: 30px;
+        }
+        
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #444;
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            height: 18px;
+            background-color: #e0f0ff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #0077b6, #00b4d8);
+            width: 5%;
+            border-radius: 12px;
+            transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(
+                45deg, 
+                rgba(255, 255, 255, 0.15) 25%, 
+                transparent 25%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.15) 50%, 
+                rgba(255, 255, 255, 0.15) 75%, 
+                transparent 75%, 
+                transparent
+            );
+            background-size: 40px 40px;
+            animation: progressMove 1.5s linear infinite;
+        }
+        
+        @keyframes progressMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+        
+        .quiz-area {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            transition: transform 0.3s ease;
+        }
+        
+        .quiz-area:hover {
+            transform: translateY(-5px);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e6f7ff;
+        }
+        
+        .question-number {
+            font-size: 1.9rem;
+            font-weight: bold;
+            color: #0077b6;
+            background-color: #e6f7ff;
+            padding: 12px 28px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        .question-type {
+            font-size: 1.3rem;
+            color: #666;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            padding: 10px 24px;
+            border-radius: 50px;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 35px;
+            color: #333;
+            line-height: 1.5;
+            text-align: center;
+        }
+        
+        .sentence-box {
+            background-color: #f8fcff;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 35px;
+            border-left: 8px solid #00b4d8;
+            font-size: 1.7rem;
+            font-style: italic;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sentence-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #0077b6, #00b4d8);
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .option-card {
+            padding: 28px 25px;
+            background-color: #f8fcff;
+            border: 3px solid #e0f0ff;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-card:hover {
+            background-color: #e6f7ff;
+            border-color: #90e0ef;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(144, 224, 239, 0.2);
+        }
+        
+        .option-card.selected {
+            background-color: #e6f7ff;
+            border-color: #0077b6;
+            box-shadow: 0 10px 20px rgba(0, 119, 182, 0.15);
+        }
+        
+        .option-card.correct {
+            background-color: #e8f5e9;
+            border-color: #4caf50;
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.15);
+        }
+        
+        .option-card.incorrect {
+            background-color: #ffebee;
+            border-color: #f44336;
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.15);
+        }
+        
+        .option-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: #e0f0ff;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .selected .option-letter {
+            background-color: #0077b6;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .correct .option-letter {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .incorrect .option-letter {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .option-text {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .explanation-area {
+            background-color: #f0f9ff;
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 30px;
+            display: none;
+            border-left: 8px solid #0096c7;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .explanation-title {
+            color: #0077b6;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .explanation-text {
+            font-size: 1.3rem;
+            color: #333;
+            line-height: 1.7;
+        }
+        
+        .rule-highlight {
+            background-color: #fff3cd;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .rule-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 25px;
+        }
+        
+        .quiz-button {
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .btn-prev {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-prev:hover:not(:disabled) {
+            background-color: #545b62;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-next {
+            background-color: #0077b6;
+            color: white;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            background-color: #005a8c;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 119, 182, 0.3);
+        }
+        
+        .btn-hint {
+            background-color: #00b4d8;
+            color: white;
+        }
+        
+        .btn-hint:hover {
+            background-color: #0096c7;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 180, 216, 0.3);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(to right, #0077b6, #00b4d8);
+            color: white;
+        }
+        
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 119, 182, 0.4);
+        }
+        
+        .quiz-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-screen {
+            background-color: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            display: none;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .result-icon {
+            font-size: 6.5rem;
+            color: #0077b6;
+            margin-bottom: 30px;
+        }
+        
+        .result-title {
+            font-size: 3.2rem;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        
+        .result-score {
+            font-size: 5.5rem;
+            font-weight: bold;
+            color: #0077b6;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-details {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .result-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .detail-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .detail-label {
+            font-size: 1.4rem;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .correct-detail .detail-value {
+            color: #4caf50;
+        }
+        
+        .incorrect-detail .detail-value {
+            color: #f44336;
+        }
+        
+        .percentage-detail .detail-value {
+            color: #00b4d8;
+        }
+        
+        .result-message {
+            font-size: 1.6rem;
+            color: #666;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(to right, #0077b6, #00b4d8);
+            color: white;
+            padding: 25px 60px;
+            font-size: 1.5rem;
+            border-radius: 16px;
+            margin-top: 30px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 119, 182, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #666;
+            font-size: 1.1rem;
+            border-top: 2px solid #e0f0ff;
+        }
+        
+        .pronoun-types {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .pronoun-type-card {
+            background-color: #f8fcff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-align: center;
+            border-top: 5px solid;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .reflexive-card {
+            border-top-color: #0077b6;
+        }
+        
+        .intensive-card {
+            border-top-color: #00b4d8;
+        }
+        
+        .type-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .reflexive-title {
+            color: #0077b6;
+        }
+        
+        .intensive-title {
+            color: #00b4d8;
+        }
+        
+        .type-example {
+            font-size: 1.3rem;
+            color: #555;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .controls-row {
+                flex-direction: column;
+            }
+            
+            .quiz-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .header-card {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .question-text {
+                font-size: 1.5rem;
+            }
+            
+            .sentence-box {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-redo-alt"></i> Reflexive & Intensive Pronouns Quiz</h1>
+            <p class="subtitle">Test your knowledge of myself, yourself, himself, herself, itself, ourselves, yourselves, themselves</p>
+            <p class="subtitle">20 questions to master reflexive and intensive pronouns in English grammar</p>
+        </header>
+        
+        <div class="pronoun-types">
+            <div class="pronoun-type-card reflexive-card">
+                <div class="type-title reflexive-title">Reflexive Pronouns</div>
+                <div class="type-example">Reflect back to the subject<br>Example: "I hurt myself"</div>
+            </div>
+            
+            <div class="pronoun-type-card intensive-card">
+                <div class="type-title intensive-title">Intensive Pronouns</div>
+                <div class="type-example">Emphasize the subject<br>Example: "I myself saw it happen"</div>
+            </div>
+        </div>
+        
+        <div class="quiz-header">
+            <div class="header-card">
+                <div class="header-value" id="currentQuestion">1</div>
+                <div class="header-label">Current Question</div>
+            </div>
+            <div class="header-card">
+                <div class="header-value" id="score">0</div>
+                <div class="header-label">Score</div>
+            </div>
+            <div class="header-card">
+                <div class="header-value" id="correctCount">0</div>
+                <div class="header-label">Correct Answers</div>
+            </div>
+            <div class="header-card">
+                <div class="header-value" id="incorrectCount">0</div>
+                <div class="header-label">Incorrect Answers</div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-top">
+                <span>Quiz Progress</span>
+                <span id="progressPercent">5%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="quiz-area" id="quizArea">
+            <div class="question-header">
+                <div class="question-number">Question <span id="questionNum">1</span> of 20</div>
+                <div class="question-type" id="questionType">Reflexive Pronoun</div>
+            </div>
+            
+            <h2 class="question-text" id="questionText">Select the correct pronoun to complete the sentence:</h2>
+            
+            <div class="sentence-box" id="sentenceExample">
+                I cut ___ while cooking dinner.
+            </div>
+            
+            <div class="options-container" id="optionsContainer">
+                <!-- Options will be generated by JavaScript -->
+            </div>
+            
+            <div class="explanation-area" id="explanationArea">
+                <h3 class="explanation-title"><i class="fas fa-lightbulb"></i> Explanation</h3>
+                <p class="explanation-text" id="explanationText">This is where the explanation will appear after you answer the question.</p>
+                
+                <div class="rule-highlight" id="ruleHighlight">
+                    <div class="rule-title" id="ruleTitle">Reflexive Pronoun Rule:</div>
+                    <div id="ruleText">Reflexive pronouns refer back to the subject of the sentence and are necessary for the sentence to make sense.</div>
+                </div>
+            </div>
+            
+            <div class="controls-row">
+                <button class="quiz-button btn-prev" id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                
+                <button class="quiz-button btn-hint" id="hintBtn">
+                    <i class="fas fa-lightbulb"></i> Hint
+                </button>
+                
+                <button class="quiz-button btn-next" id="nextBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                
+                <button class="quiz-button btn-submit" id="submitBtn" style="display: none;">
+                    <i class="fas fa-paper-plane"></i> Submit Quiz
+                </button>
+            </div>
+        </div>
+        
+        <div class="result-screen" id="resultScreen">
+            <div class="result-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2 class="result-title" id="resultTitle">Quiz Completed!</h2>
+            <div class="result-score" id="resultScore">0/100</div>
+            
+            <div class="result-details">
+                <div class="result-detail correct-detail">
+                    <div class="detail-value" id="resultCorrect">0</div>
+                    <div class="detail-label">Correct Answers</div>
+                </div>
+                <div class="result-detail incorrect-detail">
+                    <div class="detail-value" id="resultIncorrect">0</div>
+                    <div class="detail-label">Incorrect Answers</div>
+                </div>
+                <div class="result-detail percentage-detail">
+                    <div class="detail-value" id="resultPercentage">0%</div>
+                    <div class="detail-label">Final Score</div>
+                </div>
+            </div>
+            
+            <p class="result-message" id="resultMessage">You answered 0 questions correctly out of 20.</p>
+            <p class="result-message" id="resultDetail">Here's how you performed on reflexive and intensive pronouns.</p>
+            
+            <button class="quiz-button btn-restart" id="restartBtn">
+                <i class="fas fa-redo"></i> Take Quiz Again
+            </button>
+        </div>
+        
+        <footer>
+            <p><strong>Reflexive & Intensive Pronouns Quiz Project</strong> | Created with HTML, CSS & JavaScript</p>
+            <p>Test your understanding of reflexive pronouns (myself, yourself, himself, herself, itself, ourselves, yourselves, themselves) and intensive pronouns (same forms but used for emphasis).</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quiz questions database
+            const questions = [
+                {
+                    question: "Select the correct reflexive pronoun:",
+                    sentence: "I cut ___ while cooking dinner.",
+                    options: ["me", "myself", "mine", "I"],
+                    correctAnswer: 1,
+                    explanation: "'Myself' is the reflexive pronoun that refers back to the subject 'I'. Reflexive pronouns are used when the subject and object are the same person.",
+                    rule: "Reflexive pronouns end in -self (singular) or -selves (plural) and refer back to the subject.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Choose the correct intensive pronoun:",
+                    sentence: "The president ___ will give the speech tomorrow.",
+                    options: ["himself", "him", "his", "he"],
+                    correctAnswer: 0,
+                    explanation: "'Himself' is an intensive pronoun that emphasizes 'the president'. Intensive pronouns have the same form as reflexive pronouns but are used for emphasis and can be removed without changing the sentence's basic meaning.",
+                    rule: "Intensive pronouns emphasize a noun or pronoun that comes before them. They can be removed without changing the sentence's core meaning.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Which pronoun correctly completes this sentence?",
+                    sentence: "You should be proud of ___ for finishing the marathon.",
+                    options: ["you", "yourself", "yours", "your"],
+                    correctAnswer: 1,
+                    explanation: "'Yourself' is the reflexive pronoun that refers back to the subject 'you'. The sentence means you should be proud of you.",
+                    rule: "Use reflexive pronouns when the subject and object refer to the same person or thing.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Identify the intensive pronoun in this sentence:",
+                    sentence: "We decorated the entire house ourselves.",
+                    options: ["We", "decorated", "entire", "ourselves"],
+                    correctAnswer: 3,
+                    explanation: "'Ourselves' is an intensive pronoun that emphasizes 'we'. The sentence would still be grammatically correct without it: 'We decorated the entire house.'",
+                    rule: "Intensive pronouns add emphasis but are not essential to the sentence's grammar.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Select the correct reflexive pronoun:",
+                    sentence: "The cat washed ___ carefully.",
+                    options: ["it", "its", "itself", "it's"],
+                    correctAnswer: 2,
+                    explanation: "'Itself' is the reflexive pronoun for the neuter gender. It refers back to the subject 'the cat'.",
+                    rule: "Use 'itself' for animals, objects, or concepts when referring back to the subject.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Which sentence uses an intensive pronoun?",
+                    sentence: "",
+                    options: ["She bought herself a new dress.", "He himself answered the phone.", "They enjoyed themselves at the party.", "I taught myself to play guitar."],
+                    correctAnswer: 1,
+                    explanation: "'He himself answered the phone' uses 'himself' as an intensive pronoun to emphasize 'he'. The other options use reflexive pronouns that are necessary for the sentences to make sense.",
+                    rule: "Intensive pronouns emphasize but can be removed; reflexive pronouns are necessary for the sentence to make sense.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Choose the correct reflexive pronoun:",
+                    sentence: "The children made ___ some sandwiches.",
+                    options: ["them", "their", "themselves", "theirs"],
+                    correctAnswer: 2,
+                    explanation: "'Themselves' is the reflexive pronoun for plural subjects. It refers back to 'the children'.",
+                    rule: "Use 'themselves' for plural subjects when referring back to the subject.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Which is an example of an intensive pronoun?",
+                    sentence: "",
+                    options: ["I saw myself in the mirror.", "You yourself are responsible.", "We blamed ourselves for the mistake.", "She talks to herself sometimes."],
+                    correctAnswer: 1,
+                    explanation: "'You yourself are responsible' uses 'yourself' as an intensive pronoun to emphasize 'you'. It can be removed: 'You are responsible.'",
+                    rule: "Intensive pronouns can be removed without affecting the sentence's basic meaning.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Select the correct reflexive pronoun:",
+                    sentence: "We need to believe in ___ more.",
+                    options: ["us", "our", "ourselves", "we"],
+                    correctAnswer: 2,
+                    explanation: "'Ourselves' is the reflexive pronoun that refers back to the subject 'we'.",
+                    rule: "Reflexive pronouns are used when the action of the verb reflects back on the subject.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Identify the reflexive pronoun in this sentence:",
+                    sentence: "He taught himself how to code.",
+                    options: ["He", "taught", "himself", "how"],
+                    correctAnswer: 2,
+                    explanation: "'Himself' is a reflexive pronoun showing that the subject 'he' performed the action on himself.",
+                    rule: "Reflexive pronouns are necessary when the subject performs an action on itself.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Which sentence uses a reflexive pronoun correctly?",
+                    sentence: "",
+                    options: ["They prepared theirselves for the exam.", "She bought her a new phone.", "I made myself a cup of tea.", "The machine turned it on automatically."],
+                    correctAnswer: 2,
+                    explanation: "'I made myself a cup of tea' correctly uses the reflexive pronoun 'myself'. 'Theirselves' is incorrect (should be 'themselves'). 'Her' should be 'herself' in option 2.",
+                    rule: "Correct reflexive pronouns are: myself, yourself, himself, herself, itself, ourselves, yourselves, themselves.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Choose the intensive pronoun:",
+                    sentence: "The work ___ was not difficult, but the deadline was tight.",
+                    options: ["it", "its", "itself", "it's"],
+                    correctAnswer: 2,
+                    explanation: "'Itself' is an intensive pronoun emphasizing 'the work'. The sentence would still work without it: 'The work was not difficult...'",
+                    rule: "Intensive pronouns often appear right after the noun they emphasize.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Select the correct pronoun:",
+                    sentence: "You guys should do it ___.",
+                    options: ["you", "your", "yourselves", "yours"],
+                    correctAnswer: 2,
+                    explanation: "'Yourselves' is the reflexive pronoun for 'you' (plural). It refers back to 'you guys'.",
+                    rule: "Use 'yourselves' for second person plural subjects.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Which sentence contains an intensive pronoun?",
+                    sentence: "",
+                    options: ["We enjoyed ourselves at the beach.", "I myself don't believe that story.", "She hurt herself playing soccer.", "They introduced themselves to the new neighbors."],
+                    correctAnswer: 1,
+                    explanation: "'I myself don't believe that story' uses 'myself' as an intensive pronoun emphasizing 'I'. It can be removed: 'I don't believe that story.'",
+                    rule: "Intensive pronouns add emphasis but aren't grammatically necessary.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Choose the correct reflexive pronoun:",
+                    sentence: "One should always be true to ___.",
+                    options: ["oneself", "themselves", "yourself", "ourself"],
+                    correctAnswer: 0,
+                    explanation: "'Oneself' is the reflexive pronoun that corresponds to the indefinite pronoun 'one'.",
+                    rule: "Use 'oneself' with the indefinite pronoun 'one'.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Identify the intensive pronoun:",
+                    sentence: "The manager herself approved the request.",
+                    options: ["The", "manager", "herself", "approved"],
+                    correctAnswer: 2,
+                    explanation: "'Herself' is an intensive pronoun emphasizing 'the manager'. It adds emphasis that the manager personally approved it.",
+                    rule: "Intensive pronouns often appear directly after the noun they emphasize.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Which reflexive pronoun is correct?",
+                    sentence: "She looked at ___ in the mirror and smiled.",
+                    options: ["her", "herself", "she", "hers"],
+                    correctAnswer: 1,
+                    explanation: "'Herself' is the reflexive pronoun that refers back to the subject 'she'.",
+                    rule: "Use reflexive pronouns when the subject and object are the same person.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Select the sentence with an intensive pronoun:",
+                    sentence: "",
+                    options: ["We prepared ourselves for the interview.", "They themselves built the entire house.", "He blamed himself for the accident.", "I told myself to stay calm."],
+                    correctAnswer: 1,
+                    explanation: "'They themselves built the entire house' uses 'themselves' as an intensive pronoun emphasizing 'they'. It can be removed: 'They built the entire house.'",
+                    rule: "Test for intensive pronouns: If you can remove the pronoun and the sentence still makes sense, it's intensive.",
+                    type: "Intensive Pronoun"
+                },
+                {
+                    question: "Choose the correct pronoun:",
+                    sentence: "Be careful or you might hurt ___.",
+                    options: ["you", "your", "yourself", "yours"],
+                    correctAnswer: 2,
+                    explanation: "'Yourself' is the reflexive pronoun that refers back to the subject 'you'.",
+                    rule: "Reflexive pronouns are often used with verbs like hurt, cut, burn, teach, prepare, etc.",
+                    type: "Reflexive Pronoun"
+                },
+                {
+                    question: "Final question: Identify the pronoun type in this sentence:",
+                    sentence: "I myself witnessed the entire event.",
+                    options: ["Reflexive pronoun", "Intensive pronoun", "Personal pronoun", "Possessive pronoun"],
+                    correctAnswer: 1,
+                    explanation: "'Myself' is an intensive pronoun emphasizing 'I'. It can be removed: 'I witnessed the entire event.' The sentence would still be complete without it.",
+                    rule: "Remember: Intensive = Emphasis (can be removed); Reflexive = Necessary (reflects back to subject).",
+                    type: "Both Types"
+                }
+            ];
+            
+            // DOM elements
+            const quizArea = document.getElementById('quizArea');
+            const resultScreen = document.getElementById('resultScreen');
+            const questionNumElement = document.getElementById('questionNum');
+            const questionTextElement = document.getElementById('questionText');
+            const sentenceExampleElement = document.getElementById('sentenceExample');
+            const questionTypeElement = document.getElementById('questionType');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const explanationArea = document.getElementById('explanationArea');
+            const explanationTextElement = document.getElementById('explanationText');
+            const ruleHighlight = document.getElementById('ruleHighlight');
+            const ruleTitleElement = document.getElementById('ruleTitle');
+            const ruleTextElement = document.getElementById('ruleText');
+            
+            // Stats elements
+            const currentQuestionElement = document.getElementById('currentQuestion');
+            const scoreElement = document.getElementById('score');
+            const correctCountElement = document.getElementById('correctCount');
+            const incorrectCountElement = document.getElementById('incorrectCount');
+            const progressFillElement = document.getElementById('progressFill');
+            const progressPercentElement = document.getElementById('progressPercent');
+            
+            // Button elements
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const hintBtn = document.getElementById('hintBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            
+            // Result elements
+            const resultTitleElement = document.getElementById('resultTitle');
+            const resultScoreElement = document.getElementById('resultScore');
+            const resultMessageElement = document.getElementById('resultMessage');
+            const resultDetailElement = document.getElementById('resultDetail');
+            const resultCorrectElement = document.getElementById('resultCorrect');
+            const resultIncorrectElement = document.getElementById('resultIncorrect');
+            const resultPercentageElement = document.getElementById('resultPercentage');
+            
+            // Quiz state
+            let currentQuestionIndex = 0;
+            let userAnswers = new Array(questions.length).fill(null);
+            let score = 0;
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            // Initialize the quiz
+            function initQuiz() {
+                currentQuestionIndex = 0;
+                userAnswers.fill(null);
+                score = 0;
+                correctCount = 0;
+                incorrectCount = 0;
+                updateStats();
+                showQuestion(currentQuestionIndex);
+                quizArea.style.display = 'block';
+                resultScreen.style.display = 'none';
+                updateButtons();
+            }
+            
+            // Show a specific question
+            function showQuestion(index) {
+                const question = questions[index];
+                
+                // Update question elements
+                questionNumElement.textContent = index + 1;
+                currentQuestionElement.textContent = index + 1;
+                questionTextElement.textContent = question.question;
+                questionTypeElement.textContent = question.type;
+                
+                // Handle sentences with and without blanks
+                if (question.sentence) {
+                    sentenceExampleElement.textContent = question.sentence;
+                } else {
+                    // For questions without a specific sentence (like "Which sentence uses...")
+                    sentenceExampleElement.textContent = question.options[0];
+                }
+                
+                // Clear previous options
+                optionsContainer.innerHTML = '';
+                
+                // Create option elements
+                const optionLetters = ['A', 'B', 'C', 'D'];
+                
+                question.options.forEach((option, optionIndex) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option-card';
+                    
+                    // Check if this option was previously selected
+                    if (userAnswers[index] === optionIndex) {
+                        optionElement.classList.add('selected');
+                        
+                        // If the question was answered, show if it was correct/incorrect
+                        if (userAnswers[index] !== null) {
+                            if (optionIndex === question.correctAnswer) {
+                                optionElement.classList.add('correct');
+                            } else {
+                                optionElement.classList.add('incorrect');
+                            }
+                        }
+                    }
+                    
+                    optionElement.innerHTML = `
+                        <div class="option-letter">${optionLetters[optionIndex]}</div>
+                        <div class="option-text">${option}</div>
+                    `;
+                    
+                    // Only allow clicking if not already answered
+                    if (userAnswers[index] === null) {
+                        optionElement.addEventListener('click', () => selectOption(optionIndex));
+                    }
+                    
+                    optionsContainer.appendChild(optionElement);
+                });
+                
+                // Show/hide explanation based on whether the question was answered
+                if (userAnswers[index] !== null) {
+                    explanationTextElement.textContent = question.explanation;
+                    ruleTitleElement.textContent = question.type + " Rule:";
+                    ruleTextElement.textContent = question.rule;
+                    
+                    // Color code the rule highlight based on pronoun type
+                    if (question.type.includes("Reflexive")) {
+                        ruleHighlight.style.borderLeftColor = "#0077b6";
+                        ruleHighlight.style.backgroundColor = "#e6f7ff";
+                    } else if (question.type.includes("Intensive")) {
+                        ruleHighlight.style.borderLeftColor = "#00b4d8";
+                        ruleHighlight.style.backgroundColor = "#e0f7ff";
+                    } else {
+                        ruleHighlight.style.borderLeftColor = "#6c757d";
+                        ruleHighlight.style.backgroundColor = "#f8f9fa";
+                    }
+                    
+                    explanationArea.style.display = 'block';
+                } else {
+                    explanationArea.style.display = 'none';
+                }
+                
+                // Update progress
+                updateProgress();
+            }
+            
+            // Handle option selection
+            function selectOption(optionIndex) {
+                // Remove selected class from all options
+                document.querySelectorAll('.option-card').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                const selectedOption = document.querySelectorAll('.option-card')[optionIndex];
+                selectedOption.classList.add('selected');
+                
+                // Save the user's answer
+                userAnswers[currentQuestionIndex] = optionIndex;
+                
+                // Check if answer is correct
+                const question = questions[currentQuestionIndex];
+                const isCorrect = optionIndex === question.correctAnswer;
+                
+                // Update score and counts
+                if (isCorrect) {
+                    selectedOption.classList.add('correct');
+                    score += 5;
+                    correctCount++;
+                } else {
+                    selectedOption.classList.add('incorrect');
+                    incorrectCount++;
+                    
+                    // Also show the correct answer
+                    const correctOption = document.querySelectorAll('.option-card')[question.correctAnswer];
+                    correctOption.classList.add('correct');
+                }
+                
+                // Update stats
+                updateStats();
+                
+                // Show explanation
+                explanationTextElement.textContent = question.explanation;
+                ruleTitleElement.textContent = question.type + " Rule:";
+                ruleTextElement.textContent = question.rule;
+                
+                // Color code the rule highlight
+                if (question.type.includes("Reflexive")) {
+                    ruleHighlight.style.borderLeftColor = "#0077b6";
+                    ruleHighlight.style.backgroundColor = "#e6f7ff";
+                } else if (question.type.includes("Intensive")) {
+                    ruleHighlight.style.borderLeftColor = "#00b4d8";
+                    ruleHighlight.style.backgroundColor = "#e0f7ff";
+                } else {
+                    ruleHighlight.style.borderLeftColor = "#6c757d";
+                    ruleHighlight.style.backgroundColor = "#f8f9fa";
+                }
+                
+                explanationArea.style.display = 'block';
+                
+                // Update buttons
+                updateButtons();
+                
+                // Disable further clicks on options
+                document.querySelectorAll('.option-card').forEach(option => {
+                    option.style.pointerEvents = 'none';
+                });
+            }
+            
+            // Update stats display
+            function updateStats() {
+                scoreElement.textContent = score;
+                correctCountElement.textContent = correctCount;
+                incorrectCountElement.textContent = incorrectCount;
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+                progressFillElement.style.width = `${progress}%`;
+                progressPercentElement.textContent = `${Math.round(progress)}%`;
+            }
+            
+            // Update button states
+            function updateButtons() {
+                // Previous button
+                prevBtn.disabled = currentQuestionIndex === 0;
+                
+                // Next/Submit button
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'flex';
+                } else {
+                    nextBtn.style.display = 'flex';
+                    submitBtn.style.display = 'none';
+                }
+                
+                // Disable next/submit if current question not answered
+                const isCurrentAnswered = userAnswers[currentQuestionIndex] !== null;
+                nextBtn.disabled = !isCurrentAnswered;
+                submitBtn.disabled = !isCurrentAnswered;
+            }
+            
+            // Show next question
+            function nextQuestion() {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion(currentQuestionIndex);
+                    updateButtons();
+                }
+            }
+            
+            // Show previous question
+            function prevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion(currentQuestionIndex);
+                    updateButtons();
+                }
+            }
+            
+            // Show hint
+            function showHint() {
+                const question = questions[currentQuestionIndex];
+                let hint = "";
+                
+                if (question.type.includes("Reflexive")) {
+                    hint = "Hint: Reflexive pronouns reflect back to the subject and are necessary for the sentence to make sense. They end in -self or -selves.";
+                } else if (question.type.includes("Intensive")) {
+                    hint = "Hint: Intensive pronouns emphasize a noun or pronoun and can be removed without changing the sentence's basic meaning.";
+                } else {
+                    hint = "Hint: Remember the difference: Reflexive = necessary, Intensive = emphasis (can be removed).";
+                }
+                
+                alert(hint);
+            }
+            
+            // Submit quiz and show results
+            function submitQuiz() {
+                // Calculate final score
+                const totalQuestions = questions.length;
+                const percentage = Math.round((correctCount / totalQuestions) * 100);
+                
+                // Update result display
+                resultScoreElement.textContent = `${score}/${totalQuestions * 5}`;
+                resultCorrectElement.textContent = correctCount;
+                resultIncorrectElement.textContent = incorrectCount;
+                resultPercentageElement.textContent = `${percentage}%`;
+                
+                // Set result message based on score
+                let title, message, detail;
+                
+                if (percentage >= 90) {
+                    title = "Pronoun Pro!";
+                    message = "Excellent! You've mastered reflexive and intensive pronouns!";
+                    detail = "You clearly understand the difference between reflexive pronouns (necessary) and intensive pronouns (emphasis).";
+                } else if (percentage >= 70) {
+                    title = "Great Job!";
+                    message = "You have a solid understanding of reflexive and intensive pronouns.";
+                    detail = "You know most of the rules for using -self and -selves pronouns correctly.";
+                } else if (percentage >= 50) {
+                    title = "Good Effort!";
+                    message = "You have a basic understanding of reflexive and intensive pronouns.";
+                    detail = "Keep practicing to distinguish between when pronouns are necessary (reflexive) and when they add emphasis (intensive).";
+                } else {
+                    title = "Keep Practicing!";
+                    message = "You need more practice with reflexive and intensive pronouns.";
+                    detail = "Remember: Reflexive pronouns reflect back to the subject and are necessary. Intensive pronouns add emphasis and can be removed.";
+                }
+                
+                resultTitleElement.textContent = title;
+                resultMessageElement.textContent = message;
+                resultDetailElement.textContent = detail;
+                
+                // Show result screen and hide quiz area
+                quizArea.style.display = 'none';
+                resultScreen.style.display = 'block';
+            }
+            
+            // Event listeners
+            prevBtn.addEventListener('click', prevQuestion);
+            nextBtn.addEventListener('click', nextQuestion);
+            submitBtn.addEventListener('click', submitQuiz);
+            hintBtn.addEventListener('click', showHint);
+            restartBtn.addEventListener('click', initQuiz);
+            
+            // Initialize the quiz
+            initQuiz();
+        });
+    </script>
+</body>
+</html>

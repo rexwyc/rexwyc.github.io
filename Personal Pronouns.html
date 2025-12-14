@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Pronouns Quiz - 20 Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(to right, #5c6bc0, #7986cb);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(92, 107, 192, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" opacity="0.1"><path d="M0,0 L100,0 L100,100 Z" fill="white"/></svg>');
+            background-size: cover;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #5c6bc0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .progress-container {
+            margin-bottom: 25px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #5c6bc0, #7986cb);
+            width: 5%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background-color: #5c6bc0;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .sentence-example {
+            background-color: #f5f7ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 5px solid #7986cb;
+            font-size: 1.3rem;
+            font-style: italic;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            padding: 18px 20px;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .option:hover {
+            background-color: #e8eaf6;
+            border-color: #c5cae9;
+            transform: translateY(-3px);
+        }
+        
+        .option.selected {
+            background-color: #e8eaf6;
+            border-color: #5c6bc0;
+            box-shadow: 0 5px 10px rgba(92, 107, 192, 0.2);
+        }
+        
+        .option.correct {
+            background-color: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        
+        .option.incorrect {
+            background-color: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+        
+        .option-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .selected .option-letter {
+            background-color: #5c6bc0;
+            color: white;
+        }
+        
+        .correct .option-letter {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .incorrect .option-letter {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        #prevBtn, #nextBtn, #submitBtn {
+            background-color: #5c6bc0;
+            color: white;
+        }
+        
+        #prevBtn:hover, #nextBtn:hover, #submitBtn:hover {
+            background-color: #3f51b5;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(63, 81, 181, 0.2);
+        }
+        
+        #prevBtn:disabled, #nextBtn:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #hintBtn {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        #hintBtn:hover {
+            background-color: #f57c00;
+            transform: translateY(-3px);
+        }
+        
+        .explanation {
+            background-color: #e8eaf6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            display: none;
+            border-left: 5px solid #5c6bc0;
+        }
+        
+        .explanation h3 {
+            color: #5c6bc0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+            margin-bottom: 30px;
+        }
+        
+        .result-icon {
+            font-size: 5rem;
+            color: #5c6bc0;
+            margin-bottom: 20px;
+        }
+        
+        .result-title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .result-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #5c6bc0;
+            margin: 20px 0;
+        }
+        
+        .result-message {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(to right, #5c6bc0, #7986cb);
+            color: white;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(92, 107, 192, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .question-text {
+                font-size: 1.3rem;
+            }
+            
+            .sentence-example {
+                font-size: 1.1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-question-circle"></i> Personal Pronouns Quiz</h1>
+            <p class="subtitle">Test your knowledge of subject and object pronouns with 20 challenging questions</p>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="currentQuestion">1</div>
+                <div class="stat-label">Current Question</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correctCount">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="incorrectCount">0</div>
+                <div class="stat-label">Incorrect</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progress</span>
+                <span id="progressPercent">5%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="question-number">Question <span id="questionNum">1</span> of 20</div>
+            <h2 class="question-text" id="questionText">Select the correct pronoun to complete the sentence:</h2>
+            
+            <div class="sentence-example" id="sentenceExample">
+                ___ am going to the store.
+            </div>
+            
+            <div class="options-container" id="optionsContainer">
+                <!-- Options will be generated here by JavaScript -->
+            </div>
+            
+            <div class="explanation" id="explanation">
+                <h3><i class="fas fa-lightbulb"></i> Explanation</h3>
+                <p id="explanationText">This is where the explanation will appear after you answer the question.</p>
+            </div>
+            
+            <div class="controls">
+                <button id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                
+                <button id="hintBtn">
+                    <i class="fas fa-lightbulb"></i> Show Hint
+                </button>
+                
+                <button id="nextBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                
+                <button id="submitBtn" style="display: none;">
+                    <i class="fas fa-paper-plane"></i> Submit Quiz
+                </button>
+            </div>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="result-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2 class="result-title" id="resultTitle">Quiz Completed!</h2>
+            <div class="result-score" id="resultScore">0/20</div>
+            <p class="result-message" id="resultMessage">You answered 0 questions correctly out of 20.</p>
+            <p class="result-message" id="resultDetail">Here's a breakdown of your performance:</p>
+            
+            <div style="margin: 30px 0;">
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #4caf50;" id="resultCorrect">0</div>
+                        <div style="color: #666;">Correct</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #f44336;" id="resultIncorrect">0</div>
+                        <div style="color: #666;">Incorrect</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #ff9800;" id="resultPercentage">0%</div>
+                        <div style="color: #666;">Score</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="restart-btn" id="restartBtn">
+                <i class="fas fa-redo"></i> Take Quiz Again
+            </button>
+        </div>
+        
+        <footer>
+            <p>Personal Pronouns Quiz Project | Created with HTML, CSS & JavaScript</p>
+            <p>Test your understanding of subject pronouns (I, you, he, she, it, we, they) and object pronouns (me, you, him, her, it, us, them)</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quiz questions database
+            const questions = [
+                {
+                    question: "Select the correct subject pronoun to complete the sentence:",
+                    sentence: "___ am going to the store.",
+                    options: ["Me", "I", "Him", "Her"],
+                    correctAnswer: 1,
+                    explanation: "'I' is the correct subject pronoun because it's the subject performing the action (going to the store). 'Me' is an object pronoun."
+                },
+                {
+                    question: "Choose the correct object pronoun for this sentence:",
+                    sentence: "She gave the book to ___.",
+                    options: ["I", "me", "he", "they"],
+                    correctAnswer: 1,
+                    explanation: "'Me' is the correct object pronoun because it's receiving the action (the book is given to me). 'I' is a subject pronoun."
+                },
+                {
+                    question: "Which pronoun correctly completes this sentence?",
+                    sentence: "Sarah and ___ went to the movies.",
+                    options: ["Me", "I", "Him", "Her"],
+                    correctAnswer: 1,
+                    explanation: "When the pronoun is part of a compound subject (with 'Sarah'), use the subject pronoun 'I'. 'Me and Sarah' is incorrect."
+                },
+                {
+                    question: "Select the correct object pronoun:",
+                    sentence: "The teacher asked ___ a question.",
+                    options: ["he", "she", "him", "I"],
+                    correctAnswer: 2,
+                    explanation: "'Him' is the correct object pronoun because it's receiving the action (being asked a question). 'He' is a subject pronoun."
+                },
+                {
+                    question: "Which subject pronoun should replace 'John'?",
+                    sentence: "John is my brother. ___ is 10 years old.",
+                    options: ["He", "Him", "His", "She"],
+                    correctAnswer: 0,
+                    explanation: "'He' is the correct subject pronoun to replace the male subject 'John'."
+                },
+                {
+                    question: "Choose the correct object pronoun:",
+                    sentence: "I saw ___ at the park yesterday.",
+                    options: ["they", "them", "their", "we"],
+                    correctAnswer: 1,
+                    explanation: "'Them' is the correct object pronoun because it's receiving the action (being seen). 'They' is a subject pronoun."
+                },
+                {
+                    question: "Which pronoun correctly completes this sentence?",
+                    sentence: "Can you help ___ with this homework?",
+                    options: ["I", "me", "he", "she"],
+                    correctAnswer: 1,
+                    explanation: "'Me' is the correct object pronoun because it's receiving the action (being helped)."
+                },
+                {
+                    question: "Select the correct subject pronoun:",
+                    sentence: "___ are my best friends.",
+                    options: ["Them", "They", "Us", "We"],
+                    correctAnswer: 1,
+                    explanation: "'They' is the correct subject pronoun because it's the subject of the sentence (the friends)."
+                },
+                {
+                    question: "Which object pronoun should replace 'my sister'?",
+                    sentence: "I called my sister. I called ___.",
+                    options: ["she", "her", "hers", "him"],
+                    correctAnswer: 1,
+                    explanation: "'Her' is the correct object pronoun to replace 'my sister' (female object)."
+                },
+                {
+                    question: "Choose the correct pronoun for this sentence:",
+                    sentence: "Between you and ___, I think we should go.",
+                    options: ["I", "me", "he", "she"],
+                    correctAnswer: 1,
+                    explanation: "After a preposition ('between'), use the object pronoun 'me'. 'Between you and I' is a common mistake."
+                },
+                {
+                    question: "Which subject pronoun correctly completes this sentence?",
+                    sentence: "___ is raining outside.",
+                    options: ["He", "She", "It", "They"],
+                    correctAnswer: 2,
+                    explanation: "'It' is used for weather, time, and impersonal subjects."
+                },
+                {
+                    question: "Select the correct object pronoun:",
+                    sentence: "Please give the letter to ___.",
+                    options: ["they", "them", "their", "theirs"],
+                    correctAnswer: 1,
+                    explanation: "'Them' is the correct object pronoun because it's receiving the action (the letter is given to them)."
+                },
+                {
+                    question: "Which pronoun should be used in this sentence?",
+                    sentence: "My friends and ___ are going camping.",
+                    options: ["me", "I", "us", "we"],
+                    correctAnswer: 1,
+                    explanation: "When the pronoun is part of a compound subject (with 'my friends'), use the subject pronoun 'I'."
+                },
+                {
+                    question: "Choose the correct object pronoun to replace 'the boys':",
+                    sentence: "I invited the boys. I invited ___.",
+                    options: ["they", "them", "their", "theirs"],
+                    correctAnswer: 1,
+                    explanation: "'Them' is the correct object pronoun to replace 'the boys' (plural object)."
+                },
+                {
+                    question: "Which subject pronoun is correct?",
+                    sentence: "___ love to play soccer on weekends.",
+                    options: ["Us", "We", "Our", "Ours"],
+                    correctAnswer: 1,
+                    explanation: "'We' is the correct subject pronoun because it's the subject performing the action (love to play)."
+                },
+                {
+                    question: "Select the correct object pronoun:",
+                    sentence: "She told ___ a secret.",
+                    options: ["I", "me", "my", "mine"],
+                    correctAnswer: 1,
+                    explanation: "'Me' is the correct object pronoun because it's receiving the action (being told a secret)."
+                },
+                {
+                    question: "Which pronoun correctly completes this sentence?",
+                    sentence: "Is this book for ___?",
+                    options: ["I", "me", "my", "mine"],
+                    correctAnswer: 1,
+                    explanation: "After a preposition ('for'), use the object pronoun 'me'."
+                },
+                {
+                    question: "Choose the correct subject pronoun:",
+                    sentence: "___ works at a hospital.",
+                    options: ["Him", "He", "His", "Her"],
+                    correctAnswer: 1,
+                    explanation: "'He' is the correct subject pronoun because it's the subject performing the action (works)."
+                },
+                {
+                    question: "Which object pronoun should be used?",
+                    sentence: "The cat followed ___ home.",
+                    options: ["we", "us", "our", "ours"],
+                    correctAnswer: 1,
+                    explanation: "'Us' is the correct object pronoun because it's receiving the action (being followed)."
+                },
+                {
+                    question: "Select the correct pronoun for the final question:",
+                    sentence: "Between ___ and me, there are no secrets.",
+                    options: ["she", "her", "hers", "him"],
+                    correctAnswer: 1,
+                    explanation: "After a preposition ('between'), use the object pronoun 'her'. 'Between she and me' is incorrect."
+                }
+            ];
+            
+            // DOM elements
+            const quizContainer = document.getElementById('quizContainer');
+            const resultContainer = document.getElementById('resultContainer');
+            const questionNumElement = document.getElementById('questionNum');
+            const questionTextElement = document.getElementById('questionText');
+            const sentenceExampleElement = document.getElementById('sentenceExample');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const explanationElement = document.getElementById('explanation');
+            const explanationTextElement = document.getElementById('explanationText');
+            
+            // Stats elements
+            const currentQuestionElement = document.getElementById('currentQuestion');
+            const scoreElement = document.getElementById('score');
+            const correctCountElement = document.getElementById('correctCount');
+            const incorrectCountElement = document.getElementById('incorrectCount');
+            const progressFillElement = document.getElementById('progressFill');
+            const progressPercentElement = document.getElementById('progressPercent');
+            
+            // Button elements
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const hintBtn = document.getElementById('hintBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            
+            // Result elements
+            const resultTitleElement = document.getElementById('resultTitle');
+            const resultScoreElement = document.getElementById('resultScore');
+            const resultMessageElement = document.getElementById('resultMessage');
+            const resultDetailElement = document.getElementById('resultDetail');
+            const resultCorrectElement = document.getElementById('resultCorrect');
+            const resultIncorrectElement = document.getElementById('resultIncorrect');
+            const resultPercentageElement = document.getElementById('resultPercentage');
+            
+            // Quiz state
+            let currentQuestionIndex = 0;
+            let userAnswers = new Array(questions.length).fill(null);
+            let score = 0;
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            // Initialize the quiz
+            function initQuiz() {
+                currentQuestionIndex = 0;
+                userAnswers.fill(null);
+                score = 0;
+                correctCount = 0;
+                incorrectCount = 0;
+                updateStats();
+                showQuestion(currentQuestionIndex);
+                quizContainer.style.display = 'block';
+                resultContainer.style.display = 'none';
+                updateButtons();
+            }
+            
+            // Show a specific question
+            function showQuestion(index) {
+                const question = questions[index];
+                
+                // Update question number and text
+                questionNumElement.textContent = index + 1;
+                currentQuestionElement.textContent = index + 1;
+                questionTextElement.textContent = question.question;
+                sentenceExampleElement.textContent = question.sentence;
+                
+                // Clear previous options
+                optionsContainer.innerHTML = '';
+                
+                // Create option elements
+                const optionLetters = ['A', 'B', 'C', 'D'];
+                
+                question.options.forEach((option, optionIndex) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    
+                    // Check if this option was previously selected
+                    if (userAnswers[index] === optionIndex) {
+                        optionElement.classList.add('selected');
+                        
+                        // If the question was answered, show if it was correct/incorrect
+                        if (userAnswers[index] !== null) {
+                            if (optionIndex === question.correctAnswer) {
+                                optionElement.classList.add('correct');
+                            } else {
+                                optionElement.classList.add('incorrect');
+                            }
+                        }
+                    }
+                    
+                    optionElement.innerHTML = `
+                        <div class="option-letter">${optionLetters[optionIndex]}</div>
+                        <div class="option-text">${option}</div>
+                    `;
+                    
+                    // Only allow clicking if not already answered
+                    if (userAnswers[index] === null) {
+                        optionElement.addEventListener('click', () => selectOption(optionIndex));
+                    }
+                    
+                    optionsContainer.appendChild(optionElement);
+                });
+                
+                // Show/hide explanation based on whether the question was answered
+                if (userAnswers[index] !== null) {
+                    explanationTextElement.textContent = question.explanation;
+                    explanationElement.style.display = 'block';
+                } else {
+                    explanationElement.style.display = 'none';
+                }
+                
+                // Update progress
+                updateProgress();
+            }
+            
+            // Handle option selection
+            function selectOption(optionIndex) {
+                // Remove selected class from all options
+                document.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                const selectedOption = document.querySelectorAll('.option')[optionIndex];
+                selectedOption.classList.add('selected');
+                
+                // Save the user's answer
+                userAnswers[currentQuestionIndex] = optionIndex;
+                
+                // Check if answer is correct
+                const question = questions[currentQuestionIndex];
+                const isCorrect = optionIndex === question.correctAnswer;
+                
+                // Update score and counts
+                if (isCorrect) {
+                    selectedOption.classList.add('correct');
+                    score += 5;
+                    correctCount++;
+                } else {
+                    selectedOption.classList.add('incorrect');
+                    incorrectCount++;
+                    
+                    // Also show the correct answer
+                    const correctOption = document.querySelectorAll('.option')[question.correctAnswer];
+                    correctOption.classList.add('correct');
+                }
+                
+                // Update stats
+                updateStats();
+                
+                // Show explanation
+                explanationTextElement.textContent = question.explanation;
+                explanationElement.style.display = 'block';
+                
+                // Update buttons
+                updateButtons();
+                
+                // Disable further clicks on options
+                document.querySelectorAll('.option').forEach(option => {
+                    option.style.pointerEvents = 'none';
+                });
+            }
+            
+            // Update stats display
+            function updateStats() {
+                scoreElement.textContent = score;
+                correctCountElement.textContent = correctCount;
+                incorrectCountElement.textContent = incorrectCount;
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+                progressFillElement.style.width = `${progress}%`;
+                progressPercentElement.textContent = `${Math.round(progress)}%`;
+            }
+            
+            // Update button states
+            function updateButtons() {
+                // Previous button
+                prevBtn.disabled = currentQuestionIndex === 0;
+                
+                // Next/Submit button
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'flex';
+                } else {
+                    nextBtn.style.display = 'flex';
+                    submitBtn.style.display = 'none';
+                }
+                
+                // Disable next/submit if current question not answered
+                const isCurrentAnswered = userAnswers[currentQuestionIndex] !== null;
+                nextBtn.disabled = !isCurrentAnswered;
+                submitBtn.disabled = !isCurrentAnswered;
+            }
+            
+            // Show next question
+            function nextQuestion() {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion(currentQuestionIndex);
+                    updateButtons();
+                }
+            }
+            
+            // Show previous question
+            function prevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion(currentQuestionIndex);
+                    updateButtons();
+                }
+            }
+            
+            // Show hint
+            function showHint() {
+                const question = questions[currentQuestionIndex];
+                alert(`Hint: This question is about ${question.correctAnswer <= 1 ? 'subject' : 'object'} pronouns.`);
+            }
+            
+            // Submit quiz and show results
+            function submitQuiz() {
+                // Calculate final score
+                const totalQuestions = questions.length;
+                const percentage = Math.round((correctCount / totalQuestions) * 100);
+                
+                // Update result display
+                resultScoreElement.textContent = `${score}/${totalQuestions * 5}`;
+                resultCorrectElement.textContent = correctCount;
+                resultIncorrectElement.textContent = incorrectCount;
+                resultPercentageElement.textContent = `${percentage}%`;
+                
+                // Set result message based on score
+                let title, message, detail;
+                
+                if (percentage >= 90) {
+                    title = "Excellent!";
+                    message = "You have an excellent understanding of personal pronouns!";
+                    detail = "You're a pronoun expert!";
+                } else if (percentage >= 70) {
+                    title = "Great Job!";
+                    message = "You have a good understanding of personal pronouns.";
+                    detail = "You know most of the rules for using subject and object pronouns.";
+                } else if (percentage >= 50) {
+                    title = "Good Effort!";
+                    message = "You have a basic understanding of personal pronouns.";
+                    detail = "Keep practicing to improve your skills with pronouns.";
+                } else {
+                    title = "Keep Practicing!";
+                    message = "You need more practice with personal pronouns.";
+                    detail = "Review the explanations for each question to learn more.";
+                }
+                
+                resultTitleElement.textContent = title;
+                resultMessageElement.textContent = message;
+                resultDetailElement.textContent = detail;
+                
+                // Show result container and hide quiz container
+                quizContainer.style.display = 'none';
+                resultContainer.style.display = 'block';
+            }
+            
+            // Event listeners
+            prevBtn.addEventListener('click', prevQuestion);
+            nextBtn.addEventListener('click', nextQuestion);
+            submitBtn.addEventListener('click', submitQuiz);
+            hintBtn.addEventListener('click', showHint);
+            restartBtn.addEventListener('click', initQuiz);
+            
+            // Initialize the quiz
+            initQuiz();
+        });
+    </script>
+</body>
+</html>
