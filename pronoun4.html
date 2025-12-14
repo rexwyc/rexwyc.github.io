@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Pronouns Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4a6fa5, #166088);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .nav-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .nav-card {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border-left: 4px solid #166088;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left-color: #4a6fa5;
+        }
+        
+        .nav-card a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+        
+        .nav-card i {
+            font-size: 2rem;
+            color: #166088;
+            margin-bottom: 10px;
+        }
+        
+        .nav-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .nav-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .content-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section-header i {
+            font-size: 1.8rem;
+            color: #166088;
+            margin-right: 15px;
+            background-color: #f0f7ff;
+            padding: 10px;
+            border-radius: 50%;
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: #333;
+        }
+        
+        .definition {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4a6fa5;
+        }
+        
+        .definition h3 {
+            color: #166088;
+            margin-bottom: 10px;
+        }
+        
+        .examples-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .examples-table th {
+            background-color: #166088;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .examples-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .examples-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .examples-table tr:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #856404;
+        }
+        
+        .usage-notes {
+            background-color: #e7f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+        
+        .usage-notes h3 {
+            color: #166088;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+        }
+        
+        .quick-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-nav button {
+            background-color: #e9ecef;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .quick-nav button:hover {
+            background-color: #166088;
+            color: white;
+        }
+        
+        .home-btn {
+            display: block;
+            margin: 30px auto 0;
+            background-color: #166088;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .home-btn:hover {
+            background-color: #4a6fa5;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> English Pronouns Guide</h1>
+            <p>A comprehensive resource for understanding different types of pronouns in English grammar. Click on any pronoun type below to learn more.</p>
+        </header>
+        
+        <div class="nav-container">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Explore Pronoun Types</h2>
+            <div class="nav-grid">
+                <div class="nav-card" onclick="showSection('personal')">
+                    <a href="#">
+                        <i class="fas fa-user"></i>
+                        <h3>Personal Pronouns</h3>
+                        <p>I, you, he, she, it, we, they</p>
+                    </a>
+                </div>
+                <div class="nav-card" onclick="showSection('possessive')">
+                    <a href="#">
+                        <i class="fas fa-crown"></i>
+                        <h3>Possessive Pronouns</h3>
+                        <p>mine, yours, his, hers, ours, theirs</p>
+                    </a>
+                </div>
+                <div class="nav-card" onclick="showSection('reflexive')">
+                    <a href="#">
+                        <i class="fas fa-redo"></i>
+                        <h3>Reflexive & Intensive Pronouns</h3>
+                        <p>myself, yourself, himself, etc.</p>
+                    </a>
+                </div>
+                <div class="nav-card" onclick="showSection('demonstrative')">
+                    <a href="#">
+                        <i class="fas fa-hand-point-right"></i>
+                        <h3>Demonstrative Pronouns</h3>
+                        <p>this, that, these, those</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Personal Pronouns Section -->
+        <div id="personal" class="content-section active">
+            <div class="section-header">
+                <i class="fas fa-user"></i>
+                <h2>Personal Pronouns</h2>
+            </div>
+            
+            <div class="definition">
+                <h3>What are Personal Pronouns?</h3>
+                <p>Personal pronouns are words that replace specific nouns representing people, places, or things. They change form based on their function in a sentence (subject or object) and based on person (first, second, or third person).</p>
+            </div>
+            
+            <h3>Personal Pronoun Chart</h3>
+            <table class="examples-table">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Subject Pronoun</th>
+                        <th>Object Pronoun</th>
+                        <th>Example Sentences</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>First Person Singular</td>
+                        <td><span class="highlight">I</span></td>
+                        <td><span class="highlight">me</span></td>
+                        <td><span class="highlight">I</span> like coffee. Please give it to <span class="highlight">me</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Second Person Singular</td>
+                        <td><span class="highlight">you</span></td>
+                        <td><span class="highlight">you</span></td>
+                        <td><span class="highlight">You</span> are smart. I will call <span class="highlight">you</span> later.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Singular (Male)</td>
+                        <td><span class="highlight">he</span></td>
+                        <td><span class="highlight">him</span></td>
+                        <td><span class="highlight">He</span> is tall. I saw <span class="highlight">him</span> yesterday.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Singular (Female)</td>
+                        <td><span class="highlight">she</span></td>
+                        <td><span class="highlight">her</span></td>
+                        <td><span class="highlight">She</span> is a doctor. I talked to <span class="highlight">her</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Singular (Neutral)</td>
+                        <td><span class="highlight">it</span></td>
+                        <td><span class="highlight">it</span></td>
+                        <td><span class="highlight">It</span> is raining. I can't find <span class="highlight">it</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>First Person Plural</td>
+                        <td><span class="highlight">we</span></td>
+                        <td><span class="highlight">us</span></td>
+                        <td><span class="highlight">We</span> are friends. They invited <span class="highlight">us</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Second Person Plural</td>
+                        <td><span class="highlight">you</span></td>
+                        <td><span class="highlight">you</span></td>
+                        <td><span class="highlight">You</span> all should come. I made this for <span class="highlight">you</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Plural</td>
+                        <td><span class="highlight">they</span></td>
+                        <td><span class="highlight">them</span></td>
+                        <td><span class="highlight">They</span> are students. I know <span class="highlight">them</span>.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="usage-notes">
+                <h3>Usage Notes</h3>
+                <ul>
+                    <li><strong>Subject pronouns</strong> are used when the pronoun is the subject of the verb (performs the action).</li>
+                    <li><strong>Object pronouns</strong> are used when the pronoun is the object of the verb (receives the action).</li>
+                    <li>The pronoun "they" can also be used as a singular pronoun for a person whose gender is unknown or non-binary.</li>
+                    <li>Always match the pronoun with its antecedent (the noun it replaces) in number and gender.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Possessive Pronouns Section -->
+        <div id="possessive" class="content-section">
+            <div class="section-header">
+                <i class="fas fa-crown"></i>
+                <h2>Possessive Pronouns</h2>
+            </div>
+            
+            <div class="definition">
+                <h3>What are Possessive Pronouns?</h3>
+                <p>Possessive pronouns show ownership or possession without needing an apostrophe. They replace possessive noun phrases to avoid repetition.</p>
+            </div>
+            
+            <h3>Possessive Pronoun Chart</h3>
+            <table class="examples-table">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Possessive Adjective</th>
+                        <th>Possessive Pronoun</th>
+                        <th>Example Sentences</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>First Person Singular</td>
+                        <td><span class="highlight">my</span></td>
+                        <td><span class="highlight">mine</span></td>
+                        <td>This is <span class="highlight">my</span> book. This book is <span class="highlight">mine</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Second Person Singular</td>
+                        <td><span class="highlight">your</span></td>
+                        <td><span class="highlight">yours</span></td>
+                        <td>Is this <span class="highlight">your</span> pen? This pen is <span class="highlight">yours</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Singular (Male)</td>
+                        <td><span class="highlight">his</span></td>
+                        <td><span class="highlight">his</span></td>
+                        <td>That is <span class="highlight">his</span> car. That car is <span class="highlight">his</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Singular (Female)</td>
+                        <td><span class="highlight">her</span></td>
+                        <td><span class="highlight">hers</span></td>
+                        <td>This is <span class="highlight">her</span> bag. This bag is <span class="highlight">hers</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Singular (Neutral)</td>
+                        <td><span class="highlight">its</span></td>
+                        <td><span class="highlight">its</span> (rarely used)</td>
+                        <td>The cat licked <span class="highlight">its</span> paw.</td>
+                    </tr>
+                    <tr>
+                        <td>First Person Plural</td>
+                        <td><span class="highlight">our</span></td>
+                        <td><span class="highlight">ours</span></td>
+                        <td>This is <span class="highlight">our</span> house. This house is <span class="highlight">ours</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Second Person Plural</td>
+                        <td><span class="highlight">your</span></td>
+                        <td><span class="highlight">yours</span></td>
+                        <td>Are these <span class="highlight">your</span> keys? These keys are <span class="highlight">yours</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person Plural</td>
+                        <td><span class="highlight">their</span></td>
+                        <td><span class="highlight">theirs</span></td>
+                        <td>That is <span class="highlight">their</span> dog. That dog is <span class="highlight">theirs</span>.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="usage-notes">
+                <h3>Key Differences</h3>
+                <ul>
+                    <li><strong>Possessive adjectives</strong> always come before a noun (<span class="highlight">my</span> book).</li>
+                    <li><strong>Possessive pronouns</strong> stand alone and replace the noun (This book is <span class="highlight">mine</span>).</li>
+                    <li>Unlike possessive nouns (John's car), possessive pronouns don't use apostrophes.</li>
+                    <li>Possessive pronouns help avoid repetition: "Is this your coat?" "Yes, it's mine." (instead of "Yes, it's my coat.")</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Reflexive & Intensive Pronouns Section -->
+        <div id="reflexive" class="content-section">
+            <div class="section-header">
+                <i class="fas fa-redo"></i>
+                <h2>Reflexive & Intensive Pronouns</h2>
+            </div>
+            
+            <div class="definition">
+                <h3>What are Reflexive and Intensive Pronouns?</h3>
+                <p>Reflexive and intensive pronouns are formed by adding "-self" (singular) or "-selves" (plural) to certain personal pronouns. They look identical but serve different grammatical functions.</p>
+            </div>
+            
+            <h3>Reflexive & Intensive Pronoun Forms</h3>
+            <table class="examples-table">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Singular</th>
+                        <th>Plural</th>
+                        <th>Example Sentences</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>First Person</td>
+                        <td><span class="highlight">myself</span></td>
+                        <td><span class="highlight">ourselves</span></td>
+                        <td>I bought <span class="highlight">myself</span> a gift. We enjoyed <span class="highlight">ourselves</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Second Person</td>
+                        <td><span class="highlight">yourself</span></td>
+                        <td><span class="highlight">yourselves</span></td>
+                        <td>Did you hurt <span class="highlight">yourself</span>? You should be proud of <span class="highlight">yourselves</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person (Male)</td>
+                        <td><span class="highlight">himself</span></td>
+                        <td><span class="highlight">themselves</span></td>
+                        <td>He taught <span class="highlight">himself</span> to play guitar. They prepared <span class="highlight">themselves</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person (Female)</td>
+                        <td><span class="highlight">herself</span></td>
+                        <td><span class="highlight">themselves</span></td>
+                        <td>She made <span class="highlight">herself</span> breakfast. The team congratulated <span class="highlight">themselves</span>.</td>
+                    </tr>
+                    <tr>
+                        <td>Third Person (Neutral)</td>
+                        <td><span class="highlight">itself</span></td>
+                        <td><span class="highlight">themselves</span></td>
+                        <td>The cat cleaned <span class="highlight">itself</span>. The doors opened by <span class="highlight">themselves</span>.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="usage-notes">
+                <h3>Reflexive vs. Intensive Pronouns</h3>
+                <ul>
+                    <li><strong>Reflexive pronouns</strong> refer back to the subject and are necessary to the sentence meaning: "She cut <span class="highlight">herself</span>."</li>
+                    <li><strong>Intensive pronouns</strong> emphasize a noun or pronoun and can be removed without changing the sentence's core meaning: "I <span class="highlight">myself</span> saw the accident."</li>
+                    <li>Reflexive pronouns are often used with verbs that describe actions people do to themselves (wash, dress, prepare, etc.).</li>
+                    <li>Never use reflexive pronouns as subjects: Incorrect: "John and myself went shopping." Correct: "John and I went shopping."</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Demonstrative Pronouns Section -->
+        <div id="demonstrative" class="content-section">
+            <div class="section-header">
+                <i class="fas fa-hand-point-right"></i>
+                <h2>Demonstrative Pronouns</h2>
+            </div>
+            
+            <div class="definition">
+                <h3>What are Demonstrative Pronouns?</h3>
+                <p>Demonstrative pronouns point to specific things or people. They indicate whether the referent is near or far in distance or time, and whether it's singular or plural.</p>
+            </div>
+            
+            <h3>Demonstrative Pronoun Chart</h3>
+            <table class="examples-table">
+                <thead>
+                    <tr>
+                        <th>Pronoun</th>
+                        <th>Number</th>
+                        <th>Distance</th>
+                        <th>Example Sentences</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">this</span></td>
+                        <td>Singular</td>
+                        <td>Near (in space or time)</td>
+                        <td><span class="highlight">This</span> is my favorite book. (book is near me)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">that</span></td>
+                        <td>Singular</td>
+                        <td>Far (in space or time)</td>
+                        <td><span class="highlight">That</span> was a great movie. (movie watched earlier)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">these</span></td>
+                        <td>Plural</td>
+                        <td>Near (in space or time)</td>
+                        <td><span class="highlight">These</span> are delicious cookies. (cookies on the table)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">those</span></td>
+                        <td>Plural</td>
+                        <td>Far (in space or time)</td>
+                        <td><span class="highlight">Those</span> were the best years of my life. (years in the past)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 style="margin-top: 30px;">Demonstrative Pronouns vs. Demonstrative Adjectives</h3>
+            <table class="examples-table">
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Example</th>
+                        <th>Explanation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Demonstrative Pronoun</strong></td>
+                        <td><span class="highlight">This</span> is expensive.</td>
+                        <td>"This" stands alone as the subject of the sentence.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Demonstrative Adjective</strong></td>
+                        <td><span class="highlight">This</span> car is expensive.</td>
+                        <td>"This" modifies the noun "car" and comes before it.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Demonstrative Pronoun</strong></td>
+                        <td>I want <span class="highlight">those</span>.</td>
+                        <td>"Those" stands alone as the object of the sentence.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Demonstrative Adjective</strong></td>
+                        <td>I want <span class="highlight">those</span> shoes.</td>
+                        <td>"Those" modifies the noun "shoes" and comes before it.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="usage-notes">
+                <h3>Usage Guidelines</h3>
+                <ul>
+                    <li>Use <span class="highlight">this</span> and <span class="highlight">these</span> for things that are physically close or happening now.</li>
+                    <li>Use <span class="highlight">that</span> and <span class="highlight">those</span> for things that are farther away or happened in the past.</li>
+                    <li>Demonstrative pronouns can refer to both concrete objects and abstract ideas: "<span class="highlight">This</span> is important."</li>
+                    <li>When introducing people, use demonstrative pronouns: "<span class="highlight">This</span> is my sister."</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="quick-nav">
+            <button onclick="showSection('personal')">Personal Pronouns</button>
+            <button onclick="showSection('possessive')">Possessive Pronouns</button>
+            <button onclick="showSection('reflexive')">Reflexive & Intensive</button>
+            <button onclick="showSection('demonstrative')">Demonstrative Pronouns</button>
+        </div>
+        
+        <button class="home-btn" onclick="showSection('personal')">
+            <i class="fas fa-home"></i> Back to Personal Pronouns
+        </button>
+        
+        <footer>
+            <p>English Pronouns Guide | Based on rexwyc.github.io content</p>
+            <p>Personal Pronouns • Possessive Pronouns • Reflexive & Intensive Pronouns • Demonstrative Pronouns</p>
+        </footer>
+    </div>
+
+    <script>
+        // Function to show the selected section and hide others
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show the selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Scroll to the top of the section
+            window.scrollTo({
+                top: 300,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Set the first section as active by default
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('personal');
+        });
+    </script>
+</body>
+</html>
