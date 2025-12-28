@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Interrogative Pronoun Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            color: #333;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 5px solid #6a11cb;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .instructions h2 {
+            color: #6a11cb;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions ul {
+            padding-left: 18px;
+        }
+        
+        .instructions li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        
+        .pronoun-guide {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .pronoun-card {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid #e9ecef;
+            flex: 1;
+            min-width: 110px;
+        }
+        
+        .pronoun-card h4 {
+            color: #6a11cb;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .pronoun-card p {
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        .quiz-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .question-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e9ecef;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #dee2e6;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #6a11cb;
+        }
+        
+        .score {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+        
+        .sentence {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 1.4;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 18px 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            background-color: white;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .option:active {
+            transform: scale(0.98);
+        }
+        
+        .option:hover {
+            border-color: #6a11cb;
+        }
+        
+        .option.selected {
+            background-color: #6a11cb;
+            color: white;
+            border-color: #6a11cb;
+        }
+        
+        .option.correct {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .option.wrong {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            line-height: 1.4;
+        }
+        
+        .feedback.correct {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+            border: 2px solid #2ecc71;
+            display: block;
+        }
+        
+        .feedback.wrong {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 12px;
+        }
+        
+        button {
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        button:active {
+            transform: scale(0.97);
+        }
+        
+        #hint-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        #hint-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        #next-btn {
+            background-color: #2575fc;
+            color: white;
+        }
+        
+        #next-btn:hover {
+            background-color: #1c65e0;
+        }
+        
+        #restart-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #restart-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #6a11cb;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+        
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        
+        .rules {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+        
+        .rules strong {
+            color: #6a11cb;
+        }
+        
+        footer {
+            margin-top: 15px;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .sentence {
+                font-size: 1.3rem;
+                padding: 12px;
+            }
+            
+            .option {
+                padding: 16px 8px;
+                font-size: 1.1rem;
+            }
+            
+            button {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .pronoun-card {
+                min-width: 90px;
+                padding: 10px;
+            }
+        }
+        
+        /* Landscape orientation */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .sentence {
+                min-height: 60px;
+                font-size: 1.3rem;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .options {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .option {
+                padding: 14px 8px;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #5a0db9 0%, #1c65e0 100%);
+            }
+            
+            .container {
+                background-color: #2d3436;
+                color: #f5f5f5;
+            }
+            
+            .pronoun-card {
+                background-color: #3c4245;
+                border-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .question-container {
+                background-color: #3c4245;
+                border-color: #4a5257;
+            }
+            
+            .sentence {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .option {
+                background-color: #3c4245;
+                color: #f5f5f5;
+                border-color: #4a5257;
+            }
+            
+            .instructions {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .stats {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .stat-label {
+                color: #bdc3c7;
+            }
+        }
+        
+        /* Animation for correct/wrong answers */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .option.correct {
+            animation: pulse 0.5s ease;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* Highlight for who vs whom explanation */
+        .who-vs-whom {
+            background-color: rgba(106, 17, 203, 0.1);
+            border-left: 4px solid #6a11cb;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .who-vs-whom h4 {
+            color: #6a11cb;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-question-circle"></i> Interrogative Pronouns</h1>
+            <p class="subtitle">Test your knowledge of who, whom, what, and which</p>
+        </header>
+        
+        <div class="content">
+            <div class="instructions">
+                <h2><i class="fas fa-info-circle"></i> How to Play</h2>
+                <ul>
+                    <li>Tap the correct pronoun to complete each sentence</li>
+                    <li>No time limit - learn at your own pace</li>
+                    <li>20 questions then restart with new ones</li>
+                    <li>Use hints if you need help</li>
+                </ul>
+            </div>
+            
+            <div class="pronoun-guide">
+                <div class="pronoun-card">
+                    <h4>Who</h4>
+                    <p>Subject of verb</p>
+                    <p>"Who did it?"</p>
+                </div>
+                <div class="pronoun-card">
+                    <h4>Whom</h4>
+                    <p>Object of verb/preposition</p>
+                    <p>"To whom?"</p>
+                </div>
+                <div class="pronoun-card">
+                    <h4>What</h4>
+                    <p>Things, actions, ideas</p>
+                    <p>"What is that?"</p>
+                </div>
+                <div class="pronoun-card">
+                    <h4>Which</h4>
+                    <p>Choices between options</p>
+                    <p>"Which one?"</p>
+                </div>
+            </div>
+            
+            <div class="who-vs-whom">
+                <h4><i class="fas fa-lightbulb"></i> Who vs Whom Tip</h4>
+                <p>Use <strong>who</strong> when referring to the subject (doing the action).<br>
+                Use <strong>whom</strong> when referring to the object (receiving the action).<br>
+                <em>Try answering with "he" (who) or "him" (whom) to test.</em></p>
+            </div>
+            
+            <div class="quiz-area">
+                <div class="question-container">
+                    <div class="question-header">
+                        <div class="question-number">Q: <span id="current-question">1</span>/20</div>
+                        <div class="score">Score: <span id="score">0</span></div>
+                    </div>
+                    
+                    <div class="streak-counter">
+                        <i class="fas fa-fire"></i>
+                        <span id="streak">0</span> Streak
+                    </div>
+                    
+                    <div class="sentence" id="sentence">Loading question...</div>
+                    
+                    <div class="options">
+                        <div class="option" data-value="who">who</div>
+                        <div class="option" data-value="whom">whom</div>
+                        <div class="option" data-value="what">what</div>
+                        <div class="option" data-value="which">which</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback"></div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <button id="hint-btn">
+                                <i class="fas fa-lightbulb"></i> Hint
+                            </button>
+                            <button id="restart-btn">
+                                <i class="fas fa-redo"></i> Restart
+                            </button>
+                        </div>
+                        <button id="next-btn" disabled>
+                            Next Question <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="correct-answers">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="questions-answered">0</div>
+                        <div class="stat-label">Answered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                </div>
+                
+                <div class="rules">
+                    <p><strong>Remember:</strong> Use "who" for subjects, "whom" for objects, "what" for things/ideas, "which" for choices between options.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Interrogative Pronoun Quiz &bull; No time limit &bull; Learn at your own pace!</p>
+    </footer>
+
+    <script>
+        // Quiz data with who, whom, what, which
+        const quizData = [
+            { 
+                sentence: "______ is going to the party tonight?", 
+                answer: "who", 
+                hint: "Subject of the sentence - doing the action",
+                explanation: "Use 'who' when referring to the subject of a verb (the person doing the action)."
+            },
+            { 
+                sentence: "To ______ should I address this letter?", 
+                answer: "whom", 
+                hint: "Object of the preposition 'to'",
+                explanation: "Use 'whom' when it's the object of a preposition (like 'to')."
+            },
+            { 
+                sentence: "______ time does the movie start?", 
+                answer: "what", 
+                hint: "Asking about information",
+                explanation: "Use 'what' when asking for specific information like time."
+            },
+            { 
+                sentence: "______ of these books have you read?", 
+                answer: "which", 
+                hint: "Choosing among specific options",
+                explanation: "Use 'which' when selecting from a specific set of options."
+            },
+            { 
+                sentence: "______ did you invite to the wedding?", 
+                answer: "whom", 
+                hint: "Object of the verb 'invite'",
+                explanation: "Use 'whom' when it's the object of a verb (receiving the action)."
+            },
+            { 
+                sentence: "______ is your favorite singer?", 
+                answer: "who", 
+                hint: "Subject complement",
+                explanation: "Use 'who' when it follows a linking verb like 'is' and refers to the subject."
+            },
+            { 
+                sentence: "______ is the capital of Australia?", 
+                answer: "what", 
+                hint: "Asking about a fact",
+                explanation: "Use 'what' for factual information."
+            },
+            { 
+                sentence: "______ car is parked in my spot?", 
+                answer: "which", 
+                hint: "Identifying a specific item",
+                explanation: "Use 'which' to identify a specific item from a group."
+            },
+            { 
+                sentence: "For ______ are these flowers intended?", 
+                answer: "whom", 
+                hint: "Object of the preposition 'for'",
+                explanation: "Use 'whom' when it follows a preposition like 'for'."
+            },
+            { 
+                sentence: "______ knows the answer to this question?", 
+                answer: "who", 
+                hint: "Subject of the verb 'knows'",
+                explanation: "Use 'who' as the subject performing the action (knowing)."
+            },
+            { 
+                sentence: "______ is your phone number?", 
+                answer: "what", 
+                hint: "Asking for specific details",
+                explanation: "Use 'what' for specific details like phone numbers."
+            },
+            { 
+                sentence: "______ route should we take, the highway or back roads?", 
+                answer: "which", 
+                hint: "Choosing between specific routes",
+                explanation: "Use 'which' when choosing between specific alternatives."
+            },
+            { 
+                sentence: "With ______ are you going to the concert?", 
+                answer: "whom", 
+                hint: "Object of the preposition 'with'",
+                explanation: "Use 'whom' after prepositions like 'with', 'to', 'for'."
+            },
+            { 
+                sentence: "______ broke the window?", 
+                answer: "who", 
+                hint: "Subject of the verb 'broke'",
+                explanation: "Use 'who' as the subject (person doing the breaking)."
+            },
+            { 
+                sentence: "______ is the meaning of this word?", 
+                answer: "what", 
+                hint: "Asking about definition",
+                explanation: "Use 'what' for definitions or meanings."
+            },
+            { 
+                sentence: "______ team won the championship?", 
+                answer: "which", 
+                hint: "Identifying from a known group",
+                explanation: "Use 'which' when asking about a specific item from a known group."
+            },
+            { 
+                sentence: "______ did you see at the store?", 
+                answer: "whom", 
+                hint: "Object of the verb 'see'",
+                explanation: "Use 'whom' as the object of the verb 'see'."
+            },
+            { 
+                sentence: "______ is responsible for this project?", 
+                answer: "who", 
+                hint: "Subject complement after 'is'",
+                explanation: "Use 'who' after linking verbs when referring to people."
+            },
+            { 
+                sentence: "______ is your favorite color?", 
+                answer: "what", 
+                hint: "Asking about preference",
+                explanation: "Use 'what' for asking about preferences."
+            },
+            { 
+                sentence: "______ of these answers is correct?", 
+                answer: "which", 
+                hint: "Choosing correct option",
+                explanation: "Use 'which' when selecting the correct one from options."
+            },
+            { 
+                sentence: "______ did they elect as president?", 
+                answer: "whom", 
+                hint: "Object of the verb 'elect'",
+                explanation: "Use 'whom' as the object of the action (being elected)."
+            },
+            { 
+                sentence: "______ can help me with this problem?", 
+                answer: "who", 
+                hint: "Subject of modal verb 'can'",
+                explanation: "Use 'who' as the subject, even with modal verbs like 'can'."
+            },
+            { 
+                sentence: "______ is the largest ocean?", 
+                answer: "what", 
+                hint: "Asking about geographical fact",
+                explanation: "Use 'what' for geographical information."
+            },
+            { 
+                sentence: "______ restaurant serves the best pizza?", 
+                answer: "which", 
+                hint: "Choosing among restaurants",
+                explanation: "Use 'which' when asking about the best among specific options."
+            },
+            { 
+                sentence: "To ______ did you give the package?", 
+                answer: "whom", 
+                hint: "Object of 'give' and preposition 'to'",
+                explanation: "Use 'whom' as the indirect object (recipient) of 'give'."
+            },
+            { 
+                sentence: "______ wants to go first?", 
+                answer: "who", 
+                hint: "Subject of the verb 'wants'",
+                explanation: "Use 'who' as the subject (person wanting to go)."
+            },
+            { 
+                sentence: "______ is your mother's name?", 
+                answer: "what", 
+                hint: "Asking about a name",
+                explanation: "Use 'what' when asking for names of things or people."
+            },
+            { 
+                sentence: "______ dress should I wear to the party?", 
+                answer: "which", 
+                hint: "Choosing clothing",
+                explanation: "Use 'which' when selecting from clothing options."
+            },
+            { 
+                sentence: "______ are you voting for in the election?", 
+                answer: "whom", 
+                hint: "Object of preposition 'for'",
+                explanation: "Use 'whom' after the preposition 'for'."
+            },
+            { 
+                sentence: "______ told you that secret?", 
+                answer: "who", 
+                hint: "Subject of the verb 'told'",
+                explanation: "Use 'who' as the subject (person doing the telling)."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let questionsAnswered = 0;
+        let currentQuestionSet = [];
+        let selectedOption = null;
+        let gameActive = true;
+        let streak = 0;
+
+        // DOM elements
+        const sentenceElement = document.getElementById('sentence');
+        const optionsElements = document.querySelectorAll('.option');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const hintButton = document.getElementById('hint-btn');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreElement = document.getElementById('score');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const questionsAnsweredElement = document.getElementById('questions-answered');
+        const accuracyElement = document.getElementById('accuracy');
+        const streakElement = document.getElementById('streak');
+
+        // Initialize quiz
+        function initQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            questionsAnswered = 0;
+            streak = 0;
+            gameActive = true;
+            
+            // Create shuffled question set
+            currentQuestionSet = [...quizData].sort(() => 0.5 - Math.random()).slice(0, 20);
+            
+            // Update UI
+            updateStats();
+            loadQuestion();
+            
+            // Reset buttons
+            nextButton.disabled = true;
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+            
+            // Clear options
+            optionsElements.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+            });
+        }
+
+        // Load question
+        function loadQuestion() {
+            if (!gameActive) return;
+            
+            const question = currentQuestionSet[currentQuestionIndex];
+            sentenceElement.textContent = question.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous selections
+            optionsElements.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+                option.onclick = () => selectOption(option);
+            });
+            
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+            nextButton.disabled = true;
+            selectedOption = null;
+        }
+
+        // Select option
+        function selectOption(optionElement) {
+            if (!gameActive || nextButton.disabled === false) return;
+            
+            // Clear previous selections
+            optionsElements.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select this option
+            optionElement.classList.add('selected');
+            selectedOption = optionElement;
+            
+            // Add tap animation
+            optionElement.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                optionElement.style.transform = '';
+            }, 150);
+            
+            // Check answer
+            const selectedValue = optionElement.getAttribute('data-value');
+            const correctAnswer = currentQuestionSet[currentQuestionIndex].answer;
+            const isCorrect = selectedValue === correctAnswer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.innerHTML = `✅ <strong>Correct!</strong> ${currentQuestionSet[currentQuestionIndex].explanation}`;
+                feedbackElement.className = 'feedback correct';
+                optionElement.classList.add('correct');
+                
+                // Update score
+                score += 10;
+                correctAnswers++;
+                streak++;
+            } else {
+                feedbackElement.innerHTML = `❌ <strong>Incorrect.</strong> The right answer is <strong>${correctAnswer}</strong>. ${currentQuestionSet[currentQuestionIndex].explanation}`;
+                feedbackElement.className = 'feedback wrong';
+                optionElement.classList.add('wrong');
+                streak = 0;
+                
+                // Show correct answer
+                optionsElements.forEach(option => {
+                    if (option.getAttribute('data-value') === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                // Special tip for who/whom confusion
+                if ((correctAnswer === 'who' && selectedValue === 'whom') || 
+                    (correctAnswer === 'whom' && selectedValue === 'who')) {
+                    const tip = document.createElement('div');
+                    tip.className = 'explanation';
+                    tip.innerHTML = `<strong>Tip:</strong> Try the "he/him" test: If you can answer with "he", use "who". If you can answer with "him", use "whom".`;
+                    feedbackElement.appendChild(tip);
+                }
+            }
+            
+            // Update stats
+            questionsAnswered++;
+            updateStats();
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+
+        // Update stats
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctAnswersElement.textContent = correctAnswers;
+            questionsAnsweredElement.textContent = questionsAnswered;
+            streakElement.textContent = streak;
+            
+            // Calculate accuracy
+            const accuracy = questionsAnswered > 0 ? Math.round((correctAnswers / questionsAnswered) * 100) : 0;
+            accuracyElement.textContent = `${accuracy}%`;
+        }
+
+        // Show hint
+        function showHint() {
+            if (!gameActive || nextButton.disabled === false) return;
+            
+            const hint = currentQuestionSet[currentQuestionIndex].hint;
+            feedbackElement.innerHTML = `💡 <strong>Hint:</strong> ${hint}`;
+            feedbackElement.className = 'feedback correct';
+            
+            // Special who/whom hint
+            const correctAnswer = currentQuestionSet[currentQuestionIndex].answer;
+            if (correctAnswer === 'who' || correctAnswer === 'whom') {
+                const whoWhomTip = document.createElement('div');
+                whoWhomTip.className = 'explanation';
+                whoWhomTip.innerHTML = `<strong>Who/Whom Tip:</strong> Try answering the question with "he" or "him". If "he" fits, use "who". If "him" fits, use "whom".`;
+                feedbackElement.appendChild(whoWhomTip);
+            }
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (!gameActive) return;
+            
+            currentQuestionIndex++;
+            
+            // Check if reached 20 questions
+            if (currentQuestionIndex >= 20) {
+                // Show completion
+                feedbackElement.innerHTML = `🎉 <strong>Quiz Complete!</strong> Final Score: ${score}.<br>New questions loading...`;
+                feedbackElement.className = 'feedback correct';
+                
+                // Restart after delay
+                setTimeout(() => {
+                    initQuiz();
+                }, 2500);
+                return;
+            }
+            
+            loadQuestion();
+        }
+
+        // Event listeners for buttons
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', initQuiz);
+        hintButton.addEventListener('click', showHint);
+
+        // Touch swipe for navigation (optional)
+        let touchStartX = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!gameActive) return;
+            
+            const touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            // Swipe right for next question (if enabled)
+            if (swipeDistance > 80 && !nextButton.disabled) {
+                nextQuestion();
+            }
+            
+            // Swipe left for hint
+            if (swipeDistance < -80 && nextButton.disabled) {
+                showHint();
+            }
+        });
+
+        // Keyboard shortcuts for accessibility
+        document.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            
+            // Number keys 1-4 for options
+            if (e.key >= '1' && e.key <= '4' && nextButton.disabled) {
+                const optionIndex = parseInt(e.key) - 1;
+                if (optionIndex < optionsElements.length) {
+                    selectOption(optionsElements[optionIndex]);
+                }
+            }
+            
+            // Space or Enter for next
+            if ((e.key === ' ' || e.key === 'Enter') && !nextButton.disabled) {
+                nextQuestion();
+            }
+            
+            // H for hint
+            if (e.key === 'h' || e.key === 'H') {
+                showHint();
+            }
+            
+            // R for restart
+            if (e.key === 'r' || e.key === 'R') {
+                initQuiz();
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initQuiz);
+
+        // Prevent zoom on double-tap
+        document.addEventListener('touchstart', (event) => {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent context menu on long press
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+        });
+    </script>
+</body>
+</html>

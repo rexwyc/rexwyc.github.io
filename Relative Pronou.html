@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Relative Pronoun Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            color: #333;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 5px solid #1a2980;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .instructions h2 {
+            color: #1a2980;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions ul {
+            padding-left: 18px;
+        }
+        
+        .instructions li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        
+        .pronoun-guide {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .pronoun-card {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid #e9ecef;
+            flex: 1;
+            min-width: 110px;
+        }
+        
+        .pronoun-card h4 {
+            color: #1a2980;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .pronoun-card p {
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        .quiz-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .question-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e9ecef;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #dee2e6;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a2980;
+        }
+        
+        .score {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+        
+        .sentence {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 1.4;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 18px 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            background-color: white;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .option:active {
+            transform: scale(0.98);
+        }
+        
+        .option:hover {
+            border-color: #1a2980;
+        }
+        
+        .option.selected {
+            background-color: #1a2980;
+            color: white;
+            border-color: #1a2980;
+        }
+        
+        .option.correct {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .option.wrong {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            line-height: 1.4;
+        }
+        
+        .feedback.correct {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+            border: 2px solid #2ecc71;
+            display: block;
+        }
+        
+        .feedback.wrong {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 12px;
+        }
+        
+        button {
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        button:active {
+            transform: scale(0.97);
+        }
+        
+        #hint-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        #hint-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        #next-btn {
+            background-color: #26d0ce;
+            color: white;
+        }
+        
+        #next-btn:hover {
+            background-color: #1ab5b3;
+        }
+        
+        #restart-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #restart-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a2980;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+        
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        
+        .rules {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+        
+        .rules strong {
+            color: #1a2980;
+        }
+        
+        footer {
+            margin-top: 15px;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .relative-pronoun-tips {
+            background-color: rgba(26, 41, 128, 0.1);
+            border-left: 4px solid #1a2980;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .relative-pronoun-tips h4 {
+            color: #1a2980;
+            margin-bottom: 5px;
+        }
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .sentence {
+                font-size: 1.3rem;
+                padding: 12px;
+            }
+            
+            .option {
+                padding: 16px 8px;
+                font-size: 1.1rem;
+            }
+            
+            button {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .pronoun-card {
+                min-width: 90px;
+                padding: 10px;
+            }
+        }
+        
+        /* Landscape orientation */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .sentence {
+                min-height: 60px;
+                font-size: 1.3rem;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .options {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .option {
+                padding: 14px 8px;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #0d1a5c 0%, #1ab5b3 100%);
+            }
+            
+            .container {
+                background-color: #2d3436;
+                color: #f5f5f5;
+            }
+            
+            .pronoun-card {
+                background-color: #3c4245;
+                border-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .question-container {
+                background-color: #3c4245;
+                border-color: #4a5257;
+            }
+            
+            .sentence {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .option {
+                background-color: #3c4245;
+                color: #f5f5f5;
+                border-color: #4a5257;
+            }
+            
+            .instructions {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .stats {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .stat-label {
+                color: #bdc3c7;
+            }
+            
+            .relative-pronoun-tips {
+                background-color: rgba(26, 41, 128, 0.3);
+                color: #f5f5f5;
+            }
+        }
+        
+        /* Animation for correct/wrong answers */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .option.correct {
+            animation: pulse 0.5s ease;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* Special tip styling */
+        .special-tip {
+            background-color: rgba(243, 156, 18, 0.1);
+            border-left: 4px solid #f39c12;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .special-tip strong {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-link"></i> Relative Pronouns Quiz</h1>
+            <p class="subtitle">Master who, whom, which, and that in adjective clauses</p>
+        </header>
+        
+        <div class="content">
+            <div class="instructions">
+                <h2><i class="fas fa-info-circle"></i> How to Play</h2>
+                <ul>
+                    <li>Tap the correct relative pronoun to complete each sentence</li>
+                    <li>Learn to connect clauses with who, whom, which, that</li>
+                    <li>20 questions per round with instant feedback</li>
+                    <li>Use hints if you get stuck</li>
+                </ul>
+            </div>
+            
+            <div class="pronoun-guide">
+                <div class="pronoun-card">
+                    <h4>Who</h4>
+                    <p>Refers to people (subject)</p>
+                    <p>"The man <strong>who</strong> called"</p>
+                </div>
+                <div class="pronoun-card">
+                    <h4>Whom</h4>
+                    <p>Refers to people (object)</p>
+                    <p>"The woman <strong>whom</strong> I met"</p>
+                </div>
+                <div class="pronoun-card">
+                    <h4>Which</h4>
+                    <p>Refers to animals, things</p>
+                    <p>"The book <strong>which</strong> I read"</p>
+                </div>
+                <div class="pronoun-card">
+                    <h4>That</h4>
+                    <p>Refers to people, animals, things</p>
+                    <p>"The car <strong>that</strong> I bought"</p>
+                </div>
+            </div>
+            
+            <div class="relative-pronoun-tips">
+                <h4><i class="fas fa-lightbulb"></i> Key Rules for Relative Pronouns</h4>
+                <p><strong>Who/Whom:</strong> Use for people only. "Who" = subject, "Whom" = object.<br>
+                <strong>Which:</strong> Use for animals and things only (never for people).<br>
+                <strong>That:</strong> Use for people, animals, OR things. More common in defining clauses.</p>
+            </div>
+            
+            <div class="quiz-area">
+                <div class="question-container">
+                    <div class="question-header">
+                        <div class="question-number">Q: <span id="current-question">1</span>/20</div>
+                        <div class="score">Score: <span id="score">0</span></div>
+                    </div>
+                    
+                    <div class="streak-counter">
+                        <i class="fas fa-fire"></i>
+                        <span id="streak">0</span> Streak
+                    </div>
+                    
+                    <div class="sentence" id="sentence">Loading question...</div>
+                    
+                    <div class="options">
+                        <div class="option" data-value="who">who</div>
+                        <div class="option" data-value="whom">whom</div>
+                        <div class="option" data-value="which">which</div>
+                        <div class="option" data-value="that">that</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback"></div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <button id="hint-btn">
+                                <i class="fas fa-lightbulb"></i> Hint
+                            </button>
+                            <button id="restart-btn">
+                                <i class="fas fa-redo"></i> Restart
+                            </button>
+                        </div>
+                        <button id="next-btn" disabled>
+                            Next Question <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="correct-answers">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="questions-answered">0</div>
+                        <div class="stat-label">Answered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                </div>
+                
+                <div class="rules">
+                    <p><strong>Remember:</strong> Use "who/whom" for people, "which" for animals/things, "that" for all. "Whom" is for objects (after verbs/prepositions).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Relative Pronoun Quiz &bull; Master adjective clauses &bull; Grammar practice made fun!</p>
+    </footer>
+
+    <script>
+        // Updated quiz data for RELATIVE PRONOUNS (who, whom, which, that)
+        const quizData = [
+            { 
+                sentence: "The woman ______ lives next door is a doctor.", 
+                answer: "who", 
+                hint: "Refers to a person as the subject of 'lives'",
+                explanation: "Use 'who' for people when they are the subject of the relative clause."
+            },
+            { 
+                sentence: "This is the book ______ I was telling you about.", 
+                answer: "that", 
+                hint: "Refers to a thing (book) in a defining clause",
+                explanation: "Use 'that' for things in defining relative clauses. 'Which' is also possible here."
+            },
+            { 
+                sentence: "The teacher ______ you recommended is excellent.", 
+                answer: "whom", 
+                hint: "Refers to a person as the object of 'recommended'",
+                explanation: "Use 'whom' for people when they are the object of the verb."
+            },
+            { 
+                sentence: "The car, ______ was parked illegally, got towed.", 
+                answer: "which", 
+                hint: "Refers to a thing (car) in a non-defining clause",
+                explanation: "Use 'which' for things in non-defining clauses (with commas)."
+            },
+            { 
+                sentence: "People ______ work hard usually succeed.", 
+                answer: "who", 
+                hint: "Refers to people as the subject of 'work'",
+                explanation: "Use 'who' for people as the subject of the relative clause."
+            },
+            { 
+                sentence: "The dog ______ bit me ran away.", 
+                answer: "that", 
+                hint: "Refers to an animal in a defining clause",
+                explanation: "Use 'that' for animals in defining relative clauses."
+            },
+            { 
+                sentence: "My sister, ______ lives in Paris, is visiting next week.", 
+                answer: "who", 
+                hint: "Refers to a person in a non-defining clause",
+                explanation: "Use 'who' for people in non-defining clauses (extra information with commas)."
+            },
+            { 
+                sentence: "The person to ______ I spoke was very helpful.", 
+                answer: "whom", 
+                hint: "Refers to a person after the preposition 'to'",
+                explanation: "Use 'whom' after prepositions (to whom, for whom, with whom, etc.)."
+            },
+            { 
+                sentence: "The movie ______ we saw last night was fantastic.", 
+                answer: "that", 
+                hint: "Refers to a thing (movie) in a defining clause",
+                explanation: "Use 'that' for things when the information is essential to the sentence."
+            },
+            { 
+                sentence: "The company for ______ she works is expanding.", 
+                answer: "which", 
+                hint: "Refers to a thing (company) after the preposition 'for'",
+                explanation: "Use 'which' for things after prepositions (for which, in which, about which, etc.)."
+            },
+            { 
+                sentence: "Anyone ______ wants to join should sign up.", 
+                answer: "who", 
+                hint: "Refers to people as the subject of 'wants'",
+                explanation: "Use 'who' for people when they are the subject of the relative clause."
+            },
+            { 
+                sentence: "The laptop ______ I bought last year still works perfectly.", 
+                answer: "that", 
+                hint: "Refers to a thing (laptop) in a defining clause",
+                explanation: "Use 'that' for things when the clause defines which laptop you mean."
+            },
+            { 
+                sentence: "My neighbor, ______ you met yesterday, is moving away.", 
+                answer: "whom", 
+                hint: "Refers to a person as the object of 'met' in a non-defining clause",
+                explanation: "Use 'whom' for people as objects in non-defining clauses."
+            },
+            { 
+                sentence: "The house ______ roof was damaged has been repaired.", 
+                answer: "whose", 
+                answer: "that", 
+                hint: "Refers to a thing (house) in a defining clause",
+                explanation: "Use 'that' for things. (Note: 'whose' would be for possession, but it's not an option here.)"
+            },
+            { 
+                sentence: "Students ______ complete the course receive a certificate.", 
+                answer: "who", 
+                hint: "Refers to people as the subject of 'complete'",
+                explanation: "Use 'who' for people when they are the subject of the relative clause."
+            },
+            { 
+                sentence: "The restaurant at ______ we ate was very expensive.", 
+                answer: "which", 
+                hint: "Refers to a thing (restaurant) after the preposition 'at'",
+                explanation: "Use 'which' for things after prepositions (at which, in which, etc.)."
+            },
+            { 
+                sentence: "All the cookies ______ she baked were delicious.", 
+                answer: "that", 
+                hint: "Refers to things (cookies) in a defining clause",
+                explanation: "Use 'that' for things after words like 'all', 'every', 'any'."
+            },
+            { 
+                sentence: "The artist ______ paintings we saw is famous.", 
+                answer: "whose", 
+                answer: "who", 
+                hint: "Refers to a person as the subject of 'is'",
+                explanation: "Use 'who' for people as the subject. (Note: 'whose' would be for possession.)"
+            },
+            { 
+                sentence: "This phone, ______ I got for my birthday, has a great camera.", 
+                answer: "which", 
+                hint: "Refers to a thing (phone) in a non-defining clause",
+                explanation: "Use 'which' for things in non-defining clauses (extra information with commas)."
+            },
+            { 
+                sentence: "Is there anyone ______ you'd like to invite?", 
+                answer: "whom", 
+                hint: "Refers to a person as the object of 'invite'",
+                explanation: "Use 'whom' for people as objects, especially in questions."
+            },
+            { 
+                sentence: "The only thing ______ matters is your happiness.", 
+                answer: "that", 
+                hint: "Refers to a thing after 'the only'",
+                explanation: "Use 'that' after 'the only', 'the first', 'the last', 'the same'."
+            },
+            { 
+                sentence: "My friend, ______ is an engineer, fixed my computer.", 
+                answer: "who", 
+                hint: "Refers to a person in a non-defining clause",
+                explanation: "Use 'who' for people in non-defining clauses (with commas)."
+            },
+            { 
+                sentence: "The problem about ______ we spoke has been solved.", 
+                answer: "which", 
+                hint: "Refers to a thing (problem) after the preposition 'about'",
+                explanation: "Use 'which' for things after prepositions."
+            },
+            { 
+                sentence: "I need someone ______ can help me with this project.", 
+                answer: "who", 
+                hint: "Refers to a person as the subject of 'can help'",
+                explanation: "Use 'who' for people as the subject of modal verbs like 'can'."
+            },
+            { 
+                sentence: "Everything ______ you said makes sense.", 
+                answer: "that", 
+                hint: "Refers to things after 'everything'",
+                explanation: "Use 'that' after indefinite pronouns like 'everything', 'something', 'anything'."
+            },
+            { 
+                sentence: "The customer with ______ I dealt was very angry.", 
+                answer: "whom", 
+                hint: "Refers to a person after the preposition 'with'",
+                explanation: "Use 'whom' for people after prepositions (with whom, to whom, etc.)."
+            },
+            { 
+                sentence: "The hotel ______ we stayed was near the beach.", 
+                answer: "that", 
+                hint: "Refers to a thing (hotel) in a defining clause",
+                explanation: "Use 'that' for things in defining clauses. 'Where' would also work, but it's not an option."
+            },
+            { 
+                sentence: "My grandfather, ______ is 90 years old, still drives.", 
+                answer: "who", 
+                hint: "Refers to a person in a non-defining clause",
+                explanation: "Use 'who' for people in non-defining clauses (with commas)."
+            },
+            { 
+                sentence: "The decision on ______ we agreed was final.", 
+                answer: "which", 
+                hint: "Refers to a thing (decision) after the preposition 'on'",
+                explanation: "Use 'which' for things after prepositions."
+            },
+            { 
+                sentence: "She's the kind of person ______ always helps others.", 
+                answer: "who", 
+                hint: "Refers to a person as the subject of 'helps'",
+                explanation: "Use 'who' for people in expressions like 'the kind of person who', 'the type of person who'."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let questionsAnswered = 0;
+        let currentQuestionSet = [];
+        let selectedOption = null;
+        let gameActive = true;
+        let streak = 0;
+
+        // DOM elements
+        const sentenceElement = document.getElementById('sentence');
+        const optionsElements = document.querySelectorAll('.option');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const hintButton = document.getElementById('hint-btn');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreElement = document.getElementById('score');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const questionsAnsweredElement = document.getElementById('questions-answered');
+        const accuracyElement = document.getElementById('accuracy');
+        const streakElement = document.getElementById('streak');
+
+        // Initialize quiz
+        function initQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            questionsAnswered = 0;
+            streak = 0;
+            gameActive = true;
+            
+            // Create shuffled question set
+            currentQuestionSet = [...quizData].sort(() => 0.5 - Math.random()).slice(0, 20);
+            
+            // Update UI
+            updateStats();
+            loadQuestion();
+            
+            // Reset buttons
+            nextButton.disabled = true;
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+            
+            // Clear options
+            optionsElements.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+            });
+        }
+
+        // Load question
+        function loadQuestion() {
+            if (!gameActive) return;
+            
+            const question = currentQuestionSet[currentQuestionIndex];
+            sentenceElement.textContent = question.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous selections
+            optionsElements.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+                option.onclick = () => selectOption(option);
+            });
+            
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+            nextButton.disabled = true;
+            selectedOption = null;
+        }
+
+        // Select option
+        function selectOption(optionElement) {
+            if (!gameActive || nextButton.disabled === false) return;
+            
+            // Clear previous selections
+            optionsElements.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select this option
+            optionElement.classList.add('selected');
+            selectedOption = optionElement;
+            
+            // Add tap animation
+            optionElement.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                optionElement.style.transform = '';
+            }, 150);
+            
+            // Check answer
+            const selectedValue = optionElement.getAttribute('data-value');
+            const correctAnswer = currentQuestionSet[currentQuestionIndex].answer;
+            const isCorrect = selectedValue === correctAnswer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.innerHTML = `✅ <strong>Correct!</strong> ${currentQuestionSet[currentQuestionIndex].explanation}`;
+                feedbackElement.className = 'feedback correct';
+                optionElement.classList.add('correct');
+                
+                // Update score
+                score += 10;
+                correctAnswers++;
+                streak++;
+            } else {
+                feedbackElement.innerHTML = `❌ <strong>Incorrect.</strong> The right answer is <strong>${correctAnswer}</strong>. ${currentQuestionSet[currentQuestionIndex].explanation}`;
+                feedbackElement.className = 'feedback wrong';
+                optionElement.classList.add('wrong');
+                streak = 0;
+                
+                // Show correct answer
+                optionsElements.forEach(option => {
+                    if (option.getAttribute('data-value') === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                // Special tip for relative pronoun confusion
+                const tip = document.createElement('div');
+                tip.className = 'special-tip';
+                
+                if (correctAnswer === 'who' || correctAnswer === 'whom') {
+                    tip.innerHTML = `<strong>People Tip:</strong> Use "who" for subjects (doing the action), "whom" for objects (receiving action). Test with "he" (who) or "him" (whom).`;
+                } else if (correctAnswer === 'which') {
+                    tip.innerHTML = `<strong>Which Tip:</strong> Use "which" for animals and things, especially in non-defining clauses (with commas).`;
+                } else if (correctAnswer === 'that') {
+                    tip.innerHTML = `<strong>That Tip:</strong> Use "that" for people, animals, or things in defining clauses (essential information).`;
+                }
+                
+                feedbackElement.appendChild(tip);
+            }
+            
+            // Update stats
+            questionsAnswered++;
+            updateStats();
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+
+        // Update stats
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctAnswersElement.textContent = correctAnswers;
+            questionsAnsweredElement.textContent = questionsAnswered;
+            streakElement.textContent = streak;
+            
+            // Calculate accuracy
+            const accuracy = questionsAnswered > 0 ? Math.round((correctAnswers / questionsAnswered) * 100) : 0;
+            accuracyElement.textContent = `${accuracy}%`;
+        }
+
+        // Show hint
+        function showHint() {
+            if (!gameActive || nextButton.disabled === false) return;
+            
+            const hint = currentQuestionSet[currentQuestionIndex].hint;
+            feedbackElement.innerHTML = `💡 <strong>Hint:</strong> ${hint}`;
+            feedbackElement.className = 'feedback correct';
+            
+            // Special relative pronoun hint
+            const correctAnswer = currentQuestionSet[currentQuestionIndex].answer;
+            const tip = document.createElement('div');
+            tip.className = 'special-tip';
+            
+            if (correctAnswer === 'who') {
+                tip.innerHTML = `<strong>Who:</strong> Use for PEOPLE as SUBJECTS. Example: "The person who called me."`;
+            } else if (correctAnswer === 'whom') {
+                tip.innerHTML = `<strong>Whom:</strong> Use for PEOPLE as OBJECTS or after PREPOSITIONS. Example: "The person whom I called."`;
+            } else if (correctAnswer === 'which') {
+                tip.innerHTML = `<strong>Which:</strong> Use for ANIMALS and THINGS. Often used in non-defining clauses with commas.`;
+            } else if (correctAnswer === 'that') {
+                tip.innerHTML = `<strong>That:</strong> Use for PEOPLE, ANIMALS, or THINGS in defining clauses. More common in everyday speech.`;
+            }
+            
+            feedbackElement.appendChild(tip);
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (!gameActive) return;
+            
+            currentQuestionIndex++;
+            
+            // Check if reached 20 questions
+            if (currentQuestionIndex >= 20) {
+                // Show completion
+                feedbackElement.innerHTML = `🎉 <strong>Quiz Complete!</strong> Final Score: ${score}.<br>New questions loading...`;
+                feedbackElement.className = 'feedback correct';
+                
+                // Restart after delay
+                setTimeout(() => {
+                    initQuiz();
+                }, 2500);
+                return;
+            }
+            
+            loadQuestion();
+        }
+
+        // Event listeners for buttons
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', initQuiz);
+        hintButton.addEventListener('click', showHint);
+
+        // Touch swipe for navigation (optional)
+        let touchStartX = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!gameActive) return;
+            
+            const touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            // Swipe right for next question (if enabled)
+            if (swipeDistance > 80 && !nextButton.disabled) {
+                nextQuestion();
+            }
+            
+            // Swipe left for hint
+            if (swipeDistance < -80 && nextButton.disabled) {
+                showHint();
+            }
+        });
+
+        // Keyboard shortcuts for accessibility
+        document.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            
+            // Number keys 1-4 for options
+            if (e.key >= '1' && e.key <= '4' && nextButton.disabled) {
+                const optionIndex = parseInt(e.key) - 1;
+                if (optionIndex < optionsElements.length) {
+                    selectOption(optionsElements[optionIndex]);
+                }
+            }
+            
+            // Space or Enter for next
+            if ((e.key === ' ' || e.key === 'Enter') && !nextButton.disabled) {
+                nextQuestion();
+            }
+            
+            // H for hint
+            if (e.key === 'h' || e.key === 'H') {
+                showHint();
+            }
+            
+            // R for restart
+            if (e.key === 'r' || e.key === 'R') {
+                initQuiz();
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initQuiz);
+
+        // Prevent zoom on double-tap
+        document.addEventListener('touchstart', (event) => {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent context menu on long press
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+        });
+    </script>
+</body>
+</html>
