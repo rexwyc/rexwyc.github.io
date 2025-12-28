@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transitive vs Intransitive Verbs Quiz - Infinite Loop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 5px solid #27ae60;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+        
+        .verb-types {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .verb-type {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .verb-type i {
+            margin-right: 8px;
+        }
+        
+        .transitive-verb {
+            color: #e74c3c;
+        }
+        
+        .intransitive-verb {
+            color: #3498db;
+        }
+        
+        .sound-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .sound-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sound-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .sound-btn.active {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #dee2e6;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .game-area {
+            padding: 25px 20px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number i {
+            margin-right: 8px;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            color: #222;
+        }
+        
+        .sentence-example {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid #27ae60;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .sentence-example::before {
+            content: '"';
+            font-size: 4rem;
+            color: rgba(39, 174, 96, 0.2);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: Georgia, serif;
+        }
+        
+        .highlighted-verb {
+            background-color: #ffeaa7;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .direct-object {
+            background-color: #a29bfe;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        @media (min-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background-color: #f8f9fa;
+            border: 3px solid #dee2e6;
+            border-radius: 15px;
+            padding: 22px 15px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background-color: #e9ecef;
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.2);
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #27ae60;
+            color: #155724;
+            animation: pulseCorrect 0.5s ease;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #e74c3c;
+            color: #721c24;
+            animation: shake 0.5s ease;
+        }
+        
+        .option-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .option.transitive-option .option-icon {
+            background-color: #e74c3c;
+        }
+        
+        .option.intransitive-option .option-icon {
+            background-color: #3498db;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        #submit-btn {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        #submit-btn:hover {
+            background: linear-gradient(to right, #233240, #3a5579);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.4);
+        }
+        
+        #submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #next-btn {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+            flex: 1;
+            margin-left: 10px;
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(to right, #219653, #27ad5f);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .explanation {
+            background-color: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .explanation h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .explanation h3 i {
+            margin-right: 10px;
+        }
+        
+        .verb-definition {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .definition-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition-title i {
+            margin-right: 8px;
+        }
+        
+        .verb-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .example-tag {
+            background-color: #dfe6e9;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .loop-indicator {
+            background-color: rgba(52, 152, 219, 0.15);
+            border: 2px dashed #3498db;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loop-indicator i {
+            margin: 0 10px;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .verb-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .verb-tag {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #dfe6e9;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #27ae60, #2c3e50);
+            border-radius: 10px;
+            width: 5%;
+            transition: width 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes pulseCorrect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text, .sentence-example {
+                font-size: 1.4rem;
+            }
+            
+            .stat {
+                min-width: 100px;
+                margin-bottom: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            #submit-btn, #next-btn {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .option {
+                padding: 18px 12px;
+                font-size: 1.2rem;
+            }
+            
+            .verb-types {
+                gap: 15px;
+            }
+            
+            .verb-type {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .sound-controls {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+        
+        .sound-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: linear-gradient(to right, rgba(39, 174, 96, 0.3), rgba(52, 152, 219, 0.3));
+            transition: height 0.3s;
+        }
+        
+        .option.playing .sound-wave {
+            height: 5px;
+            animation: wave 0.5s ease infinite alternate;
+        }
+        
+        @keyframes wave {
+            0% { height: 5px; }
+            100% { height: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-infinity"></i> Transitive vs Intransitive Verbs</h1>
+            <p class="subtitle">Identify whether the highlighted verb takes a direct object or not</p>
+            <p class="subtitle">20 questions infinite loop - With sound effects!</p>
+            
+            <div class="verb-types">
+                <div class="verb-type transitive-verb">
+                    <i class="fas fa-exchange-alt"></i> Transitive Verb
+                </div>
+                <div class="verb-type intransitive-verb">
+                    <i class="fas fa-arrows-alt-h"></i> Intransitive Verb
+                </div>
+            </div>
+            
+            
+            
+            <div class="verb-list">
+                <div class="verb-tag">Transitive: bring, buy, make</div>
+                <div class="verb-tag">Intransitive: arrive, sleep, happen</div>
+                <div class="verb-tag">Both: run, eat, read</div>
+            </div>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="question-count">1/20</div>
+                <div class="stat-label">Question</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="loop-count">1</div>
+                <div class="stat-label">Loop</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="game-area">
+            <div class="question-container">
+                <div class="question-number">
+                    <i class="fas fa-question-circle"></i> Question <span id="current-question">1</span> of 20
+                </div>
+                
+                <div class="question-text" id="question-text">
+                    Is the highlighted verb <strong>Transitive</strong> or <strong>Intransitive</strong> in this sentence?
+                </div>
+                
+                <div class="sentence-example" id="sentence-example">
+                    Loading sentence...
+                </div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be dynamically added here -->
+                </div>
+                
+                <div class="explanation" id="explanation">
+                    <h3><i class="fas fa-lightbulb"></i> Explanation</h3>
+                    <div id="verb-definition" class="verb-definition">
+                        <!-- Verb definition will be dynamically added here -->
+                    </div>
+                    <p id="explanation-text">Explanation will appear here after you answer.</p>
+                    <div class="verb-examples" id="verb-examples">
+                        <!-- Verb examples will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <div class="loop-indicator">
+                    <i class="fas fa-redo"></i> Questions will loop infinitely! <i class="fas fa-redo"></i>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="submit-btn" disabled>
+                    <i class="fas fa-paper-plane"></i> Submit Answer
+                </button>
+                <button id="next-btn">
+                    <i class="fas fa-forward"></i> Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Transitive vs Intransitive Verbs Quiz &copy; 2023 | Infinite Loop Game | With Sound Effects</p>
+        <p>Transitive verbs take a direct object | Intransitive verbs do not take a direct object</p>
+    </footer>
+
+    <script>
+        // Question data - Transitive vs Intransitive Verbs
+        const questions = [
+            {
+                sentence: "She <span class='highlighted-verb'>reads</span> <span class='direct-object'>a book</span> every night before going to sleep.",
+                correctAnswer: "transitive",
+                explanation: "'Reads' is transitive because it has a direct object ('a book'). The verb action is transferred to the object.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["bring", "buy", "make", "write", "send", "build"]
+            },
+            {
+                sentence: "The children <span class='highlighted-verb'>play</span> in the park every afternoon after school.",
+                correctAnswer: "intransitive",
+                explanation: "'Play' is intransitive here because there is no direct object receiving the action. 'In the park' is a prepositional phrase, not a direct object.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["arrive", "sleep", "happen", "exist", "occur", "vanish"]
+            },
+            {
+                sentence: "He <span class='highlighted-verb'>built</span> <span class='direct-object'>a treehouse</span> for his children last summer.",
+                correctAnswer: "transitive",
+                explanation: "'Built' is transitive because it has a direct object ('a treehouse'). The action of building is done to the treehouse.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["construct", "create", "design", "develop", "form", "establish"]
+            },
+            {
+                sentence: "The sun <span class='highlighted-verb'>rises</span> in the east every morning.",
+                correctAnswer: "intransitive",
+                explanation: "'Rises' is intransitive because there is no direct object. The sun performs the action, but nothing receives it.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["rise", "set", "shine", "glow", "twinkle", "appear"]
+            },
+            {
+                sentence: "The chef <span class='highlighted-verb'>prepared</span> <span class='direct-object'>a delicious meal</span> for the guests.",
+                correctAnswer: "transitive",
+                explanation: "'Prepared' is transitive because it has a direct object ('a delicious meal'). The action of preparing is done to the meal.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["cook", "prepare", "make", "bake", "roast", "grill"]
+            },
+            {
+                sentence: "They <span class='highlighted-verb'>arrived</span> at the airport two hours before their flight.",
+                correctAnswer: "intransitive",
+                explanation: "'Arrived' is intransitive because there is no direct object. 'At the airport' is a prepositional phrase indicating location.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["arrive", "come", "go", "leave", "depart", "travel"]
+            },
+            {
+                sentence: "She <span class='highlighted-verb'>wrote</span> <span class='direct-object'>a heartfelt letter</span> to her grandmother.",
+                correctAnswer: "transitive",
+                explanation: "'Wrote' is transitive because it has a direct object ('a heartfelt letter'). The action of writing is done to the letter.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["write", "compose", "type", "draft", "pen", "scribble"]
+            },
+            {
+                sentence: "The baby <span class='highlighted-verb'>slept</span> peacefully through the night.",
+                correctAnswer: "intransitive",
+                explanation: "'Slept' is intransitive because there is no direct object. The baby performs the action, but nothing receives it.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["sleep", "rest", "nap", "doze", "slumber", "dream"]
+            },
+            {
+                sentence: "He <span class='highlighted-verb'>sent</span> <span class='direct-object'>an email</span> to all the team members.",
+                correctAnswer: "transitive",
+                explanation: "'Sent' is transitive because it has a direct object ('an email'). The action of sending is done to the email.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["send", "deliver", "mail", "forward", "transmit", "dispatch"]
+            },
+            {
+                sentence: "The flowers <span class='highlighted-verb'>bloomed</span> beautifully in the spring garden.",
+                correctAnswer: "intransitive",
+                explanation: "'Bloomed' is intransitive because there is no direct object. The flowers perform the action, but nothing receives it.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["bloom", "grow", "flourish", "thrive", "wilt", "fade"]
+            },
+            {
+                sentence: "The company <span class='highlighted-verb'>developed</span> <span class='direct-object'>a new software application</span>.",
+                correctAnswer: "transitive",
+                explanation: "'Developed' is transitive because it has a direct object ('a new software application'). The action of developing is done to the application.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["develop", "create", "invent", "design", "produce", "manufacture"]
+            },
+            {
+                sentence: "The accident <span class='highlighted-verb'>happened</span> on the highway during rush hour.",
+                correctAnswer: "intransitive",
+                explanation: "'Happened' is intransitive because there is no direct object. The accident occurs, but nothing receives the action.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["happen", "occur", "transpire", "take place", "ensue", "follow"]
+            },
+            {
+                sentence: "She <span class='highlighted-verb'>bought</span> <span class='direct-object'>a new car</span> with her savings.",
+                correctAnswer: "transitive",
+                explanation: "'Bought' is transitive because it has a direct object ('a new car'). The action of buying is done to the car.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["buy", "purchase", "acquire", "obtain", "procure", "secure"]
+            },
+            {
+                sentence: "The students <span class='highlighted-verb'>laughed</span> at the funny joke.",
+                correctAnswer: "intransitive",
+                explanation: "'Laughed' is intransitive because there is no direct object. 'At the funny joke' is a prepositional phrase, not a direct object.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["laugh", "smile", "cry", "weep", "giggle", "chuckle"]
+            },
+            {
+                sentence: "He <span class='highlighted-verb'>painted</span> <span class='direct-object'>a beautiful landscape</span> for the art exhibition.",
+                correctAnswer: "transitive",
+                explanation: "'Painted' is transitive because it has a direct object ('a beautiful landscape'). The action of painting is done to the landscape.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["paint", "draw", "sketch", "color", "illustrate", "depict"]
+            },
+            {
+                sentence: "The birds <span class='highlighted-verb'>sang</span> sweetly outside my window this morning.",
+                correctAnswer: "intransitive",
+                explanation: "'Sang' is intransitive because there is no direct object. The birds perform the action, but nothing receives it.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["sing", "chirp", "tweet", "whistle", "hum", "warble"]
+            },
+            {
+                sentence: "She <span class='highlighted-verb'>answered</span> <span class='direct-object'>all the questions</span> correctly on the test.",
+                correctAnswer: "transitive",
+                explanation: "'Answered' is transitive because it has a direct object ('all the questions'). The action of answering is done to the questions.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["answer", "reply", "respond", "acknowledge", "address", "retort"]
+            },
+            {
+                sentence: "Time <span class='highlighted-verb'>flies</span> when you're having fun.",
+                correctAnswer: "intransitive",
+                explanation: "'Flies' is intransitive because there is no direct object. Time performs the action, but nothing receives it.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["fly", "pass", "elapse", "progress", "advance", "proceed"]
+            },
+            {
+                sentence: "The teacher <span class='highlighted-verb'>explained</span> <span class='direct-object'>the difficult concept</span> clearly.",
+                correctAnswer: "transitive",
+                explanation: "'Explained' is transitive because it has a direct object ('the difficult concept'). The action of explaining is done to the concept.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["explain", "clarify", "describe", "illustrate", "demonstrate", "show"]
+            },
+            {
+                sentence: "The old man <span class='highlighted-verb'>walked</span> slowly along the beach at sunset.",
+                correctAnswer: "intransitive",
+                explanation: "'Walked' is intransitive because there is no direct object. 'Along the beach' is a prepositional phrase indicating location.",
+                transitiveDef: "Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object.",
+                intransitiveDef: "Intransitive verbs do not require a direct object to complete their meaning. The action does not pass to an object.",
+                examples: ["walk", "run", "jog", "stroll", "hike", "pace"]
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let loopCount = 1;
+        let selectedOption = null;
+        let gameActive = true;
+        let soundEnabled = true;
+        let musicEnabled = false;
+        
+        // DOM elements
+        const questionTextElement = document.getElementById('question-text');
+        const sentenceExampleElement = document.getElementById('sentence-example');
+        const optionsContainerElement = document.getElementById('options-container');
+        const scoreElement = document.getElementById('score');
+        const questionCountElement = document.getElementById('question-count');
+        const correctCountElement = document.getElementById('correct-count');
+        const currentQuestionElement = document.getElementById('current-question');
+        const loopCountElement = document.getElementById('loop-count');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const verbDefinitionElement = document.getElementById('verb-definition');
+        const verbExamplesElement = document.getElementById('verb-examples');
+        const progressBarElement = document.getElementById('progress-bar');
+        const soundToggleBtn = document.getElementById('sound-toggle');
+        const musicToggleBtn = document.getElementById('music-toggle');
+        
+        // Audio elements - REMOVED the external URLs and using local files
+        const correctSound = new Audio('music/f.wav');  // Correct answer sound
+        const wrongSound = new Audio('music/h.wav');    // Wrong answer sound
+        const clickSound = new Audio();  // We'll create a simple click sound
+        
+        // Create a simple click sound
+        function createClickSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Web Audio API not supported");
+            }
+        }
+        
+        // Initialize the game
+        function initGame() {
+            loadQuestion();
+            updateStats();
+            updateProgressBar();
+            
+            // Event listeners
+            submitButton.addEventListener('click', submitAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+            soundToggleBtn.addEventListener('click', toggleSound);
+            musicToggleBtn.addEventListener('click', toggleMusic);
+            
+            // Set initial audio volume
+            correctSound.volume = 0.7;
+            wrongSound.volume = 0.7;
+        }
+        
+        // Toggle sound effects
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundToggleBtn.classList.toggle('active', soundEnabled);
+            soundToggleBtn.innerHTML = `<i class="fas fa-volume-${soundEnabled ? 'up' : 'mute'}"></i> Sound: ${soundEnabled ? 'ON' : 'OFF'}`;
+            
+            // Play click sound if enabling
+            if (soundEnabled) {
+                playClickSound();
+            }
+        }
+        
+        // Toggle background music
+        function toggleMusic() {
+            musicEnabled = !musicEnabled;
+            musicToggleBtn.classList.toggle('active', musicEnabled);
+            musicToggleBtn.innerHTML = `<i class="fas fa-music"></i> Music: ${musicEnabled ? 'ON' : 'OFF'}`;
+            
+            // Play click sound
+            playClickSound();
+        }
+        
+        // Play click sound
+        function playClickSound() {
+            if (!soundEnabled) return;
+            createClickSound();
+        }
+        
+        // Play sound with error handling
+        function playSound(audioElement) {
+            if (!soundEnabled) return;
+            
+            try {
+                // Reset audio to start
+                audioElement.currentTime = 0;
+                // Play audio
+                audioElement.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                    // Fallback: try with user gesture
+                    document.body.addEventListener('click', function playOnce() {
+                        audioElement.play().catch(e2 => console.log("Fallback play failed:", e2));
+                        document.body.removeEventListener('click', playOnce);
+                    });
+                });
+            } catch (error) {
+                console.log("Audio error:", error);
+            }
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            sentenceExampleElement.innerHTML = currentQuestion.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous options
+            optionsContainerElement.innerHTML = '';
+            explanationElement.classList.remove('show');
+            selectedOption = null;
+            submitButton.disabled = true;
+            
+            // Create option elements
+            const options = [
+                { type: "transitive", text: "Transitive Verb", icon: "fas fa-exchange-alt", className: "transitive-option" },
+                { type: "intransitive", text: "Intransitive Verb", icon: "fas fa-arrows-alt-h", className: "intransitive-option" }
+            ];
+            
+            // Shuffle options to randomize position
+            const shuffledOptions = [...options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = `option ${option.className}`;
+                optionElement.dataset.type = option.type;
+                optionElement.innerHTML = `
+                    <div class="option-icon"><i class="${option.icon}"></i></div>
+                    <div class="option-text">${option.text}</div>
+                    <div class="sound-wave"></div>
+                `;
+                
+                optionElement.addEventListener('click', () => {
+                    playClickSound();
+                    selectOption(optionElement, option.type);
+                    
+                    // Add visual feedback for sound playing
+                    optionElement.classList.add('playing');
+                    setTimeout(() => {
+                        optionElement.classList.remove('playing');
+                    }, 500);
+                });
+                optionsContainerElement.appendChild(optionElement);
+            });
+            
+            updateStats();
+            updateProgressBar();
+        }
+        
+        // Select an option
+        function selectOption(optionElement, optionType) {
+            if (!gameActive) return;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            selectedOption = optionType;
+            submitButton.disabled = false;
+        }
+        
+        // Submit answer
+        function submitAnswer() {
+            if (selectedOption === null || !gameActive) return;
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            const optionElements = document.querySelectorAll('.option');
+            
+            // Disable all options
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark correct and incorrect answers
+            optionElements.forEach(option => {
+                const optionType = option.dataset.type;
+                if (optionType === currentQuestion.correctAnswer) {
+                    option.classList.add('correct');
+                    option.style.animation = 'pulseCorrect 0.5s ease';
+                } else if (optionType === selectedOption && optionType !== currentQuestion.correctAnswer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            
+            // Play appropriate sound - USING YOUR FILES
+            if (isCorrect) {
+                playSound(correctSound); // This will play music/f.wav
+            } else {
+                playSound(wrongSound); // This will play music/h.wav
+            }
+            
+            // Update score and correct count
+            if (isCorrect) {
+                score += 10;
+                correctCount++;
+                
+                // Add bonus for consecutive correct answers
+                if (correctCount % 5 === 0) {
+                    score += 15; // Bonus points
+                    showBonusNotification();
+                }
+            } else {
+                // Small penalty for incorrect answer
+                score = Math.max(0, score - 5);
+            }
+            
+            // Show explanation with appropriate definition
+            verbDefinitionElement.innerHTML = `
+                <div class="definition-title ${currentQuestion.correctAnswer === 'transitive' ? 'transitive-verb' : 'intransitive-verb'}">
+                    <i class="${currentQuestion.correctAnswer === 'transitive' ? 'fas fa-exchange-alt' : 'fas fa-arrows-alt-h'}"></i>
+                    ${currentQuestion.correctAnswer === 'transitive' ? 'Transitive Verb' : 'Intransitive Verb'} Definition
+                </div>
+                <p>${currentQuestion.correctAnswer === 'transitive' ? currentQuestion.transitiveDef : currentQuestion.intransitiveDef}</p>
+            `;
+            
+            explanationTextElement.textContent = currentQuestion.explanation;
+            
+            // Add examples
+            verbExamplesElement.innerHTML = `
+                <div class="definition-title">
+                    <i class="fas fa-list"></i> Example ${currentQuestion.correctAnswer === 'transitive' ? 'Transitive' : 'Intransitive'} Verbs
+                </div>
+                <div class="verb-examples">
+                    ${currentQuestion.examples.map(example => `<div class="example-tag">${example}</div>`).join('')}
+                </div>
+            `;
+            
+            explanationElement.classList.add('show');
+            
+            // Update UI
+            submitButton.disabled = true;
+            gameActive = false;
+            updateStats();
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            // Play click sound
+            playClickSound();
+            
+            // Reset game state
+            gameActive = true;
+            
+            // Move to next question
+            currentQuestionIndex++;
+            
+            // If we've reached the end of questions, loop back to the beginning
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0;
+                loopCount++;
+                loopCountElement.textContent = loopCount;
+                
+                // Show loop notification
+                showLoopNotification();
+            }
+            
+            // Load the next question
+            loadQuestion();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctCountElement.textContent = correctCount;
+            questionCountElement.textContent = `${currentQuestionIndex + 1}/20`;
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBarElement.style.width = `${progress}%`;
+        }
+        
+        // Show loop notification
+        function showLoopNotification() {
+            // Play click sound
+            playClickSound();
+            
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #3498db, #2ecc71);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 3s ease;
+            `;
+            
+            // Add keyframes for animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; top: 0; }
+                    15% { opacity: 1; top: 20px; }
+                    85% { opacity: 1; top: 20px; }
+                    100% { opacity: 0; top: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = `Loop ${loopCount} started! Keep mastering verbs!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                document.head.removeChild(style);
+            }, 3000);
+        }
+        
+        // Show bonus notification
+        function showBonusNotification() {
+            // Play correct sound for bonus
+            playSound(correctSound);
+            
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #f39c12, #f1c40f);
+                color: #333;
+                padding: 12px 25px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 2.5s ease;
+            `;
+            
+            notification.innerHTML = `<i class="fas fa-star" style="margin-right: 8px;"></i> +15 Bonus Points!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 2500);
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+        
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Pause any playing sounds when page is hidden
+                correctSound.pause();
+                wrongSound.pause();
+            }
+        });
+    </script>
+</body>
+</html>

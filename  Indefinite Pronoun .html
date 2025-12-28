@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indefinite Pronoun Quiz - Infinite Loop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 5px solid #ffcc00;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f0f0f0;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4a00e0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .game-area {
+            padding: 25px 20px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            color: #4a00e0;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number i {
+            margin-right: 8px;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            color: #222;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        @media (min-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background-color: #f8f8f8;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 18px 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background-color: #eef2ff;
+            border-color: #8e2de2;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background-color: #dbe4ff;
+            border-color: #4a00e0;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .option-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: #4a00e0;
+            color: white;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        #submit-btn {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        #submit-btn:hover {
+            background: linear-gradient(to right, #3a00b0, #7e1dd2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.4);
+        }
+        
+        #submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #next-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            flex: 1;
+            margin-left: 10px;
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(to right, #009688, #86b936);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+        }
+        
+        .explanation {
+            background-color: #f8f9fa;
+            border-left: 5px solid #4a00e0;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .explanation h3 {
+            color: #4a00e0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .explanation h3 i {
+            margin-right: 10px;
+        }
+        
+        .loop-indicator {
+            background-color: rgba(255, 204, 0, 0.2);
+            border: 2px dashed #ffcc00;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #996600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loop-indicator i {
+            margin: 0 10px;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.5rem;
+            }
+            
+            .stat {
+                min-width: 100px;
+                margin-bottom: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            #submit-btn, #next-btn {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .option {
+                padding: 15px 12px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-infinity"></i> Indefinite Pronoun Quiz</h1>
+            <p class="subtitle">Test your knowledge of indefinite pronouns (everyone, somebody, anything, etc.)</p>
+            <p class="subtitle">20 questions infinite loop - Play as long as you want!</p>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="question-count">1/20</div>
+                <div class="stat-label">Question</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="loop-count">1</div>
+                <div class="stat-label">Loop</div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="question-container">
+                <div class="question-number">
+                    <i class="fas fa-question-circle"></i> Question <span id="current-question">1</span> of 20
+                </div>
+                
+                <div class="question-text" id="question-text">
+                    Loading question...
+                </div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be dynamically added here -->
+                </div>
+                
+                <div class="explanation" id="explanation">
+                    <h3><i class="fas fa-lightbulb"></i> Explanation</h3>
+                    <p id="explanation-text">Explanation will appear here after you answer.</p>
+                </div>
+                
+                <div class="loop-indicator">
+                    <i class="fas fa-redo"></i> Questions will loop infinitely! <i class="fas fa-redo"></i>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="submit-btn" disabled>
+                    <i class="fas fa-paper-plane"></i> Submit Answer
+                </button>
+                <button id="next-btn">
+                    <i class="fas fa-forward"></i> Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Indefinite Pronoun Quiz &copy; 2023 | Infinite Loop Game | Designed for Mobile & Desktop</p>
+    </footer>
+
+    <script>
+        // Question data - indefinite pronouns
+        const questions = [
+            {
+                question: "______ should be able to express their opinion freely.",
+                options: ["Anyone", "Everyone", "Somebody", "Nothing"],
+                correct: 1,
+                explanation: "'Everyone' is used to refer to all people in a group. 'Anyone' would also be grammatically correct but has a slightly different meaning (any single person)."
+            },
+            {
+                question: "Is there ______ interesting on TV tonight?",
+                options: ["anyone", "somebody", "anything", "everyone"],
+                correct: 2,
+                explanation: "'Anything' is used in questions to refer to a thing, no matter what. 'Anyone' and 'somebody' refer to people, not things."
+            },
+            {
+                question: "I didn't see ______ at the park when I went there.",
+                options: ["nobody", "anybody", "somebody", "everybody"],
+                correct: 1,
+                explanation: "'Anybody' is used in negative sentences. 'Nobody' would create a double negative with 'didn't', which is incorrect in standard English."
+            },
+            {
+                question: "______ left their umbrella in the conference room.",
+                options: ["Somebody", "Anybody", "Anything", "Everything"],
+                correct: 0,
+                explanation: "'Somebody' is used for an unknown or unspecified person. In this context, we know a specific person left something, but we don't know who."
+            },
+            {
+                question: "There's ______ in my eye. I can't get it out.",
+                options: ["anything", "something", "nothing", "everything"],
+                correct: 1,
+                explanation: "'Something' is used when referring to an unspecified thing. We know there's a thing in the eye, but we don't know exactly what it is."
+            },
+            {
+                question: "I searched everywhere but couldn't find my keys ______.",
+                options: ["nowhere", "anywhere", "somewhere", "everywhere"],
+                correct: 1,
+                explanation: "'Anywhere' is used in negative sentences. 'Nowhere' would create a double negative with 'couldn't'."
+            },
+            {
+                question: "______ who finishes the test early can leave the classroom.",
+                options: ["Anybody", "Nobody", "Everybody", "Somebody"],
+                correct: 0,
+                explanation: "'Anybody' means any person without exception. In this case, it means any person who meets the condition (finishing early) can leave."
+            },
+            {
+                question: "______ of the students passed the difficult exam.",
+                options: ["Nobody", "Anybody", "Somebody", "None"],
+                correct: 3,
+                explanation: "'None' is used to refer to not any of a group of people or things. It's often followed by 'of' + noun phrase."
+            },
+            {
+                question: "Would you like ______ to drink before we leave?",
+                options: ["anything", "something", "nothing", "everything"],
+                correct: 1,
+                explanation: "'Something' is often used in offers and requests, while 'anything' is more common in questions. However, 'something' sounds more positive and inviting here."
+            },
+            {
+                question: "______ in this room is made of recycled materials.",
+                options: ["Anything", "Everything", "Nothing", "Something"],
+                correct: 1,
+                explanation: "'Everything' refers to all things in the room. It indicates that every single item is made of recycled materials."
+            },
+            {
+                question: "I don't know ______ about quantum physics.",
+                options: ["nothing", "anything", "something", "everything"],
+                correct: 1,
+                explanation: "'Anything' is used in negative sentences. 'Nothing' would create a double negative with 'don't'."
+            },
+            {
+                question: "______ called while you were out, but they didn't leave a message.",
+                options: ["Anybody", "Nobody", "Somebody", "Everybody"],
+                correct: 2,
+                explanation: "'Somebody' refers to an unknown or unspecified person. We know someone called, but we don't know who."
+            },
+            {
+                question: "You can choose ______ from the menu; it's all delicious.",
+                options: ["nothing", "anything", "something", "everything"],
+                correct: 1,
+                explanation: "'Anything' means any one item without restriction. It suggests complete freedom of choice."
+            },
+            {
+                question: "______ is perfect, and that's okay.",
+                options: ["Anybody", "Nobody", "Somebody", "Everybody"],
+                correct: 1,
+                explanation: "'Nobody' means no person. This is a common saying meaning that no person is without flaws."
+            },
+            {
+                question: "I've looked ______ for my glasses, but I can't find them.",
+                options: ["nowhere", "anywhere", "somewhere", "everywhere"],
+                correct: 3,
+                explanation: "'Everywhere' means all places. It emphasizes the completeness of the search."
+            },
+            {
+                question: "There's ______ I'd rather be than right here with you.",
+                options: ["anywhere", "nowhere", "somewhere", "everywhere"],
+                correct: 1,
+                explanation: "'Nowhere' means no place. This is a romantic expression meaning there's no other place the speaker would prefer."
+            },
+            {
+                question: "______ in the audience laughed at the comedian's joke.",
+                options: ["Anybody", "Nobody", "Somebody", "Everybody"],
+                correct: 3,
+                explanation: "'Everybody' means all people in the group (the audience). It suggests a unanimous reaction."
+            },
+            {
+                question: "Is there ______ else I should know about this situation?",
+                options: ["anything", "something", "nothing", "everything"],
+                correct: 0,
+                explanation: "'Anything' is used in questions to refer to a thing, no matter what. It's asking if there's any additional information."
+            },
+            {
+                question: "______ of the applicants had the required qualifications.",
+                options: ["No one", "Anyone", "Someone", "Everyone"],
+                correct: 0,
+                explanation: "'No one' means not a single person. It emphasizes that zero applicants met the requirements."
+            },
+            {
+                question: "We need ______ reliable to manage this important project.",
+                options: ["anybody", "somebody", "nobody", "everybody"],
+                correct: 1,
+                explanation: "'Somebody' refers to a person (unknown or unspecified) with the quality of being reliable."
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let loopCount = 1;
+        let selectedOption = null;
+        let gameActive = true;
+        
+        // DOM elements
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainerElement = document.getElementById('options-container');
+        const scoreElement = document.getElementById('score');
+        const questionCountElement = document.getElementById('question-count');
+        const correctCountElement = document.getElementById('correct-count');
+        const currentQuestionElement = document.getElementById('current-question');
+        const loopCountElement = document.getElementById('loop-count');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        
+        // Initialize the game
+        function initGame() {
+            loadQuestion();
+            updateStats();
+            
+            // Event listeners
+            submitButton.addEventListener('click', submitAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionTextElement.textContent = currentQuestion.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous options
+            optionsContainerElement.innerHTML = '';
+            explanationElement.classList.remove('show');
+            selectedOption = null;
+            submitButton.disabled = true;
+            
+            // Create option elements
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.innerHTML = `
+                    <div class="option-letter">${optionLetters[index]}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement, index));
+                optionsContainerElement.appendChild(optionElement);
+            });
+            
+            updateStats();
+        }
+        
+        // Select an option
+        function selectOption(optionElement, optionIndex) {
+            if (!gameActive) return;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            selectedOption = optionIndex;
+            submitButton.disabled = false;
+        }
+        
+        // Submit answer
+        function submitAnswer() {
+            if (selectedOption === null || !gameActive) return;
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            const optionElements = document.querySelectorAll('.option');
+            
+            // Disable all options
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark correct and incorrect answers
+            optionElements.forEach((option, index) => {
+                if (index === currentQuestion.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedOption && index !== currentQuestion.correct) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.correct;
+            
+            // Update score and correct count
+            if (isCorrect) {
+                score += 10;
+                correctCount++;
+            } else {
+                // Small penalty for incorrect answer
+                score = Math.max(0, score - 2);
+            }
+            
+            // Show explanation
+            explanationTextElement.textContent = currentQuestion.explanation;
+            explanationElement.classList.add('show');
+            
+            // Update UI
+            submitButton.disabled = true;
+            gameActive = false;
+            updateStats();
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            // Reset game state
+            gameActive = true;
+            
+            // Move to next question
+            currentQuestionIndex++;
+            
+            // If we've reached the end of questions, loop back to the beginning
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0;
+                loopCount++;
+                loopCountElement.textContent = loopCount;
+                
+                // Show loop notification
+                showLoopNotification();
+            }
+            
+            // Load the next question
+            loadQuestion();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctCountElement.textContent = correctCount;
+            questionCountElement.textContent = `${currentQuestionIndex + 1}/20`;
+        }
+        
+        // Show loop notification
+        function showLoopNotification() {
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #4a00e0, #8e2de2);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 3s ease;
+            `;
+            
+            // Add keyframes for animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; top: 0; }
+                    15% { opacity: 1; top: 20px; }
+                    85% { opacity: 1; top: 20px; }
+                    100% { opacity: 0; top: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = `Loop ${loopCount} started! Keep playing!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                document.head.removeChild(style);
+            }, 3000);
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
