@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrasal Verbs Quiz - Infinite Loop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #8e44ad, #3498db);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 5px solid #e74c3c;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+        
+        .phrasal-types {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .phrasal-type {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .phrasal-type i {
+            margin-right: 8px;
+        }
+        
+        .verb-particle {
+            color: #f39c12;
+        }
+        
+        .meaning {
+            color: #2ecc71;
+        }
+        
+        .sound-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .sound-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sound-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .sound-btn.active {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #8e44ad;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .game-area {
+            padding: 25px 20px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            color: #8e44ad;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number i {
+            margin-right: 8px;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            color: #222;
+        }
+        
+        .sentence-example {
+            font-size: 1.6rem;
+            color: #8e44ad;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid #e74c3c;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .sentence-example::before {
+            content: '"';
+            font-size: 4rem;
+            color: rgba(231, 76, 60, 0.2);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: Georgia, serif;
+        }
+        
+        .highlighted-phrasal {
+            background-color: #f1c40f;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #333;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        @media (min-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background-color: #f8f9fa;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 22px 15px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background-color: #eeeeee;
+            border-color: #8e44ad;
+            box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.2);
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            animation: pulseCorrect 0.5s ease;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            animation: shake 0.5s ease;
+        }
+        
+        .option-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .option.option-a .option-icon {
+            background-color: #e74c3c;
+        }
+        
+        .option.option-b .option-icon {
+            background-color: #3498db;
+        }
+        
+        .option.option-c .option-icon {
+            background-color: #2ecc71;
+        }
+        
+        .option.option-d .option-icon {
+            background-color: #f39c12;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        #submit-btn {
+            background: linear-gradient(to right, #8e44ad, #3498db);
+            color: white;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        #submit-btn:hover {
+            background: linear-gradient(to right, #7d3c98, #2980b9);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
+        }
+        
+        #submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #next-btn {
+            background: linear-gradient(to right, #e74c3c, #f39c12);
+            color: white;
+            flex: 1;
+            margin-left: 10px;
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(to right, #c0392b, #e67e22);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .explanation {
+            background-color: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .explanation h3 {
+            color: #8e44ad;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .explanation h3 i {
+            margin-right: 10px;
+        }
+        
+        .phrasal-definition {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .definition-title {
+            font-weight: bold;
+            color: #8e44ad;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition-title i {
+            margin-right: 8px;
+        }
+        
+        .phrasal-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .example-tag {
+            background-color: #d6eaf8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .loop-indicator {
+            background-color: rgba(52, 152, 219, 0.15);
+            border: 2px dashed #3498db;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #8e44ad;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loop-indicator i {
+            margin: 0 10px;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .phrasal-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .phrasal-tag {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #e74c3c, #8e44ad);
+            border-radius: 10px;
+            width: 5%;
+            transition: width 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes pulseCorrect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text, .sentence-example {
+                font-size: 1.4rem;
+            }
+            
+            .stat {
+                min-width: 100px;
+                margin-bottom: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            #submit-btn, #next-btn {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .option {
+                padding: 18px 12px;
+                font-size: 1.2rem;
+            }
+            
+            .phrasal-types {
+                gap: 15px;
+            }
+            
+            .phrasal-type {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .sound-controls {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+        
+        .sound-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: linear-gradient(to right, rgba(231, 76, 60, 0.3), rgba(52, 152, 219, 0.3));
+            transition: height 0.3s;
+        }
+        
+        .option.playing .sound-wave {
+            height: 5px;
+            animation: wave 0.5s ease infinite alternate;
+        }
+        
+        @keyframes wave {
+            0% { height: 5px; }
+            100% { height: 10px; }
+        }
+        
+        .phrasal-verb {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-infinity"></i> Phrasal Verbs Quiz</h1>
+            <p class="subtitle">Choose the correct meaning of the highlighted phrasal verb</p>
+            <p class="subtitle">20 questions infinite loop - Master phrasal verbs with sound effects!</p>
+            
+            <div class="phrasal-types">
+                <div class="phrasal-type verb-particle">
+                    <i class="fas fa-link"></i> Verb + Particle
+                </div>
+                <div class="phrasal-type meaning">
+                    <i class="fas fa-brain"></i> Special Meaning
+                </div>
+            </div>
+            
+            <div class="sound-controls">
+                <button id="sound-toggle" class="sound-btn active">
+                    <i class="fas fa-volume-up"></i> Sound: ON
+                </button>
+            </div>
+            
+            <div class="phrasal-list">
+                <div class="phrasal-tag">give up = quit</div>
+                <div class="phrasal-tag">look into = investigate</div>
+                <div class="phrasal-tag">turn down = reject</div>
+                <div class="phrasal-tag">break down = stop working</div>
+            </div>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="question-count">1/20</div>
+                <div class="stat-label">Question</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="loop-count">1</div>
+                <div class="stat-label">Loop</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="game-area">
+            <div class="question-container">
+                <div class="question-number">
+                    <i class="fas fa-question-circle"></i> Question <span id="current-question">1</span> of 20
+                </div>
+                
+                <div class="question-text" id="question-text">
+                    What does the highlighted phrasal verb mean in this sentence?
+                </div>
+                
+                <div class="sentence-example" id="sentence-example">
+                    Loading sentence...
+                </div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be dynamically added here -->
+                </div>
+                
+                <div class="explanation" id="explanation">
+                    <h3><i class="fas fa-lightbulb"></i> Explanation</h3>
+                    <div id="phrasal-definition" class="phrasal-definition">
+                        <!-- Phrasal verb definition will be dynamically added here -->
+                    </div>
+                    <p id="explanation-text">Explanation will appear here after you answer.</p>
+                    <div class="phrasal-examples" id="phrasal-examples">
+                        <!-- Phrasal verb examples will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <div class="loop-indicator">
+                    <i class="fas fa-redo"></i> Questions will loop infinitely! <i class="fas fa-redo"></i>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="submit-btn" disabled>
+                    <i class="fas fa-paper-plane"></i> Submit Answer
+                </button>
+                <button id="next-btn">
+                    <i class="fas fa-forward"></i> Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Phrasal Verbs Quiz &copy; 2023 | Infinite Loop Game | With Sound Effects</p>
+        <p>Phrasal verbs = verb + particle with special meaning | Practice makes perfect!</p>
+    </footer>
+
+    <script>
+        // Question data - Phrasal Verbs
+        const questions = [
+            {
+                sentence: "After trying for months, she decided to <span class='highlighted-phrasal'>give up</span> smoking for good.",
+                options: [
+                    "To offer something",
+                    "To quit or stop trying",
+                    "To distribute something",
+                    "To surrender in a game"
+                ],
+                correctAnswer: 1,
+                explanation: "'Give up' means to quit or stop trying to do something. It's often used when someone stops a habit or abandons an effort.",
+                definition: "Give up = To stop trying to do something; to quit or abandon an effort or habit.",
+                examples: ["give up smoking", "give up trying", "give up hope", "never give up"]
+            },
+            {
+                sentence: "The manager promised to <span class='highlighted-phrasal'>look into</span> the customer's complaint immediately.",
+                options: [
+                    "To watch carefully",
+                    "To investigate or examine",
+                    "To search for something",
+                    "To admire something"
+                ],
+                correctAnswer: 1,
+                explanation: "'Look into' means to investigate or examine a situation or problem to find more information about it.",
+                definition: "Look into = To investigate, examine, or research something to find information.",
+                examples: ["look into a problem", "look into the matter", "look into possibilities", "look into allegations"]
+            },
+            {
+                sentence: "He had to <span class='highlighted-phrasal'>turn down</span> the job offer because of the low salary.",
+                options: [
+                    "To reduce volume",
+                    "To reject or refuse",
+                    "To fold something",
+                    "To look downward"
+                ],
+                correctAnswer: 1,
+                explanation: "'Turn down' means to reject or refuse an offer, invitation, or request.",
+                definition: "Turn down = To reject or refuse an offer, invitation, or request.",
+                examples: ["turn down an offer", "turn down an invitation", "turn down a proposal", "turn down a request"]
+            },
+            {
+                sentence: "My car <span class='highlighted-phrasal'>broke down</span> on the highway yesterday.",
+                options: [
+                    "To separate into pieces",
+                    "To stop working suddenly",
+                    "To enter by force",
+                    "To analyze in detail"
+                ],
+                correctAnswer: 1,
+                explanation: "'Broke down' means that a machine or vehicle stops working properly or completely.",
+                definition: "Break down = When a machine or vehicle stops working properly; also can mean to lose emotional control.",
+                examples: ["car broke down", "washing machine broke down", "break down in tears", "break down barriers"]
+            },
+            {
+                sentence: "We need to <span class='highlighted-phrasal'>put off</span> the meeting until next week.",
+                options: [
+                    "To place something somewhere",
+                    "To postpone or delay",
+                    "To dress in clothing",
+                    "To extinguish a fire"
+                ],
+                correctAnswer: 1,
+                explanation: "'Put off' means to postpone or delay something to a later time.",
+                definition: "Put off = To postpone or delay something to a later time.",
+                examples: ["put off a meeting", "put off a decision", "put off doing homework", "put off until tomorrow"]
+            },
+            {
+                sentence: "Can you <span class='highlighted-phrasal'>look after</span> my cat while I'm on vacation?",
+                options: [
+                    "To search for something",
+                    "To take care of someone",
+                    "To consider carefully",
+                    "To appear attractive"
+                ],
+                correctAnswer: 1,
+                explanation: "'Look after' means to take care of someone or something, to be responsible for them.",
+                definition: "Look after = To take care of someone or something; to be responsible for their well-being.",
+                examples: ["look after children", "look after pets", "look after the house", "look after yourself"]
+            },
+            {
+                sentence: "The company plans to <span class='highlighted-phrasal'>set up</span> a new office in Tokyo.",
+                options: [
+                    "To arrange a meeting",
+                    "To establish or start",
+                    "To prepare equipment",
+                    "To trick someone"
+                ],
+                correctAnswer: 1,
+                explanation: "'Set up' means to establish, arrange, or start something new, like a business or system.",
+                definition: "Set up = To establish, arrange, or start something new such as a business, system, or organization.",
+                examples: ["set up a business", "set up a meeting", "set up equipment", "set up a website"]
+            },
+            {
+                sentence: "I can't <span class='highlighted-phrasal'>put up with</span> his constant complaining anymore.",
+                options: [
+                    "To tolerate or endure",
+                    "To hang something",
+                    "To provide accommodation",
+                    "To suggest an idea"
+                ],
+                correctAnswer: 0,
+                explanation: "'Put up with' means to tolerate or endure something unpleasant without complaining.",
+                definition: "Put up with = To tolerate or endure something unpleasant or annoying.",
+                examples: ["put up with noise", "put up with bad behavior", "put up with delays", "put up with rudeness"]
+            },
+            {
+                sentence: "Let's <span class='highlighted-phrasal'>go over</span> the report one more time before the presentation.",
+                options: [
+                    "To visit someone",
+                    "To review or examine",
+                    "To cross something",
+                    "To exceed a limit"
+                ],
+                correctAnswer: 1,
+                explanation: "'Go over' means to review, examine, or check something carefully.",
+                definition: "Go over = To review, examine, or check something carefully; also can mean to visit.",
+                examples: ["go over notes", "go over a plan", "go over details", "go over to someone's house"]
+            },
+            {
+                sentence: "She <span class='highlighted-phrasal'>took up</span> painting as a hobby after she retired.",
+                options: [
+                    "To remove something",
+                    "To begin a new activity",
+                    "To occupy space",
+                    "To continue something"
+                ],
+                correctAnswer: 1,
+                explanation: "'Took up' means to begin a new activity, hobby, or interest.",
+                definition: "Take up = To begin a new activity, hobby, or interest; also means to occupy time or space.",
+                examples: ["take up a hobby", "take up a sport", "take up time", "take up space"]
+            },
+            {
+                sentence: "The police are trying to <span class='highlighted-phrasal'>track down</span> the missing documents.",
+                options: [
+                    "To follow footprints",
+                    "To find after searching",
+                    "To record information",
+                    "To reduce speed"
+                ],
+                correctAnswer: 1,
+                explanation: "'Track down' means to find someone or something after searching for them.",
+                definition: "Track down = To find someone or something after a search or investigation.",
+                examples: ["track down a criminal", "track down information", "track down a source", "track down evidence"]
+            },
+            {
+                sentence: "I need to <span class='highlighted-phrasal'>fill out</span> this application form before the deadline.",
+                options: [
+                    "To complete a form",
+                    "To make something full",
+                    "To repair something",
+                    "To substitute for someone"
+                ],
+                correctAnswer: 0,
+                explanation: "'Fill out' means to complete a form or document by writing the required information.",
+                definition: "Fill out = To complete a form or document by writing the required information in the spaces.",
+                examples: ["fill out a form", "fill out an application", "fill out a survey", "fill out paperwork"]
+            },
+            {
+                sentence: "The meeting <span class='highlighted-phrasal'>went on</span> for three hours without a break.",
+                options: [
+                    "To attend an event",
+                    "To continue happening",
+                    "To be successful",
+                    "To explode"
+                ],
+                correctAnswer: 1,
+                explanation: "'Went on' means to continue happening or to last for a period of time.",
+                definition: "Go on = To continue happening or existing; to proceed or last.",
+                examples: ["the show went on", "go on talking", "go on a trip", "what's going on?"]
+            },
+            {
+                sentence: "We should <span class='highlighted-phrasal'>call off</span> the picnic if it rains tomorrow.",
+                options: [
+                    "To cancel something",
+                    "To shout loudly",
+                    "To visit someone",
+                    "To order by phone"
+                ],
+                correctAnswer: 0,
+                explanation: "'Call off' means to cancel an event or activity that was planned.",
+                definition: "Call off = To cancel an event or activity that was planned.",
+                examples: ["call off a meeting", "call off a wedding", "call off a strike", "call off the search"]
+            },
+            {
+                sentence: "He <span class='highlighted-phrasal'>came across</span> an old photo album while cleaning the attic.",
+                options: [
+                    "To meet by chance",
+                    "To find unexpectedly",
+                    "To cross a road",
+                    "To appear angry"
+                ],
+                correctAnswer: 1,
+                explanation: "'Came across' means to find or discover something unexpectedly or by chance.",
+                definition: "Come across = To find or discover something unexpectedly or by chance; also means to make an impression.",
+                examples: ["come across information", "come across an old friend", "come across as friendly", "come across clearly"]
+            },
+            {
+                sentence: "Please <span class='highlighted-phrasal'>turn up</span> the volume; I can't hear the movie.",
+                options: [
+                    "To appear unexpectedly",
+                    "To increase volume",
+                    "To fold something",
+                    "To reject an offer"
+                ],
+                correctAnswer: 1,
+                explanation: "'Turn up' means to increase the volume, level, or intensity of something.",
+                definition: "Turn up = To increase the volume, level, or intensity of something; also means to appear or arrive.",
+                examples: ["turn up the volume", "turn up the heat", "turn up unexpectedly", "turn up late"]
+            },
+            {
+                sentence: "She had to <span class='highlighted-phrasal'>break up</span> with her boyfriend because of long distance.",
+                options: [
+                    "To separate into pieces",
+                    "To end a relationship",
+                    "To start laughing",
+                    "To interrupt someone"
+                ],
+                correctAnswer: 1,
+                explanation: "'Break up' means to end a romantic relationship or to separate from someone.",
+                definition: "Break up = To end a romantic relationship; also means to separate into smaller pieces.",
+                examples: ["break up with someone", "break up a fight", "break up a meeting", "break up into groups"]
+            },
+            {
+                sentence: "I'll <span class='highlighted-phrasal'>drop off</span> the package at the post office on my way to work.",
+                options: [
+                    "To fall asleep",
+                    "To deliver or leave",
+                    "To decrease in amount",
+                    "To visit briefly"
+                ],
+                correctAnswer: 1,
+                explanation: "'Drop off' means to deliver something or leave it at a particular place.",
+                definition: "Drop off = To deliver or leave something or someone at a particular place; also means to decrease.",
+                examples: ["drop off a package", "drop off children at school", "drop off to sleep", "sales dropped off"]
+            },
+            {
+                sentence: "The firefighter managed to <span class='highlighted-phrasal'>put out</span> the fire before it spread.",
+                options: [
+                    "To place outside",
+                    "To extinguish a fire",
+                    "To publish something",
+                    "To make an effort"
+                ],
+                correctAnswer: 1,
+                explanation: "'Put out' means to extinguish a fire or to stop something from burning.",
+                definition: "Put out = To extinguish a fire or flame; also means to inconvenience someone or publish something.",
+                examples: ["put out a fire", "put out a cigarette", "put out an announcement", "put someone out"]
+            },
+            {
+                sentence: "Let's <span class='highlighted-phrasal'>wind up</span> the meeting so we can all go home.",
+                options: [
+                    "To become angry",
+                    "To finish or conclude",
+                    "To twist a mechanism",
+                    "To travel a route"
+                ],
+                correctAnswer: 1,
+                explanation: "'Wind up' means to bring something to an end or to conclude an activity.",
+                definition: "Wind up = To bring something to an end or conclusion; also means to tighten a spring mechanism.",
+                examples: ["wind up a meeting", "wind up a speech", "wind up a business", "wind up a clock"]
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let loopCount = 1;
+        let selectedOption = null;
+        let gameActive = true;
+        let soundEnabled = true;
+        
+        // DOM elements
+        const questionTextElement = document.getElementById('question-text');
+        const sentenceExampleElement = document.getElementById('sentence-example');
+        const optionsContainerElement = document.getElementById('options-container');
+        const scoreElement = document.getElementById('score');
+        const questionCountElement = document.getElementById('question-count');
+        const correctCountElement = document.getElementById('correct-count');
+        const currentQuestionElement = document.getElementById('current-question');
+        const loopCountElement = document.getElementById('loop-count');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const phrasalDefinitionElement = document.getElementById('phrasal-definition');
+        const phrasalExamplesElement = document.getElementById('phrasal-examples');
+        const progressBarElement = document.getElementById('progress-bar');
+        const soundToggleBtn = document.getElementById('sound-toggle');
+        
+        // Audio elements - Using your sound files
+        const correctSound = new Audio('music/f.wav');  // Correct answer sound
+        const wrongSound = new Audio('music/h.wav');    // Wrong answer sound
+        
+        // Initialize the game
+        function initGame() {
+            loadQuestion();
+            updateStats();
+            updateProgressBar();
+            
+            // Event listeners
+            submitButton.addEventListener('click', submitAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+            soundToggleBtn.addEventListener('click', toggleSound);
+            
+            // Set initial audio volume
+            correctSound.volume = 0.7;
+            wrongSound.volume = 0.7;
+        }
+        
+        // Toggle sound effects
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundToggleBtn.classList.toggle('active', soundEnabled);
+            soundToggleBtn.innerHTML = `<i class="fas fa-volume-${soundEnabled ? 'up' : 'mute'}"></i> Sound: ${soundEnabled ? 'ON' : 'OFF'}`;
+            
+            // Play click sound if enabling
+            if (soundEnabled) {
+                playClickSound();
+            }
+        }
+        
+        // Play click sound using Web Audio API
+        function playClickSound() {
+            if (!soundEnabled) return;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Web Audio API not supported");
+            }
+        }
+        
+        // Play sound with error handling
+        function playSound(audioElement) {
+            if (!soundEnabled) return;
+            
+            try {
+                // Reset audio to start
+                audioElement.currentTime = 0;
+                // Play audio
+                audioElement.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                    // Fallback: try with user gesture
+                    document.body.addEventListener('click', function playOnce() {
+                        audioElement.play().catch(e2 => console.log("Fallback play failed:", e2));
+                        document.body.removeEventListener('click', playOnce);
+                    });
+                });
+            } catch (error) {
+                console.log("Audio error:", error);
+            }
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            sentenceExampleElement.innerHTML = currentQuestion.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous options
+            optionsContainerElement.innerHTML = '';
+            explanationElement.classList.remove('show');
+            selectedOption = null;
+            submitButton.disabled = true;
+            
+            // Create option elements with letters A, B, C, D
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            const optionClasses = ['option-a', 'option-b', 'option-c', 'option-d'];
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = `option ${optionClasses[index]}`;
+                optionElement.dataset.index = index;
+                optionElement.innerHTML = `
+                    <div class="option-icon">${optionLetters[index]}</div>
+                    <div class="option-text">${option}</div>
+                    <div class="sound-wave"></div>
+                `;
+                
+                optionElement.addEventListener('click', () => {
+                    playClickSound();
+                    selectOption(optionElement, index);
+                    
+                    // Add visual feedback for sound playing
+                    optionElement.classList.add('playing');
+                    setTimeout(() => {
+                        optionElement.classList.remove('playing');
+                    }, 500);
+                });
+                optionsContainerElement.appendChild(optionElement);
+            });
+            
+            updateStats();
+            updateProgressBar();
+        }
+        
+        // Select an option
+        function selectOption(optionElement, optionIndex) {
+            if (!gameActive) return;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            selectedOption = optionIndex;
+            submitButton.disabled = false;
+        }
+        
+        // Submit answer
+        function submitAnswer() {
+            if (selectedOption === null || !gameActive) return;
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            const optionElements = document.querySelectorAll('.option');
+            
+            // Disable all options
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark correct and incorrect answers
+            optionElements.forEach(option => {
+                const optionIndex = parseInt(option.dataset.index);
+                if (optionIndex === currentQuestion.correctAnswer) {
+                    option.classList.add('correct');
+                    option.style.animation = 'pulseCorrect 0.5s ease';
+                } else if (optionIndex === selectedOption && optionIndex !== currentQuestion.correctAnswer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            
+            // Play appropriate sound - USING YOUR FILES
+            if (isCorrect) {
+                playSound(correctSound); // This will play music/f.wav for correct answers
+            } else {
+                playSound(wrongSound); // This will play music/h.wav for wrong answers
+            }
+            
+            // Update score and correct count
+            if (isCorrect) {
+                score += 10;
+                correctCount++;
+                
+                // Add bonus for consecutive correct answers
+                if (correctCount % 5 === 0) {
+                    score += 15; // Bonus points
+                    showBonusNotification();
+                }
+            } else {
+                // Small penalty for incorrect answer
+                score = Math.max(0, score - 5);
+            }
+            
+            // Show explanation with appropriate definition
+            phrasalDefinitionElement.innerHTML = `
+                <div class="definition-title">
+                    <i class="fas fa-language"></i> Phrasal Verb Definition
+                </div>
+                <p><span class="phrasal-verb">${currentQuestion.definition.split(' = ')[0]}</span> = ${currentQuestion.definition.split(' = ')[1]}</p>
+            `;
+            
+            explanationTextElement.textContent = currentQuestion.explanation;
+            
+            // Add examples
+            phrasalExamplesElement.innerHTML = `
+                <div class="definition-title">
+                    <i class="fas fa-list"></i> Example Sentences
+                </div>
+                <div class="phrasal-examples">
+                    ${currentQuestion.examples.map(example => `<div class="example-tag">${example}</div>`).join('')}
+                </div>
+            `;
+            
+            explanationElement.classList.add('show');
+            
+            // Update UI
+            submitButton.disabled = true;
+            gameActive = false;
+            updateStats();
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            // Play click sound
+            playClickSound();
+            
+            // Reset game state
+            gameActive = true;
+            
+            // Move to next question
+            currentQuestionIndex++;
+            
+            // If we've reached the end of questions, loop back to the beginning
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0;
+                loopCount++;
+                loopCountElement.textContent = loopCount;
+                
+                // Show loop notification
+                showLoopNotification();
+            }
+            
+            // Load the next question
+            loadQuestion();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctCountElement.textContent = correctCount;
+            questionCountElement.textContent = `${currentQuestionIndex + 1}/20`;
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBarElement.style.width = `${progress}%`;
+        }
+        
+        // Show loop notification
+        function showLoopNotification() {
+            // Play click sound
+            playClickSound();
+            
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #3498db, #8e44ad);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 3s ease;
+            `;
+            
+            // Add keyframes for animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; top: 0; }
+                    15% { opacity: 1; top: 20px; }
+                    85% { opacity: 1; top: 20px; }
+                    100% { opacity: 0; top: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = `Loop ${loopCount} started! Keep practicing!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                document.head.removeChild(style);
+            }, 3000);
+        }
+        
+        // Show bonus notification
+        function showBonusNotification() {
+            // Play correct sound for bonus
+            playSound(correctSound);
+            
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #f39c12, #e74c3c);
+                color: white;
+                padding: 12px 25px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 2.5s ease;
+            `;
+            
+            notification.innerHTML = `<i class="fas fa-star" style="margin-right: 8px;"></i> +15 Bonus Points!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 2500);
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+        
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Pause any playing sounds when page is hidden
+                correctSound.pause();
+                wrongSound.pause();
+            }
+        });
+    </script>
+</body>
+</html>

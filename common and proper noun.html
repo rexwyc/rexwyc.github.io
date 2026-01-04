@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Common and Proper Noun Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            color: #333;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #11998e, #38ef7d);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 5px solid #11998e;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .instructions h2 {
+            color: #11998e;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions ul {
+            padding-left: 18px;
+        }
+        
+        .instructions li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        
+        .noun-guide {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .noun-card {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid #e9ecef;
+            flex: 1;
+            min-width: 110px;
+        }
+        
+        .noun-card h4 {
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .noun-card.common h4 {
+            color: #11998e;
+        }
+        
+        .noun-card.proper h4 {
+            color: #ff6b6b;
+        }
+        
+        .noun-card p {
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        .quiz-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .question-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e9ecef;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #dee2e6;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #11998e;
+        }
+        
+        .score {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+        
+        .sentence {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 1.4;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .highlighted-noun {
+            background-color: #ffeb3b;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 18px 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            background-color: white;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .option:active {
+            transform: scale(0.98);
+        }
+        
+        .option:hover {
+            border-color: #11998e;
+        }
+        
+        .option.selected {
+            background-color: #11998e;
+            color: white;
+            border-color: #11998e;
+        }
+        
+        .option.correct {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .option.wrong {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            line-height: 1.4;
+        }
+        
+        .feedback.correct {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+            border: 2px solid #2ecc71;
+            display: block;
+        }
+        
+        .feedback.wrong {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 12px;
+        }
+        
+        button {
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        button:active {
+            transform: scale(0.97);
+        }
+        
+        #hint-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        #hint-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        #next-btn {
+            background-color: #38ef7d;
+            color: white;
+        }
+        
+        #next-btn:hover {
+            background-color: #2ecc71;
+        }
+        
+        #restart-btn {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        #restart-btn:hover {
+            background-color: #e74c3c;
+        }
+        
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #11998e;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+        
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        
+        .rules {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+        
+        .rules strong {
+            color: #11998e;
+        }
+        
+        .noun-tips {
+            background-color: rgba(17, 153, 142, 0.1);
+            border-left: 4px solid #11998e;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .noun-tips h4 {
+            color: #11998e;
+            margin-bottom: 5px;
+        }
+        
+        .capitalization-rule {
+            background-color: rgba(255, 107, 107, 0.1);
+            border-left: 4px solid #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .capitalization-rule h4 {
+            color: #ff6b6b;
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            margin-top: 15px;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .sentence {
+                font-size: 1.3rem;
+                padding: 12px;
+            }
+            
+            .option {
+                padding: 16px 8px;
+                font-size: 1.1rem;
+            }
+            
+            button {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .noun-card {
+                min-width: 90px;
+                padding: 10px;
+            }
+        }
+        
+        /* Landscape orientation */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .sentence {
+                min-height: 60px;
+                font-size: 1.3rem;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .options {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .option {
+                padding: 14px 8px;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #0d7a6f 0%, #2ecc71 100%);
+            }
+            
+            .container {
+                background-color: #2d3436;
+                color: #f5f5f5;
+            }
+            
+            .noun-card {
+                background-color: #3c4245;
+                border-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .question-container {
+                background-color: #3c4245;
+                border-color: #4a5257;
+            }
+            
+            .sentence {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .highlighted-noun {
+                background-color: #b58900;
+                color: #2d3436;
+            }
+            
+            .option {
+                background-color: #3c4245;
+                color: #f5f5f5;
+                border-color: #4a5257;
+            }
+            
+            .instructions {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .stats {
+                background-color: #4a5257;
+                color: #f5f5f5;
+            }
+            
+            .stat-label {
+                color: #bdc3c7;
+            }
+            
+            .noun-tips, .capitalization-rule {
+                background-color: rgba(17, 153, 142, 0.2);
+            }
+        }
+        
+        /* Animation for correct/wrong answers */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .option.correct {
+            animation: pulse 0.5s ease;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book"></i> Common & Proper Nouns</h1>
+            <p class="subtitle">Identify common and proper nouns in sentences</p>
+        </header>
+        
+        <div class="content">
+            <div class="instructions">
+                <h2><i class="fas fa-info-circle"></i> How to Play</h2>
+                <ul>
+                    <li>Identify if the highlighted noun is common or proper</li>
+                    <li>Common nouns are general (city, teacher, river)</li>
+                    <li>Proper nouns are specific names (Paris, Mr. Smith, Amazon River)</li>
+                    <li>20 questions per round - learn at your own pace</li>
+                </ul>
+            </div>
+            
+            <div class="noun-guide">
+                <div class="noun-card common">
+                    <h4>Common Noun</h4>
+                    <p>General names</p>
+                    <p>"city", "teacher"</p>
+                    <p>Not capitalized*</p>
+                </div>
+                <div class="noun-card proper">
+                    <h4>Proper Noun</h4>
+                    <p>Specific names</p>
+                    <p>"London", "Dr. Jones"</p>
+                    <p>Always capitalized</p>
+                </div>
+            </div>
+            
+            <div class="noun-tips">
+                <h4><i class="fas fa-lightbulb"></i> Quick Tips</h4>
+                <p><strong>Common nouns:</strong> Can use "a/an/the" before them (a city, the teacher)<br>
+                <strong>Proper nouns:</strong> Specific names of people, places, organizations<br>
+                <em>Test: If you can put "the" before it and it still makes sense, it's probably common.</em></p>
+            </div>
+            
+            <div class="capitalization-rule">
+                <h4><i class="fas fa-exclamation-triangle"></i> Capitalization Rule</h4>
+                <p><strong>Proper nouns ALWAYS start with a capital letter!</strong><br>
+                Common nouns only capitalize at the start of a sentence.<br>
+                <em>Examples: dog (common) vs. Rover (proper), river (common) vs. Nile River (proper)</em></p>
+            </div>
+            
+            <div class="quiz-area">
+                <div class="question-container">
+                    <div class="question-header">
+                        <div class="question-number">Q: <span id="current-question">1</span>/20</div>
+                        <div class="score">Score: <span id="score">0</span></div>
+                    </div>
+                    
+                    <div class="streak-counter">
+                        <i class="fas fa-fire"></i>
+                        <span id="streak">0</span> Streak
+                    </div>
+                    
+                    <div class="sentence" id="sentence">Loading question...</div>
+                    
+                    <div class="options">
+                        <div class="option" data-value="common">Common Noun</div>
+                        <div class="option" data-value="proper">Proper Noun</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback"></div>
+                    
+                    <div class="controls">
+                        <div class="control-row">
+                            <button id="hint-btn">
+                                <i class="fas fa-lightbulb"></i> Hint
+                            </button>
+                            <button id="restart-btn">
+                                <i class="fas fa-redo"></i> Restart
+                            </button>
+                        </div>
+                        <button id="next-btn" disabled>
+                            Next Question <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="correct-answers">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="questions-answered">0</div>
+                        <div class="stat-label">Answered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                </div>
+                
+                <div class="rules">
+                    <p><strong>Remember:</strong> Proper nouns name specific people, places, or things and are always capitalized. Common nouns are general names.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Common & Proper Noun Quiz &bull; Educational Grammar Game &bull; Learn English Nouns!</p>
+    </footer>
+
+    <script>
+        // Quiz data for common and proper nouns
+        const quizData = [
+            { 
+                sentence: "My sister <span class='highlighted-noun'>Emily</span> is a doctor.", 
+                answer: "proper", 
+                hint: "This is a specific person's name",
+                explanation: "'Emily' is a proper noun because it's the specific name of a person. Proper nouns are always capitalized."
+            },
+            { 
+                sentence: "We visited a beautiful <span class='highlighted-noun'>city</span> in Italy.", 
+                answer: "common", 
+                hint: "This is a general place, not a specific name",
+                explanation: "'city' is a common noun because it refers to any city, not a specific one."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>Amazon River</span> is the largest in the world.", 
+                answer: "proper", 
+                hint: "This is the specific name of a river",
+                explanation: "'Amazon River' is a proper noun because it's the specific name of a river. Geographic features have proper names."
+            },
+            { 
+                sentence: "I need to buy a new <span class='highlighted-noun'>book</span> for school.", 
+                answer: "common", 
+                hint: "This is a general item, not a specific title",
+                explanation: "'book' is a common noun because it refers to any book, not a specific titled book."
+            },
+            { 
+                sentence: "<span class='highlighted-noun'>Mr. Johnson</span> is our English teacher.", 
+                answer: "proper", 
+                hint: "This is a specific person with a title",
+                explanation: "'Mr. Johnson' is a proper noun because it's the specific name and title of a person."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>dog</span> chased the ball in the park.", 
+                answer: "common", 
+                hint: "This is a general animal, not a specific pet's name",
+                explanation: "'dog' is a common noun because it refers to any dog, not a specific named dog."
+            },
+            { 
+                sentence: "We're flying to <span class='highlighted-noun'>Paris</span> next month.", 
+                answer: "proper", 
+                hint: "This is a specific city name",
+                explanation: "'Paris' is a proper noun because it's the specific name of a city. City names are always proper nouns."
+            },
+            { 
+                sentence: "Her favorite <span class='highlighted-noun'>movie</span> is a comedy.", 
+                answer: "common", 
+                hint: "This is a general type of entertainment",
+                explanation: "'movie' is a common noun because it refers to any movie, not a specific titled movie."
+            },
+            { 
+                sentence: "<span class='highlighted-noun'>Mount Everest</span> is the highest mountain.", 
+                answer: "proper", 
+                hint: "This is a specific mountain's name",
+                explanation: "'Mount Everest' is a proper noun because it's the specific name of a mountain."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>teacher</span> explained the lesson clearly.", 
+                answer: "common", 
+                hint: "This is a general profession, not a specific person",
+                explanation: "'teacher' is a common noun because it refers to any teacher, not a specific named teacher."
+            },
+            { 
+                sentence: "I read about it in <span class='highlighted-noun'>National Geographic</span> magazine.", 
+                answer: "proper", 
+                hint: "This is a specific magazine title",
+                explanation: "'National Geographic' is a proper noun because it's the specific name of a magazine. Publication titles are proper nouns."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>river</span> flows through the valley.", 
+                answer: "common", 
+                hint: "This is a general body of water",
+                explanation: "'river' is a common noun because it refers to any river, not a specific named river."
+            },
+            { 
+                sentence: "<span class='highlighted-noun'>Christmas</span> is my favorite holiday.", 
+                answer: "proper", 
+                hint: "This is a specific holiday name",
+                explanation: "'Christmas' is a proper noun because it's the specific name of a holiday. Holiday names are always capitalized."
+            },
+            { 
+                sentence: "We need to buy some <span class='highlighted-noun'>fruit</span> from the market.", 
+                answer: "common", 
+                hint: "This is a general type of food",
+                explanation: "'fruit' is a common noun because it refers to any fruit, not a specific type like 'Apple' (which would be proper as a brand)."
+            },
+            { 
+                sentence: "She works for <span class='highlighted-noun'>Microsoft Corporation</span>.", 
+                answer: "proper", 
+                hint: "This is a specific company name",
+                explanation: "'Microsoft Corporation' is a proper noun because it's the specific name of a company. Company names are always proper nouns."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>car</span> needs new tires.", 
+                answer: "common", 
+                hint: "This is a general vehicle",
+                explanation: "'car' is a common noun because it refers to any car, not a specific brand or model."
+            },
+            { 
+                sentence: "We studied the <span class='highlighted-noun'>American Revolution</span> in history class.", 
+                answer: "proper", 
+                hint: "This is a specific historical event",
+                explanation: "'American Revolution' is a proper noun because it's the specific name of a historical event."
+            },
+            { 
+                sentence: "Her <span class='highlighted-noun'>cat</span> sleeps on the sofa all day.", 
+                answer: "common", 
+                hint: "This is a general animal",
+                explanation: "'cat' is a common noun because it refers to any cat, not a specific named pet."
+            },
+            { 
+                sentence: "The book is set in <span class='highlighted-noun'>Victorian England</span>.", 
+                answer: "proper", 
+                hint: "This is a specific historical period and country",
+                explanation: "'Victorian England' is a proper noun because it refers to a specific historical period and country combination."
+            },
+            { 
+                sentence: "I need a new <span class='highlighted-noun'>computer</span> for my work.", 
+                answer: "common", 
+                hint: "This is a general electronic device",
+                explanation: "'computer' is a common noun because it refers to any computer, not a specific brand or model."
+            },
+            { 
+                sentence: "He wants to visit <span class='highlighted-noun'>Australia</span> someday.", 
+                answer: "proper", 
+                hint: "This is a specific country name",
+                explanation: "'Australia' is a proper noun because it's the specific name of a country. Country names are always proper nouns."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>ocean</span> was calm today.", 
+                answer: "common", 
+                hint: "This is a general body of water",
+                explanation: "'ocean' is a common noun because it refers to any ocean, not a specific named ocean."
+            },
+            { 
+                sentence: "We watched <span class='highlighted-noun'>Shakespeare's Hamlet</span> at the theater.", 
+                answer: "proper", 
+                hint: "This is a specific play title and author",
+                explanation: "'Shakespeare's Hamlet' is a proper noun because it includes a specific author's name and play title."
+            },
+            { 
+                sentence: "There's a <span class='highlighted-noun'>school</span> near my house.", 
+                answer: "common", 
+                hint: "This is a general type of building",
+                explanation: "'school' is a common noun because it refers to any school, not a specific named school."
+            },
+            { 
+                sentence: "She donated to the <span class='highlighted-noun'>Red Cross</span>.", 
+                answer: "proper", 
+                hint: "This is a specific organization name",
+                explanation: "'Red Cross' is a proper noun because it's the specific name of an organization."
+            },
+            { 
+                sentence: "The <span class='highlighted-noun'>child</span> played in the garden.", 
+                answer: "common", 
+                hint: "This is a general person",
+                explanation: "'child' is a common noun because it refers to any child, not a specific named child."
+            },
+            { 
+                sentence: "They're traveling through the <span class='highlighted-noun'>Sahara Desert</span>.", 
+                answer: "proper", 
+                hint: "This is a specific desert name",
+                explanation: "'Sahara Desert' is a proper noun because it's the specific name of a desert."
+            },
+            { 
+                sentence: "I drink <span class='highlighted-noun'>coffee</span> every morning.", 
+                answer: "common", 
+                hint: "This is a general beverage",
+                explanation: "'coffee' is a common noun because it refers to the beverage in general, not a specific brand."
+            },
+            { 
+                sentence: "<span class='highlighted-noun'>Professor Smith</span> will give the lecture.", 
+                answer: "proper", 
+                hint: "This is a specific person with title",
+                explanation: "'Professor Smith' is a proper noun because it's the specific title and name of a person."
+            },
+            { 
+                sentence: "The old <span class='highlighted-noun'>bridge</span> was built in 1900.", 
+                answer: "common", 
+                hint: "This is a general structure",
+                explanation: "'bridge' is a common noun because it refers to any bridge, not a specific named bridge like 'Golden Gate Bridge'."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let questionsAnswered = 0;
+        let currentQuestionSet = [];
+        let selectedOption = null;
+        let gameActive = true;
+        let streak = 0;
+
+        // DOM elements
+        const sentenceElement = document.getElementById('sentence');
+        const optionsElements = document.querySelectorAll('.option');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const hintButton = document.getElementById('hint-btn');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreElement = document.getElementById('score');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const questionsAnsweredElement = document.getElementById('questions-answered');
+        const accuracyElement = document.getElementById('accuracy');
+        const streakElement = document.getElementById('streak');
+
+        // Initialize quiz
+        function initQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            questionsAnswered = 0;
+            streak = 0;
+            gameActive = true;
+            
+            // Create shuffled question set
+            currentQuestionSet = [...quizData].sort(() => 0.5 - Math.random()).slice(0, 20);
+            
+            // Update UI
+            updateStats();
+            loadQuestion();
+            
+            // Reset buttons
+            nextButton.disabled = true;
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+            
+            // Clear options
+            optionsElements.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+            });
+        }
+
+        // Load question
+        function loadQuestion() {
+            if (!gameActive) return;
+            
+            const question = currentQuestionSet[currentQuestionIndex];
+            sentenceElement.innerHTML = question.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous selections
+            optionsElements.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+                option.onclick = () => selectOption(option);
+            });
+            
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+            nextButton.disabled = true;
+            selectedOption = null;
+        }
+
+        // Select option
+        function selectOption(optionElement) {
+            if (!gameActive || nextButton.disabled === false) return;
+            
+            // Clear previous selections
+            optionsElements.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select this option
+            optionElement.classList.add('selected');
+            selectedOption = optionElement;
+            
+            // Add tap animation
+            optionElement.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                optionElement.style.transform = '';
+            }, 150);
+            
+            // Check answer
+            const selectedValue = optionElement.getAttribute('data-value');
+            const correctAnswer = currentQuestionSet[currentQuestionIndex].answer;
+            const isCorrect = selectedValue === correctAnswer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.innerHTML = `✅ <strong>Correct!</strong> ${currentQuestionSet[currentQuestionIndex].explanation}`;
+                feedbackElement.className = 'feedback correct';
+                optionElement.classList.add('correct');
+                
+                // Update score
+                score += 10;
+                correctAnswers++;
+                streak++;
+            } else {
+                feedbackElement.innerHTML = `❌ <strong>Incorrect.</strong> This is a <strong>${correctAnswer} noun</strong>. ${currentQuestionSet[currentQuestionIndex].explanation}`;
+                feedbackElement.className = 'feedback wrong';
+                optionElement.classList.add('wrong');
+                streak = 0;
+                
+                // Show correct answer
+                optionsElements.forEach(option => {
+                    if (option.getAttribute('data-value') === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                // Special capitalization tip
+                const tip = document.createElement('div');
+                tip.className = 'explanation';
+                if (correctAnswer === 'proper') {
+                    tip.innerHTML = `<strong>Remember:</strong> Proper nouns are ALWAYS capitalized (e.g., Paris, Mr. Smith, Christmas).`;
+                } else {
+                    tip.innerHTML = `<strong>Remember:</strong> Common nouns are only capitalized at the start of sentences.`;
+                }
+                feedbackElement.appendChild(tip);
+            }
+            
+            // Update stats
+            questionsAnswered++;
+            updateStats();
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+
+        // Update stats
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctAnswersElement.textContent = correctAnswers;
+            questionsAnsweredElement.textContent = questionsAnswered;
+            streakElement.textContent = streak;
+            
+            // Calculate accuracy
+            const accuracy = questionsAnswered > 0 ? Math.round((correctAnswers / questionsAnswered) * 100) : 0;
+            accuracyElement.textContent = `${accuracy}%`;
+        }
+
+        // Show hint
+        function showHint() {
+            if (!gameActive || nextButton.disabled === false) return;
+            
+            const hint = currentQuestionSet[currentQuestionIndex].hint;
+            const correctAnswer = currentQuestionSet[currentQuestionIndex].answer;
+            
+            feedbackElement.innerHTML = `💡 <strong>Hint:</strong> ${hint}`;
+            feedbackElement.className = 'feedback correct';
+            
+            // Add rule explanation
+            const ruleTip = document.createElement('div');
+            ruleTip.className = 'explanation';
+            if (correctAnswer === 'proper') {
+                ruleTip.innerHTML = `<strong>Proper Noun Rule:</strong> Names of specific people, places, organizations, and things. Always capitalized.`;
+            } else {
+                ruleTip.innerHTML = `<strong>Common Noun Rule:</strong> General names for people, places, things, or ideas. Only capitalized at sentence start.`;
+            }
+            feedbackElement.appendChild(ruleTip);
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (!gameActive) return;
+            
+            currentQuestionIndex++;
+            
+            // Check if reached 20 questions
+            if (currentQuestionIndex >= 20) {
+                // Show completion
+                let message = `🎉 <strong>Quiz Complete!</strong> Final Score: ${score}. `;
+                if (accuracy >= 90) {
+                    message += `<br>Excellent work! You're a noun expert!`;
+                } else if (accuracy >= 70) {
+                    message += `<br>Good job! Keep practicing!`;
+                } else {
+                    message += `<br>Keep practicing - you'll improve!`;
+                }
+                
+                feedbackElement.innerHTML = message;
+                feedbackElement.className = 'feedback correct';
+                
+                // Restart after delay
+                setTimeout(() => {
+                    initQuiz();
+                }, 3500);
+                return;
+            }
+            
+            loadQuestion();
+        }
+
+        // Event listeners for buttons
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', initQuiz);
+        hintButton.addEventListener('click', showHint);
+
+        // Touch swipe for navigation (optional)
+        let touchStartX = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!gameActive) return;
+            
+            const touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            // Swipe right for next question (if enabled)
+            if (swipeDistance > 80 && !nextButton.disabled) {
+                nextQuestion();
+            }
+            
+            // Swipe left for hint
+            if (swipeDistance < -80 && nextButton.disabled) {
+                showHint();
+            }
+        });
+
+        // Keyboard shortcuts for accessibility
+        document.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            
+            // Number keys 1-2 for options
+            if (e.key >= '1' && e.key <= '2' && nextButton.disabled) {
+                const optionIndex = parseInt(e.key) - 1;
+                if (optionIndex < optionsElements.length) {
+                    selectOption(optionsElements[optionIndex]);
+                }
+            }
+            
+            // Space or Enter for next
+            if ((e.key === ' ' || e.key === 'Enter') && !nextButton.disabled) {
+                nextQuestion();
+            }
+            
+            // H for hint
+            if (e.key === 'h' || e.key === 'H') {
+                showHint();
+            }
+            
+            // R for restart
+            if (e.key === 'r' || e.key === 'R') {
+                initQuiz();
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initQuiz);
+
+        // Prevent zoom on double-tap
+        document.addEventListener('touchstart', (event) => {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent context menu on long press
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+        });
+    </script>
+</body>
+</html>
