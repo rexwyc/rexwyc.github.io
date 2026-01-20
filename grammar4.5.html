@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collective Nouns Quiz | Grammar Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto 15px;
+        }
+        
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question-number {
+            color: #3498db;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        @media (min-width: 600px) {
+            .options-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .option-button {
+            padding: 18px 20px;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .option-button:hover {
+            background-color: #e8f4fc;
+            border-color: #3498db;
+            transform: translateY(-3px);
+        }
+        
+        .option-button.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .option-button.correct {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .option-button.incorrect {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .option-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: #ecf0f1;
+            color: #3498db;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .option-button.selected .option-letter,
+        .option-button.correct .option-letter,
+        .option-button.incorrect .option-letter {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        
+        .feedback-container {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: none;
+        }
+        
+        .feedback-container.correct {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left: 5px solid #2ecc71;
+            display: block;
+        }
+        
+        .feedback-container.incorrect {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 5px solid #e74c3c;
+            display: block;
+        }
+        
+        .feedback-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .feedback-text {
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .control-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+        
+        .submit-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .next-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .next-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-3px);
+        }
+        
+        .restart-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .restart-btn:hover {
+            background-color: #8e44ad;
+            transform: translateY(-3px);
+        }
+        
+        .results-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .results-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .score-percentage {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .score-text {
+            font-size: 1.2rem;
+        }
+        
+        .results-message {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .restart-quiz-btn {
+            padding: 18px 40px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-quiz-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .loop-notice {
+            background-color: rgba(155, 89, 182, 0.1);
+            border-left: 5px solid #9b59b6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: #555;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+            color: #7f8c8d;
+            width: 100%;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .quiz-container, .results-container {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .control-button {
+                min-width: 100%;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-users"></i> Collective Nouns Quiz</h1>
+            <p class="subtitle">Test your knowledge of collective nouns for animals, people, and things. 20 challenging questions with infinite replay!</p>
+        </header>
+        
+        <div class="quiz-container" id="quiz-container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="score-value">0</div>
+                    <div class="stat-label">Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="question-number">1/20</div>
+                    <div class="stat-label">Question</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correct-count">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="incorrect-count">0</div>
+                    <div class="stat-label">Incorrect</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number">Question <span id="current-question">1</span> of 20</div>
+                <div class="question-text" id="question-text">What is the collective noun for a group of lions?</div>
+            </div>
+            
+            <div class="options-container" id="options-container">
+                <!-- Options will be generated by JavaScript -->
+            </div>
+            
+            <div class="feedback-container" id="feedback-container">
+                <div class="feedback-title" id="feedback-title"></div>
+                <div class="feedback-text" id="feedback-text"></div>
+            </div>
+            
+            <div class="controls-container">
+                <button class="control-button submit-btn" id="submit-btn" disabled>
+                    <i class="fas fa-paper-plane"></i> Submit Answer
+                </button>
+                <button class="control-button next-btn" id="next-btn" style="display: none;">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="control-button restart-btn" id="restart-btn" style="display: none;">
+                    <i class="fas fa-redo"></i> Restart Quiz
+                </button>
+            </div>
+            
+            <div class="loop-notice">
+                <i class="fas fa-infinity"></i> This quiz will loop infinitely with new questions each time!
+            </div>
+        </div>
+        
+        <div class="results-container" id="results-container">
+            <h2 class="results-title">Quiz Complete!</h2>
+            
+            <div class="score-circle">
+                <div class="score-percentage" id="score-percentage">0%</div>
+                <div class="score-text">Your Score</div>
+            </div>
+            
+            <div class="results-message" id="results-message"></div>
+            
+            <button class="restart-quiz-btn" id="restart-quiz-btn">
+                <i class="fas fa-redo"></i> Take Quiz Again
+            </button>
+        </div>
+        
+        <footer>
+            <p>Collective Nouns Quiz &copy; 2023 | Created for rexwyc.github.io</p>
+            <p>Test your grammar knowledge with infinite replay!</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Collective nouns quiz data - 20 questions
+        const quizData = [
+            {
+                question: "What is the collective noun for a group of lions?",
+                options: ["Pride", "Herd", "Pack", "School"],
+                correctAnswer: 0,
+                explanation: "A group of lions is called a 'pride'. This is one of the most well-known collective nouns for animals."
+            },
+            {
+                question: "What do you call a group of crows?",
+                options: ["Flock", "Murder", "Gaggle", "Colony"],
+                correctAnswer: 1,
+                explanation: "A group of crows is called a 'murder'. This unusual term dates back to the 15th century."
+            },
+            {
+                question: "Which collective noun refers to a group of whales?",
+                options: ["School", "Pod", "Herd", "Flock"],
+                correctAnswer: 1,
+                explanation: "A group of whales is called a 'pod'. This term is also used for dolphins and porpoises."
+            },
+            {
+                question: "What is the collective noun for a group of geese on the ground?",
+                options: ["Skein", "Gaggle", "Flock", "Team"],
+                correctAnswer: 1,
+                explanation: "Geese on the ground are called a 'gaggle', while geese in flight are called a 'skein'."
+            },
+            {
+                question: "What do you call a group of owls?",
+                options: ["Parliament", "Congress", "Colony", "Nest"],
+                correctAnswer: 0,
+                explanation: "A group of owls is called a 'parliament'. This term likely comes from C.S. Lewis's 'The Chronicles of Narnia'."
+            },
+            {
+                question: "Which collective noun is used for a group of fish?",
+                options: ["Herd", "School", "Swarm", "Pack"],
+                correctAnswer: 1,
+                explanation: "A group of fish is called a 'school' or sometimes a 'shoal'."
+            },
+            {
+                question: "What is the collective noun for a group of wolves?",
+                options: ["Pack", "Herd", "Pride", "Colony"],
+                correctAnswer: 0,
+                explanation: "A group of wolves is called a 'pack'. Wolves are highly social animals that live in structured packs."
+            },
+            {
+                question: "What do you call a group of elephants?",
+                options: ["Herd", "Parade", "Family", "Group"],
+                correctAnswer: 0,
+                explanation: "A group of elephants is called a 'herd'. Elephant herds are matriarchal, led by the oldest female."
+            },
+            {
+                question: "Which collective noun refers to a group of kangaroos?",
+                options: ["Troop", "Mob", "Herd", "Pack"],
+                correctAnswer: 1,
+                explanation: "A group of kangaroos is called a 'mob'. They can also be called a 'troop' or 'court'."
+            },
+            {
+                question: "What is the collective noun for a group of flamingos?",
+                options: ["Flock", "Stand", "Colony", "Regiment"],
+                correctAnswer: 0,
+                explanation: "A group of flamingos is called a 'flamboyance', which is a fitting term for these brightly colored birds."
+            },
+            {
+                question: "What do you call a group of rhinoceroses?",
+                options: ["Herd", "Crash", "Group", "Pack"],
+                correctAnswer: 1,
+                explanation: "A group of rhinos is called a 'crash'. This likely refers to the sound they make when moving through vegetation."
+            },
+            {
+                question: "Which collective noun is used for a group of jellyfish?",
+                options: ["Swarm", "Bloom", "Smack", "Floating"],
+                correctAnswer: 2,
+                explanation: "A group of jellyfish is called a 'smack'. It can also be called a 'bloom' or 'swarm'."
+            },
+            {
+                question: "What is the collective noun for a group of zebras?",
+                options: ["Herd", "Dazzle", "Pack", "Troop"],
+                correctAnswer: 1,
+                explanation: "A group of zebras is called a 'dazzle', referring to the optical illusion created by their stripes when they move together."
+            },
+            {
+                question: "What do you call a group of hippopotamuses?",
+                options: ["Herd", "Bloat", "School", "Pod"],
+                correctAnswer: 1,
+                explanation: "A group of hippos is called a 'bloat'. They can also be called a 'pod' or 'herd'."
+            },
+            {
+                question: "Which collective noun refers to a group of ferrets?",
+                options: ["Pack", "Business", "Fesnyng", "Group"],
+                correctAnswer: 1,
+                explanation: "A group of ferrets is called a 'business'. This unusual term dates back to the 15th century."
+            },
+            {
+                question: "What is the collective noun for a group of giraffes?",
+                options: ["Herd", "Tower", "Group", "Journey"],
+                correctAnswer: 1,
+                explanation: "A group of giraffes is called a 'tower', which is fitting for the world's tallest animals."
+            },
+            {
+                question: "What do you call a group of porcupines?",
+                options: ["Prickle", "Herd", "Family", "Colony"],
+                correctAnswer: 0,
+                explanation: "A group of porcupines is called a 'prickle', which is a perfect description given their spiky quills."
+            },
+            {
+                question: "Which collective noun is used for a group of ravens?",
+                options: ["Murder", "Unkindness", "Flock", "Congress"],
+                correctAnswer: 1,
+                explanation: "A group of ravens is called an 'unkindness'. This term reflects the bird's historical association with bad omens."
+            },
+            {
+                question: "What is the collective noun for a group of crocodiles?",
+                options: ["Bask", "Float", "Nest", "Pack"],
+                correctAnswer: 0,
+                explanation: "A group of crocodiles is called a 'bask'. They can also be called a 'congregation' or 'float'."
+            },
+            {
+                question: "What do you call a group of peacocks?",
+                options: ["Pride", "Muster", "Flock", "Party"],
+                correctAnswer: 1,
+                explanation: "A group of peacocks is called a 'muster'. They can also be called an 'ostentation' or 'pride'."
+            }
+        ];
+        
+        // Quiz state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let quizCompleted = false;
+        let shuffledQuestions = [];
+        
+        // DOM elements
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreValue = document.getElementById('score-value');
+        const correctCountElement = document.getElementById('correct-count');
+        const incorrectCountElement = document.getElementById('incorrect-count');
+        const progressFill = document.getElementById('progress-fill');
+        const scorePercentage = document.getElementById('score-percentage');
+        const resultsMessage = document.getElementById('results-message');
+        
+        // Initialize the quiz
+        function initQuiz() {
+            // Shuffle the questions for infinite loop variation
+            shuffledQuestions = [...quizData];
+            shuffleArray(shuffledQuestions);
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            userAnswers.fill(null);
+            quizCompleted = false;
+            
+            // Update UI
+            updateStats();
+            loadQuestion();
+            
+            // Show quiz container, hide results
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            
+            // Reset buttons
+            submitBtn.disabled = true;
+            submitBtn.style.display = 'flex';
+            nextBtn.style.display = 'none';
+            restartBtn.style.display = 'none';
+            
+            // Reset feedback
+            feedbackContainer.className = 'feedback-container';
+            feedbackContainer.style.display = 'none';
+        }
+        
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            
+            // Update question text
+            questionText.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear options container
+            optionsContainer.innerHTML = '';
+            
+            // Create option buttons
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionButton = document.createElement('button');
+                optionButton.className = 'option-button';
+                optionButton.innerHTML = `
+                    <div>
+                        <span class="option-letter">${optionLetters[index]}</span>
+                        ${option}
+                    </div>
+                    <i class="fas fa-check" style="display: none;"></i>
+                `;
+                
+                optionButton.addEventListener('click', () => selectOption(index));
+                
+                // If user already answered this question, show their selection
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionButton.classList.add('selected');
+                    optionButton.querySelector('.fa-check').style.display = 'inline-block';
+                    submitBtn.disabled = false;
+                }
+                
+                optionsContainer.appendChild(optionButton);
+            });
+            
+            // Update progress bar
+            progressFill.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+        }
+        
+        // Select an option
+        function selectOption(optionIndex) {
+            // Remove selected class from all options
+            const optionButtons = document.querySelectorAll('.option-button');
+            optionButtons.forEach(button => {
+                button.classList.remove('selected');
+                button.querySelector('.fa-check').style.display = 'none';
+            });
+            
+            // Add selected class to clicked option
+            const selectedButton = optionButtons[optionIndex];
+            selectedButton.classList.add('selected');
+            selectedButton.querySelector('.fa-check').style.display = 'inline-block';
+            
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Enable submit button
+            submitBtn.disabled = false;
+        }
+        
+        // Submit answer
+        function submitAnswer() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            const userAnswerIndex = userAnswers[currentQuestionIndex];
+            const isCorrect = userAnswerIndex === question.correctAnswer;
+            
+            // Disable all option buttons
+            const optionButtons = document.querySelectorAll('.option-button');
+            optionButtons.forEach(button => {
+                button.disabled = true;
+            });
+            
+            // Mark correct and incorrect answers
+            optionButtons[question.correctAnswer].classList.add('correct');
+            if (!isCorrect) {
+                optionButtons[userAnswerIndex].classList.add('incorrect');
+            }
+            
+            // Update score and counts
+            if (isCorrect) {
+                score += 10;
+                correctCount++;
+                
+                // Show correct feedback
+                feedbackContainer.className = 'feedback-container correct';
+                feedbackTitle.textContent = 'Correct!';
+                feedbackText.textContent = question.explanation;
+                feedbackContainer.style.display = 'block';
+            } else {
+                incorrectCount++;
+                
+                // Show incorrect feedback
+                feedbackContainer.className = 'feedback-container incorrect';
+                feedbackTitle.textContent = 'Incorrect!';
+                feedbackText.textContent = `${question.explanation} The correct answer is: ${question.options[question.correctAnswer]}`;
+                feedbackContainer.style.display = 'block';
+            }
+            
+            // Update stats
+            updateStats();
+            
+            // Update buttons
+            submitBtn.style.display = 'none';
+            
+            // Show next button if not last question, else show restart
+            if (currentQuestionIndex < quizData.length - 1) {
+                nextBtn.style.display = 'flex';
+            } else {
+                restartBtn.style.display = 'flex';
+            }
+        }
+        
+        // Go to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            // Reset feedback
+            feedbackContainer.style.display = 'none';
+            
+            // Update buttons
+            submitBtn.disabled = true;
+            submitBtn.style.display = 'flex';
+            nextBtn.style.display = 'none';
+            
+            // Load next question
+            loadQuestion();
+        }
+        
+        // Show results
+        function showResults() {
+            // Calculate percentage
+            const percentage = Math.round((correctCount / quizData.length) * 100);
+            
+            // Update results UI
+            scorePercentage.textContent = `${percentage}%`;
+            
+            // Set results message based on score
+            let message = '';
+            if (percentage === 100) {
+                message = 'Perfect! You are a collective nouns expert!';
+            } else if (percentage >= 80) {
+                message = 'Excellent! You know your collective nouns very well!';
+            } else if (percentage >= 60) {
+                message = 'Good job! You have a solid knowledge of collective nouns.';
+            } else if (percentage >= 40) {
+                message = 'Not bad! You know some interesting collective nouns.';
+            } else {
+                message = 'Keep practicing! Collective nouns can be tricky.';
+            }
+            
+            resultsMessage.textContent = `You got ${correctCount} out of ${quizData.length} questions correct. ${message}`;
+            
+            // Show results, hide quiz
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Mark quiz as completed
+            quizCompleted = true;
+        }
+        
+        // Update statistics
+        function updateStats() {
+            scoreValue.textContent = score;
+            correctCountElement.textContent = correctCount;
+            incorrectCountElement.textContent = incorrectCount;
+            
+            // Update progress bar
+            progressFill.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+        }
+        
+        // Restart the quiz with new questions
+        function restartQuiz() {
+            // Reshuffle questions for infinite loop
+            shuffledQuestions = [...quizData];
+            shuffleArray(shuffledQuestions);
+            
+            // Reset to first question
+            currentQuestionIndex = 0;
+            loadQuestion();
+            
+            // Reset feedback
+            feedbackContainer.style.display = 'none';
+            
+            // Reset buttons
+            submitBtn.disabled = true;
+            submitBtn.style.display = 'flex';
+            nextBtn.style.display = 'none';
+            restartBtn.style.display = 'none';
+            
+            // Show quiz container
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+        }
+        
+        // Event listeners
+        submitBtn.addEventListener('click', submitAnswer);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', showResults);
+        restartQuizBtn.addEventListener('click', initQuiz);
+        
+        // Initialize the quiz on page load
+        window.addEventListener('DOMContentLoaded', initQuiz);
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (quizCompleted) return;
+            
+            // Number keys 1-4 for selecting options
+            if (e.key >= '1' && e.key <= '4') {
+                const optionIndex = parseInt(e.key) - 1;
+                const optionButtons = document.querySelectorAll('.option-button');
+                if (optionIndex < optionButtons.length) {
+                    selectOption(optionIndex);
+                }
+            }
+            
+            // Enter key to submit answer or go to next question
+            if (e.key === 'Enter') {
+                if (submitBtn.style.display !== 'none' && !submitBtn.disabled) {
+                    submitAnswer();
+                } else if (nextBtn.style.display !== 'none') {
+                    if (currentQuestionIndex < quizData.length - 1) {
+                        nextQuestion();
+                    } else {
+                        showResults();
+                    }
+                }
+            }
+            
+            // Space bar to restart quiz from results
+            if (e.key === ' ' && quizCompleted) {
+                initQuiz();
+            }
+        });
+    </script>
+</body>
+</html>
