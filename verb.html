@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verb Grammar Guide | Complete Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .project-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #ecf0f1;
+            color: #3498db;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .project-link:hover {
+            background-color: #3498db;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            padding: 25px 25px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h2 i {
+            color: #3498db;
+            font-size: 1.3rem;
+        }
+        
+        .card-content {
+            padding: 20px 25px;
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .examples h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .example-item {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        .example-item strong {
+            color: #2c3e50;
+            margin-right: 5px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        
+        .page-link i {
+            margin-left: 8px;
+        }
+        
+        .quick-links {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .quick-links h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .link-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .link-item {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .full-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .full-content h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 2rem;
+        }
+        
+        .full-content h3 {
+            color: #3498db;
+            margin: 30px 0 15px;
+            font-size: 1.5rem;
+        }
+        
+        .full-content p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .full-content ul, .full-content ol {
+            margin-left: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .full-content li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        
+        .rule-box {
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid #3498db;
+        }
+        
+        .rule-box h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .comparison-table th {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #e8f4fc;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .verb-highlight {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+        
+        .topic-nav {
+            position: sticky;
+            top: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .topic-nav h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: #3498db;
+            color: white;
+            border-left-color: #2c3e50;
+        }
+        
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .main-content {
+            flex: 1;
+        }
+        
+        .quiz-link-box {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(26, 41, 128, 0.3);
+        }
+        
+        .quiz-link-box h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: white;
+            color: #1a2980;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-btn:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+        }
+        
+        @media (max-width: 992px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .topic-nav {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .full-content {
+                padding: 25px;
+            }
+            
+            .project-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .project-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book"></i> Verb Grammar Guide</h1>
+            <p class="subtitle">A complete reference for understanding different types of verbs in English grammar. Each topic is covered in detail with examples.</p>
+            
+            <div class="project-links">
+                <a href="index.html" class="project-link">Noun Grammar Guide</a>
+                <a href="Finite vs. Non-Finite.html" class="project-link">Finite vs. Non-Finite Verbs</a>
+                <a href="quiz.html" class="project-link">Collective Nouns Quiz</a>
+            </div>
+        </header>
+        
+        <div class="topic-grid">
+            <!-- Main vs. Helping Verbs -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-infinity"></i> Main vs. Helping Verbs</h2>
+                </div>
+                <div class="card-content">
+                    <p>Main verbs express the primary action or state of being. Helping verbs (auxiliary verbs) help the main verb express tense, mood, or voice.</p>
+                    
+                    <div class="examples">
+                        <h3>Examples:</h3>
+                        <div class="example-item"><strong>Main:</strong> She <span class="verb-highlight">reads</span> every day.</div>
+                        <div class="example-item"><strong>Helping:</strong> She <span class="verb-highlight">is reading</span> now.</div>
+                        <div class="example-item"><strong>Both:</strong> They <span class="verb-highlight">have been studying</span>.</div>
+                    </div>
+                    
+                    <p>Common helping verbs: be, have, do, will, would, can, could, may, might, shall, should, must.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="Main vs Helping Verbs.html" class="page-link">Take Interactive Quiz <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            
+            <!-- Action vs. Stative Verbs -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-running"></i> Action vs. Stative Verbs</h2>
+                </div>
+                <div class="card-content">
+                    <p>Action verbs express physical or mental activities. Stative verbs describe states, conditions, feelings, or possession rather than actions.</p>
+                    
+                    <div class="examples">
+                        <h3>Examples:</h3>
+                        <div class="example-item"><strong>Action:</strong> run, jump, think, build</div>
+                        <div class="example-item"><strong>Stative:</strong> know, believe, own, prefer</div>
+                        <div class="example-item"><strong>Context:</strong> I <span class="verb-highlight">think</span> (action) vs. I <span class="verb-highlight">think</span> (stative)</div>
+                    </div>
+                    
+                    <p>Stative verbs are typically not used in continuous tenses (-ing forms).</p>
+                </div>
+                <div class="card-footer">
+                    <a href="Action vs Stative Verbs.html" class="page-link">Take Interactive Quiz <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            
+            <!-- Transitive vs. Intransitive Verbs -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-exchange-alt"></i> Transitive vs. Intransitive</h2>
+                </div>
+                <div class="card-content">
+                    <p>Transitive verbs require a direct object to complete their meaning. Intransitive verbs do not require a direct object.</p>
+                    
+                    <div class="examples">
+                        <h3>Examples:</h3>
+                        <div class="example-item"><strong>Transitive:</strong> She <span class="verb-highlight">bought</span> a car.</div>
+                        <div class="example-item"><strong>Intransitive:</strong> He <span class="verb-highlight">arrived</span> early.</div>
+                        <div class="example-item"><strong>Both:</strong> She <span class="verb-highlight">runs</span> (intr.) / She <span class="verb-highlight">runs</span> a business (trans.)</div>
+                    </div>
+                    
+                    <p>Some verbs can be both transitive and intransitive depending on usage.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="Transitive vs Intransitive Verbs Quiz.html" class="page-link">Take Interactive Quiz <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            
+            <!-- Phrasal Verbs -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-link"></i> Phrasal Verbs</h2>
+                </div>
+                <div class="card-content">
+                    <p>Phrasal verbs consist of a verb plus one or more particles (prepositions or adverbs) that create a new meaning different from the original verb.</p>
+                    
+                    <div class="examples">
+                        <h3>Examples:</h3>
+                        <div class="example-item"><strong>Literal:</strong> look up (direct your gaze upward)</div>
+                        <div class="example-item"><strong>Phrasal:</strong> look up (search for information)</div>
+                        <div class="example-item"><strong>Common:</strong> give up, break down, turn down</div>
+                    </div>
+                    
+                    <p>Phrasal verbs can be separable or inseparable, and transitive or intransitive.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="Phrasal Verbs.html" class="page-link">Take Interactive Quiz <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            
+            <!-- Finite vs. Non-Finite Verbs -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-check-circle"></i> Finite vs. Non-Finite</h2>
+                </div>
+                <div class="card-content">
+                    <p>Finite verbs show tense and agree with subjects. Non-finite verbs (infinitives, gerunds, participles) do not show tense or subject agreement.</p>
+                    
+                    <div class="examples">
+                        <h3>Examples:</h3>
+                        <div class="example-item"><strong>Finite:</strong> She <span class="verb-highlight">writes</span> letters.</div>
+                        <div class="example-item"><strong>Non-Finite:</strong> She likes <span class="verb-highlight">to write</span> letters.</div>
+                        <div class="example-item"><strong>Forms:</strong> to write (infin.), writing (gerund), written (participle)</div>
+                    </div>
+                    
+                    <p>Every sentence must contain at least one finite verb.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="Finite vs. Non-Finite.html" class="page-link">View Full Guide <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            
+            <!-- Regular vs. Irregular Verbs -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-random"></i> Regular vs. Irregular</h2>
+                </div>
+                <div class="card-content">
+                    <p>Regular verbs form their past tense and past participle by adding -ed. Irregular verbs have unique forms for past tense and past participle.</p>
+                    
+                    <div class="examples">
+                        <h3>Examples:</h3>
+                        <div class="example-item"><strong>Regular:</strong> walk → walked → walked</div>
+                        <div class="example-item"><strong>Irregular:</strong> go → went → gone</div>
+                        <div class="example-item"><strong>Irregular:</strong> be → was/were → been</div>
+                    </div>
+                    
+                    <p>There are about 200 irregular verbs in English that must be memorized individually.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#regular-irregular" class="page-link">View Full Section <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="topic-nav">
+                <h3><i class="fas fa-list"></i> Quick Navigation</h3>
+                <div class="nav-links">
+                    <a href="#main-helping" class="nav-link active"><i class="fas fa-infinity"></i> Main vs. Helping Verbs</a>
+                    <a href="#action-stative" class="nav-link"><i class="fas fa-running"></i> Action vs. Stative Verbs</a>
+                    <a href="#transitive-intransitive" class="nav-link"><i class="fas fa-exchange-alt"></i> Transitive vs. Intransitive</a>
+                    <a href="#phrasal" class="nav-link"><i class="fas fa-link"></i> Phrasal Verbs</a>
+                    <a href="#finite-nonfinite" class="nav-link"><i class="fas fa-check-circle"></i> Finite vs. Non-Finite</a>
+                    <a href="#regular-irregular" class="nav-link"><i class="fas fa-random"></i> Regular vs. Irregular</a>
+                    <a href="#verb-tenses" class="nav-link"><i class="fas fa-clock"></i> Verb Tenses</a>
+                    <a href="#voice-mood" class="nav-link"><i class="fas fa-volume-up"></i> Voice & Mood</a>
+                </div>
+                
+                <div class="quiz-link-box">
+                    <h3>Test Your Knowledge!</h3>
+                    <p>Try our interactive verb quizzes with infinite loops and sound effects</p>
+                    <a href="Main vs Helping Verbs.html" class="quiz-btn">Start Quizzes <i class="fas fa-play-circle"></i></a>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="full-content">
+                    <h2 id="main-helping">Main Verbs vs. Helping Verbs</h2>
+                    <p>Understanding the difference between main verbs and helping verbs (also called auxiliary verbs) is fundamental to English grammar. Main verbs carry the core meaning of the sentence, while helping verbs assist in expressing grammatical concepts.</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Characteristics:</h4>
+                        <ul>
+                            <li><strong>Main Verbs:</strong> Express the primary action or state of being</li>
+                            <li><strong>Helping Verbs:</strong> Help the main verb express tense, mood, voice, or aspect</li>
+                            <li><strong>Position:</strong> Helping verbs come before main verbs</li>
+                            <li><strong>Multiple Helpers:</strong> A sentence can have multiple helping verbs</li>
+                            <li><strong>Standalone:</strong> Main verbs can sometimes stand alone; helping verbs cannot</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Types of Helping Verbs</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Function</th>
+                                <th>Examples</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Primary Auxiliaries</strong></td>
+                                <td>Form tenses, questions, negatives</td>
+                                <td>be, have, do</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Modal Auxiliaries</strong></td>
+                                <td>Express ability, possibility, permission, obligation</td>
+                                <td>can, could, may, might, will, would, shall, should, must</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Semi-modals</strong></td>
+                                <td>Function like modals but have different forms</td>
+                                <td>need to, have to, ought to, used to</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Examples in Sentences</h3>
+                    <ul>
+                        <li><span class="verb-highlight">She is reading</span> a book. (is = helping, reading = main)</li>
+                        <li><span class="verb-highlight">They have finished</span> their homework. (have = helping, finished = main)</li>
+                        <li><span class="verb-highlight">He can speak</span> three languages. (can = helping, speak = main)</li>
+                        <li><span class="verb-highlight">Do you understand</span> the question? (Do = helping, understand = main)</li>
+                        <li><span class="verb-highlight">She will have been studying</span> for six hours. (will, have, been = helping, studying = main)</li>
+                    </ul>
+                    
+                    <h3>Identifying Main and Helping Verbs</h3>
+                    <p>To identify whether a verb is main or helping:</p>
+                    <ol>
+                        <li><strong>Question Test:</strong> Can the verb form a question by itself? (Do you go? → "Do" is helping)</li>
+                        <li><strong>Negation Test:</strong> Can "not" be inserted after it? (She does not know → "does" is helping)</li>
+                        <li><strong>Meaning Test:</strong> Does it carry the main meaning or just assist? (In "is running," "running" has the action meaning)</li>
+                        <li><strong>Tense Test:</strong> Does it change form to show tense? Helping verbs often show tense while main verbs show the action.</li>
+                    </ol>
+                    
+                    <div class="quiz-link-box">
+                        <h3>Practice This Topic!</h3>
+                        <p>Take our interactive Main vs. Helping Verbs quiz with 20 questions in infinite loop mode</p>
+                        <a href="Main vs Helping Verbs.html" class="quiz-btn">Start Quiz <i class="fas fa-gamepad"></i></a>
+                    </div>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="action-stative">Action Verbs vs. Stative Verbs</h2>
+                    <p>Action verbs express physical or mental activities that someone or something does. Stative verbs describe states, conditions, feelings, thoughts, relationships, or measurements that exist rather than actions that are performed.</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Characteristics:</h4>
+                        <ul>
+                            <li><strong>Action Verbs:</strong> Show what the subject does (run, think, build)</li>
+                            <li><strong>Stative Verbs:</strong> Show what the subject is or has (know, own, prefer)</li>
+                            <li><strong>Continuous Forms:</strong> Action verbs can use -ing forms; stative verbs generally cannot</li>
+                            <li><strong>Volition:</strong> Action verbs involve volition (choice); stative verbs describe involuntary states</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Categories of Stative Verbs</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Function</th>
+                                <th>Examples</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Thought & Opinion</strong></td>
+                                <td>Mental states and beliefs</td>
+                                <td>know, believe, understand, think, suppose</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Feelings & Emotions</strong></td>
+                                <td>Emotional states</td>
+                                <td>like, love, hate, prefer, want, need</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Senses & Perception</strong></td>
+                                <td>Sensory experiences</td>
+                                <td>see, hear, smell, taste, feel, seem</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Possession</strong></td>
+                                <td>Ownership and belonging</td>
+                                <td>have, own, possess, belong, contain</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Measurement</strong></td>
+                                <td>Cost, weight, size</td>
+                                <td>cost, weigh, measure, equal</td>
+                            </tr>
+                            <tr>
+                                <td><strong>States of Being</strong></td>
+                                <td>Existence and relationships</td>
+                                <td>be, exist, consist, involve, concern</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Examples in Sentences</h3>
+                    <ul>
+                        <li><strong>Action:</strong> She <span class="verb-highlight">runs</span> five miles every morning. (physical activity)</li>
+                        <li><strong>Stative:</strong> She <span class="verb-highlight">knows</span> the answer. (state of knowledge)</li>
+                        <li><strong>Action:</strong> I <span class="verb-highlight">am thinking</span> about the problem. (active mental process)</li>
+                        <li><strong>Stative:</strong> I <span class="verb-highlight">think</span> he's right. (state of opinion)</li>
+                        <li><strong>Action:</strong> The chef <span class="verb-highlight">is tasting</span> the soup. (deliberate action)</li>
+                        <li><strong>Stative:</strong> The soup <span class="verb-highlight">tastes</span> delicious. (sensory perception)</li>
+                    </ul>
+                    
+                    <h3>Verbs That Can Be Both Action and Stative</h3>
+                    <p>Some verbs have both action and stative meanings:</p>
+                    <ul>
+                        <li><strong>Have:</strong> She <span class="verb-highlight">has</span> a car. (stative - possession) vs. She <span class="verb-highlight">is having</span> dinner. (action - eating)</li>
+                        <li><strong>See:</strong> I <span class="verb-highlight">see</span> what you mean. (stative - understand) vs. I <span class="verb-highlight">am seeing</span> the doctor. (action - meeting)</li>
+                        <li><strong>Think:</strong> I <span class="verb-highlight">think</span> it's true. (stative - believe) vs. I <span class="verb-highlight">am thinking</span> about it. (action - considering)</li>
+                        <li><strong>Feel:</strong> I <span class="verb-highlight">feel</span> happy. (stative - emotion) vs. I <span class="verb-highlight">am feeling</span> the fabric. (action - touching)</li>
+                    </ul>
+                    
+                    <div class="quiz-link-box">
+                        <h3>Practice This Topic!</h3>
+                        <p>Take our interactive Action vs. Stative Verbs quiz with 20 questions in infinite loop mode</p>
+                        <a href="Action vs Stative Verbs.html" class="quiz-btn">Start Quiz <i class="fas fa-gamepad"></i></a>
+                    </div>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="transitive-intransitive">Transitive vs. Intransitive Verbs</h2>
+                    <p>Transitive verbs require a direct object to complete their meaning. The action of the verb passes from the subject to the object. Intransitive verbs do not require a direct object; they express complete actions by themselves.</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Characteristics:</h4>
+                        <ul>
+                            <li><strong>Transitive Verbs:</strong> Must have a direct object (answers "what?" or "whom?")</li>
+                            <li><strong>Intransitive Verbs:</strong> Do not have a direct object (action doesn't pass to an object)</li>
+                            <li><strong>Both Types:</strong> Some verbs can be both transitive and intransitive</li>
+                            <li><strong>Passive Voice:</strong> Only transitive verbs can be used in passive voice</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Identifying Transitive and Intransitive Verbs</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Test</th>
+                                <th>Transitive Verb</th>
+                                <th>Intransitive Verb</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Direct Object Test</strong></td>
+                                <td>Can answer "what?" or "whom?" after the verb</td>
+                                <td>Cannot answer "what?" or "whom?" after the verb</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Passive Voice Test</strong></td>
+                                <td>Can be converted to passive voice</td>
+                                <td>Cannot be converted to passive voice</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sentence Completion</strong></td>
+                                <td>Sentence feels incomplete without object</td>
+                                <td>Sentence is complete without object</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Examples in Sentences</h3>
+                    <ul>
+                        <li><strong>Transitive:</strong> She <span class="verb-highlight">bought</span> a new car. (What did she buy? A car - direct object)</li>
+                        <li><strong>Intransitive:</strong> He <span class="verb-highlight">arrived</span> early. (Cannot ask "what arrived?" - no direct object)</li>
+                        <li><strong>Transitive:</strong> The teacher <span class="verb-highlight">explained</span> the lesson. (What was explained? The lesson)</li>
+                        <li><strong>Intransitive:</strong> The sun <span class="verb-highlight">rises</span> in the east. (No direct object)</li>
+                        <li><strong>Both:</strong> She <span class="verb-highlight">sings</span> beautifully. (intransitive) vs. She <span class="verb-highlight">sings</span> songs. (transitive)</li>
+                    </ul>
+                    
+                    <h3>Verbs That Are Usually Transitive</h3>
+                    <p>These verbs typically require a direct object:</p>
+                    <ul>
+                        <li>bring, buy, give, make, send, show, tell</li>
+                        <li>build, create, design, develop</li>
+                        <li>answer, ask, explain, teach</li>
+                        <li>enjoy, like, love, hate, prefer</li>
+                    </ul>
+                    
+                    <h3>Verbs That Are Usually Intransitive</h3>
+                    <p>These verbs typically do not take a direct object:</p>
+                    <ul>
+                        <li>arrive, come, go, leave, travel</li>
+                        <li>sleep, rest, wake, dream</li>
+                        <li>happen, occur, exist, disappear</li>
+                        <li>laugh, cry, smile, sigh</li>
+                        <li>rise, fall, appear, vanish</li>
+                    </ul>
+                    
+                    <div class="quiz-link-box">
+                        <h3>Practice This Topic!</h3>
+                        <p>Take our interactive Transitive vs. Intransitive quiz with 20 questions and sound effects</p>
+                        <a href="Transitive vs Intransitive Verbs Quiz.html" class="quiz-btn">Start Quiz <i class="fas fa-gamepad"></i></a>
+                    </div>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="phrasal">Phrasal Verbs</h2>
+                    <p>Phrasal verbs consist of a verb plus one or more particles (prepositions or adverbs) that together create a meaning different from the original verb. They are extremely common in English, especially in informal speech and writing.</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Characteristics:</h4>
+                        <ul>
+                            <li><strong>Verb + Particle:</strong> Combination creates new meaning</li>
+                            <li><strong>Idiomatic:</strong> Meaning often cannot be deduced from individual words</li>
+                            <li><strong>Separable/Inseparable:</strong> Some can be separated by object, others cannot</li>
+                            <li><strong>Transitive/Intransitive:</strong> Can be both depending on the phrasal verb</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Types of Phrasal Verbs</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Structure</th>
+                                <th>Example</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Intransitive</strong></td>
+                                <td>verb + particle (no object)</td>
+                                <td>The car <span class="verb-highlight">broke down</span>.</td>
+                                <td>Cannot take an object</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transitive Separable</strong></td>
+                                <td>verb + particle + object OR verb + object + particle</td>
+                                <td><span class="verb-highlight">Turn on</span> the light. / <span class="verb-highlight">Turn</span> the light <span class="verb-highlight">on</span>.</td>
+                                <td>Object can come between verb and particle</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transitive Inseparable</strong></td>
+                                <td>verb + particle + object</td>
+                                <td>She <span class="verb-highlight">looks after</span> her sister.</td>
+                                <td>Object must follow particle</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Three-word</strong></td>
+                                <td>verb + particle 1 + particle 2</td>
+                                <td>I <span class="verb-highlight">look forward to</span> meeting you.</td>
+                                <td>Always inseparable</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Common Phrasal Verbs by Meaning Category</h3>
+                    
+                    <h4>1. Relationships & Social</h4>
+                    <ul>
+                        <li><span class="verb-highlight">get along with</span> - have a good relationship with</li>
+                        <li><span class="verb-highlight">break up with</span> - end a romantic relationship</li>
+                        <li><span class="verb-highlight">look up to</span> - admire or respect</li>
+                        <li><span class="verb-highlight">put up with</span> - tolerate</li>
+                    </ul>
+                    
+                    <h4>2. Work & Study</h4>
+                    <ul>
+                        <li><span class="verb-highlight">take up</span> - begin a hobby or activity</li>
+                        <li><span class="verb-highlight">give up</span> - quit or stop trying</li>
+                        <li><span class="verb-highlight">catch up on</span> - do work you should have done earlier</li>
+                        <li><span class="verb-highlight">hand in</span> - submit work</li>
+                    </ul>
+                    
+                    <h4>3. Communication</h4>
+                    <ul>
+                        <li><span class="verb-highlight">point out</span> - indicate or mention</li>
+                        <li><span class="verb-highlight">bring up</span> - mention or introduce a topic</li>
+                        <li><span class="verb-highlight">call off</span> - cancel</li>
+                        <li><span class="verb-highlight">figure out</span> - understand or solve</li>
+                    </ul>
+                    
+                    <h4>4. Movement & Travel</h4>
+                    <ul>
+                        <li><span class="verb-highlight">set off</span> - begin a journey</li>
+                        <li><span class="verb-highlight">drop off</span> - leave someone/something somewhere</li>
+                        <li><span class="verb-highlight">pick up</span> - collect someone/something</li>
+                        <li><span class="verb-highlight">get away</span> - go on vacation</li>
+                    </ul>
+                    
+                    <h3>Tips for Learning Phrasal Verbs</h3>
+                    <ol>
+                        <li><strong>Learn in Context:</strong> Memorize example sentences, not just definitions</li>
+                        <li><strong>Group by Particle:</strong> Study phrasal verbs with the same particle together</li>
+                        <li><strong>Note Separability:</strong> Pay attention to whether objects can come between verb and particle</li>
+                        <li><strong>Practice Regularly:</strong> Use phrasal verbs in your own speaking and writing</li>
+                        <li><strong>Watch for Formality:</strong> Many phrasal verbs are informal; know when to use more formal equivalents</li>
+                    </ol>
+                    
+                    <div class="quiz-link-box">
+                        <h3>Practice This Topic!</h3>
+                        <p>Take our interactive Phrasal Verbs quiz with 20 questions and sound effects</p>
+                        <a href="Phrasal Verbs.html" class="quiz-btn">Start Quiz <i class="fas fa-gamepad"></i></a>
+                    </div>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="finite-nonfinite">Finite vs. Non-Finite Verbs</h2>
+                    <p>Finite verbs show tense and agree with their subjects. Non-finite verbs do not show tense or subject agreement and cannot be the main verb in a sentence. Every complete sentence must contain at least one finite verb.</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Characteristics:</h4>
+                        <ul>
+                            <li><strong>Finite Verbs:</strong> Show tense, person, and number; agree with subject</li>
+                            <li><strong>Non-Finite Verbs:</strong> Do not show tense, person, or number; don't change with subject</li>
+                            <li><strong>Three Forms:</strong> Non-finite verbs have three forms: infinitives, gerunds, and participles</li>
+                            <li><strong>Sentence Role:</strong> Finite verbs can be main verbs; non-finite verbs cannot stand alone</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Comparison Table</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Finite Verbs</th>
+                                <th>Non-Finite Verbs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Tense</strong></td>
+                                <td>Show tense (present, past, future)</td>
+                                <td>Do not show tense</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Subject Agreement</strong></td>
+                                <td>Agree with subject (I am, you are, he is)</td>
+                                <td>Do not change according to subject</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Function</strong></td>
+                                <td>Can be main verb</td>
+                                <td>Cannot be main verb; need finite verb</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Examples</strong></td>
+                                <td>She writes. They wrote. He will write.</td>
+                                <td>To write, writing, written</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sentence</strong></td>
+                                <td>Essential for complete sentence</td>
+                                <td>Optional; enhance meaning</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Examples of Non-Finite Verb Forms</h3>
+                    
+                    <h4>1. Infinitives (to + base verb)</h4>
+                    <ul>
+                        <li><strong>As noun:</strong> <span class="verb-highlight">To err</span> is human.</li>
+                        <li><strong>As adjective:</strong> She has homework <span class="verb-highlight">to complete</span>.</li>
+                        <li><strong>As adverb:</strong> He studies <span class="verb-highlight">to learn</span>.</li>
+                        <li><strong>Bare infinitive:</strong> She can <span class="verb-highlight">swim</span> well.</li>
+                    </ul>
+                    
+                    <h4>2. Gerunds (verb + -ing as noun)</h4>
+                    <ul>
+                        <li><strong>As subject:</strong> <span class="verb-highlight">Swimming</span> is good exercise.</li>
+                        <li><strong>As object:</strong> She enjoys <span class="verb-highlight">reading</span>.</li>
+                        <li><strong>After preposition:</strong> He's good at <span class="verb-highlight">solving</span> problems.</li>
+                    </ul>
+                    
+                    <h4>3. Participles (verb forms as adjectives)</h4>
+                    <ul>
+                        <li><strong>Present participle:</strong> The <span class="verb-highlight">barking</span> dog woke everyone.</li>
+                        <li><strong>Past participle:</strong> The <span class="verb-highlight">broken</span> window needs repair.</li>
+                        <li><strong>Perfect participle:</strong> <span class="verb-highlight">Having finished</span> her work, she left.</li>
+                    </ul>
+                    
+                    <h3>Identifying Finite vs. Non-Finite Verbs</h3>
+                    <p>Ask these questions:</p>
+                    <ol>
+                        <li><strong>Tense Test:</strong> Does it show when the action happens? (If yes → finite)</li>
+                        <li><strong>Agreement Test:</strong> Does it change when the subject changes? (If yes → finite)</li>
+                        <li><strong>Standalone Test:</strong> Can it be the only verb in a complete sentence? (If yes → finite)</li>
+                        <li><strong>Form Test:</strong> Is it an infinitive (to + verb), gerund (-ing as noun), or participle (-ing/-ed as adjective)? (If yes → non-finite)</li>
+                    </ol>
+                    
+                    <div class="rule-box">
+                        <h4>Important Note:</h4>
+                        <p>The same -ing form can be finite or non-finite depending on usage:</p>
+                        <ul>
+                            <li><strong>Finite:</strong> She <span class="verb-highlight">is studying</span>. (part of present continuous tense)</li>
+                            <li><strong>Non-finite:</strong> She enjoys <span class="verb-highlight">studying</span>. (gerund as object)</li>
+                            <li><strong>Non-finite:</strong> The <span class="verb-highlight">studying</span> student worked hard. (present participle as adjective)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="quiz-link-box">
+                        <h3>Learn More About This Topic!</h3>
+                        <p>Check out our complete Finite vs. Non-Finite Verbs guide with detailed explanations</p>
+                        <a href="Finite vs. Non-Finite.html" class="quiz-btn">View Full Guide <i class="fas fa-book"></i></a>
+                    </div>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="regular-irregular">Regular vs. Irregular Verbs</h2>
+                    <p>Regular verbs form their past tense and past participle by adding -ed to the base form. Irregular verbs have unique forms for past tense and past participle that must be memorized individually.</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Characteristics:</h4>
+                        <ul>
+                            <li><strong>Regular Verbs:</strong> Follow predictable pattern: base + -ed for past/past participle</li>
+                            <li><strong>Irregular Verbs:</strong> Have unique forms; no consistent pattern</li>
+                            <li><strong>Number:</strong> About 200 irregular verbs in common use</li>
+                            <li><strong>Frequency:</strong> Many common verbs are irregular (be, have, do, go, etc.)</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Regular Verb Conjugation Patterns</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th>Base Form</th>
+                                <th>Past Tense</th>
+                                <th>Past Participle</th>
+                                <th>Example Sentence</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Add -ed</td>
+                                <td>walk</td>
+                                <td>walked</td>
+                                <td>walked</td>
+                                <td>I walk → I walked → I have walked</td>
+                            </tr>
+                            <tr>
+                                <td>Add -d (ends in e)</td>
+                                <td>live</td>
+                                <td>lived</td>
+                                <td>lived</td>
+                                <td>She lives → She lived → She has lived</td>
+                            </tr>
+                            <tr>
+                                <td>Double consonant + -ed</td>
+                                <td>stop</td>
+                                <td>stopped</td>
+                                <td>stopped</td>
+                                <td>It stops → It stopped → It has stopped</td>
+                            </tr>
+                            <tr>
+                                <td>Change y to i + -ed</td>
+                                <td>study</td>
+                                <td>studied</td>
+                                <td>studied</td>
+                                <td>He studies → He studied → He has studied</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Common Irregular Verb Patterns</h3>
+                    
+                    <h4>1. No Change (A-A-A Pattern)</h4>
+                    <ul>
+                        <li>cut - cut - cut</li>
+                        <li>put - put - put</li>
+                        <li>set - set - set</li>
+                        <li>shut - shut - shut</li>
+                    </ul>
+                    
+                    <h4>2. Same Past and Past Participle (A-B-B Pattern)</h4>
+                    <ul>
+                        <li>bring - brought - brought</li>
+                        <li>buy - bought - bought</li>
+                        <li>catch - caught - caught</li>
+                        <li>teach - taught - taught</li>
+                        <li>think - thought - thought</li>
+                    </ul>
+                    
+                    <h4>3. Different All Three Forms (A-B-C Pattern)</h4>
+                    <ul>
+                        <li>begin - began - begun</li>
+                        <li>drink - drank - drunk</li>
+                        <li>ring - rang - rung</li>
+                        <li>sing - sang - sung</li>
+                        <li>swim - swam - swum</li>
+                    </ul>
+                    
+                    <h4>4. Vowel Change (i-a-u Pattern)</h4>
+                    <ul>
+                        <li>begin - began - begun</li>
+                        <li>drink - drank - drunk</li>
+                        <li>ring - rang - rung</li>
+                        <li>sing - sang - sung</li>
+                        <li>swim - swam - swum</li>
+                    </ul>
+                    
+                    <h4>5. -ought/-aught Ending</h4>
+                    <ul>
+                        <li>bring - brought - brought</li>
+                        <li>buy - bought - bought</li>
+                        <li>catch - caught - caught</li>
+                        <li>teach - taught - taught</li>
+                        <li>think - thought - thought</li>
+                    </ul>
+                    
+                    <h3>Most Common Irregular Verbs</h3>
+                    <p>These are the irregular verbs you'll encounter most frequently:</p>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Base Form</th>
+                                <th>Past Tense</th>
+                                <th>Past Participle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>be</td>
+                                <td>was/were</td>
+                                <td>been</td>
+                            </tr>
+                            <tr>
+                                <td>have</td>
+                                <td>had</td>
+                                <td>had</td>
+                            </tr>
+                            <tr>
+                                <td>do</td>
+                                <td>did</td>
+                                <td>done</td>
+                            </tr>
+                            <tr>
+                                <td>go</td>
+                                <td>went</td>
+                                <td>gone</td>
+                            </tr>
+                            <tr>
+                                <td>see</td>
+                                <td>saw</td>
+                                <td>seen</td>
+                            </tr>
+                            <tr>
+                                <td>come</td>
+                                <td>came</td>
+                                <td>come</td>
+                            </tr>
+                            <tr>
+                                <td>take</td>
+                                <td>took</td>
+                                <td>taken</td>
+                            </tr>
+                            <tr>
+                                <td>make</td>
+                                <td>made</td>
+                                <td>made</td>
+                            </tr>
+                            <tr>
+                                <td>know</td>
+                                <td>knew</td>
+                                <td>known</td>
+                            </tr>
+                            <tr>
+                                <td>get</td>
+                                <td>got</td>
+                                <td>gotten/got</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Tips for Learning Irregular Verbs</h3>
+                    <ol>
+                        <li><strong>Group by Pattern:</strong> Learn verbs with similar patterns together</li>
+                        <li><strong>Use in Sentences:</strong> Practice with example sentences, not just memorizing forms</li>
+                        <li><strong>Focus on Common Ones:</strong> Master the most frequently used irregular verbs first</li>
+                        <li><strong>Create Flashcards:</strong> Regular practice with flashcards helps with memorization</li>
+                        <li><strong>Listen and Repeat:</strong> Hearing correct usage helps internalize the patterns</li>
+                    </ol>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="verb-tenses">Verb Tenses</h2>
+                    <p>Verb tenses indicate when an action or state occurs. English has 12 main tenses that combine time (past, present, future) with aspect (simple, continuous, perfect, perfect continuous).</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Concepts:</h4>
+                        <ul>
+                            <li><strong>Time:</strong> When the action occurs (past, present, future)</li>
+                            <li><strong>Aspect:</strong> How the action relates to time (simple, continuous, perfect, perfect continuous)</li>
+                            <li><strong>Formation:</strong> Tenses are formed using helping verbs + main verb forms</li>
+                            <li><strong>Usage:</strong> Each tense has specific uses and time expressions</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>The 12 English Tenses</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Tense</th>
+                                <th>Structure</th>
+                                <th>Example</th>
+                                <th>Common Uses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Present Simple</strong></td>
+                                <td>base form / base + s</td>
+                                <td>She writes letters.</td>
+                                <td>Habits, facts, general truths</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Present Continuous</strong></td>
+                                <td>am/is/are + present participle</td>
+                                <td>She is writing a letter.</td>
+                                <td>Actions happening now, temporary situations</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Present Perfect</strong></td>
+                                <td>have/has + past participle</td>
+                                <td>She has written letters.</td>
+                                <td>Past actions with present relevance, experiences</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Present Perfect Continuous</strong></td>
+                                <td>have/has been + present participle</td>
+                                <td>She has been writing letters.</td>
+                                <td>Actions started in past, continuing to present</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Past Simple</strong></td>
+                                <td>past form</td>
+                                <td>She wrote letters.</td>
+                                <td>Completed actions in definite past</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Past Continuous</strong></td>
+                                <td>was/were + present participle</td>
+                                <td>She was writing a letter.</td>
+                                <td>Actions in progress at specific past time</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Past Perfect</strong></td>
+                                <td>had + past participle</td>
+                                <td>She had written letters.</td>
+                                <td>Actions completed before another past action</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Past Perfect Continuous</strong></td>
+                                <td>had been + present participle</td>
+                                <td>She had been writing letters.</td>
+                                <td>Actions ongoing before another past action</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Future Simple</strong></td>
+                                <td>will + base form</td>
+                                <td>She will write letters.</td>
+                                <td>Predictions, spontaneous decisions</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Future Continuous</strong></td>
+                                <td>will be + present participle</td>
+                                <td>She will be writing letters.</td>
+                                <td>Actions in progress at specific future time</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Future Perfect</strong></td>
+                                <td>will have + past participle</td>
+                                <td>She will have written letters.</td>
+                                <td>Actions completed before specific future time</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Future Perfect Continuous</strong></td>
+                                <td>will have been + present participle</td>
+                                <td>She will have been writing letters.</td>
+                                <td>Actions ongoing up to specific future time</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Time Expressions for Each Tense</h3>
+                    
+                    <h4>Present Tenses</h4>
+                    <ul>
+                        <li><strong>Simple:</strong> always, usually, often, sometimes, never, every day</li>
+                        <li><strong>Continuous:</strong> now, at the moment, currently, right now</li>
+                        <li><strong>Perfect:</strong> already, yet, just, ever, never, since, for</li>
+                        <li><strong>Perfect Continuous:</strong> for, since, all day, how long</li>
+                    </ul>
+                    
+                    <h4>Past Tenses</h4>
+                    <ul>
+                        <li><strong>Simple:</strong> yesterday, last week, in 1999, ago</li>
+                        <li><strong>Continuous:</strong> while, when, as, at 5 PM yesterday</li>
+                        <li><strong>Perfect:</strong> by the time, before, after, already</li>
+                        <li><strong>Perfect Continuous:</strong> for, since, all day, how long</li>
+                    </ul>
+                    
+                    <h4>Future Tenses</h4>
+                    <ul>
+                        <li><strong>Simple:</strong> tomorrow, next week, in 2024, soon</li>
+                        <li><strong>Continuous:</strong> at this time tomorrow, from 3 to 5</li>
+                        <li><strong>Perfect:</strong> by, by the time, before</li>
+                        <li><strong>Perfect Continuous:</strong> by, for, when</li>
+                    </ul>
+                    
+                    <h3>Common Tense Usage Errors</h3>
+                    <ol>
+                        <li><strong>Present Simple vs. Present Continuous:</strong> Don't use present continuous for permanent states</li>
+                        <li><strong>Past Simple vs. Present Perfect:</strong> Use past simple for definite past time; present perfect for indefinite</li>
+                        <li><strong>Will vs. Going to:</strong> "Will" for predictions/decisions; "going to" for plans</li>
+                        <li><strong>Past Perfect Overuse:</strong> Only use when necessary to show sequence of past events</li>
+                        <li><strong>Continuous with Stative Verbs:</strong> Avoid continuous forms with stative verbs (know, believe, etc.)</li>
+                    </ol>
+                </div>
+                
+                <div class="full-content">
+                    <h2 id="voice-mood">Voice and Mood</h2>
+                    <p>Voice indicates whether the subject performs or receives the action. Mood expresses the speaker's attitude toward the action. English has two voices (active and passive) and three moods (indicative, imperative, subjunctive).</p>
+                    
+                    <div class="rule-box">
+                        <h4>Key Concepts:</h4>
+                        <ul>
+                            <li><strong>Active Voice:</strong> Subject performs the action</li>
+                            <li><strong>Passive Voice:</strong> Subject receives the action</li>
+                            <li><strong>Indicative Mood:</strong> States facts or asks questions</li>
+                            <li><strong>Imperative Mood:</strong> Gives commands or makes requests</li>
+                            <li><strong>Subjunctive Mood:</strong> Expresses wishes, suggestions, or hypotheticals</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>Active vs. Passive Voice</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Active Voice</th>
+                                <th>Passive Voice</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Focus</strong></td>
+                                <td>On the doer of the action</td>
+                                <td>On the receiver of the action</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Structure</strong></td>
+                                <td>Subject + Verb + Object</td>
+                                <td>Subject + be + Past Participle + (by + agent)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Example</strong></td>
+                                <td>The chef cooked the meal.</td>
+                                <td>The meal was cooked by the chef.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Verb Type</strong></td>
+                                <td>All verbs</td>
+                                <td>Only transitive verbs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Use When</strong></td>
+                                <td>Doer is important or known</td>
+                                <td>Receiver is important or doer is unknown/unimportant</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Passive Voice in Different Tenses</h3>
+                    <ul>
+                        <li><strong>Present Simple:</strong> The letter <span class="verb-highlight">is written</span> by her.</li>
+                        <li><strong>Present Continuous:</strong> The letter <span class="verb-highlight">is being written</span> by her.</li>
+                        <li><strong>Present Perfect:</strong> The letter <span class="verb-highlight">has been written</span> by her.</li>
+                        <li><strong>Past Simple:</strong> The letter <span class="verb-highlight">was written</span> by her.</li>
+                        <li><strong>Past Continuous:</strong> The letter <span class="verb-highlight">was being written</span> by her.</li>
+                        <li><strong>Past Perfect:</strong> The letter <span class="verb-highlight">had been written</span> by her.</li>
+                        <li><strong>Future Simple:</strong> The letter <span class="verb-highlight">will be written</span> by her.</li>
+                        <li><strong>Future Perfect:</strong> The letter <span class="verb-highlight">will have been written</span> by her.</li>
+                    </ul>
+                    
+                    <h3>Verb Moods</h3>
+                    
+                    <h4>1. Indicative Mood (Most Common)</h4>
+                    <p>Used for statements of fact and questions:</p>
+                    <ul>
+                        <li><strong>Statements:</strong> She studies every day. It is raining.</li>
+                        <li><strong>Questions:</strong> Do you understand? Where is she going?</li>
+                        <li><strong>Exclamations:</strong> What a beautiful day it is!</li>
+                    </ul>
+                    
+                    <h4>2. Imperative Mood</h4>
+                    <p>Used for commands, requests, and instructions:</p>
+                    <ul>
+                        <li><strong>Commands:</strong> Close the door. Be quiet.</li>
+                        <li><strong>Requests:</strong> Please help me. Pass the salt.</li>
+                        <li><strong>Instructions:</strong> First, mix the ingredients. Turn left at the corner.</li>
+                        <li><strong>Negative:</strong> Don't touch that. Never give up.</li>
+                        <li><strong>With "let's":</strong> Let's go. Let's not argue.</li>
+                    </ul>
+                    
+                    <h4>3. Subjunctive Mood</h4>
+                    <p>Used for wishes, suggestions, demands, and hypothetical situations:</p>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Use</th>
+                                <th>Structure</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Wishes</strong></td>
+                                <td>wish + past subjunctive</td>
+                                <td>I wish I <span class="verb-highlight">were</span> taller.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Suggestions</strong></td>
+                                <td>suggest/recommend + that + base form</td>
+                                <td>She suggested that he <span class="verb-highlight">study</span> more.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Demands</strong></td>
+                                <td>demand/insist + that + base form</td>
+                                <td>I demand that she <span class="verb-highlight">apologize</span>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hypotheticals</strong></td>
+                                <td>If + past subjunctive, would + base form</td>
+                                <td>If I <span class="verb-highlight">were</span> you, I would go.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Importance</strong></td>
+                                <td>It's important + that + base form</td>
+                                <td>It's important that he <span class="verb-highlight">be</span> on time.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>When to Use Passive Voice</h3>
+                    <ol>
+                        <li><strong>Unknown Agent:</strong> My car was stolen last night. (We don't know who stole it)</li>
+                        <li><strong>Unimportant Agent:</strong> The road is being repaired. (Who is repairing it doesn't matter)</li>
+                        <li><strong>Obvious Agent:</strong> She was elected president. (By voters - obvious)</li>
+                        <li><strong>General Statements:</strong> English is spoken here.</li>
+                        <li><strong>Formal Writing:</strong> The results were analyzed and conclusions were drawn.</li>
+                        <li><strong>Tact or Politeness:</strong> Mistakes were made. (Rather than "You made mistakes")</li>
+                    </ol>
+                    
+                    <div class="rule-box">
+                        <h4>Style Tip:</h4>
+                        <p>In most writing, active voice is preferred because it's more direct and concise. However, passive voice has specific uses where it's appropriate or necessary.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quick-links">
+            <h2><i class="fas fa-link"></i> Interactive Verb Quizzes</h2>
+            <div class="link-list">
+                <a href="Main vs Helping Verbs.html" class="link-item">Main vs. Helping Verbs Quiz</a>
+                <a href="Action vs Stative Verbs.html" class="link-item">Action vs. Stative Verbs Quiz</a>
+                <a href="Transitive vs Intransitive Verbs Quiz.html" class="link-item">Transitive vs. Intransitive Quiz</a>
+                <a href="Phrasal Verbs.html" class="link-item">Phrasal Verbs Quiz</a>
+                <a href="Finite vs. Non-Finite.html" class="link-item">Finite vs. Non-Finite Guide</a>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Verb Grammar Guide &copy; 2023 | Complete reference for English verb types | Created for rexwyc.github.io</p>
+            <p>Includes links to interactive quizzes with infinite loops and sound effects</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Add smooth scrolling to anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+        
+        // Update active nav link based on scroll position
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.full-content');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                const sectionHeight = section.clientHeight;
+                if(scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Add animation to cards when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Set initial state for cards
+        document.querySelectorAll('.topic-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+        
+        // Highlight the verb examples
+        document.querySelectorAll('.verb-highlight').forEach(element => {
+            element.innerHTML = `<span class="highlight">${element.textContent}</span>`;
+        });
+    </script>
+</body>
+</html>
