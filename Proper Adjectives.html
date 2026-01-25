@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proper Adjectives Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 100, 0.1);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4a6fa5, #2c3e50);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #e8f1ff;
+            padding: 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #d0e0ff;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #5a7ab0;
+            margin-top: 5px;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .instructions {
+            background-color: #f8fbff;
+            border-left: 4px solid #4a6fa5;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question-number {
+            color: #5a7ab0;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        @media (min-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            padding: 16px;
+            background-color: #f8fbff;
+            border: 2px solid #d0e0ff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .option:hover {
+            background-color: #e8f1ff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .option.correct {
+            background-color: #e7f7ef;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        
+        .option.incorrect {
+            background-color: #fdeaea;
+            border-color: #f44336;
+            color: #c62828;
+        }
+        
+        .option.selected {
+            border-width: 3px;
+            font-weight: bold;
+        }
+        
+        .feedback {
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .feedback.correct {
+            background-color: #e7f7ef;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .feedback.incorrect {
+            background-color: #fdeaea;
+            border-left: 5px solid #f44336;
+        }
+        
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feedback-title i {
+            font-size: 1.2rem;
+        }
+        
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4a6fa5, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 100, 0.15);
+        }
+        
+        .next-btn:active {
+            transform: translateY(0);
+        }
+        
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #555;
+        }
+        
+        .definition-box {
+            background-color: #f0f7ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px dashed #5a7ab0;
+        }
+        
+        .definition-box h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .definition-box p {
+            margin-bottom: 10px;
+        }
+        
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .example {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 3px solid #4a6fa5;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .example-country {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .example-adjective {
+            color: #4a6fa5;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #5a7ab0;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 800px;
+            padding: 15px;
+        }
+        
+        .infinite-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: #e8f1ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-globe-americas"></i> Proper Adjectives Quiz</h1>
+            <p class="subtitle">Test your knowledge of adjectives derived from proper nouns</p>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="question-count">1/20</div>
+                <div class="stat-label">Question</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correct-streak">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="instructions">
+                <h3>How to Play</h3>
+                <p>Select the correct proper adjective for each question. Proper adjectives are derived from proper nouns (names of specific people, places, or things) and are always capitalized. After 20 questions, the quiz continues with new questions for infinite practice!</p>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number" id="question-number">Question #1</div>
+                <div class="question-text" id="question-text">Loading question...</div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="feedback" id="feedback">
+                    <div class="feedback-title" id="feedback-title">
+                        <i class="fas fa-check-circle"></i> <span>Correct!</span>
+                    </div>
+                    <div id="feedback-text">That's the right answer!</div>
+                    <div class="explanation" id="explanation"></div>
+                </div>
+                
+                <button class="next-btn" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="definition-box">
+                <h3><i class="fas fa-info-circle"></i> What are Proper Adjectives?</h3>
+                <p>Proper adjectives are adjectives formed from proper nouns. They always begin with a capital letter and often describe something related to a specific place, person, or culture.</p>
+                
+                <div class="examples">
+                    <div class="example">
+                        <span class="example-country">China</span> → <span class="example-adjective">Chinese</span> food
+                    </div>
+                    <div class="example">
+                        <span class="example-country">Shakespeare</span> → <span class="example-adjective">Shakespearean</span> sonnet
+                    </div>
+                    <div class="example">
+                        <span class="example-country">France</span> → <span class="example-adjective">French</span> cuisine
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Proper Adjectives Quiz &copy; 2023 | Keep practicing to improve your grammar skills!</p>
+        <div class="infinite-notice">
+            <i class="fas fa-infinity"></i>
+            <span>This quiz generates new questions infinitely for unlimited practice!</span>
+        </div>
+    </footer>
+
+    <script>
+        // Question bank with proper adjectives
+        const questionBank = [
+            {
+                question: "Which is the proper adjective form of 'Italy'?",
+                options: ["Italic", "Italian", "Italyish", "Italish"],
+                correct: 1,
+                explanation: "The proper adjective for Italy is 'Italian' (e.g., Italian food, Italian art)."
+            },
+            {
+                question: "What is the proper adjective for 'Shakespeare'?",
+                options: ["Shakespearian", "Shakespearean", "Shakespearan", "Shakespearish"],
+                correct: 1,
+                explanation: "The proper adjective for Shakespeare is 'Shakespearean' (e.g., Shakespearean tragedy)."
+            },
+            {
+                question: "Which proper adjective describes something from Canada?",
+                options: ["Canadian", "Canadan", "Canadish", "Canadial"],
+                correct: 0,
+                explanation: "The proper adjective for Canada is 'Canadian' (e.g., Canadian maple syrup)."
+            },
+            {
+                question: "What is the proper adjective form of 'Buddha'?",
+                options: ["Buddhist", "Buddhan", "Buddhistic", "Buddhaesque"],
+                correct: 0,
+                explanation: "The proper adjective for Buddha is 'Buddhist' (e.g., Buddhist temple)."
+            },
+            {
+                question: "Which is the correct proper adjective for 'Mexico'?",
+                options: ["Mexicish", "Mexican", "Mexical", "Mexic"],
+                correct: 1,
+                explanation: "The proper adjective for Mexico is 'Mexican' (e.g., Mexican culture)."
+            },
+            {
+                question: "What is the proper adjective for something related to 'Marx'?",
+                options: ["Marxical", "Marxian", "Marxist", "Marxish"],
+                correct: 2,
+                explanation: "The proper adjective for Marx is 'Marxist' (e.g., Marxist theory)."
+            },
+            {
+                question: "Which proper adjective describes something from Japan?",
+                options: ["Japanish", "Japanic", "Japanese", "Japanean"],
+                correct: 2,
+                explanation: "The proper adjective for Japan is 'Japanese' (e.g., Japanese technology)."
+            },
+            {
+                question: "What is the proper adjective form of 'Africa'?",
+                options: ["African", "Afric", "Africish", "Africian"],
+                correct: 0,
+                explanation: "The proper adjective for Africa is 'African' (e.g., African wildlife)."
+            },
+            {
+                question: "Which is the proper adjective for 'Newton'?",
+                options: ["Newtonic", "Newtonian", "Newtonish", "Newtonal"],
+                correct: 1,
+                explanation: "The proper adjective for Newton is 'Newtonian' (e.g., Newtonian physics)."
+            },
+            {
+                question: "What is the proper adjective describing something from Greece?",
+                options: ["Grecian", "Greek", "Greecian", "Greco"],
+                correct: 1,
+                explanation: "The proper adjective for Greece is 'Greek' (e.g., Greek mythology). 'Grecian' is also sometimes used for ancient Greek style."
+            },
+            {
+                question: "Which proper adjective is derived from 'Christ'?",
+                options: ["Christic", "Christian", "Christal", "Christish"],
+                correct: 1,
+                explanation: "The proper adjective for Christ is 'Christian' (e.g., Christian values)."
+            },
+            {
+                question: "What is the proper adjective for something from Spain?",
+                options: ["Spanian", "Spanish", "Spanic", "Spane"],
+                correct: 1,
+                explanation: "The proper adjective for Spain is 'Spanish' (e.g., Spanish language)."
+            },
+            {
+                question: "Which is the proper adjective form of 'Sweden'?",
+                options: ["Swedish", "Swedian", "Swedic", "Swedenish"],
+                correct: 0,
+                explanation: "The proper adjective for Sweden is 'Swedish' (e.g., Swedish design)."
+            },
+            {
+                question: "What is the proper adjective for something related to 'Darwin'?",
+                options: ["Darwinic", "Darwinish", "Darwinian", "Darwinal"],
+                correct: 2,
+                explanation: "The proper adjective for Darwin is 'Darwinian' (e.g., Darwinian evolution)."
+            },
+            {
+                question: "Which proper adjective describes something from Egypt?",
+                options: ["Egyptian", "Egyptic", "Egyptish", "Egypcian"],
+                correct: 0,
+                explanation: "The proper adjective for Egypt is 'Egyptian' (e.g., Egyptian pyramids)."
+            },
+            {
+                question: "What is the proper adjective form of 'Freud'?",
+                options: ["Freudian", "Freudic", "Freudish", "Freudesque"],
+                correct: 0,
+                explanation: "The proper adjective for Freud is 'Freudian' (e.g., Freudian psychology)."
+            },
+            {
+                question: "Which is the proper adjective for 'Norway'?",
+                options: ["Norwegic", "Norwayish", "Norwegian", "Norwayan"],
+                correct: 2,
+                explanation: "The proper adjective for Norway is 'Norwegian' (e.g., Norwegian fjords)."
+            },
+            {
+                question: "What is the proper adjective describing something from Russia?",
+                options: ["Russic", "Russian", "Russish", "Russi"],
+                correct: 1,
+                explanation: "The proper adjective for Russia is 'Russian' (e.g., Russian literature)."
+            },
+            {
+                question: "Which proper adjective is derived from 'Plato'?",
+                options: ["Platonic", "Platonic", "Platonian", "Platonesque"],
+                correct: 1,
+                explanation: "The proper adjective for Plato is 'Platonic' (e.g., Platonic love). Note: 'Platonic' is spelled the same but refers specifically to Plato's philosophy."
+            },
+            {
+                question: "What is the proper adjective for something from Portugal?",
+                options: ["Portugalish", "Portugese", "Portuguese", "Portugalian"],
+                correct: 2,
+                explanation: "The proper adjective for Portugal is 'Portuguese' (e.g., Portuguese explorers)."
+            },
+            {
+                question: "Which is the proper adjective form of 'Texas'?",
+                options: ["Texan", "Texasian", "Texasite", "Texian"],
+                correct: 0,
+                explanation: "The proper adjective for Texas is 'Texan' (e.g., Texan hospitality)."
+            },
+            {
+                question: "What is the proper adjective for something related to 'Einstein'?",
+                options: ["Einsteinic", "Einsteinish", "Einsteinian", "Einsteinal"],
+                correct: 2,
+                explanation: "The proper adjective for Einstein is 'Einsteinian' (e.g., Einsteinian physics)."
+            },
+            {
+                question: "Which proper adjective describes something from Brazil?",
+                options: ["Brazilian", "Brazilic", "Brazilean", "Brazilish"],
+                correct: 0,
+                explanation: "The proper adjective for Brazil is 'Brazilian' (e.g., Brazilian coffee)."
+            },
+            {
+                question: "What is the proper adjective form of 'Islam'?",
+                options: ["Islamish", "Islamic", "Islamian", "Islamist"],
+                correct: 1,
+                explanation: "The proper adjective for Islam is 'Islamic' (e.g., Islamic art)."
+            },
+            {
+                question: "Which is the proper adjective for 'Vietnam'?",
+                options: ["Vietnamite", "Vietnamesh", "Vietnamese", "Vietnamian"],
+                correct: 2,
+                explanation: "The proper adjective for Vietnam is 'Vietnamese' (e.g., Vietnamese cuisine)."
+            }
+        ];
+
+        // Quiz state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctStreak = 0;
+        let totalQuestionsAnswered = 0;
+        let usedQuestionIndices = new Set();
+        let currentQuestion = null;
+
+        // DOM elements
+        const questionText = document.getElementById('question-text');
+        const questionNumber = document.getElementById('question-number');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const explanation = document.getElementById('explanation');
+        const nextBtn = document.getElementById('next-btn');
+        const scoreElement = document.getElementById('score');
+        const questionCountElement = document.getElementById('question-count');
+        const correctStreakElement = document.getElementById('correct-streak');
+
+        // Initialize quiz
+        function initQuiz() {
+            // Reset state for a fresh start
+            score = 0;
+            correctStreak = 0;
+            totalQuestionsAnswered = 0;
+            usedQuestionIndices.clear();
+            
+            // Update display
+            scoreElement.textContent = score;
+            correctStreakElement.textContent = correctStreak;
+            questionCountElement.textContent = `1/20`;
+            
+            // Load first question
+            loadNewQuestion();
+        }
+
+        // Get a random question that hasn't been used recently
+        function getRandomQuestion() {
+            // If we've used all questions, reset the used indices
+            if (usedQuestionIndices.size >= questionBank.length) {
+                usedQuestionIndices.clear();
+            }
+            
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * questionBank.length);
+            } while (usedQuestionIndices.has(randomIndex));
+            
+            usedQuestionIndices.add(randomIndex);
+            return questionBank[randomIndex];
+        }
+
+        // Load a new question
+        function loadNewQuestion() {
+            // Reset UI
+            optionsContainer.innerHTML = '';
+            feedback.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // Get a new question
+            currentQuestion = getRandomQuestion();
+            
+            // Update question display
+            questionNumber.textContent = `Question #${totalQuestionsAnswered + 1}`;
+            questionCountElement.textContent = `${(totalQuestionsAnswered % 20) + 1}/20`;
+            questionText.textContent = currentQuestion.question;
+            
+            // Create option buttons
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update next button text for the last question in a set
+            if ((totalQuestionsAnswered + 1) % 20 === 0) {
+                nextBtn.innerHTML = 'Continue to Next Set <i class="fas fa-arrow-right"></i>';
+            } else {
+                nextBtn.innerHTML = 'Next Question <i class="fas fa-arrow-right"></i>';
+            }
+        }
+
+        // Handle option selection
+        function selectOption(selectedIndex) {
+            // Disable further selections
+            const optionElements = document.querySelectorAll('.option');
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+                option.classList.remove('selected');
+            });
+            
+            // Mark selected option
+            optionElements[selectedIndex].classList.add('selected');
+            
+            // Check if answer is correct
+            const isCorrect = selectedIndex === currentQuestion.correct;
+            
+            // Update score and streak
+            if (isCorrect) {
+                score += 10;
+                correctStreak++;
+                scoreElement.textContent = score;
+                correctStreakElement.textContent = correctStreak;
+            } else {
+                correctStreak = 0;
+                correctStreakElement.textContent = correctStreak;
+            }
+            
+            // Show feedback
+            showFeedback(isCorrect, selectedIndex);
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+            
+            // Increment question counter
+            totalQuestionsAnswered++;
+        }
+
+        // Show feedback for the selected answer
+        function showFeedback(isCorrect, selectedIndex) {
+            const optionElements = document.querySelectorAll('.option');
+            
+            // Mark correct and incorrect answers
+            optionElements.forEach((option, index) => {
+                if (index === currentQuestion.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Set feedback content
+            if (isCorrect) {
+                feedbackTitle.innerHTML = '<i class="fas fa-check-circle"></i> <span>Correct!</span>';
+                feedbackText.textContent = 'Well done! You selected the right proper adjective.';
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+            } else {
+                feedbackTitle.innerHTML = '<i class="fas fa-times-circle"></i> <span>Incorrect</span>';
+                feedbackText.textContent = `The correct answer is: ${currentQuestion.options[currentQuestion.correct]}`;
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+            }
+            
+            // Add explanation if available
+            if (currentQuestion.explanation) {
+                explanation.textContent = currentQuestion.explanation;
+            } else {
+                explanation.textContent = '';
+            }
+            
+            // Show feedback
+            feedback.style.display = 'block';
+        }
+
+        // Set up event listener for next button
+        nextBtn.addEventListener('click', () => {
+            loadNewQuestion();
+        });
+
+        // Initialize the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

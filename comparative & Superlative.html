@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparative & Superlative Forms Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e1f0ff;
+            padding-bottom: 15px;
+        }
+        
+        h1 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #e1f0ff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .info-item {
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c5aa0;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question-number {
+            font-size: 0.9rem;
+            color: #2c5aa0;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        @media (min-width: 500px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #d0e4ff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.05rem;
+            background-color: #f8fbff;
+        }
+        
+        .option:hover {
+            background-color: #e8f2ff;
+            border-color: #a8c8f0;
+        }
+        
+        .option.selected {
+            background-color: #d4e6ff;
+            border-color: #2c5aa0;
+            font-weight: bold;
+        }
+        
+        .option.correct {
+            background-color: #d4ffd4;
+            border-color: #2ecc71;
+        }
+        
+        .option.incorrect {
+            background-color: #ffd4d4;
+            border-color: #e74c3c;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4ffd4;
+            border-left: 5px solid #2ecc71;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background-color: #ffd4d4;
+            border-left: 5px solid #e74c3c;
+            display: block;
+        }
+        
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .feedback-explanation {
+            font-size: 0.95rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #2c5aa0;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1e3d6f;
+        }
+        
+        .btn-secondary {
+            background-color: #e1f0ff;
+            color: #2c5aa0;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #c9e0ff;
+        }
+        
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .toggle-label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #2c5aa0;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #2c5aa0;
+            border-radius: 5px;
+            width: 5%;
+            transition: width 0.5s ease;
+        }
+        
+        .loop-notice {
+            text-align: center;
+            font-style: italic;
+            color: #2c5aa0;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .info-item {
+                min-width: 80px;
+            }
+        }
+        
+        .completed-message {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        
+        .completed-message h2 {
+            color: #2c5aa0;
+        }
+        
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2c5aa0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Comparative & Superlative Forms Quiz</h1>
+            <p class="subtitle">Test your knowledge of English grammar with 20 questions. Enable infinite loop to practice continuously!</p>
+        </div>
+        
+        <div class="quiz-info">
+            <div class="info-item">
+                <div class="info-value" id="question-counter">1/20</div>
+                <div class="info-label">Question</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="score">0</div>
+                <div class="info-label">Score</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="correct-streak">0</div>
+                <div class="info-label">Correct Streak</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-content">
+            <div class="question-container">
+                <div class="question-number">Question <span id="current-question">1</span> of 20</div>
+                <div class="question-text" id="question-text">Loading question...</div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be generated here -->
+                </div>
+                
+                <div class="feedback" id="feedback">
+                    <div class="feedback-title" id="feedback-title"></div>
+                    <div class="feedback-explanation" id="feedback-explanation"></div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-secondary" id="prev-btn" disabled>Previous</button>
+                <button class="btn btn-primary" id="next-btn">Next Question</button>
+            </div>
+            
+            <div class="toggle-container">
+                <span class="toggle-label">Infinite Loop:</span>
+                <label class="switch">
+                    <input type="checkbox" id="loop-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="loop-notice" id="loop-notice">
+                Infinite loop enabled! After 20 questions, the quiz will restart automatically.
+            </div>
+        </div>
+        
+        <div class="completed-message" id="completed-message">
+            <h2>Quiz Completed!</h2>
+            <div class="score-display" id="final-score">0/20</div>
+            <p id="performance-message">Great job! You've completed the quiz.</p>
+            <button class="btn btn-primary" id="restart-btn">Restart Quiz</button>
+            <div style="margin-top: 20px;">
+                <p>Turn on Infinite Loop to practice continuously!</p>
+                <label class="switch">
+                    <input type="checkbox" id="loop-toggle-end">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data - 20 questions about comparative and superlative forms
+        const quizQuestions = [
+            {
+                question: "What is the comparative form of 'big'?",
+                options: ["bigger", "biggest", "more big", "most big"],
+                correctAnswer: 0,
+                explanation: "The comparative form of 'big' is 'bigger'. For one-syllable adjectives, we usually add -er."
+            },
+            {
+                question: "What is the superlative form of 'happy'?",
+                options: ["happyer", "happiest", "more happy", "most happy"],
+                correctAnswer: 1,
+                explanation: "The superlative form of 'happy' is 'happiest'. For adjectives ending in -y, we change the y to i and add -est."
+            },
+            {
+                question: "Which is the correct comparative form: 'This book is ______ than that one.'",
+                options: ["interesting", "more interesting", "interestinger", "most interesting"],
+                correctAnswer: 1,
+                explanation: "For adjectives with three or more syllables, we use 'more' + adjective for the comparative form."
+            },
+            {
+                question: "What is the superlative form of 'bad'?",
+                options: ["badder", "baddest", "worse", "worst"],
+                correctAnswer: 3,
+                explanation: "The superlative form of 'bad' is 'worst'. This is an irregular form."
+            },
+            {
+                question: "Which sentence uses the correct comparative form?",
+                options: ["She is tall than her brother.", "She is taller than her brother.", "She is more tall than her brother.", "She is tallest than her brother."],
+                correctAnswer: 1,
+                explanation: "The correct comparative form is 'taller than'. For one-syllable adjectives, add -er and use 'than' for comparison."
+            },
+            {
+                question: "What is the comparative form of 'far'?",
+                options: ["farther", "farthest", "more far", "most far"],
+                correctAnswer: 0,
+                explanation: "The comparative form of 'far' is 'farther' or 'further'. Both are acceptable, but 'farther' is more common for physical distance."
+            },
+            {
+                question: "Which is the correct superlative: 'Mount Everest is the ______ mountain in the world.'",
+                options: ["high", "higher", "highest", "most high"],
+                correctAnswer: 2,
+                explanation: "The superlative form of 'high' is 'highest'. For one-syllable adjectives, add -est for the superlative form."
+            },
+            {
+                question: "What is the comparative form of 'beautiful'?",
+                options: ["beautifuller", "beautifullest", "more beautiful", "most beautiful"],
+                correctAnswer: 2,
+                explanation: "For adjectives with three or more syllables like 'beautiful', we use 'more' + adjective for the comparative form."
+            },
+            {
+                question: "Which sentence is correct?",
+                options: ["This is the most good cake I've ever tasted.", "This is the better cake I've ever tasted.", "This is the best cake I've ever tasted.", "This is the goodest cake I've ever tasted."],
+                correctAnswer: 2,
+                explanation: "The superlative form of 'good' is 'best'. 'Good' has irregular comparative and superlative forms: good → better → best."
+            },
+            {
+                question: "What is the superlative form of 'little' (meaning small amount)?",
+                options: ["littler", "littlest", "less", "least"],
+                correctAnswer: 3,
+                explanation: "The superlative form of 'little' (meaning small amount) is 'least'. The comparative form is 'less'."
+            },
+            {
+                question: "Which is the correct comparative: 'My new phone is ______ than my old one.'",
+                options: ["expensiver", "more expensive", "expensivest", "most expensive"],
+                correctAnswer: 1,
+                explanation: "For adjectives with three or more syllables like 'expensive', we use 'more' + adjective for the comparative form."
+            },
+            {
+                question: "What is the comparative form of 'thin'?",
+                options: ["thinner", "thinnest", "more thin", "most thin"],
+                correctAnswer: 0,
+                explanation: "The comparative form of 'thin' is 'thinner'. For one-syllable adjectives ending with a consonant-vowel-consonant pattern, we double the final consonant before adding -er."
+            },
+            {
+                question: "Which sentence uses the correct superlative form?",
+                options: ["He is the most fast runner on the team.", "He is the faster runner on the team.", "He is the fastest runner on the team.", "He is the fast runner on the team."],
+                correctAnswer: 2,
+                explanation: "The superlative form of 'fast' is 'fastest'. For one-syllable adjectives, add -est for the superlative form."
+            },
+            {
+                question: "What is the comparative form of 'interesting'?",
+                options: ["interesting", "interestinger", "more interesting", "most interesting"],
+                correctAnswer: 2,
+                explanation: "For adjectives with three or more syllables like 'interesting', we use 'more' + adjective for the comparative form."
+            },
+            {
+                question: "What is the superlative form of 'good'?",
+                options: ["gooder", "goodest", "better", "best"],
+                correctAnswer: 3,
+                explanation: "The superlative form of 'good' is 'best'. 'Good' has irregular comparative and superlative forms: good → better → best."
+            },
+            {
+                question: "Which is correct: 'This is ______ day of my life!'",
+                options: ["the happy", "the happier", "the happiest", "the most happy"],
+                correctAnswer: 2,
+                explanation: "The superlative form of 'happy' is 'happiest'. For adjectives ending in -y, we change the y to i and add -est."
+            },
+            {
+                question: "What is the comparative form of 'bad'?",
+                options: ["badder", "baddest", "worse", "worst"],
+                correctAnswer: 2,
+                explanation: "The comparative form of 'bad' is 'worse'. This is an irregular form."
+            },
+            {
+                question: "Which sentence uses the correct comparative form?",
+                options: ["Winter is cold than autumn.", "Winter is colder than autumn.", "Winter is more cold than autumn.", "Winter is coldest than autumn."],
+                correctAnswer: 1,
+                explanation: "The correct comparative form is 'colder than'. For one-syllable adjectives, add -er and use 'than' for comparison."
+            },
+            {
+                question: "What is the superlative form of 'far'?",
+                options: ["farther", "farthest", "more far", "most far"],
+                correctAnswer: 1,
+                explanation: "The superlative form of 'far' is 'farthest' or 'furthest'. Both are acceptable, but 'farthest' is more common for physical distance."
+            },
+            {
+                question: "Which is correct: 'She is ______ person I know.'",
+                options: ["the intelligent", "the more intelligent", "the most intelligent", "the intelligenter"],
+                correctAnswer: 2,
+                explanation: "For adjectives with three or more syllables like 'intelligent', we use 'the most' + adjective for the superlative form."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(quizQuestions.length).fill(null);
+        let correctStreak = 0;
+        let infiniteLoopEnabled = false;
+
+        // DOM elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExplanation = document.getElementById('feedback-explanation');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const questionCounter = document.getElementById('question-counter');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreElement = document.getElementById('score');
+        const correctStreakElement = document.getElementById('correct-streak');
+        const progressBar = document.getElementById('progress-bar');
+        const loopToggle = document.getElementById('loop-toggle');
+        const loopToggleEnd = document.getElementById('loop-toggle-end');
+        const loopNotice = document.getElementById('loop-notice');
+        const quizContent = document.getElementById('quiz-content');
+        const completedMessage = document.getElementById('completed-message');
+        const finalScoreElement = document.getElementById('final-score');
+        const performanceMessage = document.getElementById('performance-message');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Initialize the quiz
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            correctStreak = 0;
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            
+            updateScoreDisplay();
+            loadQuestion(currentQuestionIndex);
+            updateProgressBar();
+            
+            // Show quiz content, hide completed message
+            quizContent.style.display = 'block';
+            completedMessage.style.display = 'none';
+            
+            // Update button states
+            prevBtn.disabled = true;
+            nextBtn.textContent = "Next Question";
+        }
+
+        // Load a question
+        function loadQuestion(index) {
+            const question = quizQuestions[index];
+            
+            // Update question text
+            questionText.textContent = question.question;
+            currentQuestionElement.textContent = index + 1;
+            questionCounter.textContent = `${index + 1}/20`;
+            
+            // Clear options container
+            optionsContainer.innerHTML = '';
+            
+            // Create option elements
+            question.options.forEach((option, optionIndex) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                
+                // If user has already answered this question, show correct/incorrect states
+                if (userAnswers[index] !== null) {
+                    if (optionIndex === question.correctAnswer) {
+                        optionElement.classList.add('correct');
+                    } else if (userAnswers[index] === optionIndex && userAnswers[index] !== question.correctAnswer) {
+                        optionElement.classList.add('incorrect');
+                    }
+                    
+                    if (userAnswers[index] === optionIndex) {
+                        optionElement.classList.add('selected');
+                    }
+                }
+                
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(optionIndex));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update feedback if the question has been answered
+            if (userAnswers[index] !== null) {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                showFeedback(isCorrect, question.explanation);
+            } else {
+                feedback.className = 'feedback';
+            }
+            
+            // Update button states
+            prevBtn.disabled = index === 0;
+            
+            // Update progress bar
+            updateProgressBar();
+        }
+
+        // Handle option selection
+        function selectOption(optionIndex) {
+            // If the question has already been answered, don't allow changing the answer
+            if (userAnswers[currentQuestionIndex] !== null) return;
+            
+            const question = quizQuestions[currentQuestionIndex];
+            const isCorrect = optionIndex === question.correctAnswer;
+            
+            // Store the user's answer
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update score and streak
+            if (isCorrect) {
+                score++;
+                correctStreak++;
+            } else {
+                correctStreak = 0;
+            }
+            
+            updateScoreDisplay();
+            
+            // Show visual feedback for the selected option
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, idx) => {
+                // Remove any existing selected class
+                option.classList.remove('selected');
+                
+                // If this is the user's selected option, mark it
+                if (idx === optionIndex) {
+                    option.classList.add('selected');
+                }
+                
+                // If this is the correct answer, mark it as correct
+                if (idx === question.correctAnswer) {
+                    option.classList.add('correct');
+                } else if (idx === optionIndex && !isCorrect) {
+                    // If this is the user's incorrect answer, mark it as incorrect
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Show feedback
+            showFeedback(isCorrect, question.explanation);
+            
+            // Enable next button
+            nextBtn.disabled = false;
+        }
+
+        // Show feedback for the answer
+        function showFeedback(isCorrect, explanation) {
+            feedback.className = isCorrect ? 'feedback correct' : 'feedback incorrect';
+            feedbackTitle.textContent = isCorrect ? 'Correct!' : 'Incorrect!';
+            feedbackExplanation.textContent = explanation;
+        }
+
+        // Update score display
+        function updateScoreDisplay() {
+            scoreElement.textContent = score;
+            correctStreakElement.textContent = correctStreak;
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Go to the next question
+        function nextQuestion() {
+            // Check if we need to show the next question or complete the quiz
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+            } else {
+                // Quiz is complete
+                completeQuiz();
+            }
+            
+            // Update button text if we're on the last question
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                nextBtn.textContent = "Finish Quiz";
+            }
+        }
+
+        // Go to the previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentQuestionIndex);
+                
+                // Update button text
+                nextBtn.textContent = currentQuestionIndex === quizQuestions.length - 1 ? "Finish Quiz" : "Next Question";
+            }
+        }
+
+        // Complete the quiz
+        function completeQuiz() {
+            // Calculate final score
+            const finalScore = score;
+            
+            // Update final score display
+            finalScoreElement.textContent = `${finalScore}/20`;
+            
+            // Add performance message
+            let message = "";
+            if (finalScore >= 18) {
+                message = "Excellent work! You have a strong understanding of comparative and superlative forms.";
+            } else if (finalScore >= 15) {
+                message = "Good job! You understand most comparative and superlative forms.";
+            } else if (finalScore >= 10) {
+                message = "Not bad! Keep practicing to improve your understanding of comparatives and superlatives.";
+            } else {
+                message = "Keep practicing! Review the rules for comparative and superlative forms.";
+            }
+            performanceMessage.textContent = message;
+            
+            // Show completed message, hide quiz content
+            quizContent.style.display = 'none';
+            completedMessage.style.display = 'block';
+            
+            // If infinite loop is enabled, restart the quiz after a delay
+            if (infiniteLoopEnabled) {
+                setTimeout(initQuiz, 3000); // Restart after 3 seconds
+            }
+        }
+
+        // Toggle infinite loop
+        function toggleInfiniteLoop(isEnabled) {
+            infiniteLoopEnabled = isEnabled;
+            loopNotice.style.display = isEnabled ? 'block' : 'none';
+            
+            // Sync both toggle switches
+            loopToggle.checked = isEnabled;
+            loopToggleEnd.checked = isEnabled;
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', () => {
+            // If the current question hasn't been answered, don't proceed
+            if (userAnswers[currentQuestionIndex] === null) {
+                alert("Please select an answer before proceeding.");
+                return;
+            }
+            
+            nextQuestion();
+        });
+
+        prevBtn.addEventListener('click', previousQuestion);
+
+        loopToggle.addEventListener('change', (e) => {
+            toggleInfiniteLoop(e.target.checked);
+        });
+
+        loopToggleEnd.addEventListener('change', (e) => {
+            toggleInfiniteLoop(e.target.checked);
+        });
+
+        restartBtn.addEventListener('click', initQuiz);
+
+        // Initialize the quiz when the page loads
+        window.addEventListener('DOMContentLoaded', initQuiz);
+
+        // Make sure the quiz is responsive on mobile
+        window.addEventListener('resize', () => {
+            // If we're on a small screen and the quiz is complete, ensure the completed message is properly displayed
+            if (window.innerWidth < 600 && completedMessage.style.display === 'block') {
+                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

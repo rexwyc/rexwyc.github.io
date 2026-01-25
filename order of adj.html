@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order of Adjectives Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .rules-box {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .rules-box h2 {
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .rules-list {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .rules-list li {
+            margin-bottom: 8px;
+        }
+        
+        .adjective-order {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning:hover {
+            background-color: #c0392b;
+        }
+        
+        .quiz-container {
+            display: none;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question-number {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background-color: #f8f9fa;
+            border-color: #bdc3c7;
+        }
+        
+        .option.selected {
+            border-color: #3498db;
+            background-color: #e8f4fc;
+        }
+        
+        .option.correct {
+            border-color: #2ecc71;
+            background-color: #d5f4e6;
+        }
+        
+        .option.incorrect {
+            border-color: #e74c3c;
+            background-color: #fadbd8;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d5f4e6;
+            border-left: 4px solid #2ecc71;
+            color: #27ae60;
+        }
+        
+        .feedback.incorrect {
+            background-color: #fadbd8;
+            border-left: 4px solid #e74c3c;
+            color: #c0392b;
+        }
+        
+        .feedback h3 {
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .results-container {
+            display: none;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .results-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .final-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 20px 0;
+        }
+        
+        .results-message {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: #7f8c8d;
+        }
+        
+        .infinite-mode-indicator {
+            background-color: #fef9e7;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #f39c12;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .infinite-mode-indicator i {
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .option {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-sort-alpha-down"></i> Order of Adjectives Quiz</h1>
+            <p class="subtitle">Test your knowledge of the correct adjective order in English</p>
+        </header>
+        
+        <div class="rules-box">
+            <h2><i class="fas fa-info-circle"></i> Rules & Adjective Order</h2>
+            <p>In English, adjectives usually follow a specific order when multiple adjectives describe the same noun:</p>
+            <ul class="rules-list">
+                <li><strong>Opinion</strong> (beautiful, ugly, nice)</li>
+                <li><strong>Size</strong> (big, small, tall)</li>
+                <li><strong>Age</strong> (old, young, new)</li>
+                <li><strong>Shape</strong> (round, square, rectangular)</li>
+                <li><strong>Color</strong> (red, blue, green)</li>
+                <li><strong>Origin</strong> (American, Chinese, Victorian)</li>
+                <li><strong>Material</strong> (wooden, plastic, silk)</li>
+                <li><strong>Purpose</strong> (sleeping, cooking, racing)</li>
+            </ul>
+            <div class="adjective-order">
+                <i class="fas fa-arrow-right"></i> Order: Opinion → Size → Age → Shape → Color → Origin → Material → Purpose
+            </div>
+        </div>
+        
+        <div class="infinite-mode-indicator" id="infiniteModeIndicator">
+            <i class="fas fa-infinity"></i> Infinite Mode Active - Questions will continue indefinitely
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">
+                <i class="fas fa-play"></i> Start 20 Questions Quiz
+            </button>
+            <button class="btn btn-secondary" id="infiniteBtn">
+                <i class="fas fa-infinity"></i> Start Infinite Mode
+            </button>
+            <button class="btn btn-warning" id="resetBtn">
+                <i class="fas fa-redo"></i> Reset Quiz
+            </button>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="question-header">
+                <div class="question-number" id="questionNumber">Question 1 of 20</div>
+                <div class="score" id="score">Score: 0</div>
+            </div>
+            
+            <div class="question-text" id="questionText"></div>
+            
+            <div class="options" id="optionsContainer">
+                <!-- Options will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <!-- Feedback will be inserted here by JavaScript -->
+            </div>
+            
+            <button class="next-btn" id="nextBtn">Next Question <i class="fas fa-arrow-right"></i></button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2 class="results-title">Quiz Completed!</h2>
+            <div class="final-score" id="finalScore">0/20</div>
+            <p class="results-message" id="resultsMessage"></p>
+            <div class="controls">
+                <button class="btn btn-primary" id="restartBtn">
+                    <i class="fas fa-redo"></i> Restart Quiz
+                </button>
+                <button class="btn btn-secondary" id="infiniteFromResultsBtn">
+                    <i class="fas fa-infinity"></i> Try Infinite Mode
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Quiz questions data
+        const questions = [
+            {
+                question: "Choose the correct order of adjectives: She bought a ___ car.",
+                options: [
+                    "red, beautiful, Italian, new, sports",
+                    "beautiful, new, red, Italian, sports",
+                    "Italian, beautiful, new, red, sports",
+                    "sports, Italian, red, new, beautiful"
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (beautiful) → Age (new) → Color (red) → Origin (Italian) → Purpose (sports)"
+            },
+            {
+                question: "Select the properly ordered sentence:",
+                options: [
+                    "He gave her a silk, green, beautiful scarf.",
+                    "He gave her a beautiful, green, silk scarf.",
+                    "He gave her a green, beautiful, silk scarf.",
+                    "He gave her a silk, beautiful, green scarf."
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (beautiful) → Color (green) → Material (silk)"
+            },
+            {
+                question: "Which sentence has the correct adjective order?",
+                options: [
+                    "They live in a small, wooden, old house.",
+                    "They live in an old, small, wooden house.",
+                    "They live in a wooden, old, small house.",
+                    "They live in a small, old, wooden house."
+                ],
+                correct: 3,
+                explanation: "Correct order: Size (small) → Age (old) → Material (wooden)"
+            },
+            {
+                question: "Identify the correct order: It was a ___ day.",
+                options: [
+                    "sunny, beautiful, warm",
+                    "beautiful, warm, sunny",
+                    "warm, beautiful, sunny",
+                    "beautiful, sunny, warm"
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (beautiful) → Temperature (warm) → Weather condition (sunny)"
+            },
+            {
+                question: "Choose the properly ordered phrase: a ___ table",
+                options: [
+                    "round, wooden, large, dining",
+                    "large, round, wooden, dining",
+                    "dining, wooden, round, large",
+                    "wooden, round, large, dining"
+                ],
+                correct: 1,
+                explanation: "Correct order: Size (large) → Shape (round) → Material (wooden) → Purpose (dining)"
+            },
+            {
+                question: "Which is correct?",
+                options: [
+                    "She wore a silk, blue, elegant dress.",
+                    "She wore an elegant, blue, silk dress.",
+                    "She wore a blue, elegant, silk dress.",
+                    "She wore a silk, elegant, blue dress."
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (elegant) → Color (blue) → Material (silk)"
+            },
+            {
+                question: "Select the sentence with proper adjective order:",
+                options: [
+                    "He owns several French, old, interesting books.",
+                    "He owns several interesting, old, French books.",
+                    "He owns several old, interesting, French books.",
+                    "He owns several interesting, French, old books."
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (interesting) → Age (old) → Origin (French)"
+            },
+            {
+                question: "Identify the correct adjective sequence: ___ clouds",
+                options: [
+                    "white, fluffy, big",
+                    "big, fluffy, white",
+                    "fluffy, white, big",
+                    "fluffy, big, white"
+                ],
+                correct: 1,
+                explanation: "Correct order: Size (big) → Texture (fluffy) → Color (white)"
+            },
+            {
+                question: "Which phrase is ordered correctly?",
+                options: [
+                    "plastic, red, small, toy",
+                    "small, red, plastic, toy",
+                    "toy, plastic, red, small",
+                    "red, small, plastic, toy"
+                ],
+                correct: 1,
+                explanation: "Correct order: Size (small) → Color (red) → Material (plastic) → Purpose (toy)"
+            },
+            {
+                question: "Choose the correct order: a ___ painting",
+                options: [
+                    "famous, Italian, Renaissance",
+                    "Italian, Renaissance, famous",
+                    "Renaissance, Italian, famous",
+                    "Italian, famous, Renaissance"
+                ],
+                correct: 0,
+                explanation: "Correct order: Opinion (famous) → Origin (Italian) → Period (Renaissance)"
+            },
+            {
+                question: "Select the properly ordered sentence:",
+                options: [
+                    "She adopted a dog, brown, small, adorable.",
+                    "She adopted an adorable, small, brown dog.",
+                    "She adopted a small, brown, adorable dog.",
+                    "She adopted a brown, small, adorable dog."
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (adorable) → Size (small) → Color (brown)"
+            },
+            {
+                question: "Which sentence has correct adjective order?",
+                options: [
+                    "They bought a rectangular, glass, modern coffee table.",
+                    "They bought a modern, rectangular, glass coffee table.",
+                    "They bought a glass, rectangular, modern coffee table.",
+                    "They bought a rectangular, modern, glass coffee table."
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (modern) → Shape (rectangular) → Material (glass)"
+            },
+            {
+                question: "Identify the correct order: ___ buildings",
+                options: [
+                    "ancient, stone, Greek",
+                    "Greek, ancient, stone",
+                    "stone, Greek, ancient",
+                    "ancient, Greek, stone"
+                ],
+                correct: 3,
+                explanation: "Correct order: Age (ancient) → Origin (Greek) → Material (stone)"
+            },
+            {
+                question: "Choose the properly ordered phrase: a ___ watch",
+                options: [
+                    "gold, Swiss, expensive, antique",
+                    "expensive, antique, Swiss, gold",
+                    "antique, expensive, Swiss, gold",
+                    "Swiss, gold, antique, expensive"
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (expensive) → Age (antique) → Origin (Swiss) → Material (gold)"
+            },
+            {
+                question: "Which is correct?",
+                options: [
+                    "She has long, black, beautiful hair.",
+                    "She has beautiful, long, black hair.",
+                    "She has black, long, beautiful hair.",
+                    "She has long, beautiful, black hair."
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (beautiful) → Length (long) → Color (black)"
+            },
+            {
+                question: "Select the sentence with proper adjective order:",
+                options: [
+                    "He served delicious, homemade, chocolate chip cookies.",
+                    "He served homemade, chocolate chip, delicious cookies.",
+                    "He served chocolate chip, homemade, delicious cookies.",
+                    "He served delicious, chocolate chip, homemade cookies."
+                ],
+                correct: 0,
+                explanation: "Correct order: Opinion (delicious) → Preparation (homemade) → Type/Ingredient (chocolate chip)"
+            },
+            {
+                question: "Identify the correct adjective sequence: ___ flowers",
+                options: [
+                    "yellow, delicate, spring",
+                    "delicate, yellow, spring",
+                    "spring, yellow, delicate",
+                    "delicate, spring, yellow"
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (delicate) → Color (yellow) → Type/Season (spring)"
+            },
+            {
+                question: "Which phrase is ordered correctly?",
+                options: [
+                    "leather, black, comfortable, shoes",
+                    "comfortable, black, leather, shoes",
+                    "black, comfortable, leather, shoes",
+                    "comfortable, leather, black, shoes"
+                ],
+                correct: 1,
+                explanation: "Correct order: Opinion (comfortable) → Color (black) → Material (leather) → Purpose (shoes)"
+            },
+            {
+                question: "Choose the correct order: an ___ vase",
+                options: [
+                    "Chinese, porcelain, ancient",
+                    "ancient, Chinese, porcelain",
+                    "porcelain, Chinese, ancient",
+                    "ancient, porcelain, Chinese"
+                ],
+                correct: 1,
+                explanation: "Correct order: Age (ancient) → Origin (Chinese) → Material (porcelain)"
+            },
+            {
+                question: "Select the properly ordered sentence:",
+                options: [
+                    "We saw huge, gray, African elephants.",
+                    "We saw African, huge, gray elephants.",
+                    "We saw huge, African, gray elephants.",
+                    "We saw gray, huge, African elephants."
+                ],
+                correct: 0,
+                explanation: "Correct order: Size (huge) → Color (gray) → Origin (African)"
+            }
+        ];
+
+        // DOM Elements
+        const startBtn = document.getElementById('startBtn');
+        const infiniteBtn = document.getElementById('infiniteBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const questionNumber = document.getElementById('questionNumber');
+        const scoreElement = document.getElementById('score');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const finalScore = document.getElementById('finalScore');
+        const resultsMessage = document.getElementById('resultsMessage');
+        const restartBtn = document.getElementById('restartBtn');
+        const infiniteFromResultsBtn = document.getElementById('infiniteFromResultsBtn');
+        const infiniteModeIndicator = document.getElementById('infiniteModeIndicator');
+
+        // Quiz state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isInfiniteMode = false;
+        let totalQuestionsAnswered = 0;
+        let usedQuestions = new Set();
+
+        // Initialize the quiz
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            totalQuestionsAnswered = 0;
+            usedQuestions.clear();
+            updateScore();
+            showQuestion();
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            infiniteModeIndicator.style.display = isInfiniteMode ? 'block' : 'none';
+        }
+
+        // Start normal quiz mode
+        startBtn.addEventListener('click', () => {
+            isInfiniteMode = false;
+            initQuiz();
+        });
+
+        // Start infinite quiz mode
+        infiniteBtn.addEventListener('click', () => {
+            isInfiniteMode = true;
+            initQuiz();
+        });
+
+        // Reset quiz
+        resetBtn.addEventListener('click', () => {
+            isInfiniteMode = false;
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            infiniteModeIndicator.style.display = 'none';
+        });
+
+        // Restart quiz from results
+        restartBtn.addEventListener('click', () => {
+            isInfiniteMode = false;
+            initQuiz();
+        });
+
+        // Start infinite mode from results
+        infiniteFromResultsBtn.addEventListener('click', () => {
+            isInfiniteMode = true;
+            initQuiz();
+        });
+
+        // Show current question
+        function showQuestion() {
+            // For infinite mode, get a random question not used recently
+            let question;
+            if (isInfiniteMode) {
+                // If we've used all questions, reset the used set
+                if (usedQuestions.size >= questions.length) {
+                    usedQuestions.clear();
+                }
+                
+                // Get a random question not recently used
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * questions.length);
+                } while (usedQuestions.has(randomIndex));
+                
+                question = questions[randomIndex];
+                usedQuestions.add(randomIndex);
+                
+                // Update question counter for infinite mode
+                totalQuestionsAnswered++;
+                questionNumber.textContent = `Question ${totalQuestionsAnswered} (Infinite Mode)`;
+            } else {
+                // For normal mode, get the next question in sequence
+                question = questions[currentQuestionIndex];
+                questionNumber.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            }
+            
+            questionText.textContent = question.question;
+            optionsContainer.innerHTML = '';
+            
+            // Create option buttons
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', () => selectOption(optionElement, index, question.correct));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reset feedback and next button
+            feedback.style.display = 'none';
+            nextBtn.style.display = 'none';
+            feedback.className = 'feedback';
+        }
+
+        // Handle option selection
+        function selectOption(optionElement, selectedIndex, correctIndex) {
+            // Disable all options
+            const allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Mark selected option
+            optionElement.classList.add('selected');
+            
+            // Check if correct
+            if (selectedIndex === correctIndex) {
+                optionElement.classList.add('correct');
+                score++;
+                updateScore();
+                showFeedback(true, questions[isInfiniteMode ? Array.from(usedQuestions).pop() : currentQuestionIndex].explanation);
+            } else {
+                optionElement.classList.add('incorrect');
+                // Highlight the correct option
+                allOptions[correctIndex].classList.add('correct');
+                showFeedback(false, questions[isInfiniteMode ? Array.from(usedQuestions).pop() : currentQuestionIndex].explanation);
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Update score display
+        function updateScore() {
+            if (isInfiniteMode) {
+                scoreElement.textContent = `Score: ${score}/${totalQuestionsAnswered}`;
+            } else {
+                scoreElement.textContent = `Score: ${score}/${currentQuestionIndex}`;
+            }
+        }
+
+        // Show feedback
+        function showFeedback(isCorrect, explanation) {
+            feedback.innerHTML = `
+                <h3>${isCorrect ? 'Correct!' : 'Incorrect'}</h3>
+                <p>${explanation}</p>
+            `;
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.style.display = 'block';
+        }
+
+        // Handle next question button
+        nextBtn.addEventListener('click', () => {
+            if (isInfiniteMode) {
+                // Infinite mode: just show another question
+                showQuestion();
+            } else {
+                // Normal mode: go to next question or show results
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }
+        });
+
+        // Show final results
+        function showResults() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScore.textContent = `${score}/${questions.length}`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = 'Excellent! You have mastered the order of adjectives!';
+            } else if (percentage >= 70) {
+                message = 'Great job! You have a good understanding of adjective order.';
+            } else if (percentage >= 50) {
+                message = 'Good effort! Keep practicing to improve your skills.';
+            } else {
+                message = 'Keep studying! Review the rules and try again.';
+            }
+            
+            resultsMessage.textContent = message;
+        }
+
+        // Initialize with instructions visible
+        window.onload = function() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+        };
+    </script>
+</body>
+</html>
