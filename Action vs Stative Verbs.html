@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Action vs Stative Verbs Quiz - Infinite Loop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B0000 0%, #FF8C00 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #8B0000, #FF8C00);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 5px solid #4169E1;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+        
+        .verb-types {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .verb-type {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .verb-type i {
+            margin-right: 8px;
+        }
+        
+        .action-verb {
+            color: #FFD700;
+        }
+        
+        .stative-verb {
+            color: #4169E1;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #FFF5E6;
+            padding: 15px 20px;
+            border-bottom: 1px solid #FFD8A8;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #8B0000;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .game-area {
+            padding: 25px 20px;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            color: #8B0000;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number i {
+            margin-right: 8px;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            color: #222;
+        }
+        
+        .sentence-example {
+            font-size: 1.5rem;
+            color: #8B0000;
+            margin: 15px 0;
+            padding: 20px;
+            background-color: #FFF5E6;
+            border-radius: 12px;
+            border: 2px solid #FFD8A8;
+            line-height: 1.5;
+        }
+        
+        .highlighted-verb {
+            background-color: #FFE4B5;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        @media (min-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background-color: #FFF5E6;
+            border: 3px solid #FFD8A8;
+            border-radius: 15px;
+            padding: 22px 15px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background-color: #FFE4B5;
+            border-color: #8B0000;
+            box-shadow: 0 0 0 4px rgba(139, 0, 0, 0.2);
+        }
+        
+        .option.correct {
+            background-color: #D4EDDA;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            background-color: #F8D7DA;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .option-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .option.action-verb-option .option-icon {
+            background-color: #FF8C00;
+        }
+        
+        .option.stative-verb-option .option-icon {
+            background-color: #4169E1;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        #submit-btn {
+            background: linear-gradient(to right, #8B0000, #FF4500);
+            color: white;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        #submit-btn:hover {
+            background: linear-gradient(to right, #700000, #E03E00);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.4);
+        }
+        
+        #submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #next-btn {
+            background: linear-gradient(to right, #4169E1, #6495ED);
+            color: white;
+            flex: 1;
+            margin-left: 10px;
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(to right, #3159D1, #5485DD);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(65, 105, 225, 0.4);
+        }
+        
+        .explanation {
+            background-color: #FFF5E6;
+            border-left: 5px solid #FF8C00;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .explanation h3 {
+            color: #8B0000;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .explanation h3 i {
+            margin-right: 10px;
+        }
+        
+        .verb-definition {
+            background-color: #FFF0D6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4169E1;
+        }
+        
+        .definition-title {
+            font-weight: bold;
+            color: #8B0000;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition-title i {
+            margin-right: 8px;
+        }
+        
+        .verb-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .example-tag {
+            background-color: #FFE4B5;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .loop-indicator {
+            background-color: rgba(65, 105, 225, 0.15);
+            border: 2px dashed #4169E1;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2A4AB0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loop-indicator i {
+            margin: 0 10px;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .verb-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .verb-tag {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #FFE4B5;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #FF8C00, #8B0000);
+            border-radius: 10px;
+            width: 5%;
+            transition: width 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text, .sentence-example {
+                font-size: 1.4rem;
+            }
+            
+            .stat {
+                min-width: 100px;
+                margin-bottom: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            #submit-btn, #next-btn {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .option {
+                padding: 18px 12px;
+                font-size: 1.2rem;
+            }
+            
+            .verb-types {
+                gap: 15px;
+            }
+            
+            .verb-type {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-infinity"></i> Action vs Stative Verbs Quiz</h1>
+            <p class="subtitle">Identify whether the highlighted verb expresses an action or a state</p>
+            <p class="subtitle">20 questions infinite loop - Master verb types!</p>
+            
+            <div class="verb-types">
+                <div class="verb-type action-verb">
+                    <i class="fas fa-running"></i> Action Verb
+                </div>
+                <div class="verb-type stative-verb">
+                    <i class="fas fa-brain"></i> Stative Verb
+                </div>
+            </div>
+            
+            <div class="verb-list">
+                <div class="verb-tag">Stative: know, believe, like</div>
+                <div class="verb-tag">Stative: own, possess, belong</div>
+                <div class="verb-tag">Action: run, jump, write</div>
+                <div class="verb-tag">Action: build, create, speak</div>
+            </div>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="question-count">1/20</div>
+                <div class="stat-label">Question</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="loop-count">1</div>
+                <div class="stat-label">Loop</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="game-area">
+            <div class="question-container">
+                <div class="question-number">
+                    <i class="fas fa-question-circle"></i> Question <span id="current-question">1</span> of 20
+                </div>
+                
+                <div class="question-text" id="question-text">
+                    Is the highlighted verb an <strong>Action Verb</strong> or a <strong>Stative Verb</strong>?
+                </div>
+                
+                <div class="sentence-example" id="sentence-example">
+                    Loading sentence...
+                </div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be dynamically added here -->
+                </div>
+                
+                <div class="explanation" id="explanation">
+                    <h3><i class="fas fa-lightbulb"></i> Explanation</h3>
+                    <div id="verb-definition" class="verb-definition">
+                        <!-- Verb definition will be dynamically added here -->
+                    </div>
+                    <p id="explanation-text">Explanation will appear here after you answer.</p>
+                    <div class="verb-examples" id="verb-examples">
+                        <!-- Verb examples will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <div class="loop-indicator">
+                    <i class="fas fa-redo"></i> Questions will loop infinitely! <i class="fas fa-redo"></i>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="submit-btn" disabled>
+                    <i class="fas fa-paper-plane"></i> Submit Answer
+                </button>
+                <button id="next-btn">
+                    <i class="fas fa-forward"></i> Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Action Verbs vs Stative Verbs Quiz &copy; 2023 | Infinite Loop Game | Designed for Mobile & Desktop</p>
+        <p>Action verbs show physical or mental action | Stative verbs show states, feelings, or possession</p>
+    </footer>
+
+    <script>
+        // Question data - Action Verbs vs Stative Verbs
+        const questions = [
+            {
+                sentence: "She <span class='highlighted-verb'>runs</span> five miles every morning before work to stay in shape.",
+                correctAnswer: "action",
+                explanation: "'Runs' is an action verb because it describes a physical activity that someone does.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["run", "jump", "write", "build", "speak", "think (as mental activity)"]
+            },
+            {
+                sentence: "I <span class='highlighted-verb'>believe</span> that honesty is the most important quality in a friendship.",
+                correctAnswer: "stative",
+                explanation: "'Believe' is a stative verb because it describes a mental state or opinion, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["believe", "know", "understand", "prefer", "like", "love"]
+            },
+            {
+                sentence: "The chef <span class='highlighted-verb'>prepares</span> a special dish for the restaurant's anniversary celebration.",
+                correctAnswer: "action",
+                explanation: "'Prepares' is an action verb because it describes something the chef is doing.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["cook", "prepare", "mix", "chop", "serve", "plate"]
+            },
+            {
+                sentence: "He <span class='highlighted-verb'>owns</span> three different businesses in the downtown area.",
+                correctAnswer: "stative",
+                explanation: "'Owns' is a stative verb because it describes a state of possession, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["own", "possess", "belong", "have", "contain", "include"]
+            },
+            {
+                sentence: "The children <span class='highlighted-verb'>play</span> soccer in the park every Saturday afternoon.",
+                correctAnswer: "action",
+                explanation: "'Play' is an action verb because it describes a physical activity that the children are doing.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["play", "kick", "throw", "catch", "score", "compete"]
+            },
+            {
+                sentence: "She <span class='highlighted-verb'>understands</span> complex mathematical concepts that confuse most people.",
+                correctAnswer: "stative",
+                explanation: "'Understands' is a stative verb because it describes a state of comprehension, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["understand", "know", "realize", "recognize", "comprehend", "grasp"]
+            },
+            {
+                sentence: "The construction workers <span class='highlighted-verb'>build</span> a new office tower in the city center.",
+                correctAnswer: "action",
+                explanation: "'Build' is an action verb because it describes a physical activity that the workers are performing.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["build", "construct", "assemble", "erect", "create", "make"]
+            },
+            {
+                sentence: "I <span class='highlighted-verb'>prefer</span> coffee to tea in the morning to help me wake up.",
+                correctAnswer: "stative",
+                explanation: "'Prefer' is a stative verb because it describes a state of liking or favoring, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["prefer", "like", "love", "hate", "dislike", "appreciate"]
+            },
+            {
+                sentence: "The athlete <span class='highlighted-verb'>jumps</span> over the high bar with impressive grace and skill.",
+                correctAnswer: "action",
+                explanation: "'Jumps' is an action verb because it describes a physical movement that the athlete performs.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["jump", "leap", "hop", "skip", "vault", "spring"]
+            },
+            {
+                sentence: "This book <span class='highlighted-verb'>belongs</span> to the school library and must be returned by Friday.",
+                correctAnswer: "stative",
+                explanation: "'Belongs' is a stative verb because it describes a state of ownership or relationship, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["belong", "own", "possess", "have", "pertain", "relate"]
+            },
+            {
+                sentence: "The teacher <span class='highlighted-verb'>explains</span> the difficult concept using simple examples.",
+                correctAnswer: "action",
+                explanation: "'Explains' is an action verb because it describes something the teacher is doing (communicating information).",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["explain", "teach", "instruct", "clarify", "describe", "present"]
+            },
+            {
+                sentence: "They <span class='highlighted-verb'>seem</span> happy with their decision to move to the countryside.",
+                correctAnswer: "stative",
+                explanation: "'Seem' is a stative verb because it describes a state of appearance or impression, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["seem", "appear", "look (like)", "resemble", "sound", "feel (like)"]
+            },
+            {
+                sentence: "The musician <span class='highlighted-verb'>plays</span> the violin beautifully during the concert.",
+                correctAnswer: "action",
+                explanation: "'Plays' is an action verb because it describes a physical activity (performing on an instrument).",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["play", "perform", "sing", "strum", "bow", "practice"]
+            },
+            {
+                sentence: "I <span class='highlighted-verb'>know</span> the answer to that question from my history studies.",
+                correctAnswer: "stative",
+                explanation: "'Know' is a stative verb because it describes a state of awareness or knowledge, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["know", "understand", "recognize", "remember", "recall", "comprehend"]
+            },
+            {
+                sentence: "The writer <span class='highlighted-verb'>creates</span> fascinating characters for her mystery novels.",
+                correctAnswer: "action",
+                explanation: "'Creates' is an action verb because it describes a mental activity of invention and production.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["create", "imagine", "invent", "develop", "design", "formulate"]
+            },
+            {
+                sentence: "The cake <span class='highlighted-verb'>contains</span> chocolate, vanilla, and strawberry layers.",
+                correctAnswer: "stative",
+                explanation: "'Contains' is a stative verb because it describes a state of composition or inclusion, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["contain", "include", "consist", "comprise", "involve", "entail"]
+            },
+            {
+                sentence: "The dog <span class='highlighted-verb'>chases</span> the squirrel up the tree in the backyard.",
+                correctAnswer: "action",
+                explanation: "'Chases' is an action verb because it describes a physical pursuit or movement.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["chase", "run", "pursue", "follow", "hunt", "track"]
+            },
+            {
+                sentence: "We <span class='highlighted-verb'>need</span> more information before making a final decision.",
+                correctAnswer: "stative",
+                explanation: "'Need' is a stative verb because it describes a state of requirement or necessity, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["need", "want", "require", "deserve", "lack", "miss"]
+            },
+            {
+                sentence: "The scientist <span class='highlighted-verb'>discovers</span> a new species of deep-sea fish during the expedition.",
+                correctAnswer: "action",
+                explanation: "'Discovers' is an action verb because it describes an active process of finding or uncovering.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["discover", "find", "locate", "identify", "detect", "uncover"]
+            },
+            {
+                sentence: "The house <span class='highlighted-verb'>has</span> five bedrooms and three bathrooms for the large family.",
+                correctAnswer: "stative",
+                explanation: "'Has' is a stative verb because it describes a state of possession or characteristic, not an action.",
+                actionDef: "Action verbs express physical or mental activities that someone or something does. They can be performed and completed.",
+                stativeDef: "Stative verbs describe states, conditions, feelings, thoughts, or relationships that exist, not actions that are performed.",
+                examples: ["have", "possess", "own", "contain", "include", "feature"]
+            }
+        ];
+
+        // Game state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let loopCount = 1;
+        let selectedOption = null;
+        let gameActive = true;
+        
+        // DOM elements
+        const questionTextElement = document.getElementById('question-text');
+        const sentenceExampleElement = document.getElementById('sentence-example');
+        const optionsContainerElement = document.getElementById('options-container');
+        const scoreElement = document.getElementById('score');
+        const questionCountElement = document.getElementById('question-count');
+        const correctCountElement = document.getElementById('correct-count');
+        const currentQuestionElement = document.getElementById('current-question');
+        const loopCountElement = document.getElementById('loop-count');
+        const submitButton = document.getElementById('submit-btn');
+        const nextButton = document.getElementById('next-btn');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const verbDefinitionElement = document.getElementById('verb-definition');
+        const verbExamplesElement = document.getElementById('verb-examples');
+        const progressBarElement = document.getElementById('progress-bar');
+        
+        // Initialize the game
+        function initGame() {
+            loadQuestion();
+            updateStats();
+            updateProgressBar();
+            
+            // Event listeners
+            submitButton.addEventListener('click', submitAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            sentenceExampleElement.innerHTML = currentQuestion.sentence;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Clear previous options
+            optionsContainerElement.innerHTML = '';
+            explanationElement.classList.remove('show');
+            selectedOption = null;
+            submitButton.disabled = true;
+            
+            // Create option elements
+            const options = [
+                { type: "action", text: "Action Verb", icon: "fas fa-running", className: "action-verb-option" },
+                { type: "stative", text: "Stative Verb", icon: "fas fa-brain", className: "stative-verb-option" }
+            ];
+            
+            // Shuffle options to randomize position
+            const shuffledOptions = [...options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = `option ${option.className}`;
+                optionElement.dataset.type = option.type;
+                optionElement.innerHTML = `
+                    <div class="option-icon"><i class="${option.icon}"></i></div>
+                    <div class="option-text">${option.text}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement, option.type));
+                optionsContainerElement.appendChild(optionElement);
+            });
+            
+            updateStats();
+            updateProgressBar();
+        }
+        
+        // Select an option
+        function selectOption(optionElement, optionType) {
+            if (!gameActive) return;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            selectedOption = optionType;
+            submitButton.disabled = false;
+        }
+        
+        // Submit answer
+        function submitAnswer() {
+            if (selectedOption === null || !gameActive) return;
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            const optionElements = document.querySelectorAll('.option');
+            
+            // Disable all options
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark correct and incorrect answers
+            optionElements.forEach(option => {
+                const optionType = option.dataset.type;
+                if (optionType === currentQuestion.correctAnswer) {
+                    option.classList.add('correct');
+                    option.style.animation = 'celebrate 0.5s ease';
+                } else if (optionType === selectedOption && optionType !== currentQuestion.correctAnswer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            
+            // Update score and correct count
+            if (isCorrect) {
+                score += 10;
+                correctCount++;
+                
+                // Add bonus for consecutive correct answers
+                if (correctCount % 5 === 0) {
+                    score += 10; // Bonus points
+                    showBonusNotification();
+                }
+                
+                // Create confetti effect for correct answer
+                if (correctCount > 0 && correctCount % 3 === 0) {
+                    createConfetti();
+                }
+            } else {
+                // Small penalty for incorrect answer
+                score = Math.max(0, score - 3);
+            }
+            
+            // Show explanation with appropriate definition
+            verbDefinitionElement.innerHTML = `
+                <div class="definition-title ${currentQuestion.correctAnswer === 'action' ? 'action-verb' : 'stative-verb'}">
+                    <i class="${currentQuestion.correctAnswer === 'action' ? 'fas fa-running' : 'fas fa-brain'}"></i>
+                    ${currentQuestion.correctAnswer === 'action' ? 'Action Verb' : 'Stative Verb'} Definition
+                </div>
+                <p>${currentQuestion.correctAnswer === 'action' ? currentQuestion.actionDef : currentQuestion.stativeDef}</p>
+            `;
+            
+            explanationTextElement.textContent = currentQuestion.explanation;
+            
+            // Add examples
+            verbExamplesElement.innerHTML = `
+                <div class="definition-title">
+                    <i class="fas fa-list"></i> Example ${currentQuestion.correctAnswer === 'action' ? 'Action' : 'Stative'} Verbs
+                </div>
+                <div class="verb-examples">
+                    ${currentQuestion.examples.map(example => `<div class="example-tag">${example}</div>`).join('')}
+                </div>
+            `;
+            
+            explanationElement.classList.add('show');
+            
+            // Update UI
+            submitButton.disabled = true;
+            gameActive = false;
+            updateStats();
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            // Reset game state
+            gameActive = true;
+            
+            // Move to next question
+            currentQuestionIndex++;
+            
+            // If we've reached the end of questions, loop back to the beginning
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0;
+                loopCount++;
+                loopCountElement.textContent = loopCount;
+                
+                // Show loop notification
+                showLoopNotification();
+            }
+            
+            // Load the next question
+            loadQuestion();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            scoreElement.textContent = score;
+            correctCountElement.textContent = correctCount;
+            questionCountElement.textContent = `${currentQuestionIndex + 1}/20`;
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBarElement.style.width = `${progress}%`;
+        }
+        
+        // Show loop notification
+        function showLoopNotification() {
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #4169E1, #6495ED);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 3s ease;
+            `;
+            
+            // Add keyframes for animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; top: 0; }
+                    15% { opacity: 1; top: 20px; }
+                    85% { opacity: 1; top: 20px; }
+                    100% { opacity: 0; top: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = `Loop ${loopCount} started! Keep mastering verbs!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                document.head.removeChild(style);
+            }, 3000);
+        }
+        
+        // Show bonus notification
+        function showBonusNotification() {
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(to right, #FF8C00, #FFD700);
+                color: #333;
+                padding: 12px 25px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: fadeInOut 2.5s ease;
+            `;
+            
+            notification.innerHTML = `<i class="fas fa-star" style="margin-right: 8px;"></i> +10 Bonus Points!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 2500);
+        }
+        
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#FF8C00', '#4169E1', '#8B0000', '#FFD700', '#32CD32'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: 10px;
+                    height: 10px;
+                    background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                    top: 20px;
+                    left: ${Math.random() * 100}vw;
+                    z-index: 1000;
+                    animation: confetti ${Math.random() * 2 + 1}s linear forwards;
+                `;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    document.body.removeChild(confetti);
+                }, 3000);
+            }
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
