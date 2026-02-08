@@ -292,6 +292,7 @@
     </style>
 </head>
 <body>
+    <audio id="bgm" src="music/chinana.mp3"></audio>
     <div class="container">
         <header>
             <h1>Block Blast</h1>
@@ -325,12 +326,14 @@
                 </div>
                 
                 <div class="controls">
-                    <button class="btn-new-game" id="newGameBtn">
+                    <button class="btn-new-game" id="newGameBtn" onclick="playAudio()">
+
                         <span>New Game</span>
                     </button>
                     <button class="btn-hint" id="hintBtn">
                         <span>Show Hint</span>
                     </button>
+
                 </div>
             </div>
         </div>
@@ -357,14 +360,14 @@
         </div>
     </div>
 
-    <!-- Audio elements -->
+    <!-- Audio element for block destruction sound -->
     <audio id="blastSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg">
+        <source src="music/bing.wav">
         Your browser does not support the audio element.
     </audio>
 
-    <audio id="bgm" preload="auto" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3" type="audio/mpeg">
+    <audio id="bgm" preload="auto">
+        <source src="chinana.mp3">
         Your browser does not support the audio element.
     </audio>
 
@@ -379,7 +382,6 @@
         let seconds = 0;
         let timerInterval;
         let gameActive = true;
-        let bgmPlaying = false;
         
         // DOM elements
         const gameGrid = document.getElementById('gameGrid');
@@ -393,54 +395,42 @@
         const finalScoreElement = document.getElementById('finalScore');
         const playAgainBtn = document.getElementById('playAgainBtn');
         
-        // Audio elements
+        // Audio element
         const blastSound = document.getElementById('blastSound');
-        const bgm = document.getElementById('bgm');
         
         // Function to play block destruction sound
         function playBlastSound() {
             try {
+                // Reset sound to start
                 blastSound.currentTime = 0;
-                blastSound.volume = 0.3;
+                // Play the sound
                 blastSound.play().catch(e => {
-                    console.log("Blast sound play failed:", e);
+                    console.log("Audio play failed:", e);
+                    // If autoplay is blocked, we'll try again on user interaction
                 });
             } catch (error) {
-                console.log("Error playing blast sound:", error);
+                console.log("Error playing sound:", error);
             }
         }
-        
-        // Function to play background music
-        function playBackgroundMusic() {
-            try {
-                if (!bgmPlaying) {
-                    bgm.volume = 0.2;
-                    bgm.currentTime = 0;
-                    bgm.play().then(() => {
-                        bgmPlaying = true;
-                        console.log("Background music started");
-                    }).catch(e => {
-                        console.log("Background music play failed:", e);
-                        // Music will start on next user interaction
-                    });
-                }
-            } catch (error) {
-                console.log("Error playing background music:", error);
-            }
+
+        function playAudio() { 
+        var a = document.getElementById("bgm");
+    
+        if (a.paused) {
+            a.play();
         }
         
+        };
         // Initialize the game
         function initGame() {
             // Reset game state
+
             grid = [];
             score = 0;
             blocksCleared = 0;
             moves = 0;
             seconds = 0;
             gameActive = true;
-            
-            // Play background music when new game starts
-            playBackgroundMusic();
             
             // Clear the game grid
             gameGrid.innerHTML = '';
@@ -481,8 +471,7 @@
             
             // Check if there are any moves available
             if (!hasValidMoves()) {
-                // If no valid moves, regenerate the grid
-                regenerateUntilValid();
+                endGame();
             }
         }
         
@@ -508,7 +497,7 @@
             // Calculate score (more points for larger groups)
             const basePoints = 10;
             const multiplier = Math.floor(connectedBlocks.length / 2);
-            const points = basePoints * (multiplier || 1);
+            const points = basePoints * multiplier;
             score += points;
             blocksCleared += connectedBlocks.length;
             
@@ -533,6 +522,12 @@
                 
                 // After animation completes, update the grid
                 setTimeout(() => {
+                    // Remove blocks from DOM
+                    connectedBlocks.forEach(blockPos => {
+                        const block = document.querySelector(`.block[data-row="${blockPos.row}"][data-col="${blockPos.col}"]`);
+                        if (block) block.remove();
+                    });
+                    
                     // Apply gravity to make blocks fall down
                     applyGravity();
                     
@@ -588,6 +583,19 @@
                         // Move block down
                         grid[row + emptySpaces][col] = grid[row][col];
                         grid[row][col] = null;
+                        
+                        // Update DOM
+                        const block = document.querySelector(`.block[data-row="${row}"][data-col="${col}"]`);
+                        if (block) {
+                            block.dataset.row = row + emptySpaces;
+                            block.style.transition = 'transform 0.3s';
+                            // In a real implementation, we would animate the falling
+                            // For simplicity, we'll just reposition it
+                            setTimeout(() => {
+                                // We would normally update the position in the grid
+                                // but for this example we'll recreate the grid after all operations
+                            }, 10);
+                        }
                     }
                 }
             }
@@ -598,10 +606,9 @@
         
         // Refill empty spaces at the top with new blocks
         function refillEmptySpaces() {
-            // Clear and rebuild the grid DOM
+            // We need to rebuild the grid DOM after gravity
             gameGrid.innerHTML = '';
             
-            // First, fill empty spots with new blocks
             for (let row = 0; row < GRID_SIZE; row++) {
                 for (let col = 0; col < GRID_SIZE; col++) {
                     // If cell is empty, create a new block
@@ -628,54 +635,13 @@
             }
         }
         
-        // Regenerate grid until we have valid moves
-        function regenerateUntilValid() {
-            let attempts = 0;
-            const maxAttempts = 10;
-            
-            while (!hasValidMoves() && attempts < maxAttempts) {
-                // Regenerate the entire grid
-                for (let row = 0; row < GRID_SIZE; row++) {
-                    for (let col = 0; col < GRID_SIZE; col++) {
-                        const colorIndex = Math.floor(Math.random() * COLORS.length);
-                        grid[row][col] = {
-                            color: COLORS[colorIndex],
-                            row: row,
-                            col: col
-                        };
-                    }
-                }
-                attempts++;
-            }
-            
-            // Update the DOM with new grid
-            gameGrid.innerHTML = '';
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    const block = document.createElement('div');
-                    block.className = `block ${grid[row][col].color}`;
-                    block.dataset.row = row;
-                    block.dataset.col = col;
-                    block.addEventListener('click', () => handleBlockClick(row, col));
-                    gameGrid.appendChild(block);
-                }
-            }
-            
-            // If still no valid moves after attempts, end game
-            if (!hasValidMoves()) {
-                setTimeout(endGame, 100);
-            }
-        }
-        
         // Check if there are any valid moves left
         function hasValidMoves() {
             for (let row = 0; row < GRID_SIZE; row++) {
                 for (let col = 0; col < GRID_SIZE; col++) {
-                    if (grid[row][col]) {
-                        const connectedBlocks = getConnectedBlocks(row, col);
-                        if (connectedBlocks.length >= 2) {
-                            return true;
-                        }
+                    const connectedBlocks = getConnectedBlocks(row, col);
+                    if (connectedBlocks.length >= 2) {
+                        return true;
                     }
                 }
             }
@@ -689,29 +655,23 @@
             // Find a valid move
             for (let row = 0; row < GRID_SIZE; row++) {
                 for (let col = 0; col < GRID_SIZE; col++) {
-                    if (grid[row][col]) {
-                        const connectedBlocks = getConnectedBlocks(row, col);
-                        if (connectedBlocks.length >= 2) {
-                            // Highlight the blocks
+                    const connectedBlocks = getConnectedBlocks(row, col);
+                    if (connectedBlocks.length >= 2) {
+                        // Highlight the blocks
+                        connectedBlocks.forEach(blockPos => {
+                            const block = document.querySelector(`.block[data-row="${blockPos.row}"][data-col="${blockPos.col}"]`);
+                            block.classList.add('selected');
+                        });
+                        
+                        // Remove highlight after 1.5 seconds
+                        setTimeout(() => {
                             connectedBlocks.forEach(blockPos => {
                                 const block = document.querySelector(`.block[data-row="${blockPos.row}"][data-col="${blockPos.col}"]`);
-                                if (block) {
-                                    block.classList.add('selected');
-                                }
+                                block.classList.remove('selected');
                             });
-                            
-                            // Remove highlight after 1.5 seconds
-                            setTimeout(() => {
-                                connectedBlocks.forEach(blockPos => {
-                                    const block = document.querySelector(`.block[data-row="${blockPos.row}"][data-col="${blockPos.col}"]`);
-                                    if (block) {
-                                        block.classList.remove('selected');
-                                    }
-                                });
-                            }, 1500);
-                            
-                            return;
-                        }
+                        }, 1500);
+                        
+                        return;
                     }
                 }
             }
@@ -745,23 +705,12 @@
         }
         
         // Event listeners
-        newGameBtn.addEventListener('click', initGame);
+        newGameBtn.addEventListener ('click', initGame );
         hintBtn.addEventListener('click', showHint);
         playAgainBtn.addEventListener('click', initGame);
         
         // Initialize the game when page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            // Try to play music on initial load (may be blocked by browser)
-            setTimeout(playBackgroundMusic, 1000);
-            initGame();
-        });
-        
-        // Try to resume audio on any user interaction
-        document.addEventListener('click', () => {
-            if (!bgmPlaying) {
-                playBackgroundMusic();
-            }
-        });
+        window.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
