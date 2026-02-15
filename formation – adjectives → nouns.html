@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>✎ formation – adjectives → nouns</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 16px 8px;
+        }
+
+        .quiz-card {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 36px 36px 28px 28px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 20, 40, 0.06);
+            overflow: hidden;
+            padding: 24px 20px 32px 20px;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0b2b40;
+            padding-left: 8px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        h1 span {
+            background: #e0eefb;
+            padding: 4px 16px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 60px;
+            color: #0d4a6e;
+        }
+
+        .subhead {
+            font-size: 1.05rem;
+            color: #3c5a6f;
+            margin-bottom: 28px;
+            padding-left: 8px;
+            font-weight: 400;
+            border-left: 4px solid #93c5fd;
+            padding-left: 16px;
+            background: #f0f7ff;
+            border-radius: 0 40px 40px 0;
+            line-height: 1.4;
+            width: fit-content;
+            padding-right: 20px;
+        }
+
+        .progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0 20px 0;
+            padding: 0 4px;
+        }
+
+        .counter {
+            font-weight: 600;
+            background: #e6edf4;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 1rem;
+            color: #1f4a6e;
+        }
+
+        .score {
+            background: #1a3e54;
+            color: white;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(0,20,30,0.1);
+        }
+
+        .question-box {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 24px 18px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 1px 4px #d9e2ec, 0 8px 18px -8px rgba(33, 38, 44, 0.2);
+            border: 1px solid #dde7f0;
+        }
+
+        .adjective {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #003153;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .prompt {
+            font-size: 1.2rem;
+            color: #1f4e6f;
+            margin-bottom: 24px;
+            font-weight: 350;
+            border-bottom: 2px dashed #b7d3f0;
+            padding-bottom: 12px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            background: #f3f9ff;
+            border-radius: 60px;
+            border: 1.5px solid #c7dff5;
+            transition: 0.1s ease;
+            padding: 4px 6px 4px 18px;
+        }
+
+        .option-row:has(input:checked) {
+            background: #e3f0fe;
+            border-color: #3898ec;
+            box-shadow: 0 0 0 3px rgba(56,152,236,0.2);
+        }
+
+        .option-row input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #6f9fce;
+            border-radius: 50%;
+            margin-right: 16px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .option-row input[type="radio"]:checked {
+            border-color: #1d6fb0;
+            background: #1d6fb0;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 2px #a2cfee;
+        }
+
+        .option-text {
+            font-size: 1.3rem;
+            padding: 12px 8px 12px 0;
+            flex: 1;
+            color: #04263a;
+            font-weight: 480;
+            letter-spacing: -0.2px;
+        }
+
+        .feedback {
+            margin: 12px 0 8px 0;
+            font-size: 1.1rem;
+            padding: 12px 18px;
+            border-radius: 30px;
+            background: #ecfdf3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 10px solid;
+        }
+
+        .feedback.correct {
+            background: #e2f7e9;
+            border-left-color: #169b4e;
+            color: #0a4a2a;
+        }
+
+        .feedback.incorrect {
+            background: #ffefef;
+            border-left-color: #cc3b3b;
+            color: #710d0d;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            flex: 1 0 auto;
+            box-shadow: 0 4px 10px rgba(0, 30, 50, 0.1);
+            border: 1px solid #cee2f5;
+            color: #0e3f60;
+            transition: 0.15s;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+        }
+
+        button:active {
+            background: #e5f0ff;
+            transform: scale(0.97);
+            box-shadow: none;
+        }
+
+        button.primary {
+            background: #1a4c70;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 18px -6px #0b3d60;
+        }
+
+        button.primary:active {
+            background: #0e3b58;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            transform: none;
+            pointer-events: none;
+            filter: grayscale(0.3);
+        }
+
+        .reset-area {
+            display: flex;
+            justify-content: center;
+            margin-top: 28px;
+        }
+
+        #resetBtn {
+            background: transparent;
+            border: 2px solid #bbd1e6;
+            box-shadow: none;
+            color: #2e577b;
+            padding: 12px 30px;
+            flex: 0 1 auto;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6f8ea5;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-card" role="main">
+        <h1>
+            📘 noun formation
+            <span>adj → noun</span>
+        </h1>
+        <div class="subhead">20 questions · pick the correct noun</div>
+
+        <div class="progress-row">
+            <div class="counter" id="questionCounter">1 / 20</div>
+            <div class="score" id="scoreDisplay">0 / 20</div>
+        </div>
+
+        <!-- dynamic question area -->
+        <div id="quizContainer"></div>
+
+        <!-- navigation & reset -->
+        <div class="nav-buttons" id="navButtons">
+            <button id="prevBtn" class="secondary" aria-label="Previous question">← back</button>
+            <button id="nextBtn" class="primary" aria-label="Next question">next →</button>
+        </div>
+
+        <div class="reset-area">
+            <button id="resetBtn">↻ new round</button>
+        </div>
+        <footer>🧪 20 adjectives · tap to answer</footer>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- question bank: adjective & four noun options ----------
+            const questions = [
+                { adj: "happy", options: ["happiness", "happines", "happness", "happyness"], correct: 0 },
+                { adj: "dark", options: ["darkness", "darknesss", "darknes", "darkness"], correct: 0 }, // index 0 is correct 'darkness'
+                { adj: "wise", options: ["wisdom", "wiseness", "wisedom", "wissdom"], correct: 0 },
+                { adj: "strong", options: ["strength", "strongness", "strenght", "strengh"], correct: 0 },
+                { adj: "patient", options: ["patience", "patiance", "paten ce", "patientness"], correct: 0 },
+                { adj: "silent", options: ["silence", "silency", "sile nce", "silente"], correct: 0 },
+                { adj: "deep", options: ["depth", "deepness", "deepth", "depness"], correct: 0 },
+                { adj: "wide", options: ["width", "wideness", "widness", "wideth"], correct: 0 },
+                { adj: "proud", options: ["pride", "proudness", "prode", "proudity"], correct: 0 },
+                { adj: "curious", options: ["curiosity", "curiousness", "curiocity", "curiousity"], correct: 0 },
+                { adj: "fluent", options: ["fluency", "fluance", "fluentness", "flency"], correct: 0 },
+                { adj: "brave", options: ["bravery", "braveness", "bravry", "bravary"], correct: 0 },
+                { adj: "long", options: ["length", "longness", "lenght", "longity"], correct: 0 },
+                { adj: "young", options: ["youth", "youngness", "yought", "younth"], correct: 0 },
+                { adj: "high", options: ["height", "highness", "hight", "heigth"], correct: 0 },
+                { adj: "generous", options: ["generosity", "generousness", "generocity", "generosity"], correct: 0 }, // index 0 = generosity
+                { adj: "frequent", options: ["frequency", "frequence", "frequentness", "frequancy"], correct: 0 },
+                { adj: "accurate", options: ["accuracy", "accurateness", "accurency", "accurace"], correct: 0 },
+                { adj: "hot", options: ["heat", "hotness", "heath", "hottness"], correct: 0 },
+                { adj: "free", options: ["freedom", "freeness", "freedoom", "fridom"], correct: 0 }
+            ];
+
+            // ensure exactly 20
+            if (questions.length !== 20) console.warn("expected 20 questions, got", questions.length);
+
+            // state
+            let currentIndex = 0;                // 0-based
+            let userAnswers = new Array(20).fill(null);    // stores selected option index (0-3) or null
+            let answerStatus = new Array(20).fill(false);  // true if was checked/correct? we'll compute on the fly
+            let score = 0;
+
+            // DOM elements
+            const quizContainer = document.getElementById('quizContainer');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const questionCounter = document.getElementById('questionCounter');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+
+            // helper: recalc score from userAnswers
+            function recomputeScore() {
+                let correctCount = 0;
+                for (let i = 0; i < questions.length; i++) {
+                    const ans = userAnswers[i];
+                    if (ans !== null && ans === questions[i].correct) {
+                        correctCount++;
+                    }
+                }
+                score = correctCount;
+                scoreDisplay.textContent = `${score} / 20`;
+            }
+
+            // render question given currentIndex, with radio states and feedback
+            function renderQuestion() {
+                const q = questions[currentIndex];
+                const selected = userAnswers[currentIndex]; // null or index
+                const isCorrect = (selected !== null && selected === q.correct);
+                // optional feedback message
+                let feedbackMsg = '';
+                let feedbackClass = '';
+
+                if (selected !== null) {
+                    if (isCorrect) {
+                        feedbackMsg = '✓ correct!';
+                        feedbackClass = 'correct';
+                    } else {
+                        const correctOption = q.options[q.correct];
+                        feedbackMsg = `✗ correct noun: “${correctOption}”`;
+                        feedbackClass = 'incorrect';
+                    }
+                }
+
+                // build html
+                let html = `
+                    <div class="question-box">
+                        <div class="adjective">${q.adj}</div>
+                        <div class="prompt">➜  noun form ?</div>
+                        <div class="options" id="optionsContainer">
+                `;
+
+                q.options.forEach((opt, idx) => {
+                    const checkedAttr = (selected === idx) ? 'checked' : '';
+                    html += `
+                        <div class="option-row">
+                            <input type="radio" name="q-option" value="${idx}" id="opt_${idx}" ${checkedAttr}>
+                            <label for="opt_${idx}" class="option-text">${opt}</label>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`; // close options
+
+                // feedback area
+                if (selected !== null) {
+                    html += `<div class="feedback ${feedbackClass}">${feedbackMsg}</div>`;
+                } else {
+                    html += `<div class="feedback" style="opacity:0.4; border-left-color:#b3c9e0;">⚡ choose an option</div>`;
+                }
+
+                html += `</div>`; // close question-box
+                quizContainer.innerHTML = html;
+
+                // attach listeners to radio buttons
+                const radios = document.querySelectorAll('input[name="q-option"]');
+                radios.forEach(radio => {
+                    radio.addEventListener('change', function(e) {
+                        const val = parseInt(e.target.value, 10);
+                        // update userAnswers for current question
+                        userAnswers[currentIndex] = val;
+                        // recalc score
+                        recomputeScore();
+                        // re-render to show feedback
+                        renderQuestion();
+                    });
+                });
+
+                // update counter
+                questionCounter.textContent = `${currentIndex+1} / 20`;
+                // disable prev/next at boundaries
+                prevBtn.disabled = (currentIndex === 0);
+                nextBtn.disabled = (currentIndex === 19);
+            }
+
+            // navigation
+            function goNext() {
+                if (currentIndex < 19) {
+                    currentIndex++;
+                    renderQuestion();
+                }
+            }
+
+            function goPrev() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderQuestion();
+                }
+            }
+
+            // full reset
+            function resetQuiz() {
+                currentIndex = 0;
+                userAnswers = new Array(20).fill(null);
+                recomputeScore(); // sets score to 0
+                renderQuestion();
+            }
+
+            // event listeners
+            prevBtn.addEventListener('click', goPrev);
+            nextBtn.addEventListener('click', goNext);
+            resetBtn.addEventListener('click', resetQuiz);
+
+            // initial render
+            recomputeScore(); // 0
+            renderQuestion();
+
+            // optional: adjust for very tall phones, keep it friendly
+            window.addEventListener('touchstart', function(){}, {passive: true});
+
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Adverb Adventure · Manner · Place · Time · Frequency · Degree</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f3f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 16px 10px;
+        }
+
+        .quiz-container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 36px 36px 28px 28px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 24px 18px 32px;
+            margin: auto 0;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0b1b33;
+            padding-left: 6px;
+            margin-top: 4px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            margin: 4px 0 20px 6px;
+        }
+
+        .badge {
+            background: #e8ecf6;
+            color: #1e2f4e;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 6px 16px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            border: 1px solid #cdd9f0;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 22px 18px 18px 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(0, 10, 30, 0.05);
+            border: 1px solid #eef2f8;
+            transition: all 0.15s;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .q-num {
+            background: #dce5f8;
+            color: #102a4c;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 4px 14px;
+            border-radius: 40px;
+            border: 1px solid #b7c9ed;
+        }
+
+        .q-category {
+            background: #f2eafc;
+            color: #3d2b5f;
+            font-weight: 500;
+            font-size: 0.8rem;
+            padding: 4px 14px;
+            border-radius: 40px;
+            border: 1px solid #d7c5f0;
+        }
+
+        .question-text {
+            font-size: 1.32rem;
+            font-weight: 560;
+            line-height: 1.4;
+            margin: 16px 0 18px 4px;
+            color: #021433;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 12px 0 8px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: #f9fafd;
+            border: 1.5px solid #dee5f0;
+            border-radius: 60px;
+            padding: 6px 18px 6px 12px;
+            min-height: 58px;
+            transition: background 0.1s, border 0.1s;
+        }
+
+        .option.selected {
+            background: #eef4ff;
+            border-color: #3a67d9;
+        }
+
+        .option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #b1c2db;
+            border-radius: 50%;
+            margin-right: 18px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.1s;
+            flex-shrink: 0;
+        }
+
+        .option input[type="radio"]:checked {
+            border-color: #3a67d9;
+            background: #3a67d9;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 1px #3a67d9;
+        }
+
+        .option label {
+            font-size: 1.18rem;
+            font-weight: 480;
+            color: #121f3a;
+            line-height: 1.3;
+            padding: 8px 0;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        /* subtle touch friendly */
+        .option:active {
+            background: #e2e9f9;
+        }
+
+        .feedback {
+            margin: 12px 8px 0 8px;
+            font-weight: 500;
+            font-size: 1.03rem;
+            padding: 10px 16px;
+            border-radius: 40px;
+            background: #f2f6fd;
+            color: #153b6b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 5px solid transparent;
+        }
+
+        .feedback.correct {
+            background: #e3f7e8;
+            color: #0d421d;
+            border-left-color: #179f4a;
+        }
+
+        .feedback.incorrect {
+            background: #ffe9ea;
+            color: #961b26;
+            border-left-color: #cf303b;
+        }
+
+        .material-symbols-outlined {
+            font-size: 1.4rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            gap: 10px;
+        }
+
+        button {
+            background: white;
+            border: 1.5px solid #b9c8e5;
+            font-size: 1.1rem;
+            font-weight: 520;
+            padding: 16px 22px;
+            border-radius: 60px;
+            color: #102a4c;
+            flex: 1 1 auto;
+            min-width: 130px;
+            cursor: pointer;
+            background: #f2f7ff;
+            transition: 0.12s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            background: #dde5f2;
+            transform: scale(0.98);
+            border-color: #7f99cc;
+        }
+
+        .reset-btn {
+            background: #edf1fc;
+            border-color: #aebedb;
+            flex: 0.5;
+        }
+
+        .score-box {
+            text-align: center;
+            background: #dde5f8;
+            border-radius: 80px;
+            padding: 14px 20px;
+            margin: 24px 0 10px;
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: #0b254a;
+            border: 2px solid #b3c7ec;
+        }
+
+        hr {
+            border: none;
+            border-top: 3px dotted #cbd6ee;
+            margin: 24px 0 16px;
+        }
+        /* emoji fallback */
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #627191;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container">
+    <h1>
+        ⚡ adverb lab
+        <span style="font-size: 1rem; font-weight: 400; margin-left: auto; background: #ebf0fa; padding: 5px 12px; border-radius: 40px;">20 questions</span>
+    </h1>
+    <div class="badge-row">
+        <span class="badge">manner</span>
+        <span class="badge">place</span>
+        <span class="badge">time</span>
+        <span class="badge">frequency</span>
+        <span class="badge">degree</span>
+    </div>
+
+    <!-- 20 questions dynamically inserted -->
+    <div id="questions-root"></div>
+
+    <div class="nav-buttons">
+        <button id="prevBtn" class="reset-btn" aria-label="previous">← prev</button>
+        <button id="nextBtn">next →</button>
+    </div>
+    <button id="resetAllBtn" style="width:100%; margin-top: 12px; background: #e6defa; border-color: #b4a2dc;">⟲ reset all answers</button>
+
+    <div class="score-box" id="scoreDisplay">0 / 20</div>
+
+    <hr>
+    <footer>✏️ tap option · green = correct · auto-check</footer>
+</div>
+
+<script>
+    (function() {
+        // ----- 20 QUESTIONS: categories & correct answers -----
+        const questionsData = [
+            { text: "She sang _______ during the performance.", options: ["beautifully", "beautiful", "beauty", "beautify"], correct: 0, category: "manner" },
+            { text: "I will meet you _______.", options: ["outside", "quickly", "often", "very"], correct: 0, category: "place" },
+            { text: "He _______ gets up early on Sundays.", options: ["always", "there", "gently", "almost"], correct: 0, category: "frequency" },
+            { text: "The movie was _______ interesting.", options: ["quite", "late", "nearby", "seldom"], correct: 0, category: "degree" },
+            { text: "Please speak _______; the baby is asleep.", options: ["quietly", "loudly", "now", "everywhere"], correct: 0, category: "manner" },
+            { text: "We went _______ for our vacation.", options: ["abroad", "weekly", "completely", "rather"], correct: 0, category: "place" },
+            { text: "They _______ visit their grandparents.", options: ["often", "inside", "almost", "there"], correct: 0, category: "frequency" },
+            { text: "She finished the test _______ than everyone else.", options: ["sooner", "near", "soonest", "annually"], correct: 0, category: "time" },
+            { text: "I _______ understood his explanation.", options: ["hardly", "hard", "everywhere", "yesterday"], correct: 0, category: "degree" },
+            { text: "The children played _______.", options: ["outside", "quick", "extreme", "always"], correct: 0, category: "place" },
+            { text: "He drives _______ carefully on icy roads.", options: ["quite", "everywhere", "then", "seldom"], correct: 0, category: "degree" },
+            { text: "We will have dinner _______.", options: ["later", "there", "totally", "sometimes"], correct: 0, category: "time" },
+            { text: "She _______ forgets her keys.", options: ["never", "nowhere", "barely", "completely"], correct: 0, category: "frequency" },
+            { text: "He spoke _______ to the audience.", options: ["confidently", "near", "worldwide", "weekly"], correct: 0, category: "manner" },
+            { text: "The station is _______ close.", options: ["quite", "yesterday", "upstairs", "rarely"], correct: 0, category: "degree" },
+            { text: "They are waiting _______.", options: ["downstairs", "gently", "yearly", "absolutely"], correct: 0, category: "place" },
+            { text: "I _______ go to the gym after work.", options: ["usually", "somewhere", "fairly", "soon"], correct: 0, category: "frequency" },
+            { text: "He arrived _______ than expected.", options: ["earlier", "near", "totally", "indoors"], correct: 0, category: "time" },
+            { text: "She answered the question _______.", options: ["intelligently", "tomorrow", "almost", "somewhere"], correct: 0, category: "manner" },
+            { text: "I have _______ finished my homework.", options: ["almost", "there", "never", "daily"], correct: 0, category: "degree" }
+        ];
+
+        // ---------- state ----------
+        let selectedAnswers = new Array(20).fill(null);       // index of selected option (0..3) or null
+        let feedbackShown = new Array(20).fill(false);        // true if user submitted (lock & show feedback)
+        let currentQuestionIndex = 0;                          // for convenience, but we show all at once (scroll)
+
+        const rootEl = document.getElementById('questions-root');
+        const scoreSpan = document.getElementById('scoreDisplay');
+
+        // Render all 20 cards
+        function renderAllQuestions() {
+            let htmlStr = '';
+            for (let i = 0; i < questionsData.length; i++) {
+                const q = questionsData[i];
+                const selectedIdx = selectedAnswers[i];
+                const showFeedback = feedbackShown[i];
+                const isCorrect = (showFeedback && selectedIdx === q.correct);
+
+                // options block
+                let optionsHtml = '';
+                for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
+                    const optionText = q.options[optIdx];
+                    const isSelected = (selectedIdx === optIdx);
+                    const selectedClass = isSelected ? 'selected' : '';
+                    // radio name = q+i to isolate groups
+                    optionsHtml += `
+                        <div class="option ${selectedClass}" data-qidx="${i}" data-oidx="${optIdx}">
+                            <input type="radio" name="q${i}" value="${optIdx}" id="q${i}opt${optIdx}" ${isSelected ? 'checked' : ''}>
+                            <label for="q${i}opt${optIdx}">${optionText}</label>
+                        </div>
+                    `;
+                }
+
+                // feedback line if needed
+                let feedbackHtml = '';
+                if (showFeedback) {
+                    const correctAns = q.options[q.correct];
+                    const icon = isCorrect ? '✅' : '❌';
+                    const feedbackText = isCorrect ? `Correct! (${q.category})` : `Oops. Correct: “${correctAns}”`;
+                    const feedbackClass = isCorrect ? 'correct' : 'incorrect';
+                    feedbackHtml = `
+                        <div class="feedback ${feedbackClass}">
+                            <span class="feedback-icon">${icon}</span>
+                            <span>${feedbackText}</span>
+                        </div>
+                    `;
+                }
+
+                htmlStr += `
+                    <div class="question-card" id="qCard${i}">
+                        <div class="question-header">
+                            <span class="q-num">Q${i+1}</span>
+                            <span class="q-category">${q.category}</span>
+                        </div>
+                        <div class="question-text">${q.text}</div>
+                        <div class="options" data-qidx-group="${i}">
+                            ${optionsHtml}
+                        </div>
+                        ${feedbackHtml}
+                    </div>
+                `;
+            }
+            rootEl.innerHTML = htmlStr;
+
+            // attach click listeners to each .option (for selection + auto-check)
+            document.querySelectorAll('.option').forEach(optDiv => {
+                optDiv.addEventListener('click', function(e) {
+                    // if the click came from label or radio, we still handle.
+                    const qIdx = parseInt(this.dataset.qidx, 10);
+                    const optIdx = parseInt(this.dataset.oidx, 10);
+                    if (isNaN(qIdx) || isNaN(optIdx)) return;
+
+                    // update state: set selected answer
+                    selectedAnswers[qIdx] = optIdx;
+                    // auto mark as feedbackShown = true (instant check)
+                    feedbackShown[qIdx] = true;
+
+                    // re-render everything to reflect changes and highlight correct/incorrect
+                    renderAllQuestions();
+                    updateScore();
+                });
+            });
+
+            // also ensure clicking on label/radio works (but event from parent handles)
+            // quick fix: stop propagation on inner radio? but we already listen on parent.
+            // edge: double event, but fine.
+
+            updateScore();
+        }
+
+        // compute score and show
+        function updateScore() {
+            let correctCount = 0;
+            for (let i = 0; i < questionsData.length; i++) {
+                if (feedbackShown[i] && selectedAnswers[i] === questionsData[i].correct) {
+                    correctCount++;
+                }
+            }
+            scoreSpan.innerText = `${correctCount} / 20`;
+        }
+
+        // reset all answers (clear selections & feedback)
+        function resetAll() {
+            selectedAnswers = new Array(20).fill(null);
+            feedbackShown = new Array(20).fill(false);
+            renderAllQuestions();
+            // scroll top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // navigation: previous / next scroll (soft)
+        function goPrev() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+            } else {
+                currentQuestionIndex = 19; // wrap to last
+            }
+            document.getElementById(`qCard${currentQuestionIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function goNext() {
+            if (currentQuestionIndex < 19) {
+                currentQuestionIndex++;
+            } else {
+                currentQuestionIndex = 0; // wrap to first
+            }
+            document.getElementById(`qCard${currentQuestionIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // initial render
+        renderAllQuestions();
+
+        // buttons
+        document.getElementById('prevBtn').addEventListener('click', goPrev);
+        document.getElementById('nextBtn').addEventListener('click', goNext);
+        document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+
+        // optional: re-calc score if any external change (already in render)
+        // also check for manually selected radio? already handled via .option click.
+        // ensure that any leftover radio click via label also triggers .option click (since for attribute points to id, but click on label triggers change on radio)
+        // we also listen to change on radio directly? but we have .option listener; but if user clicks exactly on the circle, the event still bubbles from input to .option. Good.
+        // extra: if someone uses tab + space, we need change listener. safer: add change listener to radio.
+        document.body.addEventListener('change', function(e) {
+            if (e.target && e.target.matches('input[type="radio"]')) {
+                // extract q index and o index from name/id
+                const name = e.target.name; // "q3"
+                if (name && name.startsWith('q')) {
+                    const qIdx = parseInt(name.substring(1), 10);
+                    if (!isNaN(qIdx) && qIdx >= 0 && qIdx < 20) {
+                        const optIdx = parseInt(e.target.value, 10);
+                        if (!isNaN(optIdx)) {
+                            selectedAnswers[qIdx] = optIdx;
+                            feedbackShown[qIdx] = true;
+                            renderAllQuestions();
+                            updateScore();
+                        }
+                    }
+                }
+            }
+        });
+
+        // also initialise current index to first
+        currentQuestionIndex = 0;
+        // slight delay to highlight first card? not necessary, but we can scroll after small timeout so user sees first card.
+        setTimeout(() => {
+            const firstCard = document.getElementById('qCard0');
+            if (firstCard) firstCard.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }, 100);
+    })();
+</script>
+</body>
+</html>

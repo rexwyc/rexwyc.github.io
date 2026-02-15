@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>📱 adverb placement · 20 questions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 16px 10px;
+        }
+
+        .quiz-container {
+            max-width: 550px;
+            width: 100%;
+            background: white;
+            border-radius: 36px 36px 28px 28px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 24px 20px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #1a2639;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            padding-left: 6px;
+        }
+
+        h1 span {
+            background: #d0dfff;
+            padding: 4px 14px 4px 12px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e3c72;
+            margin-left: 8px;
+        }
+
+        .subhead {
+            font-size: 1rem;
+            color: #4a5b7a;
+            margin-bottom: 18px;
+            padding-left: 8px;
+            border-left: 5px solid #8ab2f0;
+            background: #f0f4fe;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 450;
+        }
+
+        .progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            font-weight: 500;
+            padding: 0 6px;
+        }
+
+        .badge {
+            background: #1e2b47;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        .score {
+            background: #e6eefa;
+            padding: 6px 18px;
+            border-radius: 50px;
+            color: #113a5e;
+            font-weight: 600;
+        }
+
+        /* question cards */
+        .question-card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 20px 18px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(156, 180, 215, 0.2);
+            transition: all 0.15s;
+            border: 1px solid rgba(211, 226, 255, 0.4);
+        }
+
+        .q-num {
+            display: inline-block;
+            background: #dee8fc;
+            border-radius: 60px;
+            padding: 4px 16px 4px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1f3a6b;
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+            border: 0.5px solid #aec3e8;
+        }
+
+        .sentence {
+            font-size: 1.28rem;
+            line-height: 1.4;
+            font-weight: 470;
+            color: #102a41;
+            margin-bottom: 18px;
+            word-break: break-word;
+            background: #f7faff;
+            padding: 14px 16px;
+            border-radius: 24px;
+            border: 1px dashed #a6c0e9;
+        }
+
+        .option-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 8px 0 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: #f5f8ff;
+            border-radius: 60px;
+            padding: 8px 18px 8px 12px;
+            border: 1.5px solid transparent;
+            transition: background 0.1s, border 0.1s;
+            font-size: 1.1rem;
+            min-height: 58px;
+            cursor: pointer;
+            border-color: #dbe3f0;
+        }
+
+        /* hidden radio */
+        .option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #a1b9d6;
+            border-radius: 50%;
+            margin-right: 18px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.08s;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .option input[type="radio"]:checked {
+            border: 7px solid #2b4f8e;
+            background: white;
+        }
+
+        .option.selected {
+            background: #e1ebff;
+            border-color: #2b4f8e;
+            border-width: 1.5px;
+        }
+
+        .option-text {
+            flex: 1;
+            color: #152c44;
+            font-weight: 460;
+            line-height: 1.3;
+            padding: 6px 0;
+        }
+
+        /* feedback message */
+        .feedback {
+            font-size: 0.95rem;
+            margin: 16px 0 4px;
+            padding: 10px 14px;
+            border-radius: 50px;
+            font-weight: 500;
+            background: #f2f2f2;
+            display: inline-block;
+            width: auto;
+        }
+
+        .correct-feedback {
+            background: #d9f0d9;
+            color: #1c6320;
+        }
+
+        .wrong-feedback {
+            background: #ffe2e2;
+            color: #a13232;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin: 28px 0 10px;
+            gap: 10px;
+        }
+
+        button {
+            background: #1d344f;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 14px 22px;
+            border-radius: 60px;
+            min-width: 120px;
+            flex: 1 1 auto;
+            box-shadow: 0 5px 10px rgba(0, 20, 50, 0.2);
+            transition: 0.1s;
+            border: 1px solid #7289ae;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            background: #102433;
+            transform: scale(0.97);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:disabled {
+            background: #b3c2d6;
+            box-shadow: none;
+            border-color: #9dafc9;
+            transform: none;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .reset-btn {
+            background: #5d6f8f;
+            flex: 0.5;
+            min-width: 80px;
+        }
+
+        .message-panel {
+            background: #eef3fd;
+            padding: 16px 18px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 470;
+            color: #1e385c;
+            margin: 8px 0 0;
+            border: 1px solid #c1d3f0;
+        }
+
+        .finish-highlight {
+            background: #d9e9b8;
+            color: #1e4a1e;
+            font-weight: 550;
+        }
+
+        hr {
+            border: 0.5px solid #cedef5;
+            margin: 18px 0 10px;
+        }
+
+        /* small screens touch */
+        @media (max-width: 400px) {
+            .quiz-container { padding: 18px 12px; }
+            .sentence { font-size: 1.2rem; }
+            .option { padding: 8px 12px; }
+            button { padding: 12px 14px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container" id="quizApp">
+    <h1>📌 adverb position <span>20</span></h1>
+    <div class="subhead">⬇️ choose the naturally placed adverb</div>
+
+    <!-- progress & score -->
+    <div class="progress-row">
+        <div class="badge" id="questionCounter">Q1 / 20</div>
+        <div class="score" id="scoreDisplay">✓ 0</div>
+    </div>
+
+    <!-- dynamic question area -->
+    <div id="questionArea"></div>
+
+    <!-- navigation & reset -->
+    <div class="nav-buttons">
+        <button id="prevBtn" disabled>← previous</button>
+        <button id="nextBtn">next →</button>
+        <button id="resetBtn" class="reset-btn">↺ reset</button>
+    </div>
+
+    <!-- global message (finished / hint) -->
+    <div id="globalMessage" class="message-panel">✔️ tap an option to answer</div>
+</div>
+
+<script>
+    (function() {
+        // ----- 20 questions on adverb positions (adverbs in bold in concept, but options contain adverb placement) -----
+        const questions = [
+            {
+                sentence: 'She ________ to classical music.',
+                options: ['listens often', 'often listens', 'listens oftenly'],
+                correct: 1,      // often listens (adverb before main verb)
+                hint: 'frequency adverb goes BEFORE the main verb.'
+            },
+            {
+                sentence: 'They ________ late on Fridays.',
+                options: ['arrive always', 'always arrive', 'always arrives'],
+                correct: 1,
+                hint: 'adverb of frequency (always) → before main verb.'
+            },
+            {
+                sentence: 'He has ________ his work.',
+                options: ['finished almost', 'almost finished', 'almost finish'],
+                correct: 1,
+                hint: 'adverb (almost) goes after auxiliary / before main verb.'
+            },
+            {
+                sentence: 'We ________ to the gym in the morning.',
+                options: ['go sometimes', 'sometimes go', 'go sometime'],
+                correct: 1,
+                hint: 'adverb of frequency → before the main verb.'
+            },
+            {
+                sentence: 'The train ________ on time.',
+                options: ['rarely arrives', 'arrives rarely', 'arrive rarely'],
+                correct: 0,
+                hint: 'adverb before main verb (rarely arrives).'
+            },
+            {
+                sentence: 'I will ________ you tomorrow.',
+                options: ['call definitely', 'definitely call', 'definitely will call'],
+                correct: 1,
+                hint: 'adverb goes after modal "will" / before main verb.'
+            },
+            {
+                sentence: 'She ________ to learn Spanish.',
+                options: ['is trying hard', 'hard is trying', 'is hard trying'],
+                correct: 0,
+                hint: 'adverb "hard" goes after the verb (or after be + trying).'
+            },
+            {
+                sentence: 'They have ________ completed the project.',
+                options: ['just about', 'just', 'just now'],
+                correct: 1,
+                hint: 'adverb "just" between auxiliary and main verb.'
+            },
+            {
+                sentence: 'He ________ his keys.',
+                options: ['lost almost', 'almost lost', 'almost lose'],
+                correct: 1,
+                hint: 'adverb (almost) before main verb.'
+            },
+            {
+                sentence: 'I ________ spicy food.',
+                options: ['like very much', 'very much like', 'much like'],
+                correct: 0,    // "like very much" more natural (adverb phrase after verb)
+                hint: 'adverb phrase "very much" typically after verb.'
+            },
+            {
+                sentence: 'The children are ________ tired.',
+                options: ['completely', 'complete', 'in a complete way'],
+                correct: 0,
+                hint: 'adverb of degree before adjective.'
+            },
+            {
+                sentence: 'She ________ arrives late.',
+                options: ['never', 'does never', 'arrives never'],
+                correct: 0,
+                hint: 'adverb "never" before main verb (never arrives).'
+            },
+            {
+                sentence: 'We could ________ see the coast.',
+                options: ['clearly', 'clear', 'in a clear way'],
+                correct: 0,
+                hint: 'adverb before main verb (clearly see) / after modal.'
+            },
+            {
+                sentence: 'He spoke ________.',
+                options: ['softly to her', 'to her softly', 'soft to her'],
+                correct: 0,   // softly to her (adverb before object? but both 0/1 work, but 0 is common Manner – choose 0)
+                hint: 'manner adverb before prepositional phrase.'
+            },
+            {
+                sentence: 'I have ________ seen that movie.',
+                options: ['never', 'ever', 'never have'],
+                correct: 0,
+                hint: 'adverb between auxiliary and main verb.'
+            },
+            {
+                sentence: 'She ________ in the library.',
+                options: ['studies often', 'often studies', 'is often studies'],
+                correct: 1,
+                hint: 'frequency before main verb.'
+            },
+            {
+                sentence: 'We are ________ to win.',
+                options: ['enough good', 'good enough', 'enough'],
+                correct: 1,
+                hint: 'adjective + enough (good enough).'
+            },
+            {
+                sentence: 'He drove ________.',
+                options: ['carefully the car', 'the car carefully', 'careful the car'],
+                correct: 1,
+                hint: 'adverb after verb + object.'
+            },
+            {
+                sentence: 'She ________ reads before bed.',
+                options: ['usually', 'is usually', 'does usually'],
+                correct: 0,
+                hint: 'adverb before main verb.'
+            },
+            {
+                sentence: 'They will ________ the news.',
+                options: ['hear probably', 'probably hear', 'hear probable'],
+                correct: 1,
+                hint: 'adverb after modal, before main verb.'
+            }
+        ];
+
+        // app state
+        let currentIndex = 0;                // 0-based
+        let answers = new Array(20).fill(null); // stores index of selected option per question (0,1,2) or null
+        let score = 0;                       // calculated from correct answers
+
+        // DOM elements
+        const questionArea = document.getElementById('questionArea');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const questionCounter = document.getElementById('questionCounter');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const globalMsg = document.getElementById('globalMessage');
+
+        // Helper: recompute score based on answers array
+        function computeScore() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            score = correctCount;
+            return score;
+        }
+
+        // update score display
+        function refreshScore() {
+            computeScore();
+            scoreDisplay.innerText = `✓ ${score}`;
+        }
+
+        // Render current question and options
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const selectedOpt = answers[currentIndex]; // null or index
+
+            // Build html
+            let html = `
+                <div class="question-card">
+                    <div class="q-num">question ${currentIndex + 1} · ${q.hint}</div>
+                    <div class="sentence">${q.sentence}</div>
+                    <div class="option-row" id="optGroup-${currentIndex}">
+            `;
+
+            q.options.forEach((optText, idx) => {
+                const isSelected = (selectedOpt === idx);
+                const selectedClass = isSelected ? 'selected' : '';
+                html += `
+                    <div class="option ${selectedClass}" data-qidx="${currentIndex}" data-optidx="${idx}">
+                        <input type="radio" name="q${currentIndex}" value="${idx}" ${isSelected ? 'checked' : ''}>
+                        <span class="option-text">${optText}</span>
+                    </div>
+                `;
+            });
+
+            html += `</div>`; // close option-row
+
+            // optional feedback per question (if answered)
+            if (selectedOpt !== null) {
+                const isCorrect = (selectedOpt === q.correct);
+                const fbClass = isCorrect ? 'correct-feedback' : 'wrong-feedback';
+                const correctText = q.options[q.correct];
+                const msg = isCorrect ? '✓ correct!' : `✗ correct: “${correctText}”`;
+                html += `<div class="feedback ${fbClass}">${msg}</div>`;
+            } else {
+                html += `<div class="feedback" style="background:transparent; padding:6px 0;">⬇️ choose an option</div>`;
+            }
+
+            html += `</div>`; // close question-card
+            questionArea.innerHTML = html;
+
+            // attach click listeners to option divs (for better touch)
+            document.querySelectorAll('.option').forEach(optDiv => {
+                optDiv.addEventListener('click', function(e) {
+                    const qIdx = parseInt(this.dataset.qidx);
+                    const optIdx = parseInt(this.dataset.optidx);
+                    selectOption(qIdx, optIdx);
+                });
+            });
+
+            // update progress & navigation
+            questionCounter.innerText = `Q${currentIndex + 1} / 20`;
+            prevBtn.disabled = (currentIndex === 0);
+            // next enabled always, but we might style nothing
+            refreshScore();
+
+            // global message update on finish?
+            const allAnswered = answers.every(idx => idx !== null);
+            if (allAnswered) {
+                globalMsg.innerText = `✅ completed! final score: ${score}/20 — reset to try again.`;
+                globalMsg.classList.add('finish-highlight');
+            } else {
+                globalMsg.innerText = `✔️ Q${currentIndex+1} · ${answers[currentIndex] !== null ? 'answered' : 'tap an option'}`;
+                globalMsg.classList.remove('finish-highlight');
+            }
+        }
+
+        // select option for question qIdx
+        function selectOption(qIdx, optIdx) {
+            if (qIdx !== currentIndex) return; // only current question
+
+            // update answers array
+            answers[currentIndex] = optIdx;
+
+            // re-render to show selected style & feedback
+            renderQuestion();
+
+            // auto advance after a short delay? (optional user-friendly) 
+            // but we do nothing, user clicks next. 
+            // but we could update global message & score
+            refreshScore();
+
+            // if all answered show congrats
+            if (answers.every(v => v !== null)) {
+                globalMsg.innerText = `🎉 done! ${score}/20 correct. use reset to practice again.`;
+                globalMsg.classList.add('finish-highlight');
+            } else {
+                globalMsg.innerText = `✔️ Q${currentIndex+1} answered · go to next`;
+            }
+        }
+
+        // next button
+        function goNext() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                // if already at last, just show message
+                if (answers.every(v => v !== null)) {
+                    globalMsg.innerText = `🏁 quiz finished — score ${score}/20. reset to restart.`;
+                } else {
+                    globalMsg.innerText = `⚠️ you still have unanswered questions.`;
+                }
+            }
+        }
+
+        // prev button
+        function goPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        // reset everything
+        function resetQuiz() {
+            currentIndex = 0;
+            answers = new Array(20).fill(null);
+            // re-render
+            renderQuestion();
+            refreshScore();
+            globalMsg.innerText = '🔄 reset. tap an option to answer.';
+            globalMsg.classList.remove('finish-highlight');
+        }
+
+        // attach listeners
+        prevBtn.addEventListener('click', goPrev);
+        nextBtn.addEventListener('click', goNext);
+        resetBtn.addEventListener('click', resetQuiz);
+
+        // initial render
+        renderQuestion();
+        refreshScore();
+    })();
+</script>
+</body>
+</html>
