@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>⏰ at · in · on – time preposition loop</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f7f9fc 0%, #eef2f7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 12px;
+            margin: 0;
+            touch-action: pan-y;  
+        }
+
+        .quiz-tile {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 48px 48px 40px 40px;
+            box-shadow: 0 25px 45px -12px rgba(0,20,40,0.35), 0 2px 8px rgba(0,0,0,0.05);
+            padding: 28px 22px 32px;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.2s ease;
+        }
+
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1a2639;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+            padding-left: 6px;
+        }
+
+        h1 span {
+            background: #1e2b41;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 5px 16px 7px 16px;
+            border-radius: 60px;
+            margin-left: 8px;
+            background: #28344e;
+            box-shadow: inset 0 -2px 0 #0f1a2e;
+        }
+
+        .subhead {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #3e4f66;
+            margin-bottom: 28px;
+            padding-left: 8px;
+            border-left: 5px solid #809ab3;
+            padding-left: 16px;
+            background: rgba(128,154,179,0.1);
+            border-radius: 0 20px 20px 0;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 36px;
+            padding: 28px 18px 22px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 1px 4px #ffffff, 0 12px 25px -12px #b0c4d9;
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+
+        .q-text {
+            font-size: 1.9rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #0e1b2b;
+            text-align: center;
+            word-break: break-word;
+            margin-bottom: 28px;
+            padding: 0 5px;
+        }
+
+        .q-text .highlight {
+            background: #fdefd4;
+            padding: 0 4px;
+            border-radius: 18px;
+            color: #a85d00;
+            font-style: italic;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 24px 0 16px;
+        }
+
+        .prep-btn {
+            flex: 1 1 90px;
+            min-width: 80px;
+            background: #eef4fc;
+            border: none;
+            border-radius: 100px;
+            padding: 18px 6px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e2e47;
+            box-shadow: 0 6px 0 #b7c5d6, 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.06s linear;
+            cursor: pointer;
+            touch-action: manipulation;
+            border: 1px solid rgba(255,255,255,0.8);
+            line-height: 1;
+            letter-spacing: 1px;
+        }
+
+        .prep-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #9dacbf, 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .prep-btn.selected {
+            background: #2b3f5c;
+            color: white;
+            box-shadow: 0 4px 0 #0e1e2f, 0 6px 14px rgba(25, 60, 100, 0.4);
+            transform: translateY(2px);
+        }
+
+        .feedback {
+            min-height: 58px;
+            font-size: 1.25rem;
+            font-weight: 470;
+            padding: 10px 20px;
+            background: #e3eaf3;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 24px 0 10px;
+            color: #1e3246;
+            text-align: center;
+            border: 1px solid white;
+        }
+
+        .check-btn {
+            background: #d6e2f0;
+            border: none;
+            border-radius: 60px;
+            padding: 16px 24px;
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: #1b2b40;
+            box-shadow: 0 5px 0 #99aec9;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.06s linear;
+            touch-action: manipulation;
+            border: 1px solid white;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .check-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #7f97b2;
+        }
+
+        .loop-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            background: #cdddec70;
+            padding: 10px 18px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            font-weight: 480;
+            color: #16273d;
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .q-counter {
+            background: #2b3d5b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .reset-icon {
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transform: rotate(0deg);
+            transition: transform 0.2s;
+            padding: 6px 10px;
+            color: #1e3a5f;
+            touch-action: manipulation;
+        }
+
+        .reset-icon:active {
+            transform: rotate(180deg);
+            opacity: 0.7;
+        }
+
+        .small-note {
+            font-size: 0.95rem;
+            color: #4b5f77;
+            text-align: center;
+            margin: 18px 0 0;
+        }
+
+        /* mobile tap highlight remove */
+        .prep-btn, .check-btn, .reset-icon {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-tile">
+    <h1>
+        ⏳ at · in · on
+        <span>20</span>
+    </h1>
+    <div class="subhead">infinite loop · tap preposition</div>
+
+    <!-- main card -->
+    <div class="question-card" id="questionCard">
+        <div class="q-text" id="questionDisplay"></div>
+        <div class="options" id="optionsContainer">
+            <button class="prep-btn" data-prep="at">at</button>
+            <button class="prep-btn" data-prep="in">in</button>
+            <button class="prep-btn" data-prep="on">on</button>
+        </div>
+        <div class="feedback" id="feedbackMessage">🤔 choose one, then ✓ check</div>
+        <button class="check-btn" id="checkBtn">✓ CHECK</button>
+    </div>
+
+    <!-- bottom loop & reset -->
+    <div class="loop-indicator">
+        <span class="q-counter" id="counterText">1 / 20</span>
+        <span style="display: flex; align-items: center; gap: 5px;">∞ loop · <button class="reset-icon" id="resetLoopBtn" aria-label="restart">↻</button></span>
+    </div>
+    <div class="small-note">
+        ⏺️ 20 timeless questions · never ends
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- question bank (time expressions: at / in / on) -----
+        const questions = [
+            { text: "…… night", answer: "at" },
+            { text: "…… the morning", answer: "in" },
+            { text: "…… Friday", answer: "on" },
+            { text: "…… midnight", answer: "at" },
+            { text: "…… the weekend (UK)", answer: "at" },
+            { text: "…… the weekend (US)", answer: "on" },
+            { text: "…… 5 o'clock", answer: "at" },
+            { text: "…… Tuesday afternoon", answer: "on" },
+            { text: "…… the 20th century", answer: "in" },
+            { text: "…… Christmas Day", answer: "on" },
+            { text: "…… the moment", answer: "at" },
+            { text: "…… 2015", answer: "in" },
+            { text: "…… noon", answer: "at" },
+            { text: "…… Valentine's Day", answer: "on" },
+            { text: "…… the afternoon", answer: "in" },
+            { text: "…… sunrise", answer: "at" },
+            { text: "…… Monday", answer: "on" },
+            { text: "…… the 1990s", answer: "in" },
+            { text: "…… the same time", answer: "at" },
+            { text: "…… a rainy day", answer: "on" }      // last (20)
+        ];
+
+        // ----- fixed 20 length, but we loop infinitely using index % total -----
+        const TOTAL = questions.length;  // 20
+
+        // state
+        let currentIndex = 0;                 // always points to the current question (0..19)
+        let selectedPrep = null;               // 'at' / 'in' / 'on' or null
+        let answeredState = false;              // has the current question been checked? (affects highlight)
+
+        // DOM elements
+        const questionDisplay = document.getElementById('questionDisplay');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackEl = document.getElementById('feedbackMessage');
+        const counterEl = document.getElementById('counterText');
+        const checkBtn = document.getElementById('checkBtn');
+        const resetBtn = document.getElementById('resetLoopBtn');
+
+        // prep buttons (3)
+        const prepButtons = document.querySelectorAll('.prep-btn');
+
+        // ----- helper: get current question object -----
+        function getCurrentQuestion() {
+            return questions[currentIndex % TOTAL];   // infinite loop
+        }
+
+        // ----- update UI: question text, counter, clear selection / feedback if needed -----
+        function renderQuestion(keepSelected = false, keepFeedback = false) {
+            const q = getCurrentQuestion();
+            questionDisplay.innerHTML = q.text.replace(/(\.\.\.)/g, '<span class="highlight">…</span>'); // style placeholder
+
+            // update counter (human readable 1‑20, but index modulo 20)
+            const displayNumber = (currentIndex % TOTAL) + 1;
+            counterEl.innerText = `${displayNumber} / ${TOTAL}`;
+
+            // if we are not keeping selected (e.g., after reset or loop jump), clear selection & feedback
+            if (!keepSelected) {
+                // remove 'selected' class from any button
+                prepButtons.forEach(btn => btn.classList.remove('selected'));
+                selectedPrep = null;
+            } else {
+                // keep selected? but if selectedPrep is set, sync class (just in case)
+                if (selectedPrep) {
+                    prepButtons.forEach(btn => {
+                        if (btn.dataset.prep === selectedPrep) {
+                            btn.classList.add('selected');
+                        } else {
+                            btn.classList.remove('selected');
+                        }
+                    });
+                } else {
+                    prepButtons.forEach(btn => btn.classList.remove('selected'));
+                }
+            }
+
+            if (!keepFeedback) {
+                feedbackEl.innerHTML = '🤔 choose one, then ✓ check';
+                feedbackEl.style.background = '#e3eaf3';
+                answeredState = false;
+            } else {
+                // if we want to keep feedback, we keep answeredState as is, but feedback text remains.
+                // but we need to set answeredState accordingly? answeredState is set when check is pressed.
+            }
+        }
+
+        // ----- handle click on preposition buttons -----
+        prepButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const prep = this.dataset.prep;
+
+                // if the same button is clicked, we can leave it selected, but also allow change
+                if (selectedPrep === prep) {
+                    // if already selected, we deselect? (optional: user may want to unselect) – but better keep UX: just stay selected.
+                    // we'll keep selected; you need to have a selection. we don't deselect.
+                } else {
+                    // remove all selections
+                    prepButtons.forEach(b => b.classList.remove('selected'));
+                    // select this one
+                    this.classList.add('selected');
+                    selectedPrep = prep;
+
+                    // if there was a previous answer feedback, we gently remove feedback (optional, but more intuitive)
+                    // but do NOT reset answeredState automatically? better remove "correct/wrong" message because answer changed.
+                    feedbackEl.innerHTML = '🤔 check your answer';
+                    feedbackEl.style.background = '#e3eaf3';
+                    answeredState = false;   // new selection invalidates previous check
+                }
+            });
+        });
+
+        // ----- check button logic -----
+        function handleCheck() {
+            if (!selectedPrep) {
+                feedbackEl.innerHTML = '⚠️ tap at / in / on first';
+                feedbackEl.style.background = '#fde6d2';
+                return;
+            }
+
+            const q = getCurrentQuestion();
+            const correct = q.answer;
+            const isCorrect = (selectedPrep === correct);
+
+            if (isCorrect) {
+                feedbackEl.innerHTML = '✅ correct!  (go to next)';
+                feedbackEl.style.background = '#d9f0e1';
+            } else {
+                feedbackEl.innerHTML = `❌ try again – correct is “${correct}”`;
+                feedbackEl.style.background = '#ffe1df';
+            }
+
+            answeredState = true;
+
+            // (we do NOT auto advance – user will tap next manually or loop by going next via reset? we'll do infinite via next/previous? Actually loop indicator)
+            // To keep infinite loop easy: the 'reset' button acts as "next random?" but we want infinite cycle: 
+            // We provide a subtle tap: click on counter or swipe? but we can just add "next" action if click on question? 
+            // Instead, we add a double function: if user taps the question area, it moves to next question. but that may be hidden. 
+            // better: let the right arrow / reset button be "next question" also ↻ acts as shuffle? but we want loop in order.
+            // We redesign reset button to be "next (loop)" — but we also have reset action? we'll split: tap on the "∞ loop" area as next, reset as reset to start.
+            // but we want simple: I'll attach "next question" to the counter or check button? No — simplest: pressing check after correct moves next automatically? 
+            // But if wrong, they stay. That's friendly. I'll make: after correct, the check button reads "✓ NEXT?" but still.
+            // I'll implement: if answeredState true and isCorrect, pressing check again will go to next question (but same check). Better: add a separate "next →" 
+            // but cleanest: I use the loop indicator as next/previous? Not needed. I'll just make the reset button double as "next question" (if you want to advance). And if you want to restart, long press? not phone friendly. I'll create two: 
+            // Actually the problem wants "infinity loop", but moving forward can be done by reset button (↻) which goes to next question (cycle). And it also resets selection. That's fine.
+
+            // So check does not auto advance. User can press reset to go to next. I'll rename reset button to "↻ next" visually, but keep symbol.
+        }
+
+        checkBtn.addEventListener('click', handleCheck);
+
+        // ----- go to next question (infinite loop) -----
+        function nextQuestion() {
+            // move to next index (cyclic)
+            currentIndex = (currentIndex + 1) % (TOTAL * 1000);  // effectively infinite, but we keep within safe bounds
+            // reset selection & feedback
+            selectedPrep = null;
+            prepButtons.forEach(btn => btn.classList.remove('selected'));
+            answeredState = false;
+            renderQuestion(false, false);   // fresh
+        }
+
+        // ----- reset/restart to first question (index 0) -----
+        function restartToFirst() {
+            currentIndex = 0;
+            selectedPrep = null;
+            answeredState = false;
+            prepButtons.forEach(btn => btn.classList.remove('selected'));
+            renderQuestion(false, false);
+        }
+
+        // attach next action to the reset button (↻) — but we also want long press maybe, but use as "next"
+        resetBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            nextQuestion();    // infinite loop: go to next
+        });
+
+        // double tap on tile or something? but also we add that click on question card advances? but avoid accidental. let's also add swipe? no need.
+        // I'll also allow clicking the counter to move next (intuitive as loop)
+        counterEl.addEventListener('click', function() {
+            nextQuestion();
+        });
+
+        // also if user wants to restart to very first (index 0) maybe long press reset? but we add a second function: double tap reset to restart.
+        // but phone friendly: double click not reliable. I'll add a small hidden: if you click on the "∞ loop" text it goes to start. (the span before reset)
+        const loopText = document.querySelector('.loop-indicator span:first-child + span'); // but that's messy.
+        // better: hold reset for 500ms? but not needed. I'll just provide a restart via double click on the whole loop indicator? Not necessary.
+        // I'll add restart on clicking the "20" badge (the h1 span) – that resets to first question.
+        const badgeSpan = document.querySelector('h1 span');
+        badgeSpan.addEventListener('click', function() {
+            restartToFirst();
+        });
+
+        // Option: if user clicks on a question after answered, also move next? but not needed. keep simple.
+
+        // initial render (first question)
+        renderQuestion(false, false);
+
+        // ensure that after correct feedback, next question works. All good.
+
+        // extra: if someone selects a preposition after already having answered correctly, we reset answered state (already in click handler sets answeredState false)
+        // but inside prep click we didn't update feedback if it was correct. we already set '🤔 check your answer' and answeredState false.
+
+        // small fix: when prep click after correct, we also need to remove correct/wrong background. (done)
+
+        // when we call nextQuestion, all resets. Works.
+
+        // we also need to handle the case where user selects answer, clicks check (answeredState becomes true), then moves to next via reset button. nextQuestion already resets everything.
+
+        // edge: if user taps check with no selection, warning.
+
+        // Keep the loop infinite – currentIndex increments without limit modulo TOTAL.
+
+        // additional touch: pressing check after correct still shows correct, but they can go next.
+
+        // Add small hint: tap counter / ↻ for next
+        const note = document.querySelector('.small-note');
+        note.innerHTML = '⏺️ tap counter or ↻ next · ∞ 20 · tap badge to restart';
+
+        // style badge as clickable
+        badgeSpan.style.cursor = 'pointer';
+        badgeSpan.title = 'restart from #1';
+
+        // also resetBtn title
+        resetBtn.title = 'next question (infinite)';
+
+        // ensure feedback show correct colors and keep state
+    })();
+</script>
+</body>
+</html>
