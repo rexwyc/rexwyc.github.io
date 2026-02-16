@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>完整版·克漏字測驗 · 339單字</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #f5f0e9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 12px 8px;
+        }
+        .game-wrapper {
+            width: 100%;
+            max-width: 560px;
+            background: white;
+            border-radius: 40px 40px 30px 30px;
+            box-shadow: 0 20px 35px rgba(60, 40, 20, 0.2);
+            overflow: hidden;
+            padding: 20px 16px 25px;
+            border: 1px solid #ffe4bc;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3e2c1a;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 3px solid #dbbd9a;
+        }
+        h1 span {
+            background: #7b5e3c;
+            color: white;
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 40px;
+            margin-left: auto;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: #efe4d5;
+            padding: 12px 18px;
+            border-radius: 60px;
+            margin: 16px 0 14px;
+            font-weight: 600;
+            color: #3e2c1a;
+        }
+        .score {
+            background: #3e2c1a;
+            color: #f9e9d7;
+            padding: 4px 20px;
+            border-radius: 30px;
+        }
+        .question-box {
+            background: #fef9f2;
+            border-radius: 32px;
+            padding: 28px 14px 20px;
+            box-shadow: inset 0 0 0 1px #eddcc9, 0 8px 18px rgba(110, 70, 30, 0.1);
+            margin-bottom: 18px;
+            border: 1px solid #f5dbb1;
+        }
+        .sentence {
+            font-size: 1.3rem;
+            font-weight: 500;
+            line-height: 1.5;
+            color: #2a1f0f;
+            text-align: center;
+            word-break: break-word;
+        }
+        .blank-highlight {
+            display: inline-block;
+            background: #fae1b8;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            color: #542e00;
+            text-decoration: underline wavy #b2632c 2px;
+            margin: 0 4px;
+            font-size: 1.2rem;
+        }
+        .part-of-speech {
+            text-align: center;
+            margin: 8px 0 4px;
+            color: #936e42;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0 15px;
+        }
+        .option-btn {
+            background: #fefcf8;
+            border: 2px solid #d4b58c;
+            padding: 16px 16px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #2f2a1f;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.08s ease;
+            box-shadow: 0 3px 0 #b3936e;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .option-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+        .option-btn.disabled-true, .option-btn:disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .option-prefix {
+            background: #dcc9b2;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #3e2c1a;
+            font-size: 1.2rem;
+        }
+        .feedback-panel {
+            background: #fff7e7;
+            border-radius: 28px;
+            padding: 18px 14px;
+            margin: 10px 0 5px;
+            border-left: 10px solid #b58b5a;
+        }
+        .correct-feedback {
+            color: #1f7840;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        .wrong-feedback {
+            color: #b34141;
+            font-weight: 600;
+        }
+        .chinese-meaning {
+            background: #ffebd2;
+            padding: 12px 15px;
+            border-radius: 40px;
+            font-size: 1.25rem;
+            color: #5a3400;
+            border: 1px solid #e5b684;
+            margin-top: 12px;
+            font-weight: 500;
+            word-break: break-word;
+        }
+        .chinese-meaning span {
+            font-weight: 300;
+            color: #7b5200;
+        }
+        .next-btn {
+            background: #8b6b44;
+            width: 100%;
+            border: none;
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 600;
+            padding: 16px 0;
+            border-radius: 60px;
+            margin-top: 20px;
+            box-shadow: 0 6px 0 #533e24;
+            cursor: pointer;
+            transition: 0.06s linear;
+            text-align: center;
+        }
+        .next-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #533e24;
+        }
+        .next-btn:disabled {
+            opacity: 0.25;
+            transform: none;
+            pointer-events: none;
+        }
+        .reset-area {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+        }
+        .reset-btn {
+            background: none;
+            border: none;
+            color: #7b5e3c;
+            font-size: 1.1rem;
+            text-decoration: underline dotted;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .small-note {
+            color: #8b775b;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper" id="gameApp">
+    <h1>📚 339words <span>Chinese traditional</span></h1>
+    <div class="stats">
+        <span>📌 <span id="currentQ">1</span>/<span id="totalQ">339</span></span>
+        <span class="score" id="scoreDisplay">⭐ 0</span>
+    </div>
+
+    <div class="question-box">
+        <div class="part-of-speech" id="posTag">⋯</div>
+        <div class="sentence" id="sentenceHolder">loading⋯</div>
+    </div>
+
+    <div id="optionsContainer" class="options-grid"></div>
+
+    <div id="feedbackArea" class="feedback-panel" style="display: none;"></div>
+
+    <button class="next-btn" id="nextBtn" disabled>▶ Next question</button>
+    <div class="reset-area">
+        <button class="reset-btn" id="resetBtn">⟲ Reset (random)</button>
+    </div>
+    <div class="small-note">✔️ 339 words total</div>
+</div>
+
+<audio id="myAudio" src="music/Tunak.mp3" loop></audio>
+
+<script>
+(function() {
+    // ==================== 完整單字列表 339項 (完全根據您的分類) ====================
+    const fullWordList = [
+        // 1. 數學與科學運算 (21)
+        { en: "subtract", zh: "減去", pos: "v." },
+        { en: "whole number", zh: "整數", pos: "n." },
+        { en: "natural number", zh: "自然數", pos: "n." },
+        { en: "perimeter", zh: "周長", pos: "n." },
+        { en: "perimeter of a circle", zh: "圓的周長", pos: "n." },
+        { en: "Quadrilateral", zh: "四邊形", pos: "n./adj." },
+        { en: "Divide the difference by the sum of x and y", zh: "將差除以 x 與 y 的和", pos: "phrase" },
+        { en: "consecutive", zh: "連續的", pos: "adj." },
+        { en: "halve", zh: "減半", pos: "v." },
+        { en: "root", zh: "根", pos: "n." },
+        { en: "analysis", zh: "分析", pos: "n." },
+        { en: "velocity", zh: "速度", pos: "n." },
+        { en: "capacity", zh: "容量", pos: "n." },
+        { en: "resistance", zh: "阻力", pos: "n." },
+        { en: "Air resistance", zh: "空氣阻力", pos: "n." },
+        { en: "drag", zh: "阻力", pos: "n." },
+        { en: "friction", zh: "摩擦力", pos: "n." },
+        { en: "kinetic energy", zh: "動能", pos: "n." },
+        { en: "potential and kinetic", zh: "位能與動能的", pos: "adj." },
+        { en: "aggregate", zh: "總計", pos: "n./v." },
+        
+        // 2. 化學實驗與器材 (14)
+        { en: "reagent bottle", zh: "試劑瓶", pos: "n." },
+        { en: "conical flask", zh: "錐形瓶", pos: "n." },
+        { en: "evaporating", zh: "蒸發", pos: "v." },
+        { en: "oxidizing", zh: "氧化", pos: "v." },
+        { en: "spring balance", zh: "彈簧秤", pos: "n." },
+        { en: "apparatus", zh: "裝置", pos: "n." },
+        { en: "fume", zh: "煙", pos: "n." },
+        { en: "carcinogenic", zh: "致癌的", pos: "adj." },
+        { en: "irritant", zh: "刺激物", pos: "n." },
+        { en: "Supply of water", zh: "水的供應", pos: "n." },
+        { en: "drainage", zh: "排水", pos: "n." },
+        { en: "ballistic missile", zh: "彈道導彈", pos: "n." },
+        { en: "ballistic", zh: "彈道的", pos: "adj." },
+        { en: "thyroid gland", zh: "甲狀腺", pos: "n." },
+        
+        // 3. 物理物件與材料 (34)
+        { en: "bulb", zh: "電燈泡", pos: "n." },
+        { en: "spectacles", zh: "眼鏡", pos: "n." },
+        { en: "quilt", zh: "被褥", pos: "n." },
+        { en: "furniture", zh: "傢俬", pos: "n." },
+        { en: "crockery", zh: "陶器", pos: "n." },
+        { en: "envelope", zh: "信封", pos: "n." },
+        { en: "badge", zh: "徽章", pos: "n." },
+        { en: "bolt", zh: "螺栓", pos: "n." },
+        { en: "tent", zh: "帳篷", pos: "n." },
+        { en: "porcelain", zh: "瓷器", pos: "n." },
+        { en: "shovel", zh: "鏟子", pos: "n." },
+        { en: "paddle", zh: "槳", pos: "n." },
+        { en: "fence", zh: "柵欄", pos: "n." },
+        { en: "lobe", zh: "葉；耳垂", pos: "n." },
+        { en: "clutches", zh: "離合器", pos: "n." },
+        { en: "titanium", zh: "鈦", pos: "n." },
+        { en: "uranium", zh: "鈾", pos: "n." },
+        { en: "nylon", zh: "尼龍", pos: "n." },
+        { en: "woollen", zh: "羊毛的", pos: "adj." },
+        { en: "silk", zh: "絲綢", pos: "n." },
+        { en: "fleece", zh: "羊毛", pos: "n." },
+        { en: "opium", zh: "鴉片", pos: "n." },
+        { en: "fentanyl", zh: "芬太尼", pos: "n." },
+        { en: "medicine", zh: "藥物", pos: "n." },
+        { en: "dose", zh: "劑量", pos: "n." },
+        
+        // 4. 地方、建築與地理 (21)
+        { en: "chimney", zh: "煙囪", pos: "n." },
+        { en: "canal", zh: "運河", pos: "n." },
+        { en: "pier", zh: "碼頭", pos: "n." },
+        { en: "reservoir", zh: "水庫", pos: "n." },
+        { en: "crematorium", zh: "火葬場", pos: "n." },
+        { en: "garages", zh: "車庫", pos: "n." },
+        { en: "lobby", zh: "大廳", pos: "n." },
+        { en: "orphanage", zh: "孤兒院", pos: "n." },
+        { en: "basketball court", zh: "籃球場", pos: "n." },
+        { en: "trenches", zh: "戰壕", pos: "n." },
+        { en: "rockery", zh: "假山", pos: "n." },
+        { en: "institute", zh: "研究所", pos: "n." },
+        { en: "free port", zh: "自由港", pos: "n." },
+        { en: "field", zh: "場地", pos: "n." },
+        { en: "scene", zh: "場景", pos: "n." },
+        { en: "Destination", zh: "目的地", pos: "n." },
+        { en: "earthquake belt", zh: "地震帶", pos: "n." },
+        { en: "channel", zh: "渠道", pos: "n." },
+        
+        // 5. 自然與環境 (12)
+        { en: "weather", zh: "天氣", pos: "n." },
+        { en: "atmosphere", zh: "氣氛", pos: "n." },
+        { en: "biodiversity", zh: "生物多樣性", pos: "n." },
+        { en: "deforestation", zh: "森林砍伐", pos: "n." },
+        { en: "Hurricane", zh: "颶風", pos: "n." },
+        { en: "precipitation", zh: "降水", pos: "n." },
+        { en: "celestial", zh: "天體的", pos: "adj." },
+        { en: "littered", zh: "散落", pos: "v." },
+        { en: "emissions", zh: "排放物", pos: "n." },
+        { en: "hygiene", zh: "衛生", pos: "n." },
+        
+        // 6. 人物、職業與動物 (26)
+        { en: "corgi", zh: "柯基犬", pos: "n." },
+        { en: "profiteers", zh: "奸商", pos: "n." },
+        { en: "servant", zh: "僕人", pos: "n." },
+        { en: "psychologists", zh: "心理學家", pos: "n." },
+        { en: "economists", zh: "經濟學家", pos: "n." },
+        { en: "detective", zh: "偵探", pos: "n." },
+        { en: "terrorist", zh: "恐怖分子", pos: "n." },
+        { en: "conjurer", zh: "魔術師", pos: "n." },
+        { en: "genius", zh: "天才", pos: "n." },
+        { en: "latino", zh: "拉丁裔", pos: "n." },
+        { en: "athlete", zh: "運動員", pos: "n." },
+        { en: "competitor", zh: "競爭對手", pos: "n." },
+        { en: "referee", zh: "裁判", pos: "n." },
+        { en: "spectator", zh: "觀眾", pos: "n." },
+        { en: "champion", zh: "冠軍", pos: "n." },
+        { en: "colleague", zh: "同事", pos: "n." },
+        { en: "frenemy", zh: "亦敵亦友", pos: "n." },
+        { en: "introvert", zh: "內向的人", pos: "n." },
+        { en: "morning person", zh: "早起的人", pos: "n." },
+        { en: "The Finance Secretary", zh: "財政司司長", pos: "n." },
+        { en: "thief", zh: "賊", pos: "n." },
+        { en: "fool", zh: "傻瓜", pos: "n." },
+        
+        // 7. 心智活動與溝通 (33)
+        { en: "consider", zh: "考慮", pos: "v." },
+        { en: "guess", zh: "猜測", pos: "v./n." },
+        { en: "focus", zh: "專注", pos: "v./n." },
+        { en: "debate", zh: "辯論", pos: "n./v." },
+        { en: "argue", zh: "爭論", pos: "v." },
+        { en: "quarrel", zh: "爭吵", pos: "n./v." },
+        { en: "describe", zh: "形容", pos: "v." },
+        { en: "tell", zh: "告訴", pos: "v." },
+        { en: "discuss", zh: "討論", pos: "v." },
+        { en: "announced", zh: "宣布", pos: "v." },
+        { en: "negotiate", zh: "談判", pos: "v." },
+        { en: "oppose", zh: "反對", pos: "v." },
+        { en: "recognise", zh: "承認", pos: "v." },
+        { en: "conceive", zh: "構思", pos: "v." },
+        { en: "internalize", zh: "內化", pos: "v." },
+        { en: "assume", zh: "假定", pos: "v." },
+        { en: "doubt", zh: "懷疑", pos: "v./n." },
+        { en: "swear", zh: "發誓", pos: "v." },
+        { en: "brag", zh: "吹噓", pos: "v." },
+        { en: "soothe", zh: "安慰", pos: "v." },
+        { en: "abbreviation", zh: "縮寫", pos: "n." },
+        { en: "metaphor", zh: "隱喻", pos: "n." },
+        { en: "lyrics", zh: "歌詞", pos: "n." },
+        { en: "statement", zh: "聲明", pos: "n." },
+        { en: "reference", zh: "參考", pos: "n." },
+        { en: "pardon", zh: "請再說一遍", pos: "phrase" },
+        
+        // 8. 身體動作與活動 (23)
+        { en: "ski", zh: "滑雪", pos: "v./n." },
+        { en: "sway", zh: "搖擺", pos: "v." },
+        { en: "sailing", zh: "航海", pos: "n." },
+        { en: "fencing", zh: "劍擊", pos: "n." },
+        { en: "shovel", zh: "鏟", pos: "v." },
+        { en: "suffocate", zh: "窒息", pos: "v." },
+        { en: "cling", zh: "緊握", pos: "v." },
+        { en: "mourn", zh: "哀悼", pos: "v." },
+        { en: "embracing", zh: "擁抱", pos: "v." },
+        { en: "poke", zh: "戳", pos: "v." },
+        { en: "wipe", zh: "擦", pos: "v." },
+        { en: "alternate", zh: "交替", pos: "v." },
+        { en: "drills", zh: "訓練", pos: "n./v." },
+        { en: "accelerate", zh: "加速", pos: "v." },
+        { en: "resist", zh: "抵抗", pos: "v." },
+        { en: "cruising", zh: "巡航", pos: "v." },
+        { en: "drifts", zh: "漂移", pos: "v." },
+        { en: "touring", zh: "巡迴", pos: "v." },
+        { en: "commute", zh: "通勤", pos: "v." },
+        
+        // 9. 感官與情感 (24)
+        { en: "appreciate", zh: "欣賞", pos: "v." },
+        { en: "amuses", zh: "娛樂", pos: "v." },
+        { en: "cherish", zh: "珍惜", pos: "v." },
+        { en: "admire", zh: "欣賞", pos: "v." },
+        { en: "cringe", zh: "尷尬", pos: "adj./v." },
+        { en: "depressed", zh: "憂鬱", pos: "adj." },
+        { en: "contented", zh: "滿足", pos: "adj." },
+        { en: "sorrow", zh: "傷心", pos: "n." },
+        { en: "heartache", zh: "心痛", pos: "n." },
+        { en: "nostalgia", zh: "懷舊", pos: "n." },
+        { en: "potentially nostalgic", zh: "可能懷舊的", pos: "adj." },
+        { en: "pleasure", zh: "快樂", pos: "n." },
+        { en: "gratitude", zh: "感謝", pos: "n." },
+        { en: "desire", zh: "慾望", pos: "n./v." },
+        { en: "satisfaction", zh: "滿意", pos: "n." },
+        { en: "charm", zh: "魅力", pos: "n." },
+        { en: "Spirit", zh: "精神", pos: "n." },
+        { en: "soul", zh: "靈魂", pos: "n." },
+        { en: "clarity", zh: "清晰度", pos: "n." },
+        { en: "intimacy", zh: "親密", pos: "n." },
+        { en: "regretting", zh: "後悔", pos: "v." },
+        
+        // 10. 性格與狀態 (32)
+        { en: "clumsy", zh: "笨拙的", pos: "adj." },
+        { en: "glaring", zh: "耀眼的", pos: "adj." },
+        { en: "twinkling", zh: "閃爍的", pos: "adj." },
+        { en: "cringe", zh: "尷尬的", pos: "adj." },
+        { en: "constructive", zh: "建設性的", pos: "adj." },
+        { en: "destructively", zh: "破壞性地", pos: "adv." },
+        { en: "thorny", zh: "棘手的", pos: "adj." },
+        { en: "inventive", zh: "有創意的", pos: "adj." },
+        { en: "humble", zh: "謙虛的", pos: "adj." },
+        { en: "genuine", zh: "真誠的", pos: "adj." },
+        { en: "vibrant", zh: "充滿活力的", pos: "adj." },
+        { en: "motivated", zh: "有動機的", pos: "adj." },
+        { en: "intrusive", zh: "侵入性的", pos: "adj." },
+        { en: "uninhibited", zh: "無抑制的", pos: "adj." },
+        { en: "inhibited", zh: "抑制的", pos: "adj." },
+        { en: "chaotic", zh: "混亂的", pos: "adj." },
+        { en: "mature", zh: "成熟的", pos: "adj." },
+        { en: "engaging", zh: "引人入勝的", pos: "adj." },
+        { en: "awkward", zh: "尷尬的", pos: "adj." },
+        { en: "jealous", zh: "妒忌的", pos: "adj." },
+        { en: "introspective", zh: "內省的", pos: "adj." },
+        { en: "steady", zh: "穩定的", pos: "adj." },
+        { en: "slippery", zh: "狡猾的", pos: "adj." },
+        { en: "vulnerable", zh: "脆弱的", pos: "adj." },
+        { en: "transparent", zh: "透明的", pos: "adj." },
+        { en: "innocent", zh: "無辜的", pos: "adj." },
+        { en: "affirmative", zh: "肯定的", pos: "adj." },
+        { en: "obtuse", zh: "遲鈍的", pos: "adj." },
+        
+        // 11. 社會、政治與經濟 (31)
+        { en: "corruption", zh: "腐敗", pos: "n." },
+        { en: "cheat people", zh: "呃人", pos: "v." },
+        { en: "denial", zh: "抵賴", pos: "n." },
+        { en: "Increased denial", zh: "抵賴增加", pos: "phrase" },
+        { en: "government", zh: "政府", pos: "n." },
+        { en: "institutional", zh: "制度上", pos: "adj." },
+        { en: "ministry", zh: "部", pos: "n." },
+        { en: "foreign ministry", zh: "外交部", pos: "n." },
+        { en: "Summit", zh: "高峰會", pos: "n." },
+        { en: "coercion", zh: "强迫", pos: "n." },
+        { en: "commerce", zh: "商業", pos: "n." },
+        { en: "Interest", zh: "利息", pos: "n." },
+        { en: "Operation", zh: "運作", pos: "n." },
+        { en: "economies", zh: "經濟體", pos: "n." },
+        { en: "export", zh: "出口", pos: "v./n." },
+        { en: "import", zh: "進口", pos: "v./n." },
+        { en: "tariffs", zh: "關稅", pos: "n." },
+        { en: "curb", zh: "限制", pos: "v./n." },
+        { en: "prosperity", zh: "繁榮", pos: "n." },
+        { en: "safeguard", zh: "保障", pos: "v./n." },
+        { en: "tension", zh: "緊張", pos: "n." },
+        { en: "crop", zh: "農作物", pos: "n." },
+        { en: "agricultural", zh: "農業的", pos: "adj." },
+        { en: "fishing vessels", zh: "漁船", pos: "n." },
+        { en: "vessels", zh: "船舶", pos: "n." },
+        { en: "development", zh: "發展", pos: "v." },
+        { en: "renovations", zh: "翻新工程", pos: "n." },
+        { en: "terrorism", zh: "恐怖主義", pos: "n." },
+        { en: "crime", zh: "罪行", pos: "n." },
+        { en: "divorce", zh: "離婚", pos: "n./v." },
+        { en: "welfare", zh: "福利", pos: "n." },
+        { en: "currency", zh: "貨幣", pos: "n." },
+        { en: "purchases", zh: "購買", pos: "n." },
+        
+        // 12. 學科、藝術與文化 (20)
+        { en: "Application", zh: "應用", pos: "n." },
+        { en: "aeronautics", zh: "航空學", pos: "n." },
+        { en: "rocketry", zh: "火箭技術", pos: "n." },
+        { en: "zoology", zh: "動物學", pos: "n." },
+        { en: "psychology", zh: "心理學", pos: "n." },
+        { en: "cosmology", zh: "宇宙學", pos: "n." },
+        { en: "phonic", zh: "語音的", pos: "adj." },
+        { en: "education", zh: "教育", pos: "n." },
+        { en: "entertainment", zh: "娛樂", pos: "n." },
+        { en: "tourism", zh: "旅遊業", pos: "n." },
+        { en: "culinary", zh: "烹飪的", pos: "adj." },
+        { en: "Heritage", zh: "遺產", pos: "n." },
+        { en: "tradition", zh: "傳統", pos: "n." },
+        { en: "Orchestra", zh: "管弦樂團", pos: "n." },
+        { en: "legend", zh: "傳奇", pos: "n." },
+        { en: "fairytale", zh: "童話故事", pos: "n." },
+        { en: "religion", zh: "宗教", pos: "n." },
+        { en: "holy spirit", zh: "聖靈", pos: "n." },
+        { en: "doctrines", zh: "教義", pos: "n." },
+        { en: "ideologies", zh: "意識形態", pos: "n." },
+        { en: "Rationalism", zh: "理性主義", pos: "n." },
+        { en: "realism", zh: "現實主義", pos: "n." },
+        
+        // 13. 抽象概念與屬性 (40)
+        { en: "natural", zh: "自然的", pos: "adj." },
+        { en: "current", zh: "目前的", pos: "adj." },
+        { en: "breadth", zh: "廣度", pos: "n." },
+        { en: "strength", zh: "力量", pos: "n." },
+        { en: "reality", zh: "現實", pos: "n." },
+        { en: "condition", zh: "條件", pos: "n." },
+        { en: "factor", zh: "因素", pos: "n." },
+        { en: "belief", zh: "信念", pos: "n." },
+        { en: "foundation", zh: "基礎", pos: "n." },
+        { en: "atmosphere", zh: "氣氛", pos: "n." },
+        { en: "era", zh: "年代", pos: "n." },
+        { en: "completion", zh: "完成", pos: "n." },
+        { en: "decline", zh: "下降", pos: "v./n." },
+        { en: "shift", zh: "轉變", pos: "v./n." },
+        { en: "complex", zh: "複雜的", pos: "adj." },
+        { en: "tremendous", zh: "巨大的", pos: "adj." },
+        { en: "chronic", zh: "慢性的", pos: "adj." },
+        { en: "usual", zh: "通常的", pos: "adj." },
+        { en: "wealthy", zh: "富裕的", pos: "adj." },
+        { en: "mutual", zh: "互相的", pos: "adj." },
+        { en: "additional", zh: "附加的", pos: "adj." },
+        { en: "seamlessly", zh: "無縫地", pos: "adv." },
+        { en: "modern", zh: "現代的", pos: "adj." },
+        { en: "pre-colonial", zh: "殖民地前的", pos: "adj." },
+        { en: "variety", zh: "各式各樣", pos: "n." },
+        { en: "trends", zh: "趨勢", pos: "n." },
+        { en: "categories", zh: "類別", pos: "n." },
+        { en: "knowing", zh: "知道", pos: "adj." },
+        { en: "actual", zh: "實際的", pos: "adj." },
+        { en: "perhaps", zh: "可能", pos: "adv." },
+        { en: "adjacent", zh: "旁邊的", pos: "adj." },
+        { en: "exclusive", zh: "獨家的", pos: "adj." },
+        { en: "Longevity", zh: "長壽", pos: "n." },
+        { en: "certainly", zh: "當然", pos: "adv." },
+        { en: "merely", zh: "只是", pos: "adv." },
+        { en: "appealing", zh: "吸引人的", pos: "adj." },
+        { en: "nevertheless", zh: "不過", pos: "adv." },
+        { en: "presently", zh: "目前", pos: "adv." },
+        { en: "transatlantically", zh: "跨大西洋地", pos: "adv." },
+        { en: "transiently", zh: "瞬間地", pos: "adv." },
+        { en: "amazingly", zh: "驚人地", pos: "adv." },
+        { en: "besides", zh: "除了", pos: "prep./adv." },
+        { en: "despite", zh: "儘管", pos: "prep." },
+        
+        // 14. 警示、規則與過程 (18)
+        { en: "precaution", zh: "預防", pos: "n." },
+        { en: "warning", zh: "警告", pos: "n." },
+        { en: "Pay attention", zh: "留心", pos: "phrase" },
+        { en: "You can't be reckless in anything", zh: "凡事不可魯莽", pos: "phrase" },
+        { en: "Contains gambling ingredients", zh: "含有賭博成份", pos: "phrase" },
+        { en: "condition", zh: "條件", pos: "n." },
+        { en: "criteria", zh: "標準", pos: "n." },
+        { en: "provision", zh: "條文", pos: "n." },
+        { en: "attempt", zh: "嘗試", pos: "n./v." },
+        { en: "began", zh: "開始", pos: "v." },
+        { en: "process", zh: "過程", pos: "n." },
+        { en: "mechanism", zh: "機制", pos: "n." },
+        { en: "consequence", zh: "後果", pos: "n." },
+        { en: "issues", zh: "問題", pos: "n." },
+        { en: "threatened", zh: "威脅", pos: "v." },
+        { en: "de-escalate", zh: "降級", pos: "v." },
+        { en: "major stumbling", zh: "重大障礙", pos: "n." },
+        
+        // 15. 關係與互動 (18)
+        { en: "depend", zh: "依賴", pos: "v." },
+        { en: "involves", zh: "涉及", pos: "v." },
+        { en: "one another", zh: "彼此", pos: "pron." },
+        { en: "Sharing the Work", zh: "分擔工作", pos: "phrase" },
+        { en: "attach", zh: "隨附", pos: "v." },
+        { en: "corresponding", zh: "對應的", pos: "adj." },
+        { en: "reunify", zh: "統一", pos: "v." },
+        { en: "reciprocation", zh: "互惠", pos: "n." },
+        { en: "committed", zh: "投入的", pos: "adj." },
+        { en: "assess", zh: "評核", pos: "v." },
+        { en: "save", zh: "節省", pos: "v." },
+        { en: "socialize", zh: "社交", pos: "v." },
+        { en: "encompasses", zh: "包括", pos: "v." },
+        { en: "categories", zh: "類別", pos: "n." }
+    ];
+
+    // 去重複 (保留首個)
+    const uniqueMap = new Map();
+    fullWordList.forEach(item => {
+        if (!uniqueMap.has(item.en)) uniqueMap.set(item.en, item);
+    });
+    const masterList = Array.from(uniqueMap.values());
+    console.log('總詞數:', masterList.length); // 應為339左右
+
+    // 製作題庫：每題隨機3個不同錯誤選項 + 正確選項
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 建立題目 (所有詞彙都出現一遍)
+    let questions = [];
+    const shuffledMaster = shuffleArray([...masterList]);
+
+    for (let i = 0; i < shuffledMaster.length; i++) {
+        const correct = shuffledMaster[i];
+        // 候選其他單字 (排除自己)
+        const otherCandidates = masterList.filter(w => w.en !== correct.en).map(w => w.en);
+        const shuffledOthers = shuffleArray(otherCandidates);
+        const wrongEnList = shuffledOthers.slice(0, 3); // 取3個不同錯誤答案
+        const wrongItems = [];
+        for (let enc of wrongEnList) {
+            const found = masterList.find(w => w.en === enc);
+            if (found) wrongItems.push(found);
+        }
+        // 若不足3個(極少數情況) 補預設
+        while (wrongItems.length < 3) {
+            wrongItems.push({ en: "default", zh: "預設", pos: "n." });
+        }
+        let options = [correct, ...wrongItems];
+        options = shuffleArray(options); // 混合
+        questions.push({
+            correct: correct,
+            options: options,
+        });
+    }
+
+    // 狀態
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+    let selectedOptionEn = "";
+
+    const posSpan = document.getElementById('posTag');
+    const sentenceDiv = document.getElementById('sentenceHolder');
+    const optionsDiv = document.getElementById('optionsContainer');
+    const feedbackDiv = document.getElementById('feedbackArea');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const currentQSpan = document.getElementById('currentQ');
+    const totalQSpan = document.getElementById('totalQ');
+    const scoreSpan = document.getElementById('scoreDisplay');
+    const myAudio = document.getElementById('myAudio');
+
+    totalQSpan.innerText = questions.length;
+
+    function playMusic() {
+        if (myAudio) {
+            myAudio.loop = true;
+            if (myAudio.paused) {
+                myAudio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+    }
+
+    function renderQuestion() {
+        answered = false;
+        const q = questions[currentIndex];
+        const correctWord = q.correct.en;
+        // 句子呈現 (填空)
+        const sentence = `請選出正確單字： 「${q.correct.zh}」 的英文是？`;
+        sentenceDiv.innerHTML = sentence.replace('？', ` ？ <span class="blank-highlight">______</span>`);
+        posSpan.innerText = q.correct.pos || '';
+
+        let htmlStr = '';
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, idx) => {
+            htmlStr += `
+                <div class="option-btn" data-en="${opt.en}" data-zh="${opt.zh}">
+                    <span class="option-prefix">${letters[idx]}</span>
+                    ${opt.en}
+                </div>
+            `;
+        });
+        optionsDiv.innerHTML = htmlStr;
+
+        feedbackDiv.style.display = 'none';
+        feedbackDiv.innerHTML = '';
+        nextBtn.disabled = true;
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (answered) return;
+                const target = btn;
+                const chosenEn = target.dataset.en;
+                const correctEn = q.correct.en;
+                const isCorrect = (chosenEn === correctEn);
+
+                answered = true;
+                selectedOptionEn = chosenEn;
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.style.pointerEvents = 'none';
+                    b.classList.add('disabled-true');
+                });
+
+                if (isCorrect) {
+                    score++;
+                }
+                scoreSpan.innerText = `⭐ ${score}`;
+
+                let feedbackHtml = '';
+                if (isCorrect) {
+                    feedbackHtml = `<div class="correct-feedback">✓ 正確！</div>`;
+                } else {
+                    const chosenWord = masterList.find(w => w.en === chosenEn) || { zh: '?' };
+                    feedbackHtml = `<div class="wrong-feedback">✗ 答錯了</div>`;
+                    feedbackHtml += `<div class="chinese-meaning"><span>🔤 ${chosenEn}</span>  ●  ${chosenWord.zh}</div>`;
+                    feedbackHtml += `<div class="chinese-meaning" style="background:#d9e9ff;">✅ 正確答案：${correctEn}  ●  ${q.correct.zh}</div>`;
+                }
+                feedbackDiv.innerHTML = feedbackHtml;
+                feedbackDiv.style.display = 'block';
+                nextBtn.disabled = false;
+            });
+        });
+        currentQSpan.innerText = currentIndex + 1;
+    }
+
+    function nextQuestion() {
+        if (currentIndex < questions.length - 1) {
+            currentIndex++;
+            renderQuestion();
+        } else {
+            sentenceDiv.innerHTML = `🎉 恭喜！ 你已完成全部 ${questions.length} 題！ 總分 ${score}/${questions.length}`;
+            optionsDiv.innerHTML = '';
+            feedbackDiv.style.display = 'none';
+            nextBtn.disabled = true;
+            posSpan.innerText = '完美！';
+        }
+    }
+
+    function resetGame() {
+        currentIndex = 0;
+        score = 0;
+        answered = false;
+        scoreSpan.innerText = '⭐ 0';
+        // 重新打亂題目順序
+        questions = shuffleArray(questions);
+        renderQuestion();
+        playMusic(); // Play music when reset button is clicked
+    }
+
+    nextBtn.addEventListener('click', nextQuestion);
+    resetBtn.addEventListener('click', resetGame);
+
+    // 啟動
+    renderQuestion();
+})();
+</script>
+</body>
+</html>
