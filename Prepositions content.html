@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prepositions Hub | at, in, on, direction & phrases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fef9f0 0%, #fef3e0 100%);
+            color: #7b4f2e;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(123, 79, 46, 0.15);
+            border-bottom: 4px solid #d97706;
+        }
+        
+        h1 {
+            color: #b45309;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #d97706, #b45309);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b45309;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .project-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #fef3e0;
+            color: #b45309;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .project-link:hover {
+            background-color: #d97706;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(123, 79, 46, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #fed7aa;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(123, 79, 46, 0.2);
+            border-color: #d97706;
+        }
+        
+        .card-header {
+            padding: 25px 25px 15px;
+            border-bottom: 1px solid #fed7aa;
+            background: linear-gradient(to right, #fef9f0, white);
+        }
+        
+        .card-header h2 {
+            color: #b45309;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h2 i {
+            color: #d97706;
+            font-size: 1.3rem;
+        }
+        
+        .card-content {
+            padding: 20px 25px;
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            color: #7b4f2e;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background-color: #fef9f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d97706;
+        }
+        
+        .examples h3 {
+            color: #b45309;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .example-item {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        .example-item strong {
+            color: #b45309;
+            margin-right: 5px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px;
+            background-color: #fef9f0;
+            border-top: 1px solid #fed7aa;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #d97706;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background-color: #b45309;
+            transform: scale(1.05);
+        }
+        
+        .page-link i {
+            margin-left: 8px;
+        }
+        
+        .quick-links {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 20px rgba(123, 79, 46, 0.1);
+            border: 1px solid #fed7aa;
+        }
+        
+        .quick-links h2 {
+            color: #b45309;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .link-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .link-item {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #fef3e0;
+            color: #b45309;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            background-color: #d97706;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #b45309;
+            border-top: 1px solid #fed7aa;
+        }
+        
+        .badge {
+            background-color: #d97706;
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .infinite-note {
+            display: inline-block;
+            background-color: #fef3e0;
+            color: #b45309;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            border: 1px solid #fed7aa;
+        }
+        
+        @media (max-width: 768px) {
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .project-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .project-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-map-pin"></i> Prepositions Hub</h1>
+            <p class="subtitle">Master location, time, direction, and phrases. Interactive 20-question cycles with infinite practice.</p>
+            
+            <div class="project-links">
+                <a href="https://rexwyc.github.io/Prepositions.html" class="project-link" target="_blank"><i class="fas fa-location-dot"></i> 📍 place (at/in/on/under/between)</a>
+                <a href="https://rexwyc.github.io/time.html" class="project-link" target="_blank"><i class="fas fa-clock"></i> ⏳ time (at/in/on)</a>
+            </div>
+        </header>
+        
+        <main>
+            <div class="topic-grid">
+                <!-- Prepositions of Place -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-location-dot"></i> place: at / in / on / under / between</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Describe <strong>where</strong> someone or something is. These prepositions show position and location.</p>
+                        
+                        <div class="examples">
+                            <h3>Sample Question:</h3>
+                            <div class="example-item"><strong>Q1:</strong> The kids are _____ school right now. <em>(choose at/in/on/under/between)</em></div>
+                        </div>
+                        
+                        <p>After choosing, an explanation appears to help you learn the rule. 20 unique sentences per cycle, then it loops from #1 for unlimited practice.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> infinite loop</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Prepositions.html" class="page-link" target="_blank">Start Practice <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Prepositions of Time -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-clock"></i> time: at / in / on</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Learn to use <strong>at, in, on</strong> correctly for time expressions: days, months, hours, and special phrases.</p>
+                        
+                        <div class="examples">
+                            <h3>Sample Question:</h3>
+                            <div class="example-item"><strong>Q1:</strong> The shop closes ___ Sunday. <em>(choose at / in / on)</em></div>
+                        </div>
+                        
+                        <p>The classic time preposition challenge. 20 unique sentences in a cycle that repeats forever.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> ♾️ infinite loop</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/time.html" class="page-link" target="_blank">Start Practice <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Prepositional Phrases -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-pen-fancy"></i> 🔤 prepositional phrases</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Practice <strong>identifying the complete prepositional phrase</strong> in a sentence – the preposition + its object.</p>
+                        
+                        <div class="examples">
+                            <h3>Sample Question:</h3>
+                            <div class="example-item"><strong>Q1:</strong> The gift is for my best friend. <em>(select the prepositional phrase)</em></div>
+                        </div>
+                        
+                        <p>Build essential grammar skills by learning to spot these phrases. 20-question cycle with infinite repeats.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> ∞ loop</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/prepositional%20phrases.html" class="page-link" target="_blank">Find the Phrase <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Prepositions of Direction -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-arrow-right-arrow-left"></i> ➡️ direction: to / from / into</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Master prepositions that show <strong>movement and direction</strong>. Choose the correct word based on the sentence context.</p>
+                        
+                        <div class="examples">
+                            <h3>Sample Question:</h3>
+                            <div class="example-item"><strong>Q1:</strong> She walked ___ the library to borrow a book. <em>(choose to / from / into)</em></div>
+                        </div>
+                        
+                        <p>Focus on three essential direction words. After each choice, get feedback. Cycles through 20 unique questions.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> infinite loop</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Direction.html" class="page-link" target="_blank">Start Practice <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-links">
+                <h2><i class="fas fa-link"></i> All Preposition Activities</h2>
+                <div class="link-list">
+                    <a href="https://rexwyc.github.io/Prepositions.html" class="link-item" target="_blank"><i class="fas fa-location-dot"></i> 📍 Place (at/in/on/under/between)</a>
+                    <a href="https://rexwyc.github.io/time.html" class="link-item" target="_blank"><i class="fas fa-clock"></i> ⏳ Time (at/in/on)</a>
+                    <a href="https://rexwyc.github.io/prepositional%20phrases.html" class="link-item" target="_blank"><i class="fas fa-pen-fancy"></i> 🔤 Prepositional Phrases</a>
+                    <a href="https://rexwyc.github.io/Direction.html" class="link-item" target="_blank"><i class="fas fa-arrow-right-arrow-left"></i> ➡️ Direction (to/from/into)</a>
+                </div>
+                <p style="margin-top: 20px; color: #b45309;"><i class="fa-regular fa-circle-info"></i> All activities feature 20-question cycles that loop infinitely — perfect for repeated practice and mastery.</p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Prepositions Hub &copy; 2025 | Created for rexwyc.github.io</p>
+            <p>Clear grammar practice with instant feedback and unlimited attempts.</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Intersection Observer for card animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Set initial state for cards
+        document.querySelectorAll('.topic-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
