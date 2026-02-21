@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>🚀 Prepositions · at / in / on / under / between</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f0f4fa;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 12px;
+    }
+
+    .phone-card {
+      max-width: 480px;
+      width: 100%;
+      background: white;
+      border-radius: 40px 40px 32px 32px;
+      box-shadow: 0 20px 40px rgba(0, 10, 30, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      padding: 24px 20px 30px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(2px);
+      transition: all 0.2s;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #113946;
+      margin-bottom: 8px;
+      padding-left: 6px;
+    }
+
+    h1 span {
+      background: #bcd2e8;
+      padding: 5px 14px;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #1a3e4c;
+    }
+
+    .progress-badge {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #e7edf6;
+      padding: 10px 16px;
+      border-radius: 60px;
+      margin: 8px 0 22px 0;
+      font-weight: 500;
+      color: #2b4f66;
+      font-size: 1rem;
+    }
+
+    .question-box {
+      background: #f9fcff;
+      border-radius: 36px;
+      padding: 26px 18px 22px 18px;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 6px 12px rgba(45, 78, 110, 0.1);
+      border: 1px solid #dae6f2;
+      margin-bottom: 24px;
+    }
+
+    .sentence {
+      font-size: 1.9rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 28px;
+      text-align: center;
+      word-break: break-word;
+      color: #163a4b;
+      padding: 0 6px;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 90px;
+      background: #f1e9db;
+      border-bottom: 5px solid #c5a47a;
+      border-radius: 12px 12px 8px 8px;
+      padding: 0px 6px;
+      color: #2b4a5e;
+      text-align: center;
+      font-weight: 700;
+      font-size: 2rem;
+      margin: 0 4px;
+      line-height: 1.4;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+    }
+
+    .prep-btn {
+      background: white;
+      border: 2px solid #b3c9db;
+      font-size: 1.6rem;
+      font-weight: 600;
+      padding: 14px 0;
+      width: 100px;
+      flex: 1 0 auto;
+      max-width: 110px;
+      border-radius: 60px;
+      color: #1c4c66;
+      box-shadow: 0 4px 0 #a0b6c9;
+      transition: all 0.08s linear;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      text-align: center;
+    }
+
+    .prep-btn:active {
+      transform: translateY(4px);
+      box-shadow: none;
+      background: #e2ecf7;
+    }
+
+    .feedback-panel {
+      background: #ffffffd6;
+      backdrop-filter: blur(6px);
+      border-radius: 28px;
+      padding: 18px 18px 12px 18px;
+      margin: 24px 0 12px;
+      border-left: 8px solid #a7c5dc;
+      box-shadow: 0 6px 14px rgba(79, 114, 145, 0.15);
+    }
+
+    .explanation {
+      font-size: 1.18rem;
+      font-weight: 460;
+      color: #1d3643;
+      padding-left: 6px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .explanation i {
+      color: #1f6383;
+      font-style: normal;
+      font-weight: 600;
+      background: #dbeaf3;
+      padding: 2px 10px;
+      border-radius: 40px;
+    }
+
+    .icon-check {
+      color: #1b8432;
+      font-weight: 600;
+      background: #dff0e1;
+      padding: 6px 14px;
+      border-radius: 40px;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .icon-wrong {
+      color: #aa3030;
+      font-weight: 600;
+      background: #ffe1de;
+      padding: 6px 14px;
+      border-radius: 40px;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .next-btn {
+      background: #295e7c;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+      padding: 18px 18px;
+      border-radius: 60px;
+      flex: 2;
+      text-align: center;
+      box-shadow: 0 8px 0 #12384b;
+      cursor: pointer;
+      transition: all 0.08s;
+      border: 1px solid #ffffff50;
+      letter-spacing: 0.5px;
+    }
+
+    .next-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #12384b;
+    }
+
+    .reset-btn {
+      background: #dde5ed;
+      border: none;
+      font-size: 1.3rem;
+      padding: 18px 8px;
+      border-radius: 60px;
+      flex: 1;
+      font-weight: 600;
+      color: #1c485f;
+      box-shadow: 0 5px 0 #b6c7d6;
+      cursor: pointer;
+      transition: 0.06s;
+      border: 1px solid white;
+    }
+
+    .reset-btn:active {
+      transform: translateY(5px);
+      box-shadow: none;
+    }
+
+    .counter-info {
+      text-align: center;
+      color: #436579;
+      font-weight: 500;
+      margin-top: 16px;
+      font-size: 1rem;
+    }
+
+    .footer {
+      font-size: 0.9rem;
+      color: #6f8fa3;
+      text-align: center;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+<div class="phone-card">
+  <h1>📍 place <span>at/in/on/under/between</span></h1>
+
+  <!-- progress display & infinite loop hint -->
+  <div class="progress-badge">
+    <span id="questionCounterDisplay">1 / 20</span>
+    <span>♾️ infinite loop</span>
+  </div>
+
+  <!-- main question block -->
+  <div class="question-box">
+    <div class="sentence" id="sentenceText">The cat is sleeping _____ the bed.</div>
+    <div class="options-grid" id="optionButtons">
+      <button class="prep-btn" data-prep="at">at</button>
+      <button class="prep-btn" data-prep="in">in</button>
+      <button class="prep-btn" data-prep="on">on</button>
+      <button class="prep-btn" data-prep="under">under</button>
+      <button class="prep-btn" data-prep="between">between</button>
+    </div>
+
+    <!-- feedback & explanation area -->
+    <div class="feedback-panel" id="feedbackArea">
+      <div class="explanation" id="explanationText">✨ choose a preposition → explanation appears</div>
+    </div>
+  </div>
+
+  <!-- navigation -->
+  <div class="action-row">
+    <button class="reset-btn" id="resetBtn" aria-label="Restart from first">↺</button>
+    <button class="next-btn" id="nextBtn">➡️ next question</button>
+  </div>
+  <div class="counter-info" id="loopHint">⏳ 20 questions — after 20 it loops from #1</div>
+  <div class="footer">tap answer · get explanation · repeat</div>
+</div>
+
+<script>
+  (function() {
+    // ---------- QUESTION BANK (20 items) ----------
+    const questions = [
+      { sentence: "The kids are _____ school right now.", correct: "at", explanation: "‘at school’ = location as a general place (not inside the building necessarily, but the idea of school)." },
+      { sentence: "She put the keys _____ the drawer.", correct: "in", explanation: "‘in the drawer’ = enclosed inside the drawer." },
+      { sentence: "The book is lying _____ the table.", correct: "on", explanation: "‘on the table’ = surface contact." },
+      { sentence: "The cat hid _____ the bed.", correct: "under", explanation: "‘under the bed’ = directly below." },
+      { sentence: "Our house is _____ the library and the bank.", correct: "between", explanation: "‘between’ two distinct landmarks." },
+      { sentence: "I’ll meet you _____ the bus stop at 5.", correct: "at", explanation: "‘at the bus stop’ = specific point or location." },
+      { sentence: "He is sitting _____ his two best friends.", correct: "between", explanation: "‘between’ friends (two people)." },
+      { sentence: "There is some milk _____ the fridge.", correct: "in", explanation: "‘in the fridge’ = inside the appliance." },
+      { sentence: "Write your name _____ the top of the page.", correct: "at", explanation: "‘at the top’ (point on a page — we also say ‘at the bottom’)." },
+      { sentence: "The picture is _____ the wall.", correct: "on", explanation: "‘on the wall’ = attached to vertical surface." },
+      { sentence: "We live _____ the 7th floor.", correct: "on", explanation: "‘on the 7th floor’ (specific level)." },
+      { sentence: "She is waiting _____ the corner of Main Street.", correct: "at", explanation: "‘at the corner’ (intersection point)." },
+      { sentence: "My phone is _____ my backpack.", correct: "in", explanation: "‘in my backpack’ = inside." },
+      { sentence: "The sun disappeared _____ the horizon.", correct: "under", explanation: "poetic: ‘under the horizon’ = below the line." },
+      { sentence: "He divided the cake _____ the two children.", correct: "between", explanation: "‘between two’ (distribution)." },
+      { sentence: "The pencil rolled _____ the desk.", correct: "under", explanation: "‘under the desk’ = beneath." },
+      { sentence: "She works _____ the hospital.", correct: "at", explanation: "‘at the hospital’ (general location / workplace). Also possible ‘in’ but ‘at’ is typical for place of duty." },
+      { sentence: "I read the news _____ the newspaper.", correct: "in", explanation: "‘in the newspaper’ (content inside)." },
+      { sentence: "He left his jacket _____ the chair.", correct: "on", explanation: "‘on the chair’ = surface." },
+      { sentence: "The ball landed _____ the car and the wall.", correct: "between", explanation: "‘between the car and the wall’ = in the gap." }
+    ];
+
+    // ----- state -----
+    let currentIndex = 0;               // 0-based, always between 0 and 19
+    let lastSelectedPrep = null;        // 'at' 'in' 'on' 'under' 'between' or null
+    let lastWasCorrect = false;
+
+    // DOM elements
+    const sentenceEl = document.getElementById('sentenceText');
+    const optionBtns = document.querySelectorAll('.prep-btn');
+    const explanationEl = document.getElementById('explanationText');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const counterDisplay = document.getElementById('questionCounterDisplay');
+    const loopHint = document.getElementById('loopHint');
+
+    // helper: update shown question & reset feedback
+    function renderQuestion(index) {
+      const q = questions[index];
+      sentenceEl.innerHTML = q.sentence.replace(/_____/, '<span class="blank">_____</span>');
+      // reset feedback area to neutral
+      explanationEl.innerHTML = `✨ choose a preposition → explanation appears`;
+      feedbackArea.style.borderLeftColor = '#a7c5dc'; // neutral blue
+      lastSelectedPrep = null;
+      lastWasCorrect = false;
+      updateCounterDisplay();
+    }
+
+    function updateCounterDisplay() {
+      // show 1‑based index, and total 20
+      counterDisplay.innerText = `${currentIndex + 1} / 20`;
+    }
+
+    // evaluate answer & update explanation panel
+    function evaluateAndShow(selectedPrep) {
+      const q = questions[currentIndex];
+      const correct = q.correct;
+      const isCorrect = (selectedPrep === correct);
+      lastSelectedPrep = selectedPrep;
+      lastWasCorrect = isCorrect;
+
+      let feedbackHtml = '';
+      if (isCorrect) {
+        feedbackHtml = `<span class="icon-check">✅ correct</span> <strong style="font-size:1.2rem;">“${selectedPrep}”</strong><br>`;
+        feedbackArea.style.borderLeftColor = '#2e7d5e'; // green
+      } else {
+        feedbackHtml = `<span class="icon-wrong">❌ wrong</span> <strong style="font-size:1.2rem;">“${selectedPrep}”</strong> (correct: “${correct}”)<br>`;
+        feedbackArea.style.borderLeftColor = '#b15e4a'; // warm error
+      }
+
+      // add explanation
+      feedbackHtml += `<span style="display:block; margin-top:10px;">📘 ${q.explanation}</span>`;
+      explanationEl.innerHTML = feedbackHtml;
+    }
+
+    // event listeners for preposition buttons
+    optionBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const prep = e.currentTarget.getAttribute('data-prep');
+        evaluateAndShow(prep);
+      });
+    });
+
+    // next button: move to next question (infinite loop)
+    function goToNext() {
+      // advance index, wrap to 0 after 19
+      currentIndex = (currentIndex + 1) % questions.length;  // infinite carousel
+      renderQuestion(currentIndex);
+    }
+
+    nextBtn.addEventListener('click', goToNext);
+
+    // reset: go back to first question (index 0)
+    resetBtn.addEventListener('click', () => {
+      currentIndex = 0;
+      renderQuestion(0);
+    });
+
+    // optional: keyboard / accessibility, but fine
+
+    // initial render
+    renderQuestion(0);
+
+    // guarantee that after any answer, next question starts fresh.
+    // also if you press next without answering, it's fine.
+
+    // small improvement: show hint that you are looping
+    // already displayed in UI
+
+    // extra: update loop hint text with style (already static)
+    // but we add dynamic update when index wraps? (optional)
+    // i'll add a quick flash effect (just for fun) - but not necessary.
+    // ensure that between questions we reset the feedback if no answer was selected.
+    // renderQuestion already resets it.
+
+    // also: when next clicked, we reset. perfect.
+
+    // handle touch and small screens: options wrap nicely
+
+    // (optional) pre-hold the blank style
+    // add a tiny extra: when answer selected, we may disable buttons? but better to allow change.
+    // but we want them to be able to change answer: we keep them active.
+    // no need to disable.
+
+    // Also add that explanation area might overflow but fine.
+
+    // one more: if they click same preposition again, it re-evaluates (refresh explanation)
+    // that's ok.
+    // make feedback clear.
+  })();
+</script>
+</body>
+</html>
