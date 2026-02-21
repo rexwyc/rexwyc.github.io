@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>⏰ at / in / on – time phrases (endless practice)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f7f9fc 0%, #eef2f7 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      padding: 12px;
+      margin: 0;
+    }
+
+    .quiz-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px 48px 40px 40px;
+      box-shadow: 0 25px 45px -12px rgba(0, 20, 40, 0.35), 0 2px 8px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 550px;
+      padding: 28px 22px 32px;
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: all 0.2s ease;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #1a2639;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      padding-left: 8px;
+    }
+
+    h1 span {
+      background: #1e2b41;
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 60px;
+      margin-left: 8px;
+      box-shadow: inset 0 -2px 0 #0f1a2c;
+    }
+
+    .sub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #2c3e5c;
+      padding: 0 10px 18px 10px;
+      border-bottom: 2px dashed #b7c9e2;
+      margin-bottom: 20px;
+    }
+
+    .score-ring {
+      background: #dce5f4;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      color: #1e2f47;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .question-box {
+      background: white;
+      border-radius: 44px;
+      padding: 30px 20px 20px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 28px -12px rgba(0, 32, 64, 0.25);
+      border: 1px solid rgba(255,255,255,0.9);
+    }
+
+    .sentence {
+      font-size: 1.9rem;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: center;
+      word-break: break-word;
+      color: #0b1e33;
+      padding: 8px 0 16px;
+    }
+
+    .sentence .blank {
+      display: inline-block;
+      min-width: 70px;
+      background: #f2f7ff;
+      border-bottom: 5px solid #809ab3;
+      color: #022b49;
+      font-weight: 700;
+      font-size: 2rem;
+      line-height: 1.4;
+      margin: 0 4px;
+      padding: 0 8px;
+      border-radius: 20px 20px 8px 8px;
+      box-shadow: inset 0 -5px 0 #cad8ea;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 30px 0 16px;
+    }
+
+    .prep-btn {
+      background: #f0f4fe;
+      border: none;
+      border-radius: 70px;
+      padding: 18px 0;
+      font-size: 2.2rem;
+      font-weight: 600;
+      min-width: 110px;
+      flex: 1 1 0;
+      text-align: center;
+      color: #1b3350;
+      box-shadow: 0 7px 0 #b1c3da, 0 10px 16px -6px #a0b3ce;
+      transition: all 0.08s linear;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      border: 1px solid white;
+      line-height: 1;
+    }
+
+    .prep-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 2px 0 #8fa3c2, 0 8px 16px -6px #7f94b4;
+    }
+
+    .prep-btn.at { background: #ffddd6; color: #a93e2b; }
+    .prep-btn.in { background: #d9f0ec; color: #136f63; }
+    .prep-btn.on { background: #fef3d7; color: #b85b14; }
+
+    .feedback {
+      font-size: 1.35rem;
+      padding: 12px 20px;
+      border-radius: 60px;
+      text-align: center;
+      font-weight: 500;
+      background: #ffffffdd;
+      backdrop-filter: blur(4px);
+      margin: 8px 0 4px;
+      border: 1px solid white;
+      transition: 0.1s;
+    }
+
+    .feedback.correct {
+      background: #d7f0e2;
+      color: #005f45;
+    }
+
+    .feedback.wrong {
+      background: #ffe2df;
+      color: #a83232;
+    }
+
+    .next-btn {
+      background: #1e2f45;
+      border: none;
+      border-radius: 60px;
+      padding: 20px 20px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: white;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 0 #0e1a28, 0 10px 20px -8px #031624;
+      transition: 0.06s linear;
+      cursor: pointer;
+      margin-top: 10px;
+      border: 1px solid #809ab3;
+      touch-action: manipulation;
+    }
+
+    .next-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #0e1a28, 0 12px 24px -12px #031624;
+    }
+
+    .next-btn:disabled {
+      opacity: 0.4;
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #0e1a28;
+      pointer-events: none;
+    }
+
+    .tiny-note {
+      text-align: center;
+      color: #4b5e77;
+      font-weight: 400;
+      margin-top: 12px;
+      font-size: 1.05rem;
+    }
+
+    /* phone-friendly compact */
+    @media (max-width: 420px) {
+      .quiz-panel { padding: 20px 14px; }
+      .sentence { font-size: 1.6rem; }
+      .prep-btn { font-size: 1.8rem; min-width: 80px; padding: 15px 0; }
+      .next-btn { font-size: 1.6rem; padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="quiz-panel" id="quizApp">
+  <h1>⏳ at • in • on <span>time</span></h1>
+  <div class="sub-header">
+    <span class="score-ring" id="scoreDisplay">✔ 0 / 20</span>
+    <span style="color:#415a77;">♾️ infinite loop</span>
+  </div>
+
+  <!-- question card -->
+  <div class="question-box">
+    <div class="sentence" id="sentenceDisplay">loading ...</div>
+    <div class="options" id="optionsContainer">
+      <button class="prep-btn at" data-prep="at">at</button>
+      <button class="prep-btn in" data-prep="in">in</button>
+      <button class="prep-btn on" data-prep="on">on</button>
+    </div>
+    <div class="feedback" id="feedbackDisplay">✔️ tap an option</div>
+    <button class="next-btn" id="nextBtn">⟳ next question</button>
+  </div>
+  <div class="tiny-note">20 unique sentences – endless cycle</div>
+</div>
+
+<script>
+  (function() {
+    // ----- QUESTION BANK (exactly 20, all using at/in/on + time) -----
+    const baseQuestions = [
+      { text: "I usually wake up ___ 7:30.", correct: "at" },
+      { text: "Let's meet ___ Friday afternoon.", correct: "on" },
+      { text: "Her birthday is ___ December.", correct: "in" },
+      { text: "We often go skiing ___ winter.", correct: "in" },
+      { text: "The meeting starts ___ 9 o'clock.", correct: "at" },
+      { text: "See you ___ Monday morning.", correct: "on" },
+      { text: "He was born ___ 2005.", correct: "in" },
+      { text: "I like to relax ___ the weekend.", correct: "at" },   // at the weekend (BrE / common)
+      { text: "She usually calls ___ lunchtime.", correct: "at" },
+      { text: "They got married ___ June 15th.", correct: "on" },
+      { text: "It's very cold ___ night here.", correct: "at" },
+      { text: "I'll finish the report ___ the afternoon.", correct: "in" },
+      { text: "We arrived ___ midnight.", correct: "at" },
+      { text: "The shop closes ___ Sunday.", correct: "on" },
+      { text: "I love walking ___ autumn.", correct: "in" },
+      { text: "The party is ___ New Year's Eve.", correct: "on" },
+      { text: "He started work ___ 2018.", correct: "in" },
+      { text: "Let's meet ___ noon.", correct: "at" },
+      { text: "I'll see you ___ Tuesday.", correct: "on" },
+      { text: "She usually wakes up ___ 6:45.", correct: "at" }
+    ];
+
+    // ----- app state -----
+    let currentQuestion = null;            // current question object
+    let answered = false;                 // true after user selects prep
+    let correctAnswer = '';               
+    let score = 0;                         // number of correct answers (capped at 20 for display)
+    let questionCounter = 0;                // total questions attempted (increases infinitely)
+    const totalBase = baseQuestions.length; // 20
+
+    // DOM elements
+    const sentenceEl = document.getElementById('sentenceDisplay');
+    const options = document.querySelectorAll('.prep-btn');
+    const feedbackEl = document.getElementById('feedbackDisplay');
+    const nextBtn = document.getElementById('nextBtn');
+    const scoreSpan = document.getElementById('scoreDisplay');
+
+    // helper: get a random question from base array (infinity loop)
+    function pickRandomQuestion() {
+      const randomIndex = Math.floor(Math.random() * totalBase);
+      return { ...baseQuestions[randomIndex] }; // shallow copy (enough)
+    }
+
+    // render current question into sentence (blank style)
+    function renderQuestion() {
+      if (!currentQuestion) return;
+      const qText = currentQuestion.text;
+      // replace the preposition word (at/in/on) ___ with styled blank
+      const blankRegex = /___/g;
+      const displayHtml = qText.replace(blankRegex, '<span class="blank">___</span>');
+      sentenceEl.innerHTML = displayHtml;
+      correctAnswer = currentQuestion.correct;
+    }
+
+    // reset UI for new question (clear feedback, enable buttons, remove extra classes)
+    function resetForNewQuestion() {
+      answered = false;
+
+      // remove any feedback styling & set neutral message
+      feedbackEl.classList.remove('correct', 'wrong');
+      feedbackEl.innerText = '🤔 choose at / in / on';
+
+      // enable all preposition buttons
+      options.forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+      });
+
+      // disable next button until answer selected
+      nextBtn.disabled = true;
+    }
+
+    // update displayed score (always shows correct count out of 20)
+    function updateScoreDisplay() {
+      // score never exceeds 20 (just a visual cap)
+      const displayScore = Math.min(score, 20);
+      scoreSpan.innerText = `✔ ${displayScore} / 20`;
+    }
+
+    // load a brand new random question and reset UI
+    function loadNextQuestion() {
+      currentQuestion = pickRandomQuestion();
+      renderQuestion();
+      resetForNewQuestion();
+      // increment question counter (unused but we track for fun)
+      questionCounter++;
+    }
+
+    // handle answer click
+    function handlePrepClick(event) {
+      const btn = event.currentTarget;
+      if (answered) return;            // already answered, ignore
+
+      const selected = btn.dataset.prep;   // 'at', 'in', 'on'
+      const isCorrect = (selected === correctAnswer);
+
+      // disable all option buttons immediately to prevent double answer
+      options.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+      });
+
+      // show feedback
+      if (isCorrect) {
+        feedbackEl.innerText = `✅ correct! “${correctAnswer}” is right.`;
+        feedbackEl.classList.add('correct');
+        feedbackEl.classList.remove('wrong');
+        score = Math.min(score + 1, 20);   // increase up to 20
+      } else {
+        feedbackEl.innerText = `❌ oops! the right answer is “${correctAnswer}”.`;
+        feedbackEl.classList.add('wrong');
+        feedbackEl.classList.remove('correct');
+        // score unchanged
+      }
+
+      // mark as answered
+      answered = true;
+      // enable next button
+      nextBtn.disabled = false;
+      // update score display
+      updateScoreDisplay();
+    }
+
+    // restart the quiz (or continue infinitely) – same as loadNextQuestion
+    function nextQuestionHandler() {
+      loadNextQuestion();
+    }
+
+    // initialization: first question, set up listeners, infinite mode
+    function initQuiz() {
+      // set initial score display
+      score = 0;
+      updateScoreDisplay();
+
+      // pick first question
+      currentQuestion = pickRandomQuestion();
+      renderQuestion();
+      resetForNewQuestion();  // also sets nextBtn disabled = true
+
+      // attach listeners to prep buttons
+      options.forEach(btn => {
+        btn.addEventListener('click', handlePrepClick);
+      });
+
+      // next button listener
+      nextBtn.addEventListener('click', nextQuestionHandler);
+
+      // little extra: keep infinite loop – when next is clicked, loadNextQuestion already does it
+      // also ensure that after 20 answers the score remains but we continue.
+    }
+
+    // start everything
+    initQuiz();
+
+    // optional: touch-friendly & disable double-tap zoom on buttons (no extra action needed)
+  })();
+</script>
+</body>
+</html>

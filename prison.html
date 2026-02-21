@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D PRISON ESCAPE · 3 MAZES · CHASING POLICE</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: #0b1a1e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 12px;
+        }
+        .game-container {
+            background: #1e2f3a;
+            padding: 25px 25px 30px 25px;
+            border-radius: 36px 36px 24px 24px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.7), inset 2px 2px 5px #3f5b68;
+            border: 3px solid #6d8a9b;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 24px;
+            box-shadow: 0 0 0 5px #263b44, 0 18px 30px black;
+            background: #1f3a47;
+            cursor: pointer;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .status-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 18px 10px 8px 10px;
+            color: #b6e6ff;
+            text-shadow: 2px 2px 0 #0f1f28;
+            font-weight: bold;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+        .badge {
+            background: #15262e;
+            padding: 8px 18px;
+            border-radius: 60px;
+            border: 2px solid #618c9e;
+            box-shadow: inset 0 2px 3px #0d181f;
+            color: #e2f0fa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge span {
+            font-size: 2rem;
+            line-height: 1;
+            color: #ffd966;
+        }
+        .level-indicator {
+            background: #1f3d4a;
+            padding: 8px 22px;
+            border-radius: 40px;
+            border: 2px solid #5c8ca3;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #f5e56b;
+        }
+        button {
+            background: #2f4d5c;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 26px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #f0f9ff;
+            text-shadow: 1px 1px 0 #12303b;
+            box-shadow: 0 7px 0 #0b1c24, 0 8px 10px black;
+            cursor: pointer;
+            transition: 0.07s ease;
+            letter-spacing: 1px;
+            border: 2px solid #7da5b9;
+        }
+        button:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #0b1c24, 0 5px 8px black;
+        }
+        .legend {
+            display: flex;
+            gap: 18px;
+            margin-left: 12px;
+            font-size: 1rem;
+            color: #afd1e0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .emoji-icon {
+            font-size: 1.8rem;
+            filter: drop-shadow(2px 2px 0 #0d1c24);
+        }
+        .win-message {
+            color: #f5e56b;
+            font-size: 1.7rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 8px;
+            background: #0c2028b3;
+            border-radius: 60px;
+            padding: 4px 15px;
+            border: 2px solid #f5d742;
+            display: inline-block;
+            backdrop-filter: blur(2px);
+        }
+        .lose-message {
+            color: #ffa098;
+            font-size: 1.7rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 8px;
+            background: #2d0f0fb3;
+            border-radius: 60px;
+            padding: 4px 15px;
+            border: 2px solid #ff5e5e;
+            display: inline-block;
+            backdrop-filter: blur(2px);
+        }
+        .info-tip {
+            text-align: center;
+            margin-top: 8px;
+            color: #b3d0e0;
+            font-size: 1.2rem;
+        }
+        .next-level-btn {
+            background: #4f7b5a;
+            margin-left: 15px;
+            padding: 8px 20px;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 0 #1d4a2a;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="status-panel">
+        <div class="badge">
+            <span>🔑</span>
+            <span id="keyCounter">0/1</span>
+        </div>
+        <div class="level-indicator" id="levelDisplay">🏁 1/3</div>
+        <div class="legend">
+            <div class="legend-item"><span class="emoji-icon">😵</span> prisoner</div>
+            <div class="legend-item"><span class="emoji-icon">👮</span> chaser</div>
+            <div class="legend-item"><span class="emoji-icon">🔓</span> exit</div>
+            <div class="legend-item"><span class="emoji-icon">🗝️</span> key</div>
+        </div>
+        <button id="resetBtn">RESET MAZE</button>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 5px 0 10px;">
+        <div id="messageArea" style="text-align: center; min-height: 60px;">
+            <div id="winBanner" class="win-message" style="display: none;">🕊️  ESCAPED!  🕊️</div>
+            <div id="loseBanner" class="lose-message" style="display: none;">👮‍♂️  CAUGHT!  👮‍♂️</div>
+        </div>
+        <button id="nextLevelBtn" class="next-level-btn" style="display: none;">⏩ NEXT MAZE</button>
+    </div>
+    <div class="info-tip">⬆️⬇️⬅️➡️  ·  police CHASES you  ·  key → exit</div>
+</div>
+
+<script>
+    (function() {
+        // ---------- THREE DISTINCT MAZES (8x8, solvable) ----------
+        const MAZES = [
+            {   // Maze 1 – classic winding path
+                grid: [
+                    [1,1,1,1,1,1,1,1],
+                    [1,0,0,0,1,0,0,1], // start (1,1)
+                    [1,1,1,0,1,1,0,1],
+                    [1,0,0,0,0,0,0,1],
+                    [1,0,1,1,1,1,0,1],
+                    [1,2,1,0,0,0,0,1], // key (5,1)
+                    [1,0,0,0,1,0,3,1], // exit (6,6)
+                    [1,1,1,1,1,1,1,1]
+                ],
+                start: { row:1, col:1 },
+                policeStart: { row:3, col:5 }
+            },
+            {   // Maze 2 – spiral / dead ends
+                grid: [
+                    [1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,1,3,1], // exit (1,6)
+                    [1,1,1,1,0,1,0,1],
+                    [1,0,0,0,0,0,0,1],
+                    [1,0,1,1,1,1,0,1],
+                    [1,2,1,0,0,0,1,1], // key (5,1)
+                    [1,0,0,0,1,0,0,1],
+                    [1,1,1,1,1,1,1,1]
+                ],
+                start: { row:1, col:1 },
+                policeStart: { row:5, col:5 }
+            },
+            {   // Maze 3 – labyrinthine
+                grid: [
+                    [1,1,1,1,1,1,1,1],
+                    [1,0,1,0,0,0,3,1], // exit (1,6)
+                    [1,0,1,1,1,0,1,1],
+                    [1,0,0,0,1,0,0,1],
+                    [1,0,1,0,0,1,0,1],
+                    [1,2,1,0,1,0,0,1], // key (5,1)
+                    [1,0,0,0,0,0,1,1],
+                    [1,1,1,1,1,1,1,1]
+                ],
+                start: { row:1, col:1 },
+                policeStart: { row:4, col:4 }
+            }
+        ];
+
+        // current level index (0,1,2)
+        let currentLevel = 0;
+
+        // ------ GAME STATE ------
+        let grid = [];
+        let player = { row:1, col:1 };
+        let hasKey = false;
+        let gameWon = false;
+        let gameLost = false;
+        let police = { row:3, col:5 }; // will be overwritten on load
+
+        let chaseInterval = null;
+        let gameActive = true;
+
+        // DOM elements
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const keySpan = document.getElementById('keyCounter');
+        const winBanner = document.getElementById('winBanner');
+        const loseBanner = document.getElementById('loseBanner');
+        const resetBtn = document.getElementById('resetBtn');
+        const nextLevelBtn = document.getElementById('nextLevelBtn');
+        const levelDisplay = document.getElementById('levelDisplay');
+
+        // TILE constants
+        const TILE = { FLOOR:0, WALL:1, KEY:2, EXIT:3 };
+
+        // ---- helper functions ----
+        function stopChaseInterval() {
+            if (chaseInterval) {
+                clearInterval(chaseInterval);
+                chaseInterval = null;
+            }
+        }
+
+        function updateKeyDisplay() {
+            keySpan.innerText = hasKey ? '1/1' : '0/1';
+        }
+
+        // Load a specific level by index
+        function loadLevel(levelIndex) {
+            stopChaseInterval();
+            const levelData = MAZES[levelIndex];
+            // deep copy grid
+            grid = levelData.grid.map(row => [...row]);
+            player.row = levelData.start.row;
+            player.col = levelData.start.col;
+            police.row = levelData.policeStart.row;
+            police.col = levelData.policeStart.col;
+            hasKey = false;
+            gameWon = false;
+            gameLost = false;
+            gameActive = true;
+
+            winBanner.style.display = 'none';
+            loseBanner.style.display = 'none';
+            nextLevelBtn.style.display = 'none';
+            updateKeyDisplay();
+            levelDisplay.innerText = `🏁 ${levelIndex+1}/3`;
+
+            drawMap();
+
+            // start chasing (police moves every 500ms)
+            if (!gameWon && !gameLost) {
+                chaseInterval = setInterval(movePoliceChaser, 500);
+            }
+        }
+
+        // reset current level
+        function resetCurrentLevel() {
+            loadLevel(currentLevel);
+        }
+
+        // go to next level (if available)
+        function nextLevel() {
+            if (currentLevel < MAZES.length - 1) {
+                currentLevel++;
+                loadLevel(currentLevel);
+            } else {
+                // already last level: restart from maze 1
+                currentLevel = 0;
+                loadLevel(0);
+            }
+            canvas.focus();
+        }
+
+        // --- CHASE LOGIC (BFS toward player) ---
+        function movePoliceChaser() {
+            if (!gameActive || gameWon || gameLost) return;
+
+            // If police already on player, capture (should have been caught, but double-check)
+            if (police.row === player.row && police.col === player.col) {
+                gameLost = true;
+                loseBanner.style.display = 'inline-block';
+                gameActive = false;
+                stopChaseInterval();
+                drawMap();
+                return;
+            }
+
+            // BFS from police to player
+            const queue = [{ r: police.row, c: police.col, path: [] }];
+            const visited = Array(8).fill().map(() => Array(8).fill(false));
+            visited[police.row][police.col] = true;
+
+            const directions = [
+                { dr: -1, dc: 0 }, // up
+                { dr: 1, dc: 0 },  // down
+                { dr: 0, dc: -1 }, // left
+                { dr: 0, dc: 1 }   // right
+            ];
+
+            let bestDir = null;
+
+            while (queue.length > 0) {
+                const { r, c, path } = queue.shift();
+
+                if (r === player.row && c === player.col) {
+                    if (path.length > 0) {
+                        bestDir = path[0];
+                    }
+                    break;
+                }
+
+                for (let d of directions) {
+                    const nr = r + d.dr;
+                    const nc = c + d.dc;
+                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && !visited[nr][nc] && grid[nr][nc] !== TILE.WALL) {
+                        visited[nr][nc] = true;
+                        const newPath = path.length === 0 ? [d] : [...path, d];
+                        queue.push({ r: nr, c: nc, path: newPath });
+                    }
+                }
+            }
+
+            if (bestDir) {
+                const newR = police.row + bestDir.dr;
+                const newC = police.col + bestDir.dc;
+                if (grid[newR][newC] !== TILE.WALL) {
+                    police.row = newR;
+                    police.col = newC;
+                }
+            }
+
+            drawMap();
+
+            // capture check
+            if (police.row === player.row && police.col === player.col) {
+                gameLost = true;
+                loseBanner.style.display = 'inline-block';
+                gameActive = false;
+                stopChaseInterval();
+                drawMap();
+            }
+        }
+
+        // ----- player movement -----
+        function tryMove(dRow, dCol) {
+            if (gameWon || gameLost || !gameActive) return;
+
+            const newRow = player.row + dRow;
+            const newCol = player.col + dCol;
+
+            if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) return;
+
+            const tile = grid[newRow][newCol];
+            if (tile === TILE.WALL) return;
+
+            // pick key?
+            if (tile === TILE.KEY) {
+                hasKey = true;
+                grid[newRow][newCol] = TILE.FLOOR;
+                updateKeyDisplay();
+            }
+
+            // move player
+            player.row = newRow;
+            player.col = newCol;
+
+            // win check (exit + key)
+            if (hasKey && grid[player.row][player.col] === TILE.EXIT) {
+                gameWon = true;
+                winBanner.style.display = 'inline-block';
+                gameActive = false;
+                stopChaseInterval();
+
+                // show next level button (if more levels exist, or restart if final)
+                if (currentLevel < MAZES.length - 1) {
+                    nextLevelBtn.style.display = 'inline-block';
+                    nextLevelBtn.innerText = '⏩ NEXT MAZE';
+                } else {
+                    nextLevelBtn.style.display = 'inline-block';
+                    nextLevelBtn.innerText = '🔁 RESTART MAZES';
+                }
+                drawMap();
+                return;
+            }
+
+            // capture check (if police on same tile after move)
+            if (police.row === player.row && police.col === player.col) {
+                gameLost = true;
+                loseBanner.style.display = 'inline-block';
+                gameActive = false;
+                stopChaseInterval();
+                drawMap();
+                return;
+            }
+
+            drawMap();
+        }
+
+        // ----- drawing (police + prisoner) -----
+        function drawMap() {
+            ctx.clearRect(0, 0, 400, 400);
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const x = c * 50;
+                    const y = r * 50;
+                    const tileType = grid[r][c];
+
+                    if (tileType === TILE.WALL) {
+                        ctx.fillStyle = '#4e3b30';
+                        ctx.fillRect(x, y, 50, 50);
+                        ctx.fillStyle = '#755e4d';
+                        ctx.fillRect(x+4, y+4, 42, 42);
+                        ctx.fillStyle = '#3d2c22';
+                        ctx.beginPath();
+                        ctx.arc(x+12, y+12, 5, 0, 2*Math.PI);
+                        ctx.arc(x+38, y+38, 5, 0, 2*Math.PI);
+                        ctx.fill();
+                    } else {
+                        ctx.fillStyle = '#4f6455';
+                        ctx.fillRect(x, y, 50, 50);
+                        ctx.fillStyle = '#6a8470';
+                        ctx.fillRect(x+2, y+2, 46, 46);
+                        ctx.strokeStyle = '#354b40';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x+1, y+1, 48, 48);
+                    }
+
+                    if (tileType === TILE.KEY) {
+                        ctx.font = 'bold 36px "Courier New", monospace';
+                        ctx.fillStyle = '#ffd966';
+                        ctx.fillText('🗝️', x+8, y+40);
+                    } else if (tileType === TILE.EXIT) {
+                        if (gameWon) {
+                            ctx.fillStyle = '#5d9732';
+                            ctx.fillRect(x+6, y+6, 38, 38);
+                            ctx.font = '28px "Courier New", monospace';
+                            ctx.fillStyle = '#fae765';
+                            ctx.fillText('🔓', x+12, y+37);
+                        } else {
+                            ctx.fillStyle = '#b07040';
+                            ctx.fillRect(x+8, y+8, 34, 34);
+                            ctx.fillStyle = '#7a4d28';
+                            ctx.font = 'bold 24px monospace';
+                            ctx.fillText('🔒', x+14, y+35);
+                        }
+                    }
+                }
+            }
+
+            // draw police (chaser)
+            const pxCop = police.col * 50;
+            const pyCop = police.row * 50;
+            ctx.fillStyle = '#1d3557';
+            ctx.fillRect(pxCop+8, pyCop+8, 34, 34);
+            ctx.fillStyle = '#2b5f8a';
+            ctx.fillRect(pxCop+12, pyCop+12, 26, 26);
+            ctx.font = '30px "Courier New", monospace';
+            ctx.fillStyle = '#fdffb8';
+            ctx.fillText('👮', pxCop+12, pyCop+40);
+
+            // draw prisoner
+            const px = player.col * 50;
+            const py = player.row * 50;
+            ctx.fillStyle = '#cf7f32';
+            ctx.fillRect(px+10, py+10, 30, 30);
+            ctx.fillStyle = '#2b211f';
+            ctx.fillRect(px+14, py+14, 8, 22);
+            ctx.fillRect(px+28, py+14, 8, 22);
+            ctx.font = '28px "Courier New", monospace';
+            ctx.fillStyle = 'white';
+            ctx.fillText('👴🏿', px+16, py+38);
+
+            if (gameWon) {
+                ctx.font = '28px sans-serif';
+                ctx.fillStyle = '#fffacd';
+                ctx.fillText('✨', px-10, py-10);
+                ctx.fillText('✨', px+40, py-15);
+            }
+            if (gameLost) {
+                ctx.font = 'bold 32px monospace';
+                ctx.fillStyle = '#ff4f4f';
+                ctx.fillText('⛔', px+5, py+40);
+            }
+        }
+
+        // ----- event handlers -----
+        function handleKeydown(e) {
+            if (gameWon || gameLost || !gameActive) return;
+            const key = e.key;
+            if (key.startsWith('Arrow')) e.preventDefault();
+            switch (key) {
+                case 'ArrowUp': tryMove(-1, 0); break;
+                case 'ArrowDown': tryMove(1, 0); break;
+                case 'ArrowLeft': tryMove(0, -1); break;
+                case 'ArrowRight': tryMove(0, 1); break;
+                default: return;
+            }
+        }
+
+        canvas.addEventListener('click', () => canvas.focus());
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        window.addEventListener('keydown', handleKeydown);
+
+        resetBtn.addEventListener('click', () => {
+            resetCurrentLevel();
+            canvas.focus();playAudio();
+        });
+
+        nextLevelBtn.addEventListener('click', () => {
+            nextLevel();
+            canvas.focus();
+        });
+
+        // start with level 0
+        currentLevel = 0;
+        loadLevel(0);
+        canvas.focus();
+
+    })();
+
+     function playAudio() { 
+            var a = document.getElementById("myAudio");
+            a.loop = true; // Fixed: was 'audio.loop' but should be 'a.loop'
+            if (a.paused) {
+                a.play();
+            }
+        };
+</script>
+ <audio id="myAudio" src="music/sunshine.wav"></audio>
+</body>
+</html>
