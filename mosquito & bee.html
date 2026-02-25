@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐝🦟 catch emoji · mosquito & bee</title>
+    <title>🐝🦟 catch · bee minus one · fullscreen</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,6 +25,30 @@
             border-radius: 2.5rem 2.5rem 2rem 2rem;
             box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6), inset 2px 2px 8px rgba(255, 255, 255, 0.2), inset -4px -4px 12px #0e2e38;
             padding: 1.8rem 1.8rem 2.2rem 1.8rem;
+            transition: all 0.2s;
+        }
+
+        /* fullscreen adjustment */
+        .game-container:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #1a3f4b;
+            border-radius: 0;
+            padding: 1.5rem;
+        }
+
+        .game-container:fullscreen .canvas-wrapper {
+            width: min(95vw, 95vh * 1.5);
+        }
+
+        .game-container:fullscreen canvas {
+            width: 100%;
+            height: auto;
+            max-height: 75vh;
         }
 
         .header {
@@ -106,6 +130,8 @@
             justify-content: space-between;
             margin-top: 1.3rem;
             padding: 0 0.5rem;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         button {
@@ -113,13 +139,13 @@
             border: none;
             font-size: 1.5rem;
             font-weight: bold;
-            padding: 0.6rem 2rem;
+            padding: 0.6rem 1.6rem;
             border-radius: 3rem;
             color: #1f404b;
             box-shadow: 0 7px 0 #a06d20, 0 8px 12px black;
             cursor: pointer;
             transition: 0.07s linear;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             letter-spacing: 0.5px;
@@ -138,6 +164,7 @@
             font-size: 1.4rem;
             font-weight: 500;
             box-shadow: inset 0 -2px 0 #0f2e36;
+            white-space: nowrap;
         }
 
         footer {
@@ -149,10 +176,16 @@
             font-size: 0.95rem;
             text-shadow: 0 2px 3px #052229;
         }
+
+        .fullscreen-btn {
+            background: #6b8b9c;
+            box-shadow: 0 7px 0 #3a5562;
+            margin-left: auto;
+        }
     </style>
 </head>
 <body>
-    <div class="game-container">
+    <div class="game-container" id="gameContainer">
         <div class="header">
             <div class="score-box">⭐ <span id="scoreDisplay">0</span></div>
             <div class="timer-box">⏳ <span id="timerDisplay">30</span>s</div>
@@ -162,9 +195,10 @@
         </div>
         <div class="controls">
             <button id="restartButton">🔁 restart</button>
-            <div class="status" id="statusMessage">swat both!</div>
+            <button id="fullscreenButton" class="fullscreen-btn">⛶ fullscreen</button>
+            <div class="status" id="statusMessage">🦟+1 / 🐝–1</div>
         </div>
-        <footer>🐝 tap mosquito or bee · +1 each · bee gives +2 ⭐</footer>
+        <footer>🐝 bee penalizes –1 · mosquito +1 · fullscreen fun</footer>
     </div>
 
     <script>
@@ -172,6 +206,7 @@
             // ----- canvas & context -----
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
+            const container = document.getElementById('gameContainer');
 
             // ----- UI elements -----
             const scoreSpan = document.getElementById('scoreDisplay');
@@ -179,7 +214,7 @@
             const statusDiv = document.getElementById('statusMessage');
 
             // ----- game constants -----
-            const INIT_TIME = 30;                 // seconds
+            const INIT_TIME = 100;                 // seconds
             const EMOJI_SIZE = 42;                 // width/height for hit detection (square)
             const SPAWN_INTERVAL_MS = 700;          // new insect every 0.7 sec
 
@@ -205,7 +240,7 @@
                 if (gameOver) {
                     statusDiv.textContent = '💤 game over · restart';
                 } else if (gameActive) {
-                    statusDiv.textContent = '🐝🦟 tap!';
+                    statusDiv.textContent = '🦟+1 / 🐝–1';
                 } else {
                     statusDiv.textContent = '⏸ paused · press restart';
                 }
@@ -272,7 +307,7 @@
                     refreshUI();
                 }, 1000);
 
-                // insect spawn (random type: 60% mosquito, 40% bee)
+                // insect spawn (60% mosquito, 40% bee)
                 spawnInterval = setInterval(() => {
                     if (!gameActive || gameOver) return;
 
@@ -283,7 +318,7 @@
                     const vx = (Math.random() * 3 - 1.5) * 0.9;
                     const vy = (Math.random() * 3 - 1.5) * 0.9;
 
-                    // spawn near edges (more dynamic)
+                    // spawn near edges
                     let x, y;
                     if (Math.random() < 0.5) {
                         x = Math.random() < 0.5 ? -EMOJI_SIZE/2 : canvas.width + EMOJI_SIZE/2;
@@ -293,7 +328,7 @@
                         y = Math.random() < 0.5 ? -EMOJI_SIZE/2 : canvas.height + EMOJI_SIZE/2;
                     }
 
-                    // clamp softly
+                    // clamp
                     x = Math.min(canvas.width + EMOJI_SIZE, Math.max(-EMOJI_SIZE, x));
                     y = Math.min(canvas.height + EMOJI_SIZE, Math.max(-EMOJI_SIZE, y));
 
@@ -386,7 +421,7 @@
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
 
-                    // tiny background glow for better readability
+                    // tiny background glow
                     ctx.shadowBlur = 18;
                     ctx.shadowColor = '#ffe68f90';
                     ctx.fillStyle = '#ffffff40';
@@ -395,10 +430,8 @@
                     // actual emoji
                     ctx.shadowColor = '#00000070';
                     ctx.shadowBlur = 15;
-                    ctx.fillStyle = '#000000'; // color doesn't matter for emoji (they are colorful)
+                    ctx.fillStyle = '#000000';
                     ctx.fillText(bug.type, bug.x, bug.y);
-
-                    // optional tiny reflection
                 });
 
                 // game over overlay
@@ -421,7 +454,7 @@
                 ctx.globalAlpha = 1.0;
             }
 
-            // ----- canvas click: detect emoji hit (bounding circle/box) -----
+            // ----- canvas click: detect emoji hit (bee = -1, mosquito = +1) -----
             function handleCanvasClick(e) {
                 if (!gameActive || gameOver) return;
 
@@ -435,17 +468,17 @@
                 // loop backwards to allow removal
                 for (let i = insects.length - 1; i >= 0; i--) {
                     const bug = insects[i];
-                    // simple circle hit detection (radius ~ half emoji size)
+                    // circle hit detection (radius ~ half emoji size)
                     const dx = mouseX - bug.x;
                     const dy = mouseY - bug.y;
                     const dist = Math.sqrt(dx*dx + dy*dy);
-                    const hitRadius = EMOJI_SIZE * 0.45;  // fair catch area
+                    const hitRadius = EMOJI_SIZE * 0.45;
 
                     if (dist <= hitRadius) {
-                        // points: bee gives 2, mosquito gives 1
+                        // points: mosquito +1, bee -1
                         if (bug.type === '🐝') {
-                            score += 2;
-                        } else {
+                            score -= 1;
+                        } else { // 🦟
                             score += 1;
                         }
                         insects.splice(i, 1);
@@ -455,10 +488,24 @@
                 }
             }
 
+            // ----- fullscreen toggle -----
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen().catch(err => {
+                        console.warn(`fullscreen error: ${err.message}`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
             // ----- restart button -----
             document.getElementById('restartButton').addEventListener('click', () => {
-                resetGame();
+                resetGame();playAudio();
             });
+
+            // ----- fullscreen button -----
+            document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
 
             // ----- canvas click listener -----
             canvas.addEventListener('click', handleCanvasClick);
@@ -473,6 +520,14 @@
                 if (animationFrame) cancelAnimationFrame(animationFrame);
             });
         })();
+        function playAudio() { 
+            var a = document.getElementById("myAudio");
+            a.loop = true; // Fixed: was 'audio.loop' but should be 'a.loop'
+            if (a.paused) {
+                a.play();
+            }
+        };
     </script>
+     <audio id="myAudio" src="music/red sun.mp3"></audio>
 </body>
 </html>
