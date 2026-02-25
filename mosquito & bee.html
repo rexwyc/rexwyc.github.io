@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐝🦟 catch emoji · mosquito & bee</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1b3b4f 0%, #1e4d5e 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        .game-container {
+            background: #204b5c;
+            border-radius: 2.5rem 2.5rem 2rem 2rem;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6), inset 2px 2px 8px rgba(255, 255, 255, 0.2), inset -4px -4px 12px #0e2e38;
+            padding: 1.8rem 1.8rem 2.2rem 1.8rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1b3d47;
+            padding: 0.8rem 1.8rem;
+            border-radius: 3rem;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 2px 5px #0c262e, 0 6px 0 #0f2d35;
+            color: #e2f0f3;
+            font-weight: 600;
+            text-shadow: 1px 2px 0 #0f2f38;
+        }
+
+        .score-box {
+            background: #2b5b68;
+            border-radius: 2.5rem;
+            padding: 0.3rem 1.4rem;
+            font-size: 1.9rem;
+            letter-spacing: 2px;
+            box-shadow: inset 0 -3px 0 #123138, 0 4px 0 #0b2b32;
+            color: #fadf7f;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .timer-box {
+            background: #283f46;
+            border-radius: 3rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 1.7rem;
+            box-shadow: inset 0 -2px 0 #142b32;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffecbb;
+        }
+
+        .timer-box span {
+            background: #101f25;
+            padding: 0.1rem 0.9rem;
+            border-radius: 2rem;
+            font-size: 2rem;
+            color: #fee6a2;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        .canvas-wrapper {
+            background: #315d67;
+            border-radius: 2rem;
+            padding: 12px;
+            box-shadow: inset 0 -3px 0 #18424b, 0 12px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            width: 600px;
+            height: 400px;
+            border-radius: 1.4rem;
+            background: radial-gradient(circle at 30% 40%, #b7e0ea, #5fa5b5);
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="14" fill="none" stroke="%23ffffff" stroke-width="2"/><circle cx="17" cy="17" r="6" fill="%23ffd966" stroke="%23b45f06" stroke-width="2"/><line x1="17" y1="3" x2="17" y2="31" stroke="%23ffffff" stroke-width="2"/><line x1="3" y1="17" x2="31" y2="17" stroke="%23ffffff" stroke-width="2"/></svg>') 17 17, crosshair;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: box-shadow 0.1s;
+        }
+
+        canvas:active {
+            box-shadow: 0 0 0 3px #ffe484;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.3rem;
+            padding: 0 0.5rem;
+        }
+
+        button {
+            background: #fec542;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 0.6rem 2rem;
+            border-radius: 3rem;
+            color: #1f404b;
+            box-shadow: 0 7px 0 #a06d20, 0 8px 12px black;
+            cursor: pointer;
+            transition: 0.07s linear;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        button:active {
+            transform: translateY(6px);
+            box-shadow: 0 1px 0 #a06d20, 0 5px 10px black;
+        }
+
+        .status {
+            background: #1d404b;
+            color: #dbf2f5;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 1.4rem;
+            font-weight: 500;
+            box-shadow: inset 0 -2px 0 #0f2e36;
+        }
+
+        footer {
+            margin-top: 1rem;
+            text-align: center;
+            color: #aaced6;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+            text-shadow: 0 2px 3px #052229;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="score-box">⭐ <span id="scoreDisplay">0</span></div>
+            <div class="timer-box">⏳ <span id="timerDisplay">30</span>s</div>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+        </div>
+        <div class="controls">
+            <button id="restartButton">🔁 restart</button>
+            <div class="status" id="statusMessage">swat both!</div>
+        </div>
+        <footer>🐝 tap mosquito or bee · +1 each · bee gives +2 ⭐</footer>
+    </div>
+
+    <script>
+        (function() {
+            // ----- canvas & context -----
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // ----- UI elements -----
+            const scoreSpan = document.getElementById('scoreDisplay');
+            const timerSpan = document.getElementById('timerDisplay');
+            const statusDiv = document.getElementById('statusMessage');
+
+            // ----- game constants -----
+            const INIT_TIME = 30;                 // seconds
+            const EMOJI_SIZE = 42;                 // width/height for hit detection (square)
+            const SPAWN_INTERVAL_MS = 700;          // new insect every 0.7 sec
+
+            // ----- game state -----
+            let score = 0;
+            let timeLeft = INIT_TIME;
+            let gameActive = false;
+            let gameOver = false;
+
+            // array of insects: { x, y, vx, vy, type }  type: '🦟' or '🐝'
+            let insects = [];
+
+            // interval & timer handles
+            let gameInterval = null;
+            let spawnInterval = null;
+            let animationFrame = null;
+
+            // ----- helper: update score & timer displays -----
+            function refreshUI() {
+                scoreSpan.textContent = score;
+                timerSpan.textContent = timeLeft;
+
+                if (gameOver) {
+                    statusDiv.textContent = '💤 game over · restart';
+                } else if (gameActive) {
+                    statusDiv.textContent = '🐝🦟 tap!';
+                } else {
+                    statusDiv.textContent = '⏸ paused · press restart';
+                }
+            }
+
+            // ----- clean all intervals / raf -----
+            function clearAllIntervals() {
+                if (gameInterval) {
+                    clearInterval(gameInterval);
+                    gameInterval = null;
+                }
+                if (spawnInterval) {
+                    clearInterval(spawnInterval);
+                    spawnInterval = null;
+                }
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
+                }
+            }
+
+            // ----- reset to fresh game -----
+            function resetGame() {
+                // kill all scheduled jobs
+                clearAllIntervals();
+
+                // reset state
+                gameActive = true;
+                gameOver = false;
+                score = 0;
+                timeLeft = INIT_TIME;
+                insects = [];
+
+                refreshUI();
+
+                // start intervals and animation
+                startIntervals();
+                animationFrame = requestAnimationFrame(drawLoop);
+            }
+
+            // ----- start timer & spawn intervals (game active) -----
+            function startIntervals() {
+                if (gameInterval) clearInterval(gameInterval);
+                if (spawnInterval) clearInterval(spawnInterval);
+
+                // timer countdown (every second)
+                gameInterval = setInterval(() => {
+                    if (!gameActive || gameOver) return;
+
+                    timeLeft -= 1;
+                    timerSpan.textContent = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        timeLeft = 0;
+                        gameActive = false;
+                        gameOver = true;
+                        refreshUI();
+
+                        if (gameInterval) clearInterval(gameInterval);
+                        if (spawnInterval) clearInterval(spawnInterval);
+                        gameInterval = null;
+                        spawnInterval = null;
+                    }
+                    refreshUI();
+                }, 1000);
+
+                // insect spawn (random type: 60% mosquito, 40% bee)
+                spawnInterval = setInterval(() => {
+                    if (!gameActive || gameOver) return;
+
+                    // choose emoji type
+                    const type = Math.random() < 0.6 ? '🦟' : '🐝';   // 60% mosquito, 40% bee
+
+                    // random velocity between -1.5 and 1.5
+                    const vx = (Math.random() * 3 - 1.5) * 0.9;
+                    const vy = (Math.random() * 3 - 1.5) * 0.9;
+
+                    // spawn near edges (more dynamic)
+                    let x, y;
+                    if (Math.random() < 0.5) {
+                        x = Math.random() < 0.5 ? -EMOJI_SIZE/2 : canvas.width + EMOJI_SIZE/2;
+                        y = Math.random() * canvas.height;
+                    } else {
+                        x = Math.random() * canvas.width;
+                        y = Math.random() < 0.5 ? -EMOJI_SIZE/2 : canvas.height + EMOJI_SIZE/2;
+                    }
+
+                    // clamp softly
+                    x = Math.min(canvas.width + EMOJI_SIZE, Math.max(-EMOJI_SIZE, x));
+                    y = Math.min(canvas.height + EMOJI_SIZE, Math.max(-EMOJI_SIZE, y));
+
+                    insects.push({
+                        x, y,
+                        vx: vx,
+                        vy: vy,
+                        type: type
+                    });
+
+                    // keep population reasonable (max 22)
+                    if (insects.length > 26) {
+                        insects.splice(0, 6);
+                    }
+                }, SPAWN_INTERVAL_MS);
+            }
+
+            // ----- drawing & updating positions -----
+            function drawLoop() {
+                updatePositions();
+                drawCanvas();
+                animationFrame = requestAnimationFrame(drawLoop);
+            }
+
+            // move all insects & bounce off walls
+            function updatePositions() {
+                if (!insects.length) return;
+
+                for (let i = 0; i < insects.length; i++) {
+                    const bug = insects[i];
+                    bug.x += bug.vx;
+                    bug.y += bug.vy;
+
+                    const half = EMOJI_SIZE / 2;
+                    // horizontal bounce
+                    if (bug.x - half < 0) {
+                        bug.x = half;
+                        bug.vx = -bug.vx * 0.96;
+                    } else if (bug.x + half > canvas.width) {
+                        bug.x = canvas.width - half;
+                        bug.vx = -bug.vx * 0.96;
+                    }
+
+                    // vertical bounce
+                    if (bug.y - half < 0) {
+                        bug.y = half;
+                        bug.vy = -bug.vy * 0.96;
+                    } else if (bug.y + half > canvas.height) {
+                        bug.y = canvas.height - half;
+                        bug.vy = -bug.vy * 0.96;
+                    }
+
+                    // avoid near-zero speed
+                    const minSpeed = 0.2;
+                    if (Math.abs(bug.vx) < minSpeed && Math.abs(bug.vy) < minSpeed) {
+                        bug.vx += (Math.random() - 0.5) * 0.35;
+                        bug.vy += (Math.random() - 0.5) * 0.35;
+                    }
+                }
+            }
+
+            // ----- canvas render with big emoji text -----
+            function drawCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // soft background gradient
+                const grad = ctx.createRadialGradient(200, 120, 50, 400, 300, 700);
+                grad.addColorStop(0, '#c2e6f0');
+                grad.addColorStop(1, '#78b2c2');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // tiny light pattern
+                ctx.fillStyle = '#e7f7fc30';
+                for (let i = 0; i < 30; i++) {
+                    ctx.beginPath();
+                    ctx.arc(30 + i*25, 20 + (i%9)*18, 3, 0, Math.PI*2);
+                    ctx.fill();
+                }
+
+                // draw each insect using fillText (emoji)
+                insects.forEach(bug => {
+                    // shadow for depth
+                    ctx.shadowColor = '#00000050';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowOffsetY = 3;
+
+                    // draw emoji, scaled by size
+                    ctx.font = `${EMOJI_SIZE}px 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiOne Color', 'Twemoji Mozilla', 'system-ui', sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+
+                    // tiny background glow for better readability
+                    ctx.shadowBlur = 18;
+                    ctx.shadowColor = '#ffe68f90';
+                    ctx.fillStyle = '#ffffff40';
+                    ctx.fillText(bug.type, bug.x, bug.y-1);
+
+                    // actual emoji
+                    ctx.shadowColor = '#00000070';
+                    ctx.shadowBlur = 15;
+                    ctx.fillStyle = '#000000'; // color doesn't matter for emoji (they are colorful)
+                    ctx.fillText(bug.type, bug.x, bug.y);
+
+                    // optional tiny reflection
+                });
+
+                // game over overlay
+                if (gameOver) {
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 0.45;
+                    ctx.fillStyle = '#0a2025';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.globalAlpha = 1;
+                    ctx.font = 'bold 36px "Segoe UI", Roboto, sans-serif';
+                    ctx.fillStyle = '#fecb7e';
+                    ctx.shadowColor = '#000000b0';
+                    ctx.shadowBlur = 20;
+                    ctx.fillText('✨ GAME OVER', 140, 210);
+                }
+
+                // reset shadow / alpha
+                ctx.shadowBlur = 0;
+                ctx.shadowColor = 'transparent';
+                ctx.globalAlpha = 1.0;
+            }
+
+            // ----- canvas click: detect emoji hit (bounding circle/box) -----
+            function handleCanvasClick(e) {
+                if (!gameActive || gameOver) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+
+                const mouseX = (e.clientX - rect.left) * scaleX;
+                const mouseY = (e.clientY - rect.top) * scaleY;
+
+                // loop backwards to allow removal
+                for (let i = insects.length - 1; i >= 0; i--) {
+                    const bug = insects[i];
+                    // simple circle hit detection (radius ~ half emoji size)
+                    const dx = mouseX - bug.x;
+                    const dy = mouseY - bug.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const hitRadius = EMOJI_SIZE * 0.45;  // fair catch area
+
+                    if (dist <= hitRadius) {
+                        // points: bee gives 2, mosquito gives 1
+                        if (bug.type === '🐝') {
+                            score += 2;
+                        } else {
+                            score += 1;
+                        }
+                        insects.splice(i, 1);
+                        scoreSpan.textContent = score;
+                        break; // one kill per click
+                    }
+                }
+            }
+
+            // ----- restart button -----
+            document.getElementById('restartButton').addEventListener('click', () => {
+                resetGame();
+            });
+
+            // ----- canvas click listener -----
+            canvas.addEventListener('click', handleCanvasClick);
+            canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // ----- init -----
+            resetGame();
+
+            // cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                clearAllIntervals();
+                if (animationFrame) cancelAnimationFrame(animationFrame);
+            });
+        })();
+    </script>
+</body>
+</html>
