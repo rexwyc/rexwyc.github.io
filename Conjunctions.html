@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conjunctions Hub | FANBOYS · subordinating · correlative</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f7fa 0%, #e6f0f5 100%);
+            color: #1e4e6f;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(21, 94, 117, 0.15);
+            border-bottom: 4px solid #0284c7;
+        }
+        
+        h1 {
+            color: #0369a1;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #0284c7, #0369a1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #0369a1;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .project-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #e6f0f5;
+            color: #0369a1;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .project-link:hover {
+            background-color: #0284c7;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(21, 94, 117, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #b8dff0;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(21, 94, 117, 0.2);
+            border-color: #0284c7;
+        }
+        
+        .card-header {
+            padding: 25px 25px 15px;
+            border-bottom: 1px solid #b8dff0;
+            background: linear-gradient(to right, #f0f7fa, white);
+        }
+        
+        .card-header h2 {
+            color: #0369a1;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .card-header h2 i {
+            color: #0284c7;
+            font-size: 1.3rem;
+        }
+        
+        .card-content {
+            padding: 20px 25px;
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            color: #1e4e6f;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background-color: #f0f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0284c7;
+        }
+        
+        .examples h3 {
+            color: #0369a1;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .example-item {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        .example-item strong {
+            color: #0369a1;
+            margin-right: 5px;
+        }
+        
+        .rule-mini {
+            background-color: #dbeafe;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0 10px;
+            font-size: 0.9rem;
+            border-left: 3px solid #0369a1;
+        }
+        
+        .rule-mini code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #0369a1;
+        }
+        
+        .card-footer {
+            padding: 15px 25px;
+            background-color: #f0f7fa;
+            border-top: 1px solid #b8dff0;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #0284c7;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background-color: #0369a1;
+            transform: scale(1.05);
+        }
+        
+        .page-link i {
+            margin-left: 8px;
+        }
+        
+        .quick-links {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 20px rgba(21, 94, 117, 0.1);
+            border: 1px solid #b8dff0;
+        }
+        
+        .quick-links h2 {
+            color: #0369a1;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .link-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .link-item {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #e6f0f5;
+            color: #0369a1;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            background-color: #0284c7;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #0369a1;
+            border-top: 1px solid #b8dff0;
+        }
+        
+        .badge {
+            background-color: #0284c7;
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .infinite-note {
+            display: inline-block;
+            background-color: #e6f0f5;
+            color: #0369a1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            border: 1px solid #b8dff0;
+        }
+        
+        .fanboys-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 15px;
+            font-size: 0.85rem;
+            margin: 10px 0 5px;
+        }
+        
+        .fanboys-mini span {
+            background: #dbeafe;
+            padding: 2px 6px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .project-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .project-link {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .fanboys-mini {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-link"></i> Conjunctions Hub</h1>
+            <p class="subtitle">Master connecting words: coordinating · subordinating · correlative. 20‑question cycles with infinite practice.</p>
+            
+            <div class="project-links">
+                <!-- we mirror the style but keep only conjunctions; no preposition links here -->
+                <a href="#coordinating" class="project-link"><i class="fas fa-grip-lines"></i> ✦ FANBOYS</a>
+                <a href="#subordinating" class="project-link"><i class="fas fa-code-branch"></i> 🔄 subordinators</a>
+                <a href="#correlative" class="project-link"><i class="fas fa-balance-scale"></i> ⚡ either ... or</a>
+            </div>
+        </header>
+        
+        <main>
+            <div class="topic-grid">
+                <!-- Coordinating conjunctions (FANBOYS) -->
+                <div class="topic-card" id="coordinating">
+                    <div class="card-header">
+                        <h2><i class="fas fa-grip-lines"></i> ✦ FANBOYS – coordinating</h2>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>for, and, nor, but, or, yet, so</strong> — join equal parts. Usually a comma before the conjunction when joining two sentences.</p>
+                        
+                        <div class="examples">
+                            <h3>sample question:</h3>
+                            <div class="example-item"><strong>Q:</strong> I wanted to go swimming, ______ the water was too cold.</div>
+                        </div>
+                        
+                        <div class="rule-mini">
+                            <code>but</code> = however &nbsp;&nbsp; <code>yet</code> = but still &nbsp;&nbsp; <code>so</code> = therefore
+                        </div>
+                        
+                        <p>20 unique sentences per cycle, then loops from #1. Phone‑friendly, instant feedback.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> ∞ loop</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Coordinating%20Conjunctions.html" class="page-link" target="_blank">Practice FANBOYS <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Subordinating conjunctions -->
+                <div class="topic-card" id="subordinating">
+                    <div class="card-header">
+                        <h2><i class="fas fa-code-branch"></i> 🔄 subordinating: because · although · if · when · since</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Connect a dependent clause to an independent one. Each answer comes with a short explanation.</p>
+                        
+                        <div class="examples">
+                            <h3>sample question:</h3>
+                            <div class="example-item"><strong>Q:</strong> ______ it was raining, we went for a walk.</div>
+                        </div>
+                        
+                        <div class="rule-mini">
+                            <i class="fa-regular fa-lightbulb"></i> <strong>because</strong> = reason &nbsp;|&nbsp; <strong>although</strong> = contrast &nbsp;|&nbsp; <strong>if</strong> = condition
+                        </div>
+                        
+                        <p>20‑question loop. After you answer, an explanation appears. Then next question — infinite cycles.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> ♾️ infinite</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Subordinating%20conjunctions.html" class="page-link" target="_blank">Start subordinating <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Correlative conjunctions -->
+                <div class="topic-card" id="correlative">
+                    <div class="card-header">
+                        <h2><i class="fas fa-balance-scale"></i> ⚡ correlative: either ... or / not only ... but also</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Paired conjunctions that join balanced elements. Choose the correct pair to complete the sentence.</p>
+                        
+                        <div class="examples">
+                            <h3>sample question:</h3>
+                            <div class="example-item"><strong>Q:</strong> You can ___ have tea ___ coffee. (either ... or / neither ... nor / not only ... but also)</div>
+                        </div>
+                        
+                        <div class="rule-mini">
+                            common pairs: <code>either ... or</code> &nbsp; <code>neither ... nor</code> &nbsp; <code>both ... and</code> &nbsp; <code>not only ... but also</code>
+                        </div>
+                        
+                        <p>20 unique sentences, then repeats. Each question shows the available pair choices. Build fluency naturally.</p>
+                        <p><span class="badge"><i class="fa-regular fa-clock"></i> 20 Q</span> <span class="infinite-note"><i class="fa-solid fa-rotate-right"></i> infinite loop</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Correlative%20Conjunctions.html" class="page-link" target="_blank">Practice correlatives <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- quick ref card: extra info from the URL content -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-book-open"></i> 📘 FANBOYS quick reference</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="fanboys-mini">
+                            <span>for = because</span>
+                            <span>and = in addition</span>
+                            <span>nor = and not</span>
+                            <span>but = however</span>
+                            <span>or = alternative</span>
+                            <span>yet = but still</span>
+                            <span>so = therefore</span>
+                        </div>
+                        <p class="rule-mini" style="margin-top:5px;"><i class="fa-solid fa-arrow-right"></i> Use a comma before FANBOYS when joining two complete sentences.</p>
+                        <p style="margin-top:15px;">The three conjunction activities each feature 20 unique questions that loop forever. Perfect for mastery.</p>
+                    </div>
+                    <div class="card-footer">
+                        <span class="infinite-note"><i class="fa-regular fa-bookmark"></i> 3 topics · 20Q each</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-links">
+                <h2><i class="fas fa-link"></i> All Conjunction Activities (direct links)</h2>
+                <div class="link-list">
+                    <a href="https://rexwyc.github.io/Coordinating%20Conjunctions.html" class="link-item" target="_blank"><i class="fas fa-grip-lines"></i> ✦ Coordinating (FANBOYS)</a>
+                    <a href="https://rexwyc.github.io/Subordinating%20conjunctions.html" class="link-item" target="_blank"><i class="fas fa-code-branch"></i> 🔄 Subordinating (because, although...)</a>
+                    <a href="https://rexwyc.github.io/Correlative%20Conjunctions.html" class="link-item" target="_blank"><i class="fas fa-balance-scale"></i> ⚡ Correlative (either...or / not only...but also)</a>
+                </div>
+                <p style="margin-top: 20px; color: #0369a1;"><i class="fa-regular fa-circle-check"></i> Every set: 20‑question cycle that repeats automatically. Includes explanations for subordinating conjunctions.</p>
+                <p style="font-size:0.95rem; background:#e6f0f5; padding:8px; border-radius:30px; margin-top:10px;">
+                    <i class="fa-regular fa-message"></i> from the subordinating page: <em>"______ it was raining, we went for a walk."</em> → explanation appears after answer.
+                </p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Conjunctions Hub &copy; 2025 | Created for rexwyc.github.io</p>
+            <p>Unlimited practice with coordinating, subordinating, and correlative conjunctions.</p>
+        </footer>
+    </div>
+    
+    <script>
+        // smooth scrolling for internal anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Intersection Observer for card entrance animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.topic-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
