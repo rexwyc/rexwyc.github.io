@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>coordinating conjunctions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f4fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .card {
+            background: white;
+            max-width: 550px;
+            width: 100%;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 10, 20, 0.15), 0 6px 12px rgba(0,0,0,0.05);
+            padding: 24px 20px 30px;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 650;
+            letter-spacing: -0.02em;
+            color: #0b2b40;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            padding-left: 8px;
+        }
+
+        h1 span {
+            background: #d3e5f0;
+            padding: 5px 16px 5px 18px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #035c7c;
+        }
+
+        /* Explanation panel (new) */
+        .explain-card {
+            background: #e4f0f9;
+            border-radius: 28px;
+            padding: 18px 18px 14px;
+            margin: 8px 0 20px;
+            border-left: 6px solid #2a7f9c;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+        }
+
+        .explain-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #05455c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .explain-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            justify-content: flex-start;
+            font-size: 1.1rem;
+            background: #ffffffb8;
+            padding: 15px 18px;
+            border-radius: 24px;
+            backdrop-filter: blur(4px);
+        }
+
+        .explain-item {
+            flex: 1 0 120px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: #103949;
+        }
+
+        .conj-example {
+            font-weight: 700;
+            background: #aacfdf;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            color: #001f2b;
+            min-width: 55px;
+            text-align: center;
+        }
+
+        .example-desc {
+            font-size: 0.95rem;
+            color: #1f4b5e;
+        }
+
+        .progress-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eef3fa;
+            padding: 12px 18px;
+            border-radius: 50px;
+            margin: 16px 0 14px;
+            font-weight: 500;
+            color: #0f3b4f;
+            font-size: 1.1rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .cycle-indicator {
+            background: #035c7c;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .question-box {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fcff 100%);
+            border-radius: 36px;
+            padding: 28px 20px 22px;
+            margin: 8px 0 16px;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 10px 20px -10px rgba(0,60,90,0.2);
+            border: 1px solid #cbdae7;
+        }
+
+        .sentence {
+            font-size: 1.8rem;
+            line-height: 1.3;
+            font-weight: 500;
+            color: #102b36;
+            word-break: break-word;
+            padding: 5px 0 5px;
+        }
+
+        .blank-highlight {
+            display: inline-block;
+            background: #ffecbb;
+            padding: 0px 6px;
+            margin: 0 -2px;
+            border-radius: 16px;
+            border: 2px dashed #fcb375;
+            font-weight: 700;
+            color: #b84500;
+        }
+
+        .conj-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0 18px;
+        }
+
+        .conj-btn {
+            background: white;
+            border: 2px solid #b3cee2;
+            font-size: 1.5rem;
+            font-weight: 600;
+            width: 70px;
+            height: 70px;
+            border-radius: 60px;
+            box-shadow: 0 5px 0 #7b9eb3;
+            color: #0b3e55;
+            transition: all 0.05s linear;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .conj-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #7b9eb3;
+            background: #e2f0fa;
+        }
+
+        .conj-btn:disabled {
+            opacity: 0.6;
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #7b9eb3;
+            pointer-events: none;
+            background: #d1dde8;
+            border-color: #96aebb;
+        }
+
+        .feedback {
+            min-height: 70px;
+            background: #f2f7fc;
+            border-radius: 30px;
+            padding: 18px 20px;
+            margin: 10px 0 16px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 8px solid #9dc3db;
+            color: #173e4f;
+            font-weight: 470;
+        }
+
+        .icon {
+            font-size: 2rem;
+        }
+
+        .next-reset-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .next-btn {
+            background: #035c7c;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 18px 30px;
+            border-radius: 60px;
+            flex: 2 1 200px;
+            box-shadow: 0 8px 0 #012a39;
+            transition: 0.06s linear;
+            cursor: pointer;
+            text-align: center;
+            touch-action: manipulation;
+            letter-spacing: 0.5px;
+        }
+
+        .next-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #012a39;
+        }
+
+        .reset-btn {
+            background: #dceaf2;
+            border: none;
+            color: #144a61;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 18px 18px;
+            border-radius: 60px;
+            flex: 1 0 120px;
+            box-shadow: 0 5px 0 #9cb6cc;
+            cursor: pointer;
+            transition: 0.06s linear;
+            touch-action: manipulation;
+            text-align: center;
+        }
+
+        .reset-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #9cb6cc;
+            background: #c1d9ea;
+        }
+
+        .small-note {
+            color: #446f88;
+            margin-top: 18px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 450;
+            background: #e7f0f8;
+            padding: 8px 14px;
+            border-radius: 60px;
+        }
+
+        .footer {
+            color: #446f88;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>
+        ✦ FANBOYS
+        <span>∞</span>
+    </h1>
+
+    <!-- 🆕 EXPLANATION SECTION (always visible) -->
+    <div class="explain-card">
+        <div class="explain-title">
+            <span>📘</span> coordinating conjunctions — how they work
+        </div>
+        <div class="explain-grid">
+            <div class="explain-item"><span class="conj-example">for</span><span class="example-desc"> = because</span></div>
+            <div class="explain-item"><span class="conj-example">and</span><span class="example-desc"> = in addition</span></div>
+            <div class="explain-item"><span class="conj-example">nor</span><span class="example-desc"> = and not</span></div>
+            <div class="explain-item"><span class="conj-example">but</span><span class="example-desc"> = however</span></div>
+            <div class="explain-item"><span class="conj-example">or</span><span class="example-desc"> = alternative</span></div>
+            <div class="explain-item"><span class="conj-example">yet</span><span class="example-desc"> = but still</span></div>
+            <div class="explain-item"><span class="conj-example">so</span><span class="example-desc"> = therefore</span></div>
+        </div>
+        <div style="font-size:0.95rem; margin-top: 10px; color:#1e5066; padding-left:5px;">
+            💡 join two independent clauses. comma usually before the conjunction.
+        </div>
+    </div>
+
+    <!-- progress + cycle display -->
+    <div class="progress-badge">
+        <span id="qCounter">question 1 / 20</span>
+        <span class="cycle-indicator" id="cycleDisplay">loop 1</span>
+    </div>
+
+    <!-- question card -->
+    <div class="question-box">
+        <div class="sentence" id="sentenceDisplay">
+            <!-- js fills -->
+        </div>
+    </div>
+
+    <!-- conjunction grid (seven buttons) -->
+    <div class="conj-grid" id="conjGrid">
+        <button class="conj-btn" data-conj="for">for</button>
+        <button class="conj-btn" data-conj="and">and</button>
+        <button class="conj-btn" data-conj="nor">nor</button>
+        <button class="conj-btn" data-conj="but">but</button>
+        <button class="conj-btn" data-conj="or">or</button>
+        <button class="conj-btn" data-conj="yet">yet</button>
+        <button class="conj-btn" data-conj="so">so</button>
+    </div>
+
+    <!-- feedback area -->
+    <div class="feedback" id="feedbackArea">
+        <span class="icon">💬</span> <span id="feedbackMessage">tap a conjunction</span>
+    </div>
+
+    <!-- next & reset -->
+    <div class="next-reset-bar">
+        <button class="next-btn" id="nextBtn">▶ next</button>
+        <button class="reset-btn" id="resetBtn">⟲ reset</button>
+    </div>
+
+    <div class="small-note">
+        ⚡ 20 questions · infinite loops · phone friendly
+    </div>
+    <div class="footer">
+        ✦ each blank — one correct FANBOYS ✦
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 20 FANBOYS questions (infinite loop) ----------
+        const questions = [
+            { text: "I wanted to go swimming, ____ the water was too cold.", correct: "but" },
+            { text: "She studied hard, ____ she passed with honors.", correct: "and" },
+            { text: "He didn't complain, ____ did he blame anyone.", correct: "nor" },
+            { text: "You can have coffee, ____ you can have tea.", correct: "or" },
+            { text: "It was raining, ____ we stayed indoors.", correct: "so" },
+            { text: "He is rich, ____ he is not happy.", correct: "yet" },        // yet = contrast
+            { text: "We stayed late, ____ we wanted to help.", correct: "for" },   // for = because
+            { text: "I'll call you, ____ I'll send a message.", correct: "or" },
+            { text: "She was tired, ____ she kept working.", correct: "but" },
+            { text: "He didn't see the sign, ____ did he hear the horn.", correct: "nor" },
+            { text: "They were hungry, ____ they ordered pizza.", correct: "so" },
+            { text: "He loves cycling, ____ his wife prefers walking.", correct: "yet" },
+            { text: "I took an umbrella, ____ it was cloudy.", correct: "for" },
+            { text: "We searched everywhere, ____ we found nothing.", correct: "but" },
+            { text: "She opened the door, ____ welcomed the guests.", correct: "and" },
+            { text: "You must apologize, ____ they will never trust you again.", correct: "or" },
+            { text: "The shoes were expensive, ____ she bought them.", correct: "yet" },  // yet works
+            { text: "He was nervous, ____ he spoke clearly.", correct: "but" },
+            { text: "The noise stopped, ____ we could finally sleep.", correct: "so" },
+            { text: "I haven't seen her, ____ have I spoken to her.", correct: "nor" }
+        ];
+
+        const TOTAL = questions.length;  // 20
+
+        // state
+        let currentIndex = 0;           // 0 … 19
+        let loopCount = 1;
+        let answered = false;           // true after user picks an answer
+
+        // DOM elements
+        const sentenceDisplay = document.getElementById('sentenceDisplay');
+        const qCounter = document.getElementById('qCounter');
+        const cycleDisplay = document.getElementById('cycleDisplay');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const conjButtons = document.querySelectorAll('.conj-btn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // helper: update counters in header
+        function updateCounters() {
+            qCounter.textContent = `question ${currentIndex + 1} / ${TOTAL}`;
+            cycleDisplay.textContent = `loop ${loopCount}`;
+        }
+
+        // render current question (sentence with visual blank)
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const parts = q.text.split('____');
+            if (parts.length === 2) {
+                sentenceDisplay.innerHTML = `${parts[0]}<span class="blank-highlight"> ______ </span>${parts[1]}`;
+            } else {
+                sentenceDisplay.textContent = q.text; // fallback
+            }
+        }
+
+        // reset answer state (enable buttons, clear feedback)
+        function resetAnswerState() {
+            answered = false;
+            conjButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.background = "";  // remove green/red
+            });
+            feedbackMessage.innerHTML = `🤔 choose a conjunction (check explanation above)`;
+        }
+
+        // load question + reset answer state
+        function loadQuestion(index) {
+            currentIndex = index;  // 0..19
+            renderQuestion();
+            resetAnswerState();
+            updateCounters();
+        }
+
+        // handle answer click
+        function handleConjClick(event) {
+            const btn = event.currentTarget;
+            if (answered) return;          // already answered
+            const chosen = btn.dataset.conj;
+            const correctAns = questions[currentIndex].correct;
+
+            answered = true;
+
+            // disable all buttons
+            conjButtons.forEach(b => { b.disabled = true; });
+
+            // highlight chosen button
+            if (chosen === correctAns) {
+                btn.style.background = "#b8f0c0";  // soft green
+                feedbackMessage.innerHTML = `✅ perfect! “${chosen}” is correct.`;
+            } else {
+                btn.style.background = "#ffd1d1";  // soft red
+                // also gently highlight the correct one as a hint
+                const correctBtn = Array.from(conjButtons).find(b => b.dataset.conj === correctAns);
+                if (correctBtn) {
+                    correctBtn.style.background = "#e0ffd8";  // light green
+                }
+                feedbackMessage.innerHTML = `❌ “${chosen}” isn’t right. Correct = “${correctAns}”.`;
+            }
+        }
+
+        // attach listeners
+        conjButtons.forEach(btn => {
+            btn.addEventListener('click', handleConjClick);
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: true });
+        });
+
+        // next button: move to next question (infinite loop)
+        function goToNext() {
+            let nextIndex = currentIndex + 1;
+            if (nextIndex >= TOTAL) {
+                nextIndex = 0;
+                loopCount++;
+            }
+            currentIndex = nextIndex;
+            loadQuestion(currentIndex);
+        }
+
+        nextBtn.addEventListener('click', goToNext);
+
+        // reset button: question 0, loop = 1
+        resetBtn.addEventListener('click', () => {
+            loopCount = 1;
+            currentIndex = 0;
+            loadQuestion(0);
+        });
+
+        // initial load
+        loadQuestion(0);
+
+        // prevent double-tap zoom on all buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+        });
+
+        // small extra: after answer, the explanation remains visible as a guide.
+        // the user can also click "next" even if not answered (free move)
+    })();
+</script>
+</body>
+</html>
