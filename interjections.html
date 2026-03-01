@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Infinite interjections · 20 question loop</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #f7f0e6 0%, #f2e3d5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .game-tile {
+            background-color: rgba(255, 250, 240, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            width: 100%;
+            max-width: 520px;
+            border-radius: 48px 48px 32px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 4px rgba(255, 255, 255, 0.8);
+            padding: 28px 22px 34px;
+            border: 1px solid rgba(255, 240, 220, 0.6);
+            transition: all 0.2s ease;
+        }
+
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #4d3e30;
+            text-shadow: 2px 2px 0 #fff8ee;
+            margin-bottom: 6px;
+            padding-left: 8px;
+        }
+
+        h1 span {
+            background: #f3d8c1;
+            font-size: 1.9rem;
+            padding: 0 14px;
+            border-radius: 80px;
+            line-height: 1.3;
+            border: 2px solid #cab9a8;
+            box-shadow: 0 4px 0 #9b8b7a;
+            color: #2e2a27;
+        }
+
+        .counter-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            background: #e7d9ca;
+            border-radius: 100px;
+            padding: 12px 24px;
+            margin: 10px 0 22px 0;
+            border: 1px solid #cfbcab;
+            box-shadow: inset 0 2px 5px rgba(89, 67, 48, 0.1), 0 6px 0 #b7a291;
+        }
+
+        .q-num {
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: #fff6eb;
+            padding: 6px 20px;
+            border-radius: 40px;
+            color: #6b4f3a;
+            border: 1px solid #cfb59e;
+            box-shadow: 0 3px 0 #a58e7a;
+        }
+
+        .badge {
+            font-size: 1.2rem;
+            background: #cbb7a4;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #2c241e;
+            border: 1px solid #ab9481;
+            letter-spacing: 0.3px;
+        }
+
+        .question-card {
+            background: #fffcf5;
+            border-radius: 44px;
+            padding: 32px 18px 28px;
+            border: 2px solid #f0dac8;
+            box-shadow: 0 14px 0 #b9a690, inset 0 -4px 8px rgba(255, 235, 210, 0.6);
+            margin-bottom: 32px;
+        }
+
+        .interjection-big {
+            font-size: 5.4rem;
+            line-height: 1.2;
+            text-align: center;
+            font-weight: 800;
+            word-break: break-word;
+            background: #faead8;
+            border-radius: 70px;
+            padding: 24px 12px;
+            margin-bottom: 18px;
+            color: #3a2d21;
+            border: 2px dashed #d7b595;
+            box-shadow: inset 0 0 0 4px #fff2e2;
+            letter-spacing: 2px;
+        }
+
+        .prompt {
+            font-size: 1.7rem;
+            font-weight: 500;
+            text-align: center;
+            color: #624c39;
+            background: #efe0d1;
+            border-radius: 60px;
+            padding: 16px 16px;
+            border: 1px solid #dac2ad;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 36px 0 24px;
+        }
+
+        .option-btn {
+            background: #faf1e7;
+            border: 2px solid #decbb8;
+            border-radius: 120px;
+            padding: 18px 24px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 7px 0 #b29e8b, 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.05s linear;
+            color: #3f3329;
+            width: 100%;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #b29e8b, 0 6px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-letter {
+            background: #ddcdbb;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #2f261e;
+            border: 2px solid #b3987c;
+            box-shadow: 0 5px 0 #7e6b5b;
+            transition: 0.05s;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .disabled-btn, .disabled-btn:active {
+            pointer-events: none;
+            opacity: 0.7;
+            filter: grayscale(0.3);
+            transform: translateY(3px);
+            box-shadow: 0 4px 0 #9b8978;
+        }
+
+        .feedback-area {
+            background: #e7cfbb;
+            border-radius: 40px;
+            padding: 14px 22px;
+            margin: 10px 0 20px;
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #2f291f;
+            text-align: center;
+            border: 1px solid #d8b594;
+            box-shadow: inset 0 2px 6px #f7e5d4, 0 5px 0 #9f8876;
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-word;
+        }
+
+        .next-button {
+            background: #bfa78e;
+            border: none;
+            border-radius: 60px;
+            padding: 18px 0;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #2f261d;
+            border-bottom: 6px solid #7e6b58;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.05s;
+            box-shadow: 0 8px 0 #7d6653, 0 8px 18px rgba(100, 70, 40, 0.2);
+            -webkit-tap-highlight-color: transparent;
+            margin-top: 12px;
+        }
+
+        .next-button:active {
+            transform: translateY(6px);
+            border-bottom-width: 2px;
+            box-shadow: 0 2px 0 #7d6653, 0 8px 18px rgba(100, 70, 40, 0.15);
+        }
+
+        .next-button.hidden {
+            display: none;
+        }
+
+        .restart-message {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #624e3b;
+            margin-top: 16px;
+            font-weight: 500;
+        }
+
+        /* tiny adjustments */
+        @media (max-width: 400px) {
+            .game-tile { padding: 18px 14px; }
+            .interjection-big { font-size: 4rem; }
+            .option-btn { font-size: 1.5rem; padding: 14px 16px; }
+            .option-letter { width: 46px; height: 46px; font-size: 2rem; }
+            .q-num { font-size: 1.4rem; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-tile" role="main">
+    <h1>
+        ✨ interjections!
+        <span>🤯</span>
+    </h1>
+    <div class="counter-panel">
+        <span class="q-num" id="questionCounterDisplay">1</span>
+        <span class="badge" id="infiniteIndicator">∞ infinite</span>
+    </div>
+
+    <!-- main question card -->
+    <div class="question-card">
+        <div class="interjection-big" id="interjectionDisplay">Wow!</div>
+        <div class="prompt" id="promptText">what does it express?</div>
+    </div>
+
+    <!-- 4 option buttons -->
+    <div class="options-grid" id="optionsContainer">
+        <button class="option-btn" id="opt0" data-index="0">
+            <span class="option-letter">A</span>
+            <span class="option-text" id="optText0">surprise</span>
+        </button>
+        <button class="option-btn" id="opt1" data-index="1">
+            <span class="option-letter">B</span>
+            <span class="option-text" id="optText1">pain</span>
+        </button>
+        <button class="option-btn" id="opt2" data-index="2">
+            <span class="option-letter">C</span>
+            <span class="option-text" id="optText2">joy</span>
+        </button>
+        <button class="option-btn" id="opt3" data-index="3">
+            <span class="option-letter">D</span>
+            <span class="option-text" id="optText3">thinking</span>
+        </button>
+    </div>
+
+    <!-- feedback & next -->
+    <div class="feedback-area" id="feedbackMessage">👆 tap an answer</div>
+    <button class="next-button" id="nextButton">↺ next question</button>
+    <div class="restart-message" id="autoLoopNote">(endless loop — 20 unique interjections)</div>
+</div>
+
+<script>
+    (function() {
+        // ---------- INTERJECTIONS POOL (exactly 20, with meanings) ----------
+        const interjectionsPool = [
+            { word: "Wow!", meaning: "surprise" },
+            { word: "Ouch!", meaning: "pain" },
+            { word: "Oh!", meaning: "realization" },
+            { word: "Yay!", meaning: "joy" },
+            { word: "Oops!", meaning: "mistake" },
+            { word: "Aha!", meaning: "understanding" },
+            { word: "Boo!", meaning: "disapproval" },
+            { word: "Eww!", meaning: "disgust" },
+            { word: "Hmm...", meaning: "thinking" },
+            { word: "Phew!", meaning: "relief" },
+            { word: "Yikes!", meaning: "fear" },
+            { word: "Bravo!", meaning: "praise" },
+            { word: "Alas!", meaning: "sorrow" },
+            { word: "Hey!", meaning: "attention" },
+            { word: "Gosh!", meaning: "surprise" },        // surprise variant
+            { word: "Ow!", meaning: "pain" },              // pain variant
+            { word: "Whoa!", meaning: "amazement" },
+            { word: "Darn!", meaning: "frustration" },
+            { word: "Mmhmm", meaning: "agreement" },
+            { word: "Yuck!", meaning: "disgust" }          // disgust variant
+        ];
+
+        // ----- helper to shuffle (Fisher–Yates) -----
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ---------- state ----------
+        let currentQuestions = [];            // will hold shuffled copy of pool
+        let currentQuestionIndex = 0;
+        let lock = false;                     // lock after answer
+        let correctMeaningForCurrent = "";
+
+        // DOM elements
+        const interjectionEl = document.getElementById('interjectionDisplay');
+        const promptEl = document.getElementById('promptText'); // not changed dynamically but you can if you want, we keep as "what does it express?"
+        const optTexts = [
+            document.getElementById('optText0'),
+            document.getElementById('optText1'),
+            document.getElementById('optText2'),
+            document.getElementById('optText3')
+        ];
+        const optionButtons = [
+            document.getElementById('opt0'),
+            document.getElementById('opt1'),
+            document.getElementById('opt2'),
+            document.getElementById('opt3')
+        ];
+        const feedbackEl = document.getElementById('feedbackMessage');
+        const nextBtn = document.getElementById('nextButton');
+        const counterDisplay = document.getElementById('questionCounterDisplay');
+
+        // ----- helper: generate 4 options (one correct, three random from pool, but distinct) -----
+        function generateOptions(correctMeaning) {
+            // collect all meanings from pool (we want variety, but may have duplicates like two surprise, but we ensure options are distinct)
+            const allMeanings = interjectionsPool.map(item => item.meaning);
+            // unique meanings set for cleaner options (still can have duplicates if same meaning appears, but we'll handle)
+            const uniqueMeanings = [...new Set(allMeanings)]; 
+            
+            // start with correct meaning
+            let optionSet = new Set();
+            optionSet.add(correctMeaning);
+            
+            // pool of possible wrong meanings (filter out correct one)
+            const possibleWrongs = uniqueMeanings.filter(m => m !== correctMeaning);
+            
+            // we need 3 distinct wrong meanings (if possible). if not enough, fallback to any meaning, but we have many.
+            while (optionSet.size < 4 && possibleWrongs.length > 0) {
+                // pick random from possibleWrongs that is not already in set
+                const randomIndex = Math.floor(Math.random() * possibleWrongs.length);
+                const candidate = possibleWrongs[randomIndex];
+                if (!optionSet.has(candidate)) {
+                    optionSet.add(candidate);
+                }
+                // if we have cycled too much, break and fill with something (but unlikely)
+                if (optionSet.size === 4) break;
+            }
+            
+            // if for some reason we still have less than 4 (should not happen with our 10+ unique meanings), pad with any
+            const allMeaningsPool = [...uniqueMeanings];
+            while (optionSet.size < 4) {
+                const fallback = allMeaningsPool[Math.floor(Math.random() * allMeaningsPool.length)];
+                optionSet.add(fallback);
+            }
+            
+            // convert set to array and shuffle
+            let options = Array.from(optionSet);
+            // shuffle options so correct is not always first
+            options = shuffleArray(options);
+            return options;
+        }
+
+        // ----- load current question (based on currentQuestionIndex) onto UI -----
+        function loadQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            interjectionEl.textContent = q.word;
+            correctMeaningForCurrent = q.meaning;
+
+            // generate 4 answer options (strings)
+            const optionMeanings = generateOptions(q.meaning);
+            for (let i = 0; i < 4; i++) {
+                optTexts[i].textContent = optionMeanings[i];
+            }
+
+            // reset UI
+            lock = false;
+            // enable buttons & remove special classes
+            optionButtons.forEach(btn => {
+                btn.classList.remove('disabled-btn');
+                btn.disabled = false;
+            });
+            feedbackEl.textContent = "👆 which emotion / meaning?";
+            // hide next button until answer
+            nextBtn.classList.add('hidden');
+            // update counter display (1-based)
+            counterDisplay.textContent = (currentQuestionIndex + 1).toString();
+        }
+
+        // ----- answer handler (attached to each option) -----
+        function onOptionClick(btnIndex) {
+            if (lock) return; // already answered
+
+            const selectedMeaning = optTexts[btnIndex].textContent;
+            const isCorrect = (selectedMeaning === correctMeaningForCurrent);
+
+            // lock & disable all buttons
+            lock = true;
+            optionButtons.forEach(btn => {
+                btn.classList.add('disabled-btn');
+                btn.disabled = true;
+            });
+
+            // show feedback
+            if (isCorrect) {
+                feedbackEl.textContent = "✅ perfect! that's right!";
+            } else {
+                feedbackEl.textContent = `❌ nope… correct meaning: ${correctMeaningForCurrent}`;
+            }
+
+            // reveal next button
+            nextBtn.classList.remove('hidden');
+        }
+
+        // ----- move to next question (infinite wrap after 20) -----
+        function goToNextQuestion() {
+            if (!lock) {
+                // if someone clicks next without answering? we ignore (next hidden normally, but for safety)
+                return;
+            }
+            // advance index, and wrap around using modulo 20
+            currentQuestionIndex = (currentQuestionIndex + 1) % currentQuestions.length;
+            loadQuestion();
+        }
+
+        // ----- restart or initialise with fresh shuffled order (keeping same 20) -----
+        function reshuffleAndReset() {
+            // create a fresh shuffled copy of the pool
+            currentQuestions = shuffleArray([...interjectionsPool]);
+            currentQuestionIndex = 0;
+            loadQuestion();
+        }
+
+        // ----- attach event listeners to option buttons -----
+        optionButtons.forEach((btn, idx) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                onOptionClick(idx);
+            });
+        });
+
+        // next button listener
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToNextQuestion();
+        });
+
+        // optional: if someone double taps next, prevent weirdness.
+        // initialise: shuffle and load first question
+        reshuffleAndReset();
+
+        // ensure infinite loop feel: after 20, it automatically goes to 1 (shuffled order preserves 20 distinct)
+        // we do not reshuffle after loop – it cycles through the same 20 shuffled order (still infinite)
+        // but to make it feel fresh, we could reshuffle after each full cycle? optional but not needed.
+        // we add a small tweak: after finishing the 20, we could reshuffle the order again for next cycle?
+        // I'll implement that in goToNextQuestion? but careful: if we reshuffle on the 20->1 transition, 
+        // it breaks the fixed 20. But the task says "20 questions infinite loop". I'll make it so that after 20,
+        // the order reshuffles, so it's a new cycle but always 20 unique interjections. 
+        // That's more interesting: every full cycle reshuffle.
+
+        // override goToNextQuestion to detect wrap and reshuffle
+        const originalGoToNext = goToNextQuestion;
+        goToNextQuestion = function() {
+            if (!lock) return;
+            // compute next index
+            let nextIndex = (currentQuestionIndex + 1) % currentQuestions.length;
+            // if nextIndex === 0 means we completed a full cycle (from 19 to 0)
+            if (nextIndex === 0) {
+                // reshuffle the pool for new cycle
+                currentQuestions = shuffleArray([...interjectionsPool]);
+                currentQuestionIndex = 0;
+                loadQuestion();
+            } else {
+                currentQuestionIndex = nextIndex;
+                loadQuestion();
+            }
+        };
+
+        // rebind next event with new function
+        nextBtn.removeEventListener('click', (e) => { e.preventDefault(); goToNextQuestion(); }); // remove old
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToNextQuestion();
+        });
+
+        // also need to reattach answer handler (already attached, but fine). 
+        // but we changed goToNextQuestion, fine. Also reshuffleAndReset uses loadQuestion, which sets correct lock etc.
+
+        // final touch: also reshuffle on first load if needed (already called reshuffleAndReset)
+        // But reshuffleAndReset uses old goToNext? no, it calls loadQuestion only. 
+        // But we haven't updated the goToNext reference inside reshuffleAndReset? not needed.
+        // But I've redefined goToNextQuestion, which is now used only by event. good.
+
+        // one more tweak: to ensure the first cycle starts shuffled
+        // we call reshuffleAndReset again? it was called already, but after we changed goToNextQuestion,
+        // no problem.
+        // However reshuffleAndReset uses currentQuestions = shuffle... and resets index. 
+        // I'll re-initialize once more to be safe (no double event break)
+        window.removeEventListener('load', reshuffleAndReset); // just in case
+        // just recall:
+        setTimeout(() => {
+            // reset to fresh shuffled, but avoid if already set
+            reshuffleAndReset();
+        }, 10);
+    })();
+</script>
+</body>
+</html>
