@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WW3 - Precision Vector Strike</title>
+    <style>
+        body { margin: 0; background: #000; color: white; font-family: 'Arial Black', sans-serif; overflow: hidden; }
+        #game-map { 
+            position: relative; width: 100vw; height: 100vh; 
+            background: url('images/map.jpg') no-repeat center/cover; 
+        }
+        .country { position: absolute; text-align: center; cursor: pointer; z-index: 10; }
+        .country img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid gold; box-shadow: 0 0 25px #000; }
+        .stats { font-size: 11px; background: rgba(0,0,0,0.85); padding: 8px; border-radius: 8px; margin-top: 5px; border: 1px solid red; line-height: 1.2; }
+        
+        /* Geographical Positioning */
+        #Canada { top: 18%; left: 14%; } #America { top: 35%; left: 14%; } #Germany { top: 25%; left: 48%; }
+        #Israel { top: 43%; left: 54%; } #Iran { top: 38%; left: 65%; } #Russia { top: 12%; left: 62%; }
+        #China { top: 35%; left: 78%; } #North_Korea { top: 32%; left: 86%; }
+
+        #ui-layer { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 20; }
+        button { padding: 14px 28px; cursor: pointer; background: #a00; color: #fff; border: 3px solid #fff; font-weight: bold; border-radius: 10px; text-transform: uppercase; }
+
+        /* --- PROJECTILE PHYSICS & VISIBILITY --- */
+        .projectile { 
+            position: absolute; z-index: 100; 
+            transition: all 1.3s cubic-bezier(0.1, 0.5, 0.5, 1); 
+            pointer-events: none;
+            mix-blend-mode: multiply; /* Removes White Edges */
+            transform-origin: center center;
+        }
+
+        /* Jets: High Vis + Vibration */
+        .jet-img { 
+            width: auto; max-height: 100px;
+            filter: contrast(250%) brightness(120%) drop-shadow(0 0 20px white); 
+            animation: jetShake 0.1s infinite alternate;
+        }
+
+        /* Missiles: Orange Glow */
+        .missile-img { 
+            width: 80px; 
+            filter: contrast(300%) brightness(130%) drop-shadow(0 0 12px orange); 
+        }
+
+        /* Nukes: Red Radiation Pulse */
+        .nuke-img { 
+            width: auto; max-height: 50px; 
+            filter: contrast(350%) brightness(110%) drop-shadow(0 0 35px red); 
+            animation: nukePulse 0.4s infinite alternate;
+        }
+
+        @keyframes jetShake { from { transform: translateY(-2px); } to { transform: translateY(2px); } }
+        @keyframes nukePulse { from { scale: 1; } to { scale: 1.2; } }
+
+        #start-screen { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .start-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <h1 style="color:red; font-size: 50px;">GLOBAL COMMAND CENTER</h1>
+    <p>BGM 100% | EXPLOSION 5% | PRECISION TARGETING ENABLED</p>
+    <div class="start-grid" id="nation-select"></div>
+</div>
+
+<div id="game-map"></div>
+
+<div id="ui-layer" style="display:none;">
+    <button onclick="launch('boom')">🚀 Missile</button>
+    <button onclick="launch('jet')">✈️ Jet Strike</button>
+    <button onclick="launch('nuke')">☢️ Launch Nuke</button>
+</div>
+
+<audio id="bgm" loop><source src="music/macarena.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-boom"><source src="music/explosion.mp3" type="audio/mpeg"></audio>
+
+<script>
+const gameData = {
+    America: { hp: 10000000000, boom: 10000, jet: 2000, nuke: 1000, img: 'images/trump.jpeg', craft: 'images/b2.png' },
+    Iran: { hp: 1000000000, boom: 1000000, jet: 1000, nuke: 50, img: 'images/iran leader.png', craft: 'images/jet.png' },
+    Israel: { hp: 10000000, boom: 1000, jet: 500, nuke: 100, img: 'images/israel leader.jpeg', craft: 'images/jet2.png' },
+    China: { hp: 5000000000, boom: 1000000000, jet: 50000, nuke: 100000, img: 'images/xi.jpeg', craft: 'images/jet.png' },
+    Russia: { hp: 4000000000, boom: 10000000, jet: 30000, nuke: 10000, img: 'images/putin.webp', craft: 'images/jet2.png' },
+    North_Korea: { hp: 500000000, boom: 10000000, jet: 30000, nuke: 100000000, img: 'images/kim.jpeg', craft: 'images/jet.png' },
+    Germany: { hp: 2000000000, boom: 1000000, jet: 60000, nuke: 1000000, img: 'images/germany.jpeg', craft: 'images/jet2.png' },
+    Canada: { hp: 1000000000, boom: 1000000, jet: 80000, nuke: 20000, img: 'images/canada leader.jpeg', craft: 'images/jet.png' }
+};
+
+const axis = ['China', 'Russia', 'North_Korea', 'Iran'];
+const weaponSkins = { boom: 'images/missle3.png', nuke: 'images/nuclear.png' };
+let playerSide = '', targetSide = '';
+
+for (let key in gameData) {
+    let b = document.createElement('button');
+    b.innerText = key; b.onclick = () => startGame(key);
+    document.getElementById('nation-select').appendChild(b);
+
+    let div = document.createElement('div');
+    div.id = key; div.className = 'country';
+    div.onclick = () => setTarget(key);
+    div.innerHTML = `<img id="img-${key}" src="${gameData[key].img}"><div class="stats" id="stats-${key}"></div>`;
+    document.getElementById('game-map').appendChild(div);
+}
+
+function startGame(side) {
+    playerSide = side;
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('ui-layer').style.display = 'flex';
+    document.getElementById('bgm').volume = 1.0; 
+    document.getElementById('bgm').play();
+    updateUI();
+    setInterval(cpuAI, 3000); 
+}
+
+function setTarget(name) {
+    if (name === playerSide) return;
+    targetSide = name;
+    document.querySelectorAll('.country img').forEach(i => i.style.borderColor = 'gold');
+    document.getElementById('img-' + name).style.borderColor = 'cyan';
+}
+
+function launch(type) {
+    if (!targetSide) return alert('SELECT TARGET!');
+    processStrike(playerSide, targetSide, type);
+}
+
+function processStrike(attacker, defender, type) {
+    if (!gameData[attacker] || !gameData[defender] || gameData[attacker].hp <= 0 || gameData[defender].hp <= 0) return;
+    
+    // Ally/Bot Logic
+    if (axis.includes(attacker) && axis.includes(defender)) return;
+    if (attacker !== playerSide) {
+        if (attacker === 'Iran' && !['America', 'Israel'].includes(defender)) return;
+        if (['America', 'Israel'].includes(attacker) && defender !== 'Iran') return;
+    }
+
+    if (gameData[attacker][type] > 0) {
+        gameData[attacker][type]--;
+        const src = (type === 'jet') ? gameData[attacker].craft : weaponSkins[type];
+        animateLaunch(attacker, defender, src, type);
+
+        let dmg = type === 'nuke' ? 100000000 : (type === 'jet' ? 10000000 : 2000000);
+        gameData[defender].hp -= dmg;
+        if (gameData[defender].hp <= 0) {
+            gameData[defender].hp = 0;
+            document.getElementById('img-' + defender).src = document.getElementById('img-' + attacker).src;
+        }
+        const exp = document.getElementById('sfx-boom').cloneNode(true);
+        exp.volume = 0.05; exp.play();
+        updateUI();
+    }
+}
+
+function cpuAI() {
+    Object.keys(gameData).forEach(bot => {
+        if (bot === playerSide || gameData[bot].hp <= 0) return;
+        let pool = Object.keys(gameData).filter(k => k !== bot && gameData[k].hp > 0);
+        let target = pool[Math.floor(Math.random() * pool.length)];
+        processStrike(bot, target, ['boom', 'jet', 'nuke'][Math.floor(Math.random() * 3)]);
+    });
+}
+
+function animateLaunch(from, to, src, type) {
+    const fromEl = document.getElementById(from);
+    const toEl = document.getElementById(to);
+    const fBox = fromEl.getBoundingClientRect();
+    const tBox = toEl.getBoundingClientRect();
+
+    // 🎯 MATH: Calculate Delta X and Delta Y for Angle
+    const dX = (tBox.left + 55) - (fBox.left + 55);
+    const dY = (tBox.top + 55) - (fBox.top + 55);
+    const angle = Math.atan2(dY, dX) * 180 / Math.PI;
+
+    const el = document.createElement('img');
+    el.src = src;
+    el.className = 'projectile ' + (type === 'nuke' ? 'nuke-img' : (type === 'jet' ? 'jet-img' : 'missile-img'));
+    
+    // Start at attacker center
+    el.style.left = (fBox.left + 55) + 'px';
+    el.style.top = (fBox.top + 55) + 'px';
+    
+    // POINT TO TARGET
+    el.style.transform = `rotate(${angle}deg)`;
+    document.body.appendChild(el);
+
+    setTimeout(() => {
+        // Move to target center
+        el.style.left = (tBox.left + 55) + 'px';
+        el.style.top = (tBox.top + 55) + 'px';
+        el.style.transform = `rotate(${angle}deg)`;
+    }, 50);
+    
+    setTimeout(() => el.remove(), 1300);
+}
+
+function updateUI() {
+    for (let c in gameData) {
+        const statsEl = document.getElementById(`stats-${c}`);
+        if(statsEl) {
+            statsEl.innerHTML = `
+                <b>HP: ${gameData[c].hp.toLocaleString()}</b><br>
+                🚀:${gameData[c].boom} ✈️:${gameData[c].jet} ☢️:${gameData[c].nuke}
+            `;
+        }
+    }
+}
+</script>
+</body>
+</html>
