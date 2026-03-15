@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2D Minecraft - Platinum & Music Fix</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #87CEEB; font-family: 'Segoe UI', sans-serif; user-select: none; }
+        canvas { display: block; cursor: crosshair; }
+        #ui { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 12px; border-radius: 8px; pointer-events: none; }
+        #hotbar {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 5px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 10px;
+            max-width: 95vw; overflow-x: auto; border: 2px solid #444; scrollbar-width: none;
+        }
+        #hotbar::-webkit-scrollbar { display: none; }
+        .slot { min-width: 60px; height: 70px; border: 2px solid #555; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 10px; background: #222; transition: 0.1s; }
+        .active { border-color: #ffff00; background: #444; transform: scale(1.1); box-shadow: 0 0 15px #ffff00; z-index: 10; }
+        .icon { width: 22px; height: 22px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.3); }
+        /* 啟動按鈕樣式 */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); color: white; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; z-index: 100;
+        }
+        #start-btn { padding: 15px 30px; font-size: 20px; cursor: pointer; background: #4da64d; border: none; color: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <h1>2D Minecraft</h1>
+        <button id="start-btn">Click to Start Game & Music 🎵</button>
+    </div>
+
+    <div id="ui">
+        <b>AD</b>: Move | <b>W / Space</b>: Jump<br>
+        <b>Wheel / 1-9</b>: Select Item | <b>Left Click</b>: Mine | <b>Right Click</b>: Place
+    </div>
+
+    <div id="hotbar"></div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 1. Audio Engine (Web Audio API)
+        const AudioEngine = {
+            ctx: null,
+            init() { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            play(freq, type, duration, vol=0.1) {
+                if(!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + duration);
+            }
+        };
+
+        const SFX = {
+            jump: () => AudioEngine.play(150, 'square', 0.2),
+            land: () => AudioEngine.play(80, 'sine', 0.1, 0.2),
+            mine: () => AudioEngine.play(200 + Math.random()*100, 'sawtooth', 0.05),
+            place: () => AudioEngine.play(400, 'sine', 0.1),
+            explode: () => AudioEngine.play(60, 'sawtooth', 0.6, 0.4)
+        };
+
+        // 2. Music Controller
+        const MUSIC_URL = 'https://www.soundhelix.com'; // Replace with Aria Math
+        const bgMusic = new Audio(MUSIC_URL);
+        bgMusic.loop = true;
+        bgMusic.volume = 0.5;
+
+        document.getElementById('start-btn').onclick = function() {
+            AudioEngine.init();
+            bgMusic.play();
+            document.getElementById('start-screen').style.display = 'none';
+        };
+
+        // 3. Blocks Definition (Including Platinum)
+        const blocks = {
+            'grass': '#4da64d', 'dirt': '#8b5a2b', 'stone': '#808080', 'tnt': '#ff3333',
+            'platinum': '#e5e4e2', // Added Platinum (Light Metallic White)
+            'coal': '#2b2b2b', 'iron': '#d8d8d8', 'copper': '#b87333', 'gold': '#ffd700',
+            'diamond': '#b9f2ff', 'emerald': '#50c878', 'ruby': '#e0115f', 'sapphire': '#0f52ba',
+            'amethyst': '#9966cc', 'quartz': '#f5f5f5', 'lapis': '#26619c', 'obsidian': '#3c2e4c',
+            'silver': '#c0c0c0', 'sulfur': '#ffff33', 'aluminum': '#a5a9b4', 'nickel': '#727472', 'uranium': '#3fb911'
+        };
+        const inventory = Object.keys(blocks);
+        let selectedIdx = 1;
+
+        // 4. Game Logic
+        const TILE = 40;
+        let player = { x: 200, y: 100, w: 24, h: 36, vx: 0, vy: 0, grounded: false };
+        const world = {};
+
+        // Generate World with Platinum Ores
+        for (let x = -20; x < 80; x++) {
+            let surfaceY = Math.floor(Math.sin(x * 0.12) * 3) + 10;
+            for (let y = surfaceY; y < 30; y++) {
+                let type = (y === surfaceY) ? 'grass' : 'dirt';
+                if (y > surfaceY + 2) {
+                    type = 'stone';
+                    if (Math.random() < 0.1) {
+                        const ores = inventory.slice(4); // Select from minerals
+                        type = ores[Math.floor(Math.random() * ores.length)];
+                    }
+                }
+                world[`${x},${y}`] = type;
+            }
+        }
+
+        function updateUI() {
+            const bar = document.getElementById('hotbar');
+            bar.innerHTML = inventory.map((id, i) => `
+                <div class="slot ${i === selectedIdx ? 'active' : ''}">
+                    <div class="icon" style="background:${blocks[id]}"></div>
+                    ${id.toUpperCase()}
+                </div>
+            `).join('');
+            const active = bar.children[selectedIdx];
+            if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+        updateUI();
+
+        // Inputs
+        const keys = {};
+        window.onkeydown = e => {
+            keys[e.code] = true;
+            if (e.key >= '1' && e.key <= '9') { selectedIdx = parseInt(e.key)-1; updateUI(); }
+        };
+        window.onkeyup = e => keys[e.code] = false;
+        window.onwheel = e => {
+            selectedIdx = (selectedIdx + (e.deltaY > 0 ? 1 : -1) + inventory.length) % inventory.length;
+            updateUI();
+        };
+
+        canvas.onmousedown = e => {
+            const tx = Math.floor(e.clientX / TILE);
+            const ty = Math.floor(e.clientY / TILE);
+            const k = `${tx},${ty}`;
+            if (e.button === 0 && world[k]) {
+                if (world[k] === 'tnt') { SFX.explode(); explode(tx, ty); }
+                else { SFX.mine(); delete world[k]; }
+            } else if (e.button === 2 && !world[k]) {
+                SFX.place(); world[k] = inventory[selectedIdx];
+            }
+        };
+        window.oncontextmenu = () => false;
+
+        function explode(tx, ty) {
+            for (let x = tx-3; x <= tx+3; x++) {
+                for (let y = ty-3; y <= ty+3; y++) {
+                    if (Math.sqrt((x-tx)**2 + (y-ty)**2) <= 3.2) delete world[`${x},${y}`];
+                }
+            }
+        }
+
+        function getBlock(px, py) { return world[`${Math.floor(px/TILE)},${Math.floor(py/TILE)}`]; }
+
+        function updatePhysics() {
+            if (keys['KeyA']) player.vx -= 0.8;
+            if (keys['KeyD']) player.vx += 0.8;
+            player.vx *= 0.8; player.x += player.vx;
+            
+            if (getBlock(player.x, player.y+2) || getBlock(player.x+player.w, player.y+2) || getBlock(player.x, player.y+player.h-2) || getBlock(player.x+player.w, player.y+player.h-2)) {
+                player.x -= player.vx; player.vx = 0;
+            }
+
+            player.vy += 0.45; player.y += player.vy;
+            let wasGrd = player.grounded; player.grounded = false;
+
+            if (getBlock(player.x+2, player.y+player.h) || getBlock(player.x+player.w-2, player.y+player.h)) {
+                player.y = Math.floor(player.y/TILE)*TILE + (TILE-player.h);
+                player.vy = 0; player.grounded = true;
+                if (!wasGrd) SFX.land();
+            }
+            if (getBlock(player.x+2, player.y) || getBlock(player.x+player.w-2, player.y)) {
+                player.y = Math.ceil(player.y/TILE)*TILE; player.vy = 0;
+            }
+            if ((keys['KeyW'] || keys['Space']) && player.grounded) { player.vy = -9.5; SFX.jump(); }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let k in world) {
+                const [x, y] = k.split(',').map(Number);
+                ctx.fillStyle = blocks[world[k]];
+                ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+                ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                ctx.strokeRect(x * TILE, y * TILE, TILE, TILE);
+            }
+            ctx.fillStyle = '#333';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+            updatePhysics();
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>

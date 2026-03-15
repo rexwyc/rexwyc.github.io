@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Side-by-Side Trip Summoner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        /* Flexbox allows side-by-side positioning */
+        .game-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            justify-content: center;
+        }
+        .summon-panel {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 3px solid transparent;
+        }
+        .display-area {
+            height: 220px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fafafa;
+        }
+        .emoji { font-size: 4.5rem; margin-bottom: 10px; }
+        .dest-name { font-size: 1.5rem; font-weight: bold; color: #333; }
+        .dest-desc { font-style: italic; color: #666; margin-top: 5px; }
+        
+        button {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: 0.2s;
+            box-shadow: 0 4px 0 #cf3544;
+        }
+        button:hover { background-color: #ff6b81; transform: translateY(-2px); }
+        button:active { transform: translateY(2px); box-shadow: none; }
+        
+        .history {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        ul { list-style: none; padding: 0; }
+        li { padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <h1>🌎 Trip Summoner</h1>
+    <p>Two players, two random fates. Who gets the better vacation?</p>
+
+    <div class="game-container">
+        <!-- Side A -->
+        <div id="panel-1" class="summon-panel">
+            <h3>Summoner 1</h3>
+            <div id="display-1" class="display-area">
+                <span>???</span>
+            </div>
+            <button onclick="summon(1)">SUMMON!</button>
+        </div>
+
+        <!-- Side B -->
+        <div id="panel-2" class="summon-panel">
+            <h3>Summoner 2</h3>
+            <div id="display-2" class="display-area">
+                <span>???</span>
+            </div>
+            <button onclick="summon(2)">SUMMON!</button>
+        </div>
+    </div>
+
+    <div class="history">
+        <strong>Recent Summons:</strong>
+        <ul id="log"></ul>
+    </div>
+
+    <script>
+        const destinations = [
+            { name: "Tokyo", emoji: "🗼", desc: "Cyberpunk vibes & sushi." },
+            { name: "Paris", emoji: "🥐", desc: "Croissants & the Eiffel Tower." },
+            { name: "Egypt", emoji: "🏺", desc: "Mysterious pyramids & heat." },
+            { name: "Iceland", emoji: "🌋", desc: "Northern lights & volcanoes." },
+            { name: "Bali", emoji: "🍹", desc: "Infinity pools & jungle vibes." },
+            { name: "London", emoji: "💂", desc: "Big Ben & afternoon tea." },
+            { name: "NYC", emoji: "🏙️", desc: "Bright lights & yellow cabs." },
+            { name: "Sydney", emoji: "🏄", desc: "Surfing & Opera House." },
+            { name: "Rome", emoji: "🍕", desc: "Colosseum & endless pasta." },
+            { name: "Swiss Alps", emoji: "⛷️", desc: "Powder snow & chocolate." }
+        ];
+
+        function summon(id) {
+            const display = document.getElementById(`display-${id}`);
+            const panel = document.getElementById(`panel-${id}`);
+            const log = document.getElementById('log');
+            
+            // Pick random destination
+            const roll = destinations[Math.floor(Math.random() * destinations.length)];
+            
+            // Visual update
+            display.innerHTML = `
+                <div class="emoji">${roll.emoji}</div>
+                <div class="dest-name">${roll.name}</div>
+                <div class="dest-desc">${roll.desc}</div>
+            `;
+            
+            // Change panel border based on player
+            panel.style.borderColor = id === 1 ? '#007bff' : '#2ed573';
+
+            // Add to log
+            const entry = document.createElement('li');
+            entry.innerHTML = `<strong>Player ${id}</strong> summoned <b>${roll.name}</b> ${roll.emoji}`;
+            log.prepend(entry);
+        }
+    </script>
+</body>
+</html>
