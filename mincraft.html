@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>2D Minecraft - Platinum & Music Fix</title>
+    <title>2D Minecraft - Clickable Inventory</title>
     <style>
         body { margin: 0; overflow: hidden; background: #87CEEB; font-family: 'Segoe UI', sans-serif; user-select: none; }
         canvas { display: block; cursor: crosshair; }
@@ -11,16 +11,24 @@
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 5px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 10px;
             max-width: 95vw; overflow-x: auto; border: 2px solid #444; scrollbar-width: none;
+            z-index: 200; /* 確保在最上層 */
         }
         #hotbar::-webkit-scrollbar { display: none; }
-        .slot { min-width: 60px; height: 70px; border: 2px solid #555; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 10px; background: #222; transition: 0.1s; }
-        .active { border-color: #ffff00; background: #444; transform: scale(1.1); box-shadow: 0 0 15px #ffff00; z-index: 10; }
-        .icon { width: 22px; height: 22px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.3); }
-        /* 啟動按鈕樣式 */
+        .slot { 
+            min-width: 60px; height: 70px; border: 2px solid #555; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            color: white; font-size: 10px; background: #222; transition: 0.1s; 
+            cursor: pointer; /* 讓玩家知道可以點擊 */
+            pointer-events: auto; /* 允許滑鼠事件 */
+        }
+        .slot:hover { background: #333; border-color: #999; }
+        .active { border-color: #ffff00 !important; background: #444 !important; transform: scale(1.1); box-shadow: 0 0 15px #ffff00; z-index: 10; }
+        .icon { width: 22px; height: 22px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
+        
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); color: white; display: flex;
-            flex-direction: column; align-items: center; justify-content: center; z-index: 100;
+            flex-direction: column; align-items: center; justify-content: center; z-index: 300;
         }
         #start-btn { padding: 15px 30px; font-size: 20px; cursor: pointer; background: #4da64d; border: none; color: white; border-radius: 5px; }
     </style>
@@ -29,12 +37,13 @@
 
     <div id="start-screen">
         <h1>2D Minecraft</h1>
-        <button id="start-btn">Click to Start Game & Music 🎵</button>
+        <button id="start-btn">Click to Start & Music 🎵</button>
     </div>
 
     <div id="ui">
         <b>AD</b>: Move | <b>W / Space</b>: Jump<br>
-        <b>Wheel / 1-9</b>: Select Item | <b>Left Click</b>: Mine | <b>Right Click</b>: Place
+        <b>Direct Click</b>: Select Block | <b>Wheel</b>: Switch<br>
+        <b>Left Click Canvas</b>: Mine | <b>Right Click</b>: Place
     </div>
 
     <div id="hotbar"></div>
@@ -46,7 +55,7 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // 1. Audio Engine (Web Audio API)
+        // 1. Audio Engine
         const AudioEngine = {
             ctx: null,
             init() { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
@@ -68,14 +77,13 @@
             land: () => AudioEngine.play(80, 'sine', 0.1, 0.2),
             mine: () => AudioEngine.play(200 + Math.random()*100, 'sawtooth', 0.05),
             place: () => AudioEngine.play(400, 'sine', 0.1),
-            explode: () => AudioEngine.play(60, 'sawtooth', 0.6, 0.4)
+            explode: () => AudioEngine.play(60, 'sawtooth', 0.6, 0.4),
+            select: () => AudioEngine.play(600, 'sine', 0.05, 0.05)
         };
 
-        // 2. Music Controller
-        const MUSIC_URL = 'https://www.soundhelix.com'; // Replace with Aria Math
-        const bgMusic = new Audio(MUSIC_URL);
+        // 2. Music Fix
+        const bgMusic = new Audio('https://www.soundhelix.com');
         bgMusic.loop = true;
-        bgMusic.volume = 0.5;
 
         document.getElementById('start-btn').onclick = function() {
             AudioEngine.init();
@@ -83,24 +91,48 @@
             document.getElementById('start-screen').style.display = 'none';
         };
 
-        // 3. Blocks Definition (Including Platinum)
+        // 3. Blocks & Inventory
         const blocks = {
-            'grass': '#4da64d', 'dirt': '#8b5a2b', 'stone': '#808080', 'tnt': '#ff3333',
-            'platinum': '#e5e4e2', // Added Platinum (Light Metallic White)
-            'coal': '#2b2b2b', 'iron': '#d8d8d8', 'copper': '#b87333', 'gold': '#ffd700',
-            'diamond': '#b9f2ff', 'emerald': '#50c878', 'ruby': '#e0115f', 'sapphire': '#0f52ba',
-            'amethyst': '#9966cc', 'quartz': '#f5f5f5', 'lapis': '#26619c', 'obsidian': '#3c2e4c',
-            'silver': '#c0c0c0', 'sulfur': '#ffff33', 'aluminum': '#a5a9b4', 'nickel': '#727472', 'uranium': '#3fb911'
+            'grass': '#4da64d', 'dirt': '#8b5a2b', 'stone': '#808080', 'tnt': '#ff3333', 'platinum': '#e5e4e2',
+            'coal': '#2b2b2b', 'iron': '#d8d8d8', 'copper': '#b87333', 'gold': '#ffd700', 'diamond': '#b9f2ff',
+            'emerald': '#50c878', 'ruby': '#e0115f', 'sapphire': '#0f52ba', 'amethyst': '#9966cc', 'quartz': '#f5f5f5',
+            'lapis': '#26619c', 'obsidian': '#3c2e4c', 'silver': '#c0c0c0', 'sulfur': '#ffff33', 'aluminum': '#a5a9b4',
+            'nickel': '#727472', 'uranium': '#3fb911'
         };
         const inventory = Object.keys(blocks);
         let selectedIdx = 1;
 
-        // 4. Game Logic
+        // --- NEW: Click to Select Logic ---
+        function updateUI() {
+            const bar = document.getElementById('hotbar');
+            bar.innerHTML = ''; // 清空重新生成
+
+            inventory.forEach((id, i) => {
+                const slot = document.createElement('div');
+                slot.className = `slot ${i === selectedIdx ? 'active' : ''}`;
+                slot.innerHTML = `<div class="icon" style="background:${blocks[id]}"></div>${id.toUpperCase()}`;
+                
+                // 點擊事件
+                slot.onclick = (e) => {
+                    e.stopPropagation(); // 防止點擊物品欄時在畫面上放方塊
+                    selectedIdx = i;
+                    SFX.select();
+                    updateUI();
+                };
+                
+                bar.appendChild(slot);
+            });
+
+            const active = bar.children[selectedIdx];
+            if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+        updateUI();
+
+        // 4. Game Setup
         const TILE = 40;
         let player = { x: 200, y: 100, w: 24, h: 36, vx: 0, vy: 0, grounded: false };
         const world = {};
 
-        // Generate World with Platinum Ores
         for (let x = -20; x < 80; x++) {
             let surfaceY = Math.floor(Math.sin(x * 0.12) * 3) + 10;
             for (let y = surfaceY; y < 30; y++) {
@@ -108,26 +140,13 @@
                 if (y > surfaceY + 2) {
                     type = 'stone';
                     if (Math.random() < 0.1) {
-                        const ores = inventory.slice(4); // Select from minerals
+                        const ores = inventory.slice(5); 
                         type = ores[Math.floor(Math.random() * ores.length)];
                     }
                 }
                 world[`${x},${y}`] = type;
             }
         }
-
-        function updateUI() {
-            const bar = document.getElementById('hotbar');
-            bar.innerHTML = inventory.map((id, i) => `
-                <div class="slot ${i === selectedIdx ? 'active' : ''}">
-                    <div class="icon" style="background:${blocks[id]}"></div>
-                    ${id.toUpperCase()}
-                </div>
-            `).join('');
-            const active = bar.children[selectedIdx];
-            if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-        }
-        updateUI();
 
         // Inputs
         const keys = {};
@@ -141,6 +160,7 @@
             updateUI();
         };
 
+        // Canvas Interaction
         canvas.onmousedown = e => {
             const tx = Math.floor(e.clientX / TILE);
             const ty = Math.floor(e.clientY / TILE);
