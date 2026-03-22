@@ -2,214 +2,453 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sovereign Shield: Tactical Balance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>\ WWII STRATEGY</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #05080a; font-family: 'Segoe UI', sans-serif; color: #00ff00; }
-        canvas { display: block; background: #0a0e14; cursor: crosshair; }
-        #sidebar {
-            position: absolute; left: 0; top: 0; width: 300px; height: 100%;
-            background: rgba(10, 20, 25, 0.95); border-right: 2px solid #27ae60;
-            overflow-y: auto; padding: 20px; box-sizing: border-box; z-index: 100;
+        * {
+            box-sizing: border-box;
+            user-select: none;
         }
-        #hud {
-            position: absolute; top: 0; left: 300px; right: 0; padding: 20px;
-            background: rgba(0, 0, 0, 0.85); border-bottom: 2px solid #27ae60; display: flex; justify-content: space-between; z-index: 10;
+        body {
+            background: linear-gradient(145deg, #2a2a1a 0%, #1a1a0a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 16px;
         }
-        .btn {
-            width: 100%; background: #1c2833; border: 1px solid #27ae60; color: #2ecc71;
-            padding: 10px; margin-bottom: 8px; cursor: pointer; text-align: left; font-size: 11px; border-radius: 4px;
+        .game-wrapper {
+            background: #4a3e2e;
+            border-radius: 2.5rem;
+            padding: 2rem 2rem 2rem 2rem;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(215,185,120,0.3);
+            border: 1px solid #b89a6a;
+            max-width: 1400px;
         }
-        .btn:hover:not(:disabled) { background: #27ae60; color: #fff; }
-        .btn.active { background: #f1c40f; color: #000; border-color: #fff; font-weight: bold; }
-        .section-title { font-weight: bold; color: #f1c40f; margin: 15px 0 10px 0; border-bottom: 1px solid #f1c40f; text-transform: uppercase; }
-        #timer { font-size: 30px; color: #f1c40f; font-weight: bold; }
-        #hint { position: absolute; bottom: 20px; left: 320px; color: #aaa; font-style: italic; pointer-events: none; }
+        h1 {
+            text-align: center;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+            font-size: 2.1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #f0e6c5;
+            text-shadow: 0 4px 0 #5a4a2a, 0 8px 10px #00000080;
+        }
+        h1 span {
+            background: #3a2e1e;
+            padding: 0 16px;
+            border-radius: 60px;
+            border-left: 4px solid #dbb05c;
+            border-right: 4px solid #dbb05c;
+        }
+        .canvas-panel {
+            display: flex;
+            justify-content: center;
+            border-radius: 36px;
+            background: #2a1e12;
+            padding: 14px;
+            border: 2px solid #b4945a;
+            box-shadow: inset 0 0 15px #1a1208;
+        }
+        canvas {
+            display: block;
+            width: 1000px;
+            height: 600px;
+            border-radius: 28px;
+            box-shadow: 0 0 0 2px #8b6b3e, 0 20px 30px black;
+        }
+        .info-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .stats-grid {
+            background: #2a2a1a;
+            padding: 12px 20px;
+            border-radius: 50px;
+            color: #eadbb6;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid #b4945a;
+            box-shadow: inset 0 2px 5px #0f171b;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 25px;
+            max-width: 850px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .flag-icon {
+            font-size: 1.9rem;
+            filter: drop-shadow(0 2px 2px black);
+        }
+        .army-number, .missile-number {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            background: #1a1a0a;
+            padding: 4px 10px;
+            border-radius: 40px;
+            border: 1px solid #b4945a;
+            color: #f0dbaa;
+            font-size: 1.0rem;
+        }
+        .missile-number {
+            background: #3a2a1a;
+            color: #ffbe76;
+            margin-left: 2px;
+        }
+        .status-indicator {
+            background: #3a2e22;
+            border-radius: 30px;
+            padding: 8px 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e3b87a;
+        }
+        .status-text {
+            color: #f5e7c8;
+            font-size: 1.3rem;
+            font-weight: 400;
+        }
+        .nation-badge {
+            font-size: 2rem;
+        }
+        .footer {
+            color: #c0b090;
+            margin-top: 14px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .footer strong {
+            color: #ffd966;
+        }
     </style>
 </head>
 <body>
+<div class="game-wrapper">
+    <h1><span>🇩🇪 GERMAN FLAG BACKGROUND · CONQUEST = FLAG CHANGE 🇩🇪</span></h1>
+    <div class="canvas-panel">
+        <canvas id="warCanvas" width="1000" height="600"></canvas>
+    </div>
 
-<!-- Background Music -->
-<audio id="bgMusic" loop>
-    <source src="music/Macarena (River Re-Mix).mp3" type="audio/mpeg">
-</audio>
-
-<div id="sidebar">
-    <div style="font-size: 18px; font-weight: bold; color: #fff;">SUPREME HQ: IRAN 🇮🇷</div>
-    <div class="section-title">Missile Research (20)</div>
-    <div id="missile-menu"></div>
-    <div class="section-title">Base Upgrades (20)</div>
-    <div id="upgrade-menu"></div>
+    <div class="info-bar">
+        <div class="stats-grid" id="armyStats"></div>
+        <div class="status-indicator">
+            <span class="nation-badge">🎯</span>
+            <span class="status-text" id="statusMessage">CLICK ENEMY TO ATTACK</span>
+        </div>
+    </div>
+    <div class="footer"><strong>🇩🇪 Background: images/earth.jpg</strong> · Click any enemy flag to fire · CPU attacks every 2.2s</div>
 </div>
-
-<div id="hud">
-    <div>FUNDS: <span style="color:#f1c40f">$<span id="money">101000</span></span> | TECH: <span id="m-name" style="color:#fff">Sayyad-1</span></div>
-    <div id="timer">PREPARING: 30s</div>
-    <div>INTEGRITY: <span id="health" style="color:#e74c3c; font-weight:bold;">100</span>%</div>
-</div>
-
-<div id="hint">Missile speeds re-balanced. Click to build. Integrity -1% per breach.</div>
-
-<canvas id="gameCanvas"></canvas>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const bgMusic = document.getElementById('bgMusic');
+(function() {
+    const canvas = document.getElementById('warCanvas');
+    const ctx = canvas.getContext('2d');
 
-let money = 101000, health = 100, level = 1;
-let prepTime = 30, warStarted = false;
-let towers = [], enemies = [], missiles = [], trails = [];
+    // ----- BACKGROUND IMAGE (German flag) -----
+    const germanFlag = new Image();
+    germanFlag.src = 'images/earth.jpg';  // Your German flag image
+    
+    // Fallback in case image doesn't load
+    germanFlag.onerror = function() {
+        console.log('German flag image not found, using fallback colors');
+    };
 
-// --- DATA ---
-const MISSILE_NAMES = ["Sayyad", "Mersad", "Raad", "Ya-Zahra", "Herz", "Talash", "Khordad", "Bavar", "Arman", "Fattah"];
-const MISSILE_DB = Array.from({length: 20}, (_, i) => ({
-    name: MISSILE_NAMES[Math.floor(i/2)] + "-" + (i + 1),
-    dmg: 150 + (i * 200), 
-    speed: Math.min(8 + (i * 0.4), 16), // CAPPED SPEED: No more ultra-fast flashes
-    cost: i === 0 ? 0 : Math.floor(Math.pow(i, 2.7) * 250), 
-    tier: i
-}));
-let activeM = 0;
+    // ----- NATIONS (with original flags) -----
+    let countries = [
+        { name: 'Germany',  flag: '🇩🇪', originalFlag: '🇩🇪', x: 260, y: 240, army: 42700, missiles: 50, isPlayer: true,  missileActive: false, missile: null },
+        { name: 'USA',      flag: '🇺🇸', originalFlag: '🇺🇸', x: 130, y: 130, army: 38500, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'China',    flag: '🇨🇳', originalFlag: '🇨🇳', x: 770, y: 210, army: 50000, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'England',  flag: '🇬🇧', originalFlag: '🇬🇧', x: 380, y: 90,  army: 31000, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'Italy',    flag: '🇮🇹', originalFlag: '🇮🇹', x: 490, y: 280, army: 28000, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'Mexico',   flag: '🇲🇽', originalFlag: '🇲🇽', x: 180, y: 420, army: 22500, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'Canada',   flag: '🇨🇦', originalFlag: '🇨🇦', x: 210, y: 40,  army: 19500, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'Japan',    flag: '🇯🇵', originalFlag: '🇯🇵', x: 880, y: 140, army: 37000, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'Iran',     flag: '🇮🇷', originalFlag: '🇮🇷', x: 700, y: 380, army: 26300, missiles: 30, isPlayer: false, missileActive: false, missile: null },
+        { name: 'Russia',   flag: '🇷🇺', originalFlag: '🇷🇺', x: 560, y: 150, army: 45500, missiles: 30, isPlayer: false, missileActive: false, missile: null }
+    ];
 
-const UPGRADES = Array.from({length: 20}, (_, i) => ({
-    name: ["Range Boost", "Rapid Fire", "Hull Repair", "Oil Profit", "Targeting AI"][i%5] + " V" + (Math.floor(i/5)+1),
-    cost: Math.floor(Math.pow(i+1, 2.4) * 200),
-    effect: (i % 5 === 0) ? () => towers.forEach(t => t.range += 70) : 
-            (i % 5 === 1) ? () => towers.forEach(t => t.reload -= 12) : 
-            (i % 5 === 2) ? () => health = Math.min(100, health + 15) : 
-            (i % 5 === 3) ? () => { money += 30000; } : 
-                            () => towers.forEach(t => t.dmgMult += 0.5)
-}));
-
-// --- TIMER ---
-const timerInterval = setInterval(() => {
-    if (prepTime > 0) {
-        prepTime--;
-        document.getElementById('timer').innerText = `PREPARING: ${prepTime}s`;
-    } else {
-        warStarted = true;
-        document.getElementById('timer').innerText = "WAR ACTIVE!";
-        document.getElementById('timer').style.color = "#ff3333";
-        clearInterval(timerInterval);
-    }
-}, 1000);
-
-// --- DEPLOY ON CLICK ---
-canvas.onclick = (e) => {
-    if (e.clientX > 300 && money >= 300) {
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        if(bgMusic.paused) bgMusic.play().catch(e => {});
-        
-        towers.push(new Tower(e.clientX, e.clientY));
-        money -= 300;
-        sfx(200, 0.1);
-    }
-};
-
-function sfx(f, d) {
-    try { const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.frequency.value = f; g.gain.value = 0.05; o.connect(g); g.connect(audioCtx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d); } catch(e) {}
-}
-
-// --- DRAWING ---
-function drawUnit(x, y, tier) {
-    ctx.save(); ctx.translate(x, y);
-    if (tier < 7) { 
-        ctx.fillStyle = "#4b5320"; ctx.fillRect(-15, -5, 30, 12);
-        ctx.fillStyle = "#111"; ctx.fillRect(-12, 6, 8, 4); ctx.fillRect(4, 6, 8, 4);
-    } else if (tier < 14) { 
-        ctx.fillStyle = "#3e4e33"; ctx.fillRect(-30, -8, 60, 16);
-        ctx.fillStyle = "#1a2416"; ctx.fillRect(-20, -20, 35, 12);
-    } else { 
-        ctx.fillStyle = "#1a1f16"; ctx.fillRect(-45, -10, 90, 25);
-        ctx.fillStyle = "#0d140a"; ctx.fillRect(-35, -35, 50, 25);
-        ctx.strokeStyle = "#00ff00"; ctx.strokeRect(-35, -35, 50, 25);
-    }
-    ctx.restore();
-}
-
-function drawEnemy(x, y, faction) {
-    ctx.save(); ctx.translate(x, y);
-    ctx.fillStyle = faction === 'us' ? "#7f8c8d" : "#34495e";
-    ctx.beginPath(); ctx.moveTo(35, 0); ctx.lineTo(-20, -12); ctx.lineTo(-15, 0); ctx.lineTo(-20, 12); ctx.fill();
-    ctx.fillStyle = "orange"; ctx.fillRect(-30, -4, 10, 8);
-    ctx.fillStyle="white"; ctx.font="10px Arial"; ctx.fillText(faction==='us'?'🇺🇸':'🇮🇱', -10, 4);
-    ctx.restore();
-}
-
-class Tower {
-    constructor(x,y) { this.x=x; this.y=y; this.range=450; this.timer=0; this.reload=85; this.dmgMult=1; }
-    update() {
-        if(this.timer > 0) this.timer--;
-        if(!warStarted) return;
-        let target = enemies.find(e => Math.hypot(e.x-this.x, e.y-this.y) < this.range);
-        if(target && this.timer <= 0) {
-            let m = MISSILE_DB[activeM];
-            missiles.push({x:this.x, y:this.y-25, t:target, s:m.speed, d:m.dmg*this.dmgMult, tier: m.tier});
-            this.timer = Math.max(10, this.reload);
+    // Missile class
+    class Missile {
+        constructor(fromX, fromY, toX, toY, ownerIdx, targetIdx) {
+            this.fromX = fromX; this.fromY = fromY; this.toX = toX; this.toY = toY;
+            this.owner = ownerIdx; this.target = targetIdx;
+            this.progress = 0; this.speed = 0.03;
+        }
+        update() {
+            this.progress = Math.min(1, this.progress + this.speed);
+            return this.progress >= 1;
+        }
+        getCurrentPos() {
+            return { x: this.fromX + (this.toX - this.fromX) * this.progress,
+                     y: this.fromY + (this.toY - this.fromY) * this.progress };
         }
     }
-}
 
-function loop() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    function launchMissile(fromIdx, targetIdx) {
+        const from = countries[fromIdx];
+        const target = countries[targetIdx];
+        if (!from || !target) return false;
+        if (from.army <= 0 || target.army <= 0) return false;
+        if (from.missiles <= 0) return false;
+        if (from.missileActive) return false;
 
-    // Enemy Spawn Logic
-    if(warStarted && Math.random() < 0.012 + (level * 0.005)) enemies.push({
-        x: 300, y: 150 + Math.random()*(canvas.height-300), 
-        hp: 300 + (level*300), speed: 1.2 + (level*0.15), faction: Math.random()>0.5?'us':'is'
+        from.missiles -= 1;
+        from.missile = new Missile(from.x, from.y, target.x, target.y, fromIdx, targetIdx);
+        from.missileActive = true;
+        return true;
+    }
+
+    function resolveImpact(ownerIdx, targetIdx) {
+        const attacker = countries[ownerIdx];
+        const target = countries[targetIdx];
+        if (!target || target.army <= 0) return;
+
+        target.army = Math.max(0, target.army - 50);
+
+        // CONQUEST: if target army reaches 0, its flag becomes attacker's original flag
+        if (target.army === 0 && attacker) {
+            target.flag = attacker.originalFlag;
+            target.missileActive = false;
+            target.missile = null;
+        }
+
+        if (countries[ownerIdx]) {
+            countries[ownerIdx].missileActive = false;
+            countries[ownerIdx].missile = null;
+        }
+
+        if (target.army <= 0) {
+            target.missileActive = false;
+            target.missile = null;
+        }
+    }
+
+    function updateMissilesAndImpact() {
+        let impact = false;
+        for (let i = 0; i < countries.length; i++) {
+            const c = countries[i];
+            if (c.missileActive && c.missile) {
+                const finished = c.missile.update();
+                if (finished) {
+                    const m = c.missile;
+                    if (m.target !== undefined && countries[m.target] && countries[m.target].army > 0) {
+                        resolveImpact(i, m.target);
+                        impact = true;
+                    } else {
+                        c.missileActive = false;
+                        c.missile = null;
+                    }
+                }
+            }
+        }
+        return impact;
+    }
+
+    function cpuRandomAttack() {
+        const alive = countries.filter(c => c.army > 0);
+        if (alive.length < 2) return;
+
+        const cpuAlive = alive.filter(c => !c.isPlayer && c.missiles > 0);
+        if (cpuAlive.length === 0) return;
+
+        const attacker = cpuAlive[Math.floor(Math.random() * cpuAlive.length)];
+        const attackerIdx = countries.findIndex(c => c.name === attacker.name);
+
+        const possibleTargets = alive.filter(c => c.name !== attacker.name);
+        if (possibleTargets.length === 0) return;
+        const target = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+        const targetIdx = countries.findIndex(c => c.name === target.name);
+
+        launchMissile(attackerIdx, targetIdx);
+    }
+
+    let animFrame = null;
+    function animationLoop() {
+        updateMissilesAndImpact();
+        draw();
+        refreshUI();
+        animFrame = requestAnimationFrame(animationLoop);
+    }
+    animFrame = requestAnimationFrame(animationLoop);
+
+    // Draw everything with GERMAN FLAG background
+    function draw() {
+        // ===== GERMAN FLAG BACKGROUND =====
+        if (germanFlag.complete && germanFlag.naturalHeight > 0) {
+            // Draw the German flag image stretched to fit canvas
+            ctx.drawImage(germanFlag, 0, 0, 1000, 600);
+            
+            // Add a semi-transparent overlay to make countries stand out
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 1000, 600);
+            ctx.globalAlpha = 1.0;
+        } else {
+            // Fallback: Draw German flag colors if image not loaded
+            // Black stripe
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 1000, 200);
+            // Red stripe
+            ctx.fillStyle = '#DD0000';
+            ctx.fillRect(0, 200, 1000, 200);
+            // Gold stripe
+            ctx.fillStyle = '#FFCE00';
+            ctx.fillRect(0, 400, 1000, 200);
+            
+            // Add dark overlay for readability
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 1000, 600);
+            ctx.globalAlpha = 1.0;
+        }
+        // ===== END BACKGROUND =====
+
+        // Draw nations on top
+        for (let i = 0; i < countries.length; i++) {
+            const c = countries[i];
+            if (c.army <= 0) {
+                // Dead: show skull and current flag (which might be conqueror's)
+                ctx.shadowBlur = 10; 
+                ctx.shadowColor = '#000000';
+                ctx.font = '42px "Segoe UI Emoji"'; 
+                ctx.fillStyle = '#4f3f3f';
+                ctx.fillText('💀', c.x-22, c.y-18);
+                ctx.font = '32px "Segoe UI Emoji"'; 
+                ctx.fillStyle = '#ffffffcc';
+                ctx.fillText(c.flag, c.x-15, c.y-50);
+                continue;
+            }
+
+            ctx.shadowColor = c.isPlayer ? '#ffbb55' : '#333333';
+            ctx.shadowBlur = c.isPlayer ? 24 : 10;
+
+            // Background disk for readability
+            ctx.beginPath(); ctx.arc(c.x, c.y, 34, 0, 2*Math.PI);
+            ctx.fillStyle = 'rgba(30, 20, 10, 0.8)'; 
+            ctx.fill();
+            ctx.strokeStyle = c.isPlayer ? '#f5c542' : '#b89a6a'; 
+            ctx.lineWidth = 4; 
+            ctx.stroke();
+
+            // Flag
+            ctx.font = '48px "Segoe UI Emoji", "Apple Color Emoji"'; 
+            ctx.textAlign = 'center'; 
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 18; 
+            ctx.fillStyle = '#ffffff'; 
+            ctx.fillText(c.flag, c.x, c.y-4);
+
+            // Army and missiles
+            ctx.font = 'bold 12px "Courier New", monospace'; 
+            ctx.fillStyle = '#eeddb0'; 
+            ctx.shadowBlur = 8;
+            let armyShow = c.army >= 1000 ? (c.army/1000).toFixed(1) + 'k' : c.army;
+            ctx.fillText('⚔️' + armyShow, c.x, c.y + 36);
+            ctx.fillStyle = '#ffbe76'; 
+            ctx.fillText('🚀' + c.missiles, c.x, c.y + 52);
+        }
+
+        // Missiles
+        for (let i = 0; i < countries.length; i++) {
+            const c = countries[i];
+            if (c.missileActive && c.missile) {
+                const pos = c.missile.getCurrentPos();
+                ctx.shadowBlur = 24; 
+                ctx.shadowColor = '#ffaa33';
+                ctx.beginPath(); ctx.arc(pos.x, pos.y, 9, 0, 2*Math.PI); 
+                ctx.fillStyle = '#c62828'; 
+                ctx.fill();
+                ctx.beginPath(); ctx.arc(pos.x-3, pos.y-3, 5, 0, 2*Math.PI); 
+                ctx.fillStyle = '#ffb74d'; 
+                ctx.fill();
+                // Smoke trail
+                ctx.beginPath(); 
+                ctx.moveTo(pos.x-14, pos.y-8); 
+                ctx.lineTo(pos.x-30, pos.y-20); 
+                ctx.lineTo(pos.x-20, pos.y-4); 
+                ctx.fillStyle = '#bf4e0c'; 
+                ctx.fill();
+            }
+        }
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = 'transparent';
+    }
+
+    function refreshUI() {
+        const statsDiv = document.getElementById('armyStats');
+        let html = '';
+        countries.forEach(c => {
+            let armyText = (c.army/1000).toFixed(1) + 'k';
+            if (c.army <= 0) armyText = '💀';
+            html += `<div class="stat-item"><span class="flag-icon">${c.flag}</span>`;
+            html += `<span class="army-number">${armyText}</span>`;
+            html += `<span class="missile-number">🚀${c.missiles}</span></div>`;
+        });
+        statsDiv.innerHTML = html;
+
+        const msg = document.getElementById('statusMessage');
+        if (countries.find(c=>c.name==='Germany').army <= 0) msg.innerText = '💔 GERMANY DESTROYED';
+        else if (countries.filter(c=>!c.isPlayer).every(c=>c.army<=0)) msg.innerText = '🏆 GERMANY VICTORY';
+        else if (countries.find(c=>c.name==='Germany').missiles <= 0) msg.innerText = '⚠️ OUT OF MISSILES! CPU ONLY';
+        else msg.innerText = 'CLICK ENEMY TO FIRE (cost 1 missile)';
+    }
+
+    // Player click: Germany attacks
+    canvas.addEventListener('click', (e) => {
+        const germany = countries.find(c => c.name === 'Germany');
+        if (germany.army <= 0) return;
+        if (germany.missiles <= 0) {
+            alert('No missiles left!');
+            return;
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+
+        let targetIdx = -1;
+        for (let i = 0; i < countries.length; i++) {
+            const c = countries[i];
+            if (c.army <= 0) continue;
+            const dx = mouseX - c.x; const dy = mouseY - c.y;
+            if (Math.hypot(dx, dy) <= 38) { targetIdx = i; break; }
+        }
+
+        if (targetIdx === -1 || countries[targetIdx].name === 'Germany') return;
+        launchMissile(0, targetIdx);
     });
 
-    towers.forEach(t => { t.update(); drawUnit(t.x, t.y, activeM); });
-    enemies.forEach((e,i) => {
-        e.x += e.speed; drawEnemy(e.x, e.y, e.faction);
-        if(e.x > canvas.width) { health -= 1; enemies.splice(i,1); sfx(60, 0.4); }
-        if(e.hp <= 0) { money += 500; level += 0.05; enemies.splice(i,1); }
-    });
+    // CPU timer
+    setInterval(() => {
+        cpuRandomAttack();
+    }, 1000);
 
-    // Trail logic
-    trails.forEach((tr, i) => {
-        ctx.fillStyle = `rgba(200, 200, 200, ${tr.a})`;
-        ctx.beginPath(); ctx.arc(tr.x, tr.y, 2, 0, 7); ctx.fill();
-        tr.a -= 0.02;
-        if(tr.a <= 0) trails.splice(i, 1);
-    });
+    // Initial draw
+    draw();
+    refreshUI();
 
-    missiles.forEach((m,i) => {
-        let a = Math.atan2(m.t.y-m.y, m.t.x-m.x);
-        m.x += Math.cos(a)*m.s; m.y += Math.sin(a)*m.s;
-        
-        // Add trail
-        if(Math.random() > 0.5) trails.push({x: m.x, y: m.y, a: 0.6});
+    // Redraw when image loads
+    germanFlag.onload = () => { draw(); refreshUI(); };
 
-        ctx.fillStyle = m.tier > 12 ? "#00ffff" : "#f1c40f";
-        ctx.beginPath(); ctx.arc(m.x,m.y,4,0,7); ctx.fill();
-        if(Math.hypot(m.t.x-m.x, m.t.y-m.y) < 20) { m.t.hp -= m.d; missiles.splice(i,1); sfx(400, 0.05); }
-    });
-
-    document.getElementById('money').innerText = Math.floor(money);
-    document.getElementById('health').innerText = Math.max(0, health);
-    if(health > 0) requestAnimationFrame(loop);
-    else { ctx.fillStyle="red"; ctx.font="60px Courier"; ctx.textAlign="center"; ctx.fillText("MISSION FAILED", canvas.width/2+150, canvas.height/2); }
-}
-
-const mMenu = document.getElementById('missile-menu');
-MISSILE_DB.forEach((m, i) => {
-    const b = document.createElement('button'); b.className = 'btn'; if(i===0) b.classList.add('active');
-    b.innerHTML = `<strong>${m.name}</strong><br>ATK: ${m.dmg} | SPD: ${m.speed}`;
-    b.onclick = () => { if(money>=m.cost && i!==activeM){ money-=m.cost; activeM=i; document.getElementById('m-name').innerText=m.name; document.querySelectorAll('#missile-menu .btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); } };
-    mMenu.appendChild(b);
-});
-
-const uMenu = document.getElementById('upgrade-menu');
-UPGRADES.forEach((u, i) => {
-    const b = document.createElement('button'); b.className = 'btn'; b.innerHTML = u.name + " ($" + u.cost + ")";
-    b.onclick = () => { if(money >= u.cost){ money -= u.cost; u.effect(); b.disabled = true; } };
-    uMenu.appendChild(b);
-});
-
-loop();
+    window.addEventListener('beforeunload', () => { if (animFrame) cancelAnimationFrame(animFrame); });
+})();
 </script>
+<audio autoplay loop>
+    <source src="music/german.mp3">
+</audio>
 </body>
 </html>

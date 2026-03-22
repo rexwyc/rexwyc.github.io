@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sovereign Shield: Direct Deployment</title>
+    <title>Sovereign Shield: Tactical Balance</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #05080a; font-family: 'Segoe UI', sans-serif; color: #00ff00; }
         canvas { display: block; background: #0a0e14; cursor: crosshair; }
@@ -22,11 +22,16 @@
         .btn:hover:not(:disabled) { background: #27ae60; color: #fff; }
         .btn.active { background: #f1c40f; color: #000; border-color: #fff; font-weight: bold; }
         .section-title { font-weight: bold; color: #f1c40f; margin: 15px 0 10px 0; border-bottom: 1px solid #f1c40f; text-transform: uppercase; }
-        #timer { font-size: 30px; color: #f1c40f; font-weight: bold; text-shadow: 0 0 15px #f1c40f; }
-        #hint { position: absolute; bottom: 20px; left: 320px; color: #aaa; font-style: italic; }
+        #timer { font-size: 30px; color: #f1c40f; font-weight: bold; }
+        #hint { position: absolute; bottom: 20px; left: 320px; color: #aaa; font-style: italic; pointer-events: none; }
     </style>
 </head>
 <body>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+    <source src="music/Macarena (River Re-Mix).mp3" type="audio/mpeg">
+</audio>
 
 <div id="sidebar">
     <div style="font-size: 18px; font-weight: bold; color: #fff;">SUPREME HQ: IRAN 🇮🇷</div>
@@ -42,35 +47,39 @@
     <div>INTEGRITY: <span id="health" style="color:#e74c3c; font-weight:bold;">100</span>%</div>
 </div>
 
-<div id="hint">Click anywhere on the battlefield to deploy Bavar-373 ($300 per unit)</div>
+<div id="hint">Missile speeds re-balanced. Click to build. Integrity -1% per breach.</div>
 
 <canvas id="gameCanvas"></canvas>
 
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const audio = new (window.AudioContext || window.webkitAudioContext)();
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const bgMusic = document.getElementById('bgMusic');
 
 let money = 101000, health = 100, level = 1;
 let prepTime = 30, warStarted = false;
-let towers = [], enemies = [], missiles = [];
+let towers = [], enemies = [], missiles = [], trails = [];
 
 // --- DATA ---
 const MISSILE_NAMES = ["Sayyad", "Mersad", "Raad", "Ya-Zahra", "Herz", "Talash", "Khordad", "Bavar", "Arman", "Fattah"];
 const MISSILE_DB = Array.from({length: 20}, (_, i) => ({
     name: MISSILE_NAMES[Math.floor(i/2)] + "-" + (i + 1),
-    dmg: 110 + (i * 160), speed: 13 + (i * 2), cost: i === 0 ? 0 : Math.floor(Math.pow(i, 2.7) * 250), tier: i
+    dmg: 150 + (i * 200), 
+    speed: Math.min(8 + (i * 0.4), 16), // CAPPED SPEED: No more ultra-fast flashes
+    cost: i === 0 ? 0 : Math.floor(Math.pow(i, 2.7) * 250), 
+    tier: i
 }));
 let activeM = 0;
 
 const UPGRADES = Array.from({length: 20}, (_, i) => ({
-    name: ["High-Range Radar", "Auto-Reloader", "Steel Fortress", "Petro Revenue", "AI Tracking"][i%5] + " V" + (Math.floor(i/5)+1),
+    name: ["Range Boost", "Rapid Fire", "Hull Repair", "Oil Profit", "Targeting AI"][i%5] + " V" + (Math.floor(i/5)+1),
     cost: Math.floor(Math.pow(i+1, 2.4) * 200),
-    effect: (i % 5 === 0) ? () => towers.forEach(t => t.range += 60) : 
-            (i % 5 === 1) ? () => towers.forEach(t => t.reload -= 10) : 
-            (i % 5 === 2) ? () => health = Math.min(100, health + 20) : 
-            (i % 5 === 3) ? () => { money += 20000; } : 
-                            () => towers.forEach(t => t.dmgMult += 0.4)
+    effect: (i % 5 === 0) ? () => towers.forEach(t => t.range += 70) : 
+            (i % 5 === 1) ? () => towers.forEach(t => t.reload -= 12) : 
+            (i % 5 === 2) ? () => health = Math.min(100, health + 15) : 
+            (i % 5 === 3) ? () => { money += 30000; } : 
+                            () => towers.forEach(t => t.dmgMult += 0.5)
 }));
 
 // --- TIMER ---
@@ -86,21 +95,23 @@ const timerInterval = setInterval(() => {
     }
 }, 1000);
 
-// --- CLICK TO DEPLOY ---
+// --- DEPLOY ON CLICK ---
 canvas.onclick = (e) => {
     if (e.clientX > 300 && money >= 300) {
-        if(audio.state === 'suspended') audio.resume();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        if(bgMusic.paused) bgMusic.play().catch(e => {});
+        
         towers.push(new Tower(e.clientX, e.clientY));
-        money -= 300; // Deduct money on each click
+        money -= 300;
         sfx(200, 0.1);
     }
 };
 
-// --- DRAWING ---
 function sfx(f, d) {
-    try { const o = audio.createOscillator(); const g = audio.createGain(); o.frequency.value = f; g.gain.value = 0.05; o.connect(g); g.connect(audio.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + d); o.stop(audio.currentTime + d); } catch(e) {}
+    try { const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.frequency.value = f; g.gain.value = 0.05; o.connect(g); g.connect(audioCtx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d); } catch(e) {}
 }
 
+// --- DRAWING ---
 function drawUnit(x, y, tier) {
     ctx.save(); ctx.translate(x, y);
     if (tier < 7) { 
@@ -127,7 +138,7 @@ function drawEnemy(x, y, faction) {
 }
 
 class Tower {
-    constructor(x,y) { this.x=x; this.y=y; this.range=420; this.timer=0; this.reload=80; this.dmgMult=1; this.tier = activeM; }
+    constructor(x,y) { this.x=x; this.y=y; this.range=450; this.timer=0; this.reload=85; this.dmgMult=1; }
     update() {
         if(this.timer > 0) this.timer--;
         if(!warStarted) return;
@@ -135,7 +146,7 @@ class Tower {
         if(target && this.timer <= 0) {
             let m = MISSILE_DB[activeM];
             missiles.push({x:this.x, y:this.y-25, t:target, s:m.speed, d:m.dmg*this.dmgMult, tier: m.tier});
-            this.timer = Math.max(4, this.reload);
+            this.timer = Math.max(10, this.reload);
         }
     }
 }
@@ -144,36 +155,49 @@ function loop() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
-    if(warStarted && Math.random() < 0.015 + (level * 0.007)) enemies.push({
-        x: 300, y: 150 + Math.random()*(canvas.height-300), hp: 200 + (level*200), speed: 4 + (level*0.4), faction: Math.random()>0.5?'us':'is'
+    // Enemy Spawn Logic
+    if(warStarted && Math.random() < 0.012 + (level * 0.005)) enemies.push({
+        x: 300, y: 150 + Math.random()*(canvas.height-300), 
+        hp: 300 + (level*300), speed: 1.2 + (level*0.15), faction: Math.random()>0.5?'us':'is'
     });
 
-    towers.forEach(t => { t.update(); drawUnit(t.x, t.y, t.tier); });
+    towers.forEach(t => { t.update(); drawUnit(t.x, t.y, activeM); });
     enemies.forEach((e,i) => {
         e.x += e.speed; drawEnemy(e.x, e.y, e.faction);
         if(e.x > canvas.width) { health -= 1; enemies.splice(i,1); sfx(60, 0.4); }
-        if(e.hp <= 0) { money += 400; level += 0.07; enemies.splice(i,1); }
+        if(e.hp <= 0) { money += 500; level += 0.05; enemies.splice(i,1); }
+    });
+
+    // Trail logic
+    trails.forEach((tr, i) => {
+        ctx.fillStyle = `rgba(200, 200, 200, ${tr.a})`;
+        ctx.beginPath(); ctx.arc(tr.x, tr.y, 2, 0, 7); ctx.fill();
+        tr.a -= 0.02;
+        if(tr.a <= 0) trails.splice(i, 1);
     });
 
     missiles.forEach((m,i) => {
         let a = Math.atan2(m.t.y-m.y, m.t.x-m.x);
         m.x += Math.cos(a)*m.s; m.y += Math.sin(a)*m.s;
+        
+        // Add trail
+        if(Math.random() > 0.5) trails.push({x: m.x, y: m.y, a: 0.6});
+
         ctx.fillStyle = m.tier > 12 ? "#00ffff" : "#f1c40f";
         ctx.beginPath(); ctx.arc(m.x,m.y,4,0,7); ctx.fill();
-        if(Math.hypot(m.t.x-m.x, m.t.y-m.y) < 20) { m.t.hp -= m.d; missiles.splice(i,1); }
+        if(Math.hypot(m.t.x-m.x, m.t.y-m.y) < 20) { m.t.hp -= m.d; missiles.splice(i,1); sfx(400, 0.05); }
     });
 
     document.getElementById('money').innerText = Math.floor(money);
     document.getElementById('health').innerText = Math.max(0, health);
     if(health > 0) requestAnimationFrame(loop);
-    else { ctx.fillStyle="red"; ctx.font="60px Courier"; ctx.textAlign="center"; ctx.fillText("AIRSPACE COMPROMISED", canvas.width/2+150, canvas.height/2); }
+    else { ctx.fillStyle="red"; ctx.font="60px Courier"; ctx.textAlign="center"; ctx.fillText("MISSION FAILED", canvas.width/2+150, canvas.height/2); }
 }
 
-// Menu Init
 const mMenu = document.getElementById('missile-menu');
 MISSILE_DB.forEach((m, i) => {
     const b = document.createElement('button'); b.className = 'btn'; if(i===0) b.classList.add('active');
-    b.innerHTML = `<strong>${m.name}</strong><br>ATK: ${m.dmg} | Cost: $${m.cost}`;
+    b.innerHTML = `<strong>${m.name}</strong><br>ATK: ${m.dmg} | SPD: ${m.speed}`;
     b.onclick = () => { if(money>=m.cost && i!==activeM){ money-=m.cost; activeM=i; document.getElementById('m-name').innerText=m.name; document.querySelectorAll('#missile-menu .btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); } };
     mMenu.appendChild(b);
 });
