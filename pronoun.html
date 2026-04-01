@@ -3,209 +3,477 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Pronouns Grammar Guide</title>
+    <title>Pronoun Grammar Guide | Complete Reference</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fef9e3 0%, #fff3e0 100%);
+            color: #7c2d12;
             line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
+            min-height: 100vh;
             padding: 20px;
-            background-color: #f9f9f9;
         }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(124, 45, 18, 0.1);
+            border-bottom: 4px solid #ea580c;
+        }
+        
         h1 {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
+            color: #9a3412;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ea580c, #9a3412);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        h2 {
-            color: #2c3e50;
-            margin-top: 30px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #ddd;
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #c2410c;
+            max-width: 800px;
+            margin: 0 auto 20px;
         }
-        h3 {
-            color: #34495e;
+        
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
             margin-top: 20px;
         }
-        .example-container {
-            background-color: #fff;
-            border-left: 4px solid #4CAF50;
-            padding: 10px 15px;
-            margin: 15px 0;
+        
+        .project-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #ffedd5;
+            color: #c2410c;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
-        code {
-            background-color: #f0f0f0;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: monospace;
+        
+        .project-link:hover {
+            background-color: #ea580c;
+            color: white;
+            transform: translateY(-3px);
         }
-        .note {
-            background-color: #e8f4fc;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 15px 0;
-            font-size: 0.9em;
+        
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(124, 45, 18, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #fed7aa;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(124, 45, 18, 0.2);
+            border-color: #ea580c;
+        }
+        
+        .card-header {
+            padding: 25px 25px 15px;
+            border-bottom: 1px solid #fed7aa;
+            background: linear-gradient(to right, #fff7ed, white);
+        }
+        
+        .card-header h2 {
+            color: #9a3412;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h2 i {
+            color: #ea580c;
+            font-size: 1.3rem;
+        }
+        
+        .card-content {
+            padding: 20px 25px;
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            color: #7c2d12;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background-color: #fff7ed;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ea580c;
+        }
+        
+        .examples h3 {
+            color: #9a3412;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .example-item {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        .example-item strong {
+            color: #c2410c;
+            margin-right: 5px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px;
+            background-color: #fff7ed;
+            border-top: 1px solid #fed7aa;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #ea580c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background-color: #9a3412;
+            transform: scale(1.05);
+        }
+        
+        .page-link i {
+            margin-left: 8px;
+        }
+        
+        .quick-links {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 20px rgba(124, 45, 18, 0.1);
+            border: 1px solid #fed7aa;
+        }
+        
+        .quick-links h2 {
+            color: #9a3412;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .link-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .link-item {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #ffedd5;
+            color: #c2410c;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            background-color: #ea580c;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #c2410c;
+            border-top: 1px solid #fed7aa;
+        }
+        
+        .badge {
+            background-color: #ea580c;
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .project-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .project-link {
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <h1>Pronouns Grammar Guide</h1>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book-open"></i> Pronoun Grammar Guide</h1>
+            <p class="subtitle">Master English pronouns: personal, possessive, demonstrative, reflexive, intensive, and relative. Complete explanations with interactive quizzes.</p>
+            
+            <div class="project-links">
+                <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="project-link" target="_blank"><i class="fas fa-user"></i> 📖 Personal Pronouns: 20 Qs</a>
+                <a href="https://rexwyc.github.io/Possessive.html" class="project-link" target="_blank"><i class="fas fa-key"></i> 🔑 Possessive Forms: 20 Qs</a>
+                <a href="https://rexwyc.github.io/Demonstrative%20Pronouns.html" class="project-link" target="_blank"><i class="fas fa-hand-pointer"></i> 👆 Demonstratives: 20 Qs</a>
+            </div>
+        </header>
+        
+        <main>
+            <div class="topic-grid">
+                <!-- Personal Pronouns -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-circle"></i> Personal Pronouns</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Refer to specific people or things. Change form based on <strong>person</strong> (1st, 2nd, 3rd), <strong>number</strong> (singular/plural), and <strong>case</strong> (subject/object).</p>
+                        
+                        <div class="examples">
+                            <h3>Subject vs. Object:</h3>
+                            <div class="example-item"><strong>Subject:</strong> I, you, he, she, it, we, they</div>
+                            <div class="example-item"><strong>Object:</strong> me, you, him, her, it, us, them</div>
+                            <div class="example-item"><em>She</em> called <em>me</em>. / <em>They</em> saw <em>us</em>.</div>
+                        </div>
+                        
+                        <p>Use subject pronouns before verbs (who performs action). Object pronouns after verbs or prepositions (who receives action).</p>
+                        <p><span class="badge"><i class="fa-regular fa-flask"></i> Personal Pronouns Quiz</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="page-link" target="_blank">Take Personal Quiz <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Possessive: Adjectives & Pronouns -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-lock"></i> Possessive Forms</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Show ownership or possession. Two forms: <strong>possessive adjectives</strong> (before nouns) and <strong>possessive pronouns</strong> (stand alone).</p>
+                        
+                        <div class="examples">
+                            <h3>Examples:</h3>
+                            <div class="example-item"><strong>Adjective:</strong> my, your, his, her, its, our, their</div>
+                            <div class="example-item"><strong>Pronoun:</strong> mine, yours, his, hers, its, ours, theirs</div>
+                            <div class="example-item"><em>My</em> book → The book is <em>mine</em>.</div>
+                        </div>
+                        
+                        <p>⚠️ No apostrophes in possessive pronouns: <em>yours, hers, ours, theirs</em>. <em>Its</em> (possession) vs. <em>it's</em> (it is).</p>
+                        <p><span class="badge"><i class="fa-regular fa-flask"></i> Possessive Quiz</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Possessive.html" class="page-link" target="_blank">Practice Possessives <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Demonstrative Pronouns -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-arrows-pointing-out"></i> Demonstrative Pronouns</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Point to specific things based on <strong>distance</strong> (near/far) and <strong>number</strong> (singular/plural).</p>
+                        
+                        <div class="examples">
+                            <h3>This, That, These, Those:</h3>
+                            <div class="example-item"><strong>This (near/singular):</strong> This is delicious.</div>
+                            <div class="example-item"><strong>That (far/singular):</strong> That looks amazing.</div>
+                            <div class="example-item"><strong>These (near/plural):</strong> These are fresh.</div>
+                            <div class="example-item"><strong>Those (far/plural):</strong> Those belong to Tom.</div>
+                        </div>
+                        
+                        <p>Can act as pronouns (<em>This is mine</em>) or determiners (<em>This book</em>). Distance can be physical or temporal.</p>
+                        <p><span class="badge"><i class="fa-regular fa-flask"></i> Demonstrative Quiz</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Demonstrative%20Pronouns.html" class="page-link" target="_blank">Master This/That <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Reflexive & Intensive Pronouns -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-rotate-left"></i> Reflexive & Intensive</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Both use <strong>-self/selves</strong> forms. <strong>Reflexive</strong> reflects action back to subject; <strong>intensive</strong> emphasizes the subject.</p>
+                        
+                        <div class="examples">
+                            <h3>Examples:</h3>
+                            <div class="example-item"><strong>Reflexive:</strong> I cut <em>myself</em>. (necessary)</div>
+                            <div class="example-item"><strong>Intensive:</strong> I <em>myself</em> saw it. (emphasis)</div>
+                            <div class="example-item">Forms: myself, yourself, himself, herself, itself, ourselves, yourselves, themselves</div>
+                        </div>
+                        
+                        <p>💡 Reflexive pronouns are essential to meaning; intensive can be removed without changing the core meaning.</p>
+                        <p><span class="badge"><i class="fa-regular fa-flask"></i> Reflexive & Intensive Quiz</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Reflexive%20&%20Intensive%20Pronouns.html" class="page-link" target="_blank">Take Reflexive Quiz <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Relative Pronouns -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-link"></i> Relative Pronouns</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Introduce relative clauses and connect them to a noun/pronoun. Choose based on <strong>person/thing</strong> and <strong>subject/object</strong> function.</p>
+                        
+                        <div class="examples">
+                            <h3>Who, Whom, Which, That:</h3>
+                            <div class="example-item"><strong>Who:</strong> people (subject) — The man <em>who</em> called</div>
+                            <div class="example-item"><strong>Whom:</strong> people (object) — The woman <em>whom</em> I met</div>
+                            <div class="example-item"><strong>Which:</strong> animals/things — The book <em>which</em> I read</div>
+                            <div class="example-item"><strong>That:</strong> people/animals/things — The car <em>that</em> I bought</div>
+                        </div>
+                        
+                        <p>In defining clauses, "that" is common. Use "whom" after prepositions or as object (formal).</p>
+                        <p><span class="badge"><i class="fa-regular fa-flask"></i> Relative Pronoun Quiz</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Relative%20Pronoun.html" class="page-link" target="_blank">Master Who/Whom/Which <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Pronoun Case & Agreement -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-balance-scale"></i> Case & Agreement Rules</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Pronouns must agree with their antecedents in <strong>number, gender, and person</strong>. Use correct case (subjective, objective, possessive).</p>
+                        
+                        <div class="examples">
+                            <h3>Key Rules:</h3>
+                            <div class="example-item"><strong>Compound subjects:</strong> John and <em>I</em> (not me)</div>
+                            <div class="example-item"><strong>After prepositions:</strong> between you and <em>me</em> (not I)</div>
+                            <div class="example-item"><strong>Singular they:</strong> "Everyone brought <em>their</em> lunch."</div>
+                        </div>
+                        
+                        <p>Avoid common errors: <em>Me and her went</em> → <em>She and I went</em>. Subject pronouns for subjects, object pronouns for objects.</p>
+                        <p><span class="badge"><i class="fa-regular fa-lightbulb"></i> Apply in all pronoun quizzes</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="page-link" target="_blank">Practice with Personal <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-links">
+                <h2><i class="fas fa-link"></i> Quick Navigation to All Pronoun Quizzes</h2>
+                <div class="link-list">
+                    <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="link-item" target="_blank"><i class="fas fa-user"></i> Personal Pronouns (20 Qs)</a>
+                    <a href="https://rexwyc.github.io/Possessive.html" class="link-item" target="_blank"><i class="fas fa-key"></i> Possessive (20 Qs)</a>
+                    <a href="https://rexwyc.github.io/Demonstrative%20Pronouns.html" class="link-item" target="_blank"><i class="fas fa-hand-pointer"></i> Demonstrative (20 Qs)</a>
+                    <a href="https://rexwyc.github.io/Reflexive%20&%20Intensive%20Pronouns.html" class="link-item" target="_blank"><i class="fas fa-rotate-left"></i> Reflexive & Intensive (20 Qs)</a>
+                    <a href="https://rexwyc.github.io/Relative%20Pronoun.html" class="link-item" target="_blank"><i class="fas fa-link"></i> Relative Pronouns (20 Qs)</a>
+                </div>
+                <p style="margin-top: 20px; color: #c2410c;"><i class="fa-regular fa-circle-info"></i> Each quiz contains 20 interactive questions with instant feedback. Click any link above to test your skills!</p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Pronoun Grammar Guide &copy; 2025 | Created for rexwyc.github.io</p>
+            <p>All pronoun types covered: personal, possessive, demonstrative, reflexive/intensive, relative — with detailed explanations and interactive practice pages.</p>
+        </footer>
+    </div>
     
-    <p>A complete reference for understanding different types of pronouns in English grammar. Each pronoun type is covered in detail with examples and usage rules.</p>
-
-    <!-- PERSONAL PRONOUNS SECTION -->
-    <section id="personal">
-        <h2>Personal Pronouns</h2>
-        <p>Personal pronouns replace specific nouns referring to people or things. They change form based on their grammatical role in a sentence.</p>
-        
-        <h3>Examples:</h3>
-        <div class="example-container">
-            <strong>Subject Pronouns:</strong> I, you, he, she, it, we, they<br>
-            <strong>Object Pronouns:</strong> me, you, him, her, it, us, them
-        </div>
-        
-        <div class="note">
-            <strong>Usage Note:</strong> Subject pronouns are used when the pronoun is the subject of the verb. Object pronouns are used when the pronoun is the object of a verb or preposition.
-        </div>
-    </section>
-
-    <!-- POSSESSIVE PRONOUNS SECTION -->
-    <section id="possessive">
-        <h2>Possessive Pronouns</h2>
-        <p>Possessive pronouns show ownership or possession without the need for an apostrophe.</p>
-        
-        <h3>Examples:</h3>
-        <div class="example-container">
-            <strong>Possessive Pronouns:</strong> mine, yours, his, hers, its, ours, theirs<br>
-            <strong>Possessive Adjectives:</strong> my, your, his, her, its, our, their
-        </div>
-        
-        <div class="note">
-            <strong>Usage Note:</strong> Possessive pronouns stand alone ("This book is <code>mine</code>"), while possessive adjectives modify nouns ("This is <code>my</code> book").
-        </div>
-    </section>
-
-    <!-- DEMONSTRATIVE PRONOUNS SECTION -->
-    <section id="demonstrative">
-        <h2>Demonstrative Pronouns</h2>
-        <p>Demonstrative pronouns point to specific things, indicating their distance from the speaker.</p>
-        
-        <h3>Examples:</h3>
-        <div class="example-container">
-            <strong>Singular:</strong> this (near), that (far)<br>
-            <strong>Plural:</strong> these (near), those (far)
-        </div>
-        
-        <div class="note">
-            <strong>Usage Note:</strong> Demonstrative pronouns can also function as demonstrative adjectives when they modify a noun ("<code>This</code> book is interesting" vs. "<code>This</code> is interesting").
-        </div>
-    </section>
-
-    <!-- INTERROGATIVE PRONOUNS SECTION -->
-    <section id="interrogative">
-        <h2>Interrogative Pronouns</h2>
-        <p>Interrogative pronouns are used to ask questions.</p>
-        
-        <h3>Examples:</h3>
-        <div class="example-container">
-            <strong>For people:</strong> who, whom, whose<br>
-            <strong>For things:</strong> what, which
-        </div>
-        
-        <div class="note">
-            <strong>Usage Note:</strong> Use <code>who</code> for the subject of a question, <code>whom</code> for the object (though increasingly less common in informal English), and <code>whose</code> to ask about possession.
-        </div>
-    </section>
-
-    <!-- RELATIVE PRONOUNS SECTION -->
-    <section id="relative">
-        <h2>Relative Pronouns</h2>
-        <p>Relative pronouns introduce relative clauses, connecting them to the noun they modify.</p>
-        
-        <h3>Examples:</h3>
-        <div class="example-container">
-            <strong>For people:</strong> who, whom, whose<br>
-            <strong>For things:</strong> which, that
-        </div>
-        
-        <div class="note">
-            <strong>Usage Note:</strong> <code>That</code> can often be used for both people and things in restrictive clauses (clauses essential to the sentence's meaning), while <code>who</code> and <code>which</code> are preferred in non-restrictive clauses (additional information).
-        </div>
-    </section>
-
-    <!-- INDEFINITE PRONOUNS SECTION -->
-    <section id="indefinite">
-        <h2>Indefinite Pronouns</h2>
-        <p>Indefinite pronouns refer to non-specific people or things.</p>
-        
-        <h3>Examples:</h3>
-        <div class="example-container">
-            <strong>Singular:</strong> someone, anyone, nobody, everybody, something, nothing<br>
-            <strong>Plural:</strong> both, few, many, several<br>
-            <strong>Singular or Plural:</strong> all, any, more, most, none, some
-        </div>
-        
-        <div class="note">
-            <strong>Usage Note:</strong> Most indefinite pronouns are singular and take singular verbs ("<code>Everyone</code> is here"). The pronouns that can be singular or plural depend on what they refer to ("<code>All</code> of the cake is gone" vs. "<code>All</code> of the students are here").
-        </div>
-    </section>
-
-    <!-- PRONOUN QUIZ SECTION -->
-    <section id="quiz">
-        <h2>Pronoun Quiz</h2>
-        <p>Test your knowledge of pronouns with this interactive quiz.</p>
-        
-        <div class="example-container">
-            <h3>Sample Questions:</h3>
-            <p>1. Choose the correct pronoun: "The book belongs to ____." (I/me)</p>
-            <p>2. Identify the pronoun type: "What did you say?"</p>
-            <p>3. Fill in the blank: "Is this pen ____?" (your/yours)</p>
-        </div>
-        
-        <div class="note">
-            <strong>Quiz Instructions:</strong> Answer each question, then check your answers. Try to identify why each answer is correct.
-        </div>
-    </section>
-
     <script>
-        // Simple navigation enhancement
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add smooth scrolling for navigation
-            const sections = document.querySelectorAll('section');
-            sections.forEach(section => {
-                section.style.scrollMarginTop = '20px';
-            });
-            
-            // Add a simple back to top button
-            const backToTop = document.createElement('button');
-            backToTop.textContent = '↑ Back to Top';
-            backToTop.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                padding: 10px 15px;
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                display: none;
-                z-index: 100;
-            `;
-            document.body.appendChild(backToTop);
-            
-            backToTop.addEventListener('click', () => {
-                window.scrollTo({top: 0, behavior: 'smooth'});
-            });
-            
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    backToTop.style.display = 'block';
-                } else {
-                    backToTop.style.display = 'none';
+        // Smooth scrolling for any anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
                 }
             });
+        });
+        
+        // Add animation to cards when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Set initial state for cards
+        document.querySelectorAll('.topic-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
         });
     </script>
 </body>
