@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pronoun & Verb Grammar Guide | Complete Reference</title>
+    <title>Verb Grammar Hub | Complete Verb Guide</title>
     <style>
         * {
             margin: 0;
@@ -13,8 +13,8 @@
         }
         
         body {
-            background: linear-gradient(135deg, #fef9e3 0%, #fff3e0 100%);
-            color: #7c2d12;
+            background: linear-gradient(135deg, #fef9e4 0%, #e8e0c5 100%);
+            color: #2e2a24;
             line-height: 1.6;
             min-height: 100vh;
             padding: 20px;
@@ -30,13 +30,13 @@
             margin-bottom: 40px;
             padding: 30px 20px;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(124, 45, 18, 0.1);
-            border-bottom: 4px solid #ea580c;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-bottom: 5px solid #d97706;
         }
         
         h1 {
-            color: #9a3412;
+            color: #b45309;
             font-size: 2.8rem;
             margin-bottom: 10px;
             background: linear-gradient(to right, #ea580c, #9a3412);
@@ -47,7 +47,7 @@
         
         .subtitle {
             font-size: 1.2rem;
-            color: #c2410c;
+            color: #78716c;
             max-width: 800px;
             margin: 0 auto 20px;
         }
@@ -63,10 +63,10 @@
         .project-link {
             display: inline-block;
             padding: 8px 20px;
-            background-color: #ffedd5;
-            color: #c2410c;
+            background-color: #fef3c7;
+            color: #b45309;
             text-decoration: none;
-            border-radius: 20px;
+            border-radius: 40px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
@@ -80,45 +80,44 @@
         .topic-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
+            gap: 28px;
             margin-bottom: 40px;
         }
         
         .topic-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 28px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(124, 45, 18, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            transition: all 0.35s ease;
             height: 100%;
             display: flex;
             flex-direction: column;
-            border: 1px solid #fed7aa;
+            border: 1px solid #fde68a;
         }
         
         .topic-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(124, 45, 18, 0.2);
-            border-color: #ea580c;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px rgba(234, 88, 12, 0.15);
+            border-color: #fdba74;
         }
         
         .card-header {
             padding: 25px 25px 15px;
-            border-bottom: 1px solid #fed7aa;
-            background: linear-gradient(to right, #fff7ed, white);
+            border-bottom: 2px solid #ffedd5;
         }
         
         .card-header h2 {
-            color: #9a3412;
-            font-size: 1.5rem;
+            color: #7c2d12;
+            font-size: 1.55rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         
         .card-header h2 i {
-            color: #ea580c;
-            font-size: 1.3rem;
+            color: #f97316;
+            font-size: 1.5rem;
         }
         
         .card-content {
@@ -127,55 +126,63 @@
         }
         
         .card-content p {
-            color: #7c2d12;
+            color: #44403c;
             margin-bottom: 20px;
         }
         
         .examples {
-            background-color: #fff7ed;
-            padding: 15px;
-            border-radius: 8px;
+            background-color: #fffbeb;
+            padding: 16px;
+            border-radius: 20px;
             margin-bottom: 20px;
-            border-left: 4px solid #ea580c;
+            border-left: 5px solid #f97316;
         }
         
         .examples h3 {
-            color: #9a3412;
-            margin-bottom: 8px;
+            color: #b45309;
+            margin-bottom: 10px;
             font-size: 1rem;
+            letter-spacing: 0.5px;
         }
         
         .example-item {
-            margin-bottom: 5px;
-            padding-left: 10px;
+            margin-bottom: 6px;
+            padding-left: 14px;
+            font-family: 'Segoe UI', monospace;
         }
         
         .example-item strong {
             color: #c2410c;
-            margin-right: 5px;
+            margin-right: 8px;
+            background: #fff0e0;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.85rem;
         }
         
         .card-footer {
-            padding: 15px 25px;
-            background-color: #fff7ed;
-            border-top: 1px solid #fed7aa;
+            padding: 18px 25px;
+            background-color: #fffaf0;
+            border-top: 1px solid #fde68a;
             text-align: center;
         }
         
         .page-link {
             display: inline-block;
-            padding: 10px 25px;
-            background-color: #ea580c;
+            padding: 10px 28px;
+            background: linear-gradient(95deg, #f97316, #ea580c);
             color: white;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            border-radius: 40px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
         }
         
         .page-link:hover {
-            background-color: #9a3412;
-            transform: scale(1.05);
+            background: linear-gradient(95deg, #ea580c, #c2410c);
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(234, 88, 12, 0.3);
         }
         
         .page-link i {
@@ -184,58 +191,52 @@
         
         .quick-links {
             background: white;
-            border-radius: 15px;
+            border-radius: 28px;
             padding: 30px;
             margin-top: 40px;
-            box-shadow: 0 10px 20px rgba(124, 45, 18, 0.1);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
             border: 1px solid #fed7aa;
         }
         
         .quick-links h2 {
-            color: #9a3412;
-            margin-bottom: 20px;
+            color: #7c2d12;
+            margin-bottom: 24px;
             text-align: center;
+            font-size: 1.8rem;
         }
         
         .link-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
+            gap: 18px;
         }
         
         .link-item {
             display: inline-block;
-            padding: 12px 25px;
-            background-color: #ffedd5;
-            color: #c2410c;
+            padding: 12px 28px;
+            background-color: #fef3c7;
+            color: #9a3412;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            border-radius: 60px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            border: 1px solid #fed7aa;
         }
         
         .link-item:hover {
-            background-color: #ea580c;
+            background-color: #f97316;
             color: white;
+            transform: translateY(-3px);
+            border-color: #f97316;
         }
         
         footer {
             text-align: center;
             padding: 30px 0;
             margin-top: 40px;
-            color: #c2410c;
-            border-top: 1px solid #fed7aa;
-        }
-        
-        .badge {
-            background-color: #ea580c;
-            color: white;
-            font-size: 0.8rem;
-            padding: 3px 10px;
-            border-radius: 15px;
-            margin-left: 10px;
-            vertical-align: middle;
+            color: #a8a29e;
+            border-top: 1px solid #e7e5e4;
         }
         
         @media (max-width: 768px) {
@@ -257,210 +258,198 @@
                 text-align: center;
             }
         }
+        
+        .badge-warning {
+            background: #fef9c3;
+            color: #b45309;
+            font-size: 0.7rem;
+            border-radius: 30px;
+            padding: 3px 10px;
+            margin-left: 12px;
+            font-weight: normal;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-book-open"></i> Pronoun & Verb Grammar Guide</h1>
-            <p class="subtitle">Master English pronouns (personal, possessive, demonstrative, reflexive, relative) and verbs (finite vs. non-finite) with complete explanations and interactive quizzes.</p>
-            
+            <h1><i class="fas fa-running"></i> Verb Grammar Hub</h1>
+            <p class="subtitle">Master English verbs: from action vs. stative to finite, non-finite, transitive, intransitive, and everything in between. Each verb family is explored on its own dedicated page.</p>
             <div class="project-links">
-                <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="project-link" target="_blank"><i class="fas fa-user"></i> Personal Pronouns</a>
-                <a href="https://rexwyc.github.io/Possessive.html" class="project-link" target="_blank"><i class="fas fa-key"></i> Possessive Forms</a>
-                <a href="https://rexwyc.github.io/Demonstrative%20Pronouns.html" class="project-link" target="_blank"><i class="fas fa-hand-pointer"></i> Demonstratives</a>
-                <a href="https://rexwyc.github.io/Reflexive%20&%20Intensive%20Pronouns.html" class="project-link" target="_blank"><i class="fas fa-rotate-left"></i> Reflexive & Intensive</a>
-                <a href="https://rexwyc.github.io/Relative%20Pronoun.html" class="project-link" target="_blank"><i class="fas fa-link"></i> Relative Pronouns</a>
-                <a href="https://rexwyc.github.io/Finite%20vs.%20Non-Finite.html" class="project-link" target="_blank"><i class="fas fa-code-branch"></i> Finite vs. Non-Finite</a>
+                <a href="https://rexwyc.github.io/Phrasal%20Verbs.html" class="project-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-link"></i> Phrasal Verbs</a>
+                <a href="https://rexwyc.github.io/Finite%20vs.%20Non-Finite.html" class="project-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-code-branch"></i> Finite vs Non-Finite</a>
+                <a href="https://rexwyc.github.io/Action%20vs%20Stative%20Verbs.html" class="project-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-bolt"></i> Action vs Stative</a>
+                <a href="https://rexwyc.github.io/Main%20vs%20Helping%20Verbs.html" class="project-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-hands-helping"></i> Main vs Helping</a>
+                <a href="https://rexwyc.github.io/Transitive%20vs%20Intransitive%20Verbs%20Quiz.html" class="project-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-question-circle"></i> Transitive vs Intransitive Quiz</a>
             </div>
         </header>
         
         <main>
             <div class="topic-grid">
-                <!-- Personal Pronouns -->
+                <!-- Phrasal Verbs Card -->
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-user-circle"></i> Personal Pronouns</h2>
+                        <h2><i class="fas fa-puzzle-piece"></i> Phrasal Verbs</h2>
                     </div>
                     <div class="card-content">
-                        <p>Refer to specific people or things. Change form based on <strong>person</strong> (1st, 2nd, 3rd), <strong>number</strong> (singular/plural), and <strong>case</strong> (subject/object).</p>
-                        
+                        <p>Multi-word verbs combining a base verb with particles (prepositions/adverbs). Meaning often differs from the original verb — essential for fluent, natural English.</p>
                         <div class="examples">
-                            <h3>Subject vs. Object:</h3>
-                            <div class="example-item"><strong>Subject:</strong> I, you, he, she, it, we, they</div>
-                            <div class="example-item"><strong>Object:</strong> me, you, him, her, it, us, them</div>
-                            <div class="example-item"><em>She</em> called <em>me</em>. / <em>They</em> saw <em>us</em>.</div>
+                            <h3><i class="fas fa-lightbulb"></i> Key examples:</h3>
+                            <div class="example-item"><strong>give up</strong> → quit</div>
+                            <div class="example-item"><strong>run into</strong> → meet unexpectedly</div>
+                            <div class="example-item"><strong>look forward to</strong> → anticipate with pleasure</div>
                         </div>
-                        
-                        <p>Use subject pronouns before verbs (who performs action). Object pronouns after verbs or prepositions (who receives action).</p>
-                        <p><span class="badge"><i class="fa-regular fa-flask"></i> 20 Questions</span></p>
+                        <p>Phrasal verbs can be separable or inseparable. Some have multiple meanings based on context. Master them to sound like a native speaker.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="page-link" target="_blank">Take Personal Quiz <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/Phrasal%20Verbs.html" class="page-link" target="_blank" rel="noopener noreferrer">Explore Phrasal Verbs <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
-                <!-- Possessive: Adjectives & Pronouns -->
+                <!-- Finite vs Non-Finite Verbs -->
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-lock"></i> Possessive Forms</h2>
+                        <h2><i class="fas fa-clock"></i> Finite vs Non-Finite Verbs</h2>
                     </div>
                     <div class="card-content">
-                        <p>Show ownership or possession. Two forms: <strong>possessive adjectives</strong> (before nouns) and <strong>possessive pronouns</strong> (stand alone).</p>
-                        
+                        <p>Finite verbs show tense, person, and number; they anchor independent clauses. Non-finite verbs (infinitives, gerunds, participles) don’t change with the subject.</p>
                         <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Adjective:</strong> my, your, his, her, its, our, their</div>
-                            <div class="example-item"><strong>Pronoun:</strong> mine, yours, his, hers, its, ours, theirs</div>
-                            <div class="example-item"><em>My</em> book → The book is <em>mine</em>.</div>
+                            <h3><i class="fas fa-code-branch"></i> Illustrations:</h3>
+                            <div class="example-item"><strong>Finite:</strong> She <strong>walks</strong> to school. (tense: present, 3rd person)</div>
+                            <div class="example-item"><strong>Non-Finite:</strong> She wants <strong>to walk</strong> home. (infinitive)</div>
+                            <div class="example-item"><strong>Walking</strong> is fun. (gerund)</div>
                         </div>
-                        
-                        <p>⚠️ No apostrophes in possessive pronouns: <em>yours, hers, ours, theirs</em>. <em>Its</em> (possession) vs. <em>it's</em> (it is).</p>
-                        <p><span class="badge"><i class="fa-regular fa-flask"></i> 20 Questions</span></p>
+                        <p>Every full sentence needs at least one finite verb. Non-finite verbs often appear in subordinate structures.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="https://rexwyc.github.io/Possessive.html" class="page-link" target="_blank">Practice Possessives <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/Finite%20vs.%20Non-Finite.html" class="page-link" target="_blank" rel="noopener noreferrer">Compare Finite & Non-Finite <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
-                <!-- Demonstrative Pronouns -->
+                <!-- Action vs Stative Verbs -->
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-arrows-pointing-out"></i> Demonstrative Pronouns</h2>
+                        <h2><i class="fas fa-battery-full"></i> Action vs Stative Verbs</h2>
                     </div>
                     <div class="card-content">
-                        <p>Point to specific things based on <strong>distance</strong> (near/far) and <strong>number</strong> (singular/plural).</p>
-                        
+                        <p>Action verbs describe dynamic activities (run, build, speak). Stative verbs describe states, emotions, possession, or senses (know, believe, own). Stative verbs rarely appear in continuous tenses.</p>
                         <div class="examples">
-                            <h3>This, That, These, Those:</h3>
-                            <div class="example-item"><strong>This (near/singular):</strong> This is delicious.</div>
-                            <div class="example-item"><strong>That (far/singular):</strong> That looks amazing.</div>
-                            <div class="example-item"><strong>These (near/plural):</strong> These are fresh.</div>
-                            <div class="example-item"><strong>Those (far/plural):</strong> Those belong to Tom.</div>
+                            <h3><i class="fas fa-exchange-alt"></i> Quick comparison:</h3>
+                            <div class="example-item"><strong>Action:</strong> I <strong>am running</strong> a marathon.</div>
+                            <div class="example-item"><strong>Stative:</strong> I <strong>love</strong> chocolate. (NOT I am loving)</div>
+                            <div class="example-item"><strong>Borderline:</strong> <strong>taste / think</strong> — can be both.</div>
                         </div>
-                        
-                        <p>Can act as pronouns (<em>This is mine</em>) or determiners (<em>This book</em>). Distance can be physical or temporal.</p>
-                        <p><span class="badge"><i class="fa-regular fa-flask"></i> 20 Questions</span></p>
+                        <p>Knowing the difference prevents common tense mistakes and adds nuance to your writing.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="https://rexwyc.github.io/Demonstrative%20Pronouns.html" class="page-link" target="_blank">Master This/That <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/Action%20vs%20Stative%20Verbs.html" class="page-link" target="_blank" rel="noopener noreferrer">Master Action vs Stative <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
-                <!-- Reflexive & Intensive Pronouns -->
+                <!-- Main vs Helping Verbs -->
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-rotate-left"></i> Reflexive & Intensive</h2>
+                        <h2><i class="fas fa-hand-holding-heart"></i> Main vs Helping Verbs</h2>
                     </div>
                     <div class="card-content">
-                        <p>Both use <strong>-self/selves</strong> forms. <strong>Reflexive</strong> reflects action back to subject; <strong>intensive</strong> emphasizes the subject.</p>
-                        
+                        <p>Main verbs carry the core meaning. Helping verbs (auxiliaries: be, do, have, modals) accompany main verbs to form tenses, questions, negatives, and voice.</p>
                         <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Reflexive:</strong> I cut <em>myself</em>. (necessary)</div>
-                            <div class="example-item"><strong>Intensive:</strong> I <em>myself</em> saw it. (emphasis)</div>
-                            <div class="example-item">Forms: myself, yourself, himself, herself, itself, ourselves, yourselves, themselves</div>
+                            <h3><i class="fas fa-layer-group"></i> Structure examples:</h3>
+                            <div class="example-item"><strong>Main verb only:</strong> She <strong>writes</strong> novels.</div>
+                            <div class="example-item"><strong>Helping + Main:</strong> She <strong>has been writing</strong> for years.</div>
+                            <div class="example-item"><strong>Modal helper:</strong> You <strong>must</strong> finish.</div>
                         </div>
-                        
-                        <p>💡 Reflexive pronouns are essential to meaning; intensive can be removed without changing the core meaning.</p>
-                        <p><span class="badge"><i class="fa-regular fa-flask"></i> 20 Questions</span></p>
+                        <p>Modal auxiliaries (can, might, should) add mood. Identify them to perfect complex sentences.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="https://rexwyc.github.io/Reflexive%20&%20Intensive%20Pronouns.html" class="page-link" target="_blank">Take Reflexive Quiz <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/Main%20vs%20Helping%20Verbs.html" class="page-link" target="_blank" rel="noopener noreferrer">Explore Main vs Helping <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
-                <!-- Relative Pronouns -->
+                <!-- Transitive vs Intransitive Verbs (Quiz Page) -->
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-link"></i> Relative Pronouns</h2>
+                        <h2><i class="fas fa-exchange-alt"></i> Transitive vs Intransitive Verbs</h2>
                     </div>
                     <div class="card-content">
-                        <p>Introduce relative clauses and connect them to a noun/pronoun. Choose based on <strong>person/thing</strong> and <strong>subject/object</strong> function.</p>
-                        
+                        <p>Transitive verbs require a direct object to complete meaning. Intransitive verbs do not take an object. Some verbs can function both ways.</p>
                         <div class="examples">
-                            <h3>Who, Whom, Which, That:</h3>
-                            <div class="example-item"><strong>Who:</strong> people (subject) — The man <em>who</em> called</div>
-                            <div class="example-item"><strong>Whom:</strong> people (object) — The woman <em>whom</em> I met</div>
-                            <div class="example-item"><strong>Which:</strong> animals/things — The book <em>which</em> I read</div>
-                            <div class="example-item"><strong>That:</strong> people/animals/things — The car <em>that</em> I bought</div>
+                            <h3><i class="fas fa-crosshairs"></i> At a glance:</h3>
+                            <div class="example-item"><strong>Transitive:</strong> She <strong>carries</strong> <u>a bag</u>. (object: a bag)</div>
+                            <div class="example-item"><strong>Intransitive:</strong> He <strong>arrived</strong> late. (no object)</div>
+                            <div class="example-item"><strong>Both:</strong> She <strong>reads</strong> <u>a book</u> / She <strong>reads</strong> every day.</div>
                         </div>
-                        
-                        <p>In defining clauses, "that" is common. Use "whom" after prepositions or as object (formal).</p>
-                        <p><span class="badge"><i class="fa-regular fa-flask"></i> 20 Questions</span></p>
+                        <p>Test your skills with an interactive 20-question quiz — with sound effects and infinite loop mode.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="https://rexwyc.github.io/Relative%20Pronoun.html" class="page-link" target="_blank">Master Who/Whom/Which <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/Transitive%20vs%20Intransitive%20Verbs%20Quiz.html" class="page-link" target="_blank" rel="noopener noreferrer">Take the Quiz <i class="fas fa-gamepad"></i></a>
                     </div>
                 </div>
                 
-                <!-- Finite vs. Non-Finite Verbs -->
+                <!-- Bonus: Transitive/Intransitive Full Guide (extra card to mirror layout & enrich) -->
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-code-branch"></i> Finite vs. Non-Finite Verbs</h2>
+                        <h2><i class="fas fa-book-open"></i> Verbs Deep Dive</h2>
                     </div>
                     <div class="card-content">
-                        <p><strong>Finite verbs</strong> show tense, person, and number. They agree with the subject and can stand alone. <strong>Non-finite verbs</strong> (infinitives, gerunds, participles) do not show tense and cannot be the main verb.</p>
-                        
+                        <p>Beyond classification: understanding verb valency, ditransitive patterns, and linking verbs. Transitive verbs can be monotransitive (one object) or ditransitive (two objects).</p>
                         <div class="examples">
-                            <h3>Key Examples:</h3>
-                            <div class="example-item"><strong>Finite:</strong> She <em>writes</em> daily. / They <em>played</em> soccer.</div>
-                            <div class="example-item"><strong>Non-Finite:</strong> She wants <em>to dance</em>. / <em>Swimming</em> is fun.</div>
-                            <div class="example-item"><strong>Participle:</strong> The <em>barking</em> dog. / The <em>broken</em> vase.</div>
+                            <h3><i class="fas fa-chalkboard"></i> Advanced insights:</h3>
+                            <div class="example-item"><strong>Ditransitive:</strong> She <strong>gave</strong> her friend a gift.</div>
+                            <div class="example-item"><strong>Linking verb:</strong> He <strong>became</strong> a teacher. (subject complement)</div>
                         </div>
-                        
-                        <p>Every complete sentence must contain at least one finite verb. Non-finite verbs add depth and detail.</p>
-                        <p><span class="badge"><i class="fa-regular fa-flask"></i> Full Guide</span></p>
+                        <p>Perfect for intermediate learners aiming for grammatical precision and stylistic variety.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="https://rexwyc.github.io/Finite%20vs.%20Non-Finite.html" class="page-link" target="_blank">Explore Verbs <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/Transitive%20vs%20Intransitive%20Verbs%20Quiz.html" class="page-link" target="_blank" rel="noopener noreferrer">Explore Verb Patterns <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
             
+            <!-- quick links with all verb resources  -->
             <div class="quick-links">
-                <h2><i class="fas fa-link"></i> Quick Navigation to All Grammar Quizzes</h2>
+                <h2><i class="fas fa-link"></i> Verb Resource Library</h2>
                 <div class="link-list">
-                    <a href="https://rexwyc.github.io/Personal%20Pronouns.html" class="link-item" target="_blank"><i class="fas fa-user"></i> Personal Pronouns (20 Qs)</a>
-                    <a href="https://rexwyc.github.io/Possessive.html" class="link-item" target="_blank"><i class="fas fa-key"></i> Possessive (20 Qs)</a>
-                    <a href="https://rexwyc.github.io/Demonstrative%20Pronouns.html" class="link-item" target="_blank"><i class="fas fa-hand-pointer"></i> Demonstrative (20 Qs)</a>
-                    <a href="https://rexwyc.github.io/Reflexive%20&%20Intensive%20Pronouns.html" class="link-item" target="_blank"><i class="fas fa-rotate-left"></i> Reflexive & Intensive (20 Qs)</a>
-                    <a href="https://rexwyc.github.io/Relative%20Pronoun.html" class="link-item" target="_blank"><i class="fas fa-link"></i> Relative Pronouns (20 Qs)</a>
-                    <a href="https://rexwyc.github.io/Finite%20vs.%20Non-Finite.html" class="link-item" target="_blank"><i class="fas fa-code-branch"></i> Finite vs. Non-Finite Verbs</a>
+                    <a href="https://rexwyc.github.io/Phrasal%20Verbs.html" class="link-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-code-branch"></i> Phrasal Verbs</a>
+                    <a href="https://rexwyc.github.io/Finite%20vs.%20Non-Finite.html" class="link-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-infinity"></i> Finite / Non-Finite</a>
+                    <a href="https://rexwyc.github.io/Action%20vs%20Stative%20Verbs.html" class="link-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-futbol"></i> Action vs Stative</a>
+                    <a href="https://rexwyc.github.io/Main%20vs%20Helping%20Verbs.html" class="link-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-tools"></i> Main vs Helping</a>
+                    <a href="https://rexwyc.github.io/Transitive%20vs%20Intransitive%20Verbs%20Quiz.html" class="link-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-question"></i> Transitive/Intransitive Quiz</a>
                 </div>
-                <p style="margin-top: 20px; color: #c2410c;"><i class="fa-regular fa-circle-info"></i> Each quiz contains 20 interactive questions with instant feedback. Click any link above to test your skills!</p>
+                <div style="text-align: center; margin-top: 25px;">
+                    <span class="badge-warning" style="background:#fff0e0; padding:6px 18px; border-radius:60px;"><i class="fas fa-star-of-life"></i> Interactive grammar quizzes & detailed verb tables</span>
+                </div>
             </div>
         </main>
         
         <footer>
-            <p>Pronoun & Verb Grammar Guide &copy; 2025 | Created for rexwyc.github.io</p>
-            <p>Complete reference: personal, possessive, demonstrative, reflexive, relative pronouns + finite vs. non-finite verbs. All topics with detailed explanations and interactive quizzes.</p>
+            <p><i class="fas fa-graduation-cap"></i> Verb Grammar Guide &copy; 2025 | Curated for rexwyc.github.io</p>
+            <p>Complete coverage: dynamic vs stative, finite/non‑finite, transitive/intransitive, phrasal verbs, and auxiliary distinctions</p>
         </footer>
     </div>
     
     <script>
-        // Smooth scrolling for anchor links
+        // smooth scroll for any anchor links (if added later)
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 if(targetId === '#') return;
-                
                 const targetElement = document.querySelector(targetId);
                 if(targetElement) {
                     window.scrollTo({
-                        top: targetElement.offsetTop - 100,
+                        top: targetElement.offsetTop - 90,
                         behavior: 'smooth'
                     });
                 }
             });
         });
         
-        // Animation for cards when they come into view
+        // Intersection Observer for subtle card fade-in animation
         const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            threshold: 0.12,
+            rootMargin: '0px 0px -30px 0px'
         };
         
         const observer = new IntersectionObserver((entries) => {
@@ -472,12 +461,22 @@
             });
         }, observerOptions);
         
-        // Set initial state for cards
         document.querySelectorAll('.topic-card').forEach(card => {
             card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transform = 'translateY(22px)';
+            card.style.transition = 'opacity 0.55s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.5s ease';
             observer.observe(card);
+        });
+        
+        // small interactive: add hover micro-effect to quick link items 
+        const links = document.querySelectorAll('.link-item');
+        links.forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+            });
+            link.addEventListener('mouseleave', (e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+            });
         });
     </script>
 </body>

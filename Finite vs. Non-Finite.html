@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>Finite vs. Non-Finite: 20-Question Loop with Explanations</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(135deg, #e9f0f5 0%, #d4e0e8 100%);
+      font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .quiz-card {
+      max-width: 620px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 48px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-header {
+      background: #1a2c3c;
+      padding: 1.5rem 1.5rem 1rem;
+      color: white;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #f4a261;
+      color: #1e2f2c;
+      font-weight: bold;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 40px;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .question-counter {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .score-badge {
+      background: rgba(255, 255, 240, 0.2);
+      padding: 0.3rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 30px;
+      height: 8px;
+      width: 100%;
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: #f4a261;
+      width: 0%;
+      height: 100%;
+      border-radius: 30px;
+      transition: width 0.3s ease;
+    }
+
+    .question-container {
+      padding: 1.8rem 1.5rem 0.8rem;
+    }
+
+    .question-text {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: #0a2a38;
+      margin-bottom: 1.5rem;
+      word-break: break-word;
+      background: #fef9e8;
+      padding: 0.8rem 1rem;
+      border-radius: 24px;
+      border-left: 5px solid #f4a261;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 100px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      font-family: inherit;
+      color: #1e3a4d;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .option-prefix {
+      font-weight: 800;
+      background: #eef3fa;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 60px;
+      color: #1e5a6e;
+      font-size: 0.9rem;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: #f7fafd;
+      border-color: #cbd5e1;
+      transform: scale(0.98);
+    }
+
+    .option-btn.correct-highlight {
+      background: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+    }
+
+    .option-btn.wrong-highlight {
+      background: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+    }
+
+    .option-btn.disabled-opt {
+      cursor: default;
+      opacity: 0.9;
+    }
+
+    /* enhanced explanation panel */
+    .explanation-panel {
+      background: #f8fafc;
+      margin: 0 1.5rem 1rem;
+      padding: 1.2rem 1.2rem;
+      border-radius: 28px;
+      border-left: 5px solid #4299c1;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .explanation-title {
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #2c7a9e;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .explanation-text {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: #1e3b4a;
+    }
+
+    .explanation-detail {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #cbdde9;
+      font-size: 0.9rem;
+      color: #2c5a6e;
+      background: #ffffffcc;
+      border-radius: 16px;
+    }
+
+    .feedback-correct-badge {
+      color: #1e7e34;
+      font-weight: 700;
+    }
+
+    .feedback-wrong-badge {
+      color: #c13b2b;
+      font-weight: 700;
+    }
+
+    .next-btn {
+      display: block;
+      width: calc(100% - 3rem);
+      margin: 0 1.5rem 1rem;
+      background: #1a2c3c;
+      border: none;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: 0.15s linear;
+      box-shadow: 0 5px 0 #0e1a24;
+      text-align: center;
+    }
+
+    .next-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #0e1a24;
+    }
+
+    .next-btn:disabled {
+      background: #9aaebf;
+      transform: none;
+      box-shadow: 0 5px 0 #6e7e8b;
+      cursor: not-allowed;
+    }
+
+    .restart-btn {
+      background: #f4a261;
+      color: #2d3e42;
+      box-shadow: 0 5px 0 #c47d34;
+      margin-top: 4px;
+    }
+
+    .reset-wrapper {
+      padding: 0 1.5rem 1.2rem;
+    }
+
+    footer {
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 0.9rem;
+      color: #5e7a8a;
+      border-top: 1px solid #e2edf2;
+      background: #fefefe;
+    }
+
+    @media (max-width: 550px) {
+      .quiz-card {
+        border-radius: 36px;
+      }
+      .question-text {
+        font-size: 1.3rem;
+        padding: 0.6rem 0.9rem;
+      }
+      .option-btn {
+        padding: 11px 14px;
+        font-size: 0.9rem;
+      }
+      .explanation-panel {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="quiz-card" id="quizRoot">
+  <div class="quiz-header">
+    <span class="badge">📖 FINITE vs NON-FINITE | DETAILED EXPLANATIONS</span>
+    <div class="progress-row">
+      <span class="question-counter" id="qCounter">Q1/20</span>
+      <span class="score-badge" id="scoreDisplay">🏆 Score: 0</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="question-container">
+    <div class="question-text" id="questionText">Loading questions...</div>
+    <div class="options-list" id="optionsContainer"></div>
+  </div>
+
+  <!-- ENHANCED EXPLANATION PART (detailed) -->
+  <div class="explanation-panel" id="explanationPanel">
+    <div class="explanation-title">
+      <span>📘 GRAMMAR INSIGHT</span>
+    </div>
+    <div class="explanation-text" id="explanationText">
+      Tap an option above to reveal a detailed explanation with grammar rules.
+    </div>
+    <div class="explanation-detail" id="explanationDetail">
+      💡 <strong>Finite verbs</strong> change with tense & subject • <strong>Non-finite</strong> forms: infinitives, gerunds, participles (no tense).
+    </div>
+  </div>
+
+  <button class="next-btn" id="nextButton">➡ NEXT QUESTION</button>
+  <div class="reset-wrapper" id="resetWrapper"></div>
+  <footer>♾️ Infinite loop — after 20 questions, quiz restarts automatically with new shuffled set + full explanations</footer>
+</div>
+
+<script>
+  // ===================== 20 EXPANDED QUESTIONS with RICH EXPLANATIONS ===================
+  const MASTER_QUESTIONS = [
+    { text: "She <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>wants</span> to travel abroad.", answer: "finite", explanation: "'wants' is a finite verb: it shows present tense, agrees with third-person singular subject 'She', and carries tense information.", rule: "Finite verbs indicate tense (past/present) and grammatical agreement with the subject. 'Wants' cannot be non-finite because it's conjugated." },
+    { text: "The children <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>playing</span> outside are my neighbors.", answer: "non-finite", explanation: "'playing' is a present participle (non-finite). It does not show tense or subject agreement; it acts as an adjective describing 'children'.", rule: "Participles (-ing / -ed) are non-finite verb forms. They don’t carry the main tense of the sentence." },
+    { text: "I have <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>finished</span> my homework.", answer: "finite", explanation: "'have finished' is a finite verb phrase — 'have' is auxiliary showing present perfect tense and agrees with 'I'.", rule: "Auxiliary + past participle still creates a finite verb phrase because the auxiliary carries tense." },
+    { text: "<span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>To err</span> is human.", answer: "non-finite", explanation: "'To err' is an infinitive (non-finite). It functions as a noun phrase and does not indicate tense.", rule: "Infinitives (to + base verb) are always non-finite, regardless of position." },
+    { text: "He <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>ran</span> fast to catch the bus.", answer: "finite", explanation: "'ran' is finite — past tense, agrees with subject 'He' (third-person singular).", rule: "Simple past verbs are finite: they show completed action in past." },
+    { text: "The broken vase <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>was</span> repaired.", answer: "finite", explanation: "'was' is a finite verb (past tense, singular linking verb).", rule: "Linking verbs like 'be', 'am', 'is', 'are', 'was', 'were' are finite when used as main verbs." },
+    { text: "I saw him <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>crossing</span> the street.", answer: "non-finite", explanation: "'crossing' is a non-finite participle complementing the verb 'saw'. It has no tense.", rule: "After verbs of perception (see, hear), participles remain non-finite." },
+    { text: "They <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>decided</span> to leave early.", answer: "finite", explanation: "'decided' is finite (past tense, plural subject agreement).", rule: "Regular past tense forms are finite and show action completed in past." },
+    { text: "This is a <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>written</span> exam.", answer: "non-finite", explanation: "'written' is a past participle used as an adjective — non-finite form.", rule: "Past participles (often -ed/en) can act adjectivally without conveying tense." },
+    { text: "We <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>are</span> learning grammar.", answer: "finite", explanation: "'are' is a finite auxiliary verb (present tense, plural agreement).", rule: "Present tense forms of 'be' are always finite when they function as auxiliaries or main verbs." },
+    { text: "She avoided <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>talking</span> to him.", answer: "non-finite", explanation: "'talking' is a gerund (non-finite) acting as direct object of 'avoided'.", rule: "Gerunds (-ing forms used as nouns) never show tense — non-finite." },
+    { text: "The report <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>submitted</span> yesterday was excellent.", answer: "non-finite", explanation: "'submitted' is a past participle (non-finite) modifying 'report'.", rule: "Reduced relative clauses often use non-finite participles." },
+    { text: "He <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>does</span> not like coffee.", answer: "finite", explanation: "'does' is finite (present tense, third person singular auxiliary).", rule: "The auxiliary 'do/does/did' carries tense and agreement, making it finite." },
+    { text: "I want you <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>to succeed</span>.", answer: "non-finite", explanation: "'to succeed' is an infinitive phrase — non-finite. It expresses purpose but not tense.", rule: "Any 'to + verb' structure is infinitive (non-finite)." },
+    { text: "The dog <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>barked</span> loudly.", answer: "finite", explanation: "'barked' is a finite past-tense verb (agrees with singular subject).", rule: "Past tense action verb is always finite." },
+    { text: "<span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>Having finished</span> dinner, we went for a walk.", answer: "non-finite", explanation: "'Having finished' is a perfect participle phrase (non-finite) showing prior action without tense inflection.", rule: "Perfect participles (having + past participle) remain non-finite." },
+    { text: "She <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>is</span> reading a novel.", answer: "finite", explanation: "'is' is finite auxiliary (present continuous, third person singular).", rule: "Progressive aspect relies on finite 'be' + non-finite participle." },
+    { text: "The <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>dancing</span> children entertained everyone.", answer: "non-finite", explanation: "'dancing' is a present participle acting as an adjective — non-finite.", rule: "Attributive participles never inflect for tense." },
+    { text: "We must <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>go</span> now.", answer: "non-finite", explanation: "'go' is a bare infinitive after modal verb 'must'. Bare infinitives are non-finite.", rule: "Modals (can, must, should) are followed by non-finite base form." },
+    { text: "Her dream <span style='background:#ffecb3; padding:2px 4px; border-radius:12px;'>is</span> to become a doctor.", answer: "finite", explanation: "'is' is finite (present tense linking verb). The infinitive 'to become' is non-finite, but the main verb 'is' carries tense.", rule: "In a sentence, at least one finite verb typically exists; others may be non-finite." }
+  ];
+
+  // global state
+  let currentQuestions = [];        // shuffled version
+  let currentIndex = 0;
+  let userScore = 0;
+  let answered = false;
+  let selectedAnswerValue = null;
+  
+  // DOM elements
+  const qCounterEl = document.getElementById('qCounter');
+  const scoreDisplayEl = document.getElementById('scoreDisplay');
+  const progressFillEl = document.getElementById('progressFill');
+  const questionTextEl = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const explanationPanel = document.getElementById('explanationPanel');
+  const explanationTextEl = document.getElementById('explanationText');
+  const explanationDetailEl = document.getElementById('explanationDetail');
+  const nextButton = document.getElementById('nextButton');
+  const resetWrapper = document.getElementById('resetWrapper');
+
+  // utility: shuffle array (Fisher-Yates)
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // full cycle initialization (fresh infinite round)
+  function initNewCycle() {
+    currentQuestions = shuffleArray([...MASTER_QUESTIONS]);
+    currentIndex = 0;
+    userScore = 0;
+    answered = false;
+    selectedAnswerValue = null;
+    updateMetaDisplays();
+    renderCurrentQuestionUI();
+    enableOptionsInteractivity(true);
+    nextButton.disabled = true;
+    nextButton.textContent = "➡ NEXT QUESTION";
+    nextButton.classList.remove("restart-btn");
+    ensureResetButtonExists();
+    // reset explanation panel to default friendly message
+    explanationTextEl.innerHTML = "✨ Choose FINITE or NON-FINITE for the highlighted verb. Detailed explanation will appear here.";
+    explanationDetailEl.innerHTML = "💡 <strong>Quick tip:</strong> Finite verbs change form with tense (I run / he runs). Non-finite: infinitives (to run), gerunds (running), participles (broken).";
+    explanationPanel.style.borderLeftColor = "#4299c1";
+  }
+
+  function updateMetaDisplays() {
+    const total = currentQuestions.length;
+    scoreDisplayEl.innerHTML = `🏆 Score: ${userScore} / ${total}`;
+    qCounterEl.innerHTML = `Q${currentIndex + 1}/${total}`;
+    const percent = (currentIndex / total) * 100;
+    progressFillEl.style.width = `${percent}%`;
+  }
+
+  function renderCurrentQuestionUI() {
+    if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
+      if (currentIndex >= currentQuestions.length && currentQuestions.length === 20) {
+        startNewInfiniteCycle();
+        return;
+      }
+    }
+    const q = currentQuestions[currentIndex];
+    if (!q) return;
+    questionTextEl.innerHTML = q.text;
+
+    // generate finite/non-finite buttons
+    const options = [
+      { value: "finite", label: "🔹 FINITE VERB", sub: "shows tense & subject agreement" },
+      { value: "non-finite", label: "🔸 NON-FINITE VERB", sub: "infinitive / gerund / participle — no tense" }
+    ];
+
+    optionsContainer.innerHTML = '';
+    answered = false;
+    selectedAnswerValue = null;
+
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.setAttribute('data-value', opt.value);
+      const prefixSpan = document.createElement('span');
+      prefixSpan.className = 'option-prefix';
+      prefixSpan.innerText = opt.value === "finite" ? "F" : "NF";
+      const textSpan = document.createElement('span');
+      textSpan.innerHTML = `<strong>${opt.label}</strong><span style="font-size:0.7rem; display:block; opacity:0.75;">${opt.sub}</span>`;
+      btn.appendChild(prefixSpan);
+      btn.appendChild(textSpan);
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleAnswerSelection(opt.value, btn);
+      });
+      optionsContainer.appendChild(btn);
+    });
+
+    // reset explanation to neutral while waiting for answer
+    explanationTextEl.innerHTML = "📌 Tap an option to see a thorough grammatical breakdown.";
+    explanationDetailEl.innerHTML = "⭐ The highlighted word/phrase determines whether it's finite or non-finite.";
+    explanationPanel.style.borderLeftColor = "#4299c1";
+    nextButton.disabled = true;
+    enableOptionsInteractivity(true);
+  }
+
+  function enableOptionsInteractivity(enabled) {
+    const allBtns = document.querySelectorAll('.option-btn');
+    allBtns.forEach(btn => {
+      if (enabled) {
+        btn.disabled = false;
+        btn.classList.remove('disabled-opt', 'correct-highlight', 'wrong-highlight');
+      } else {
+        btn.disabled = true;
+        btn.classList.add('disabled-opt');
+      }
+    });
+  }
+
+  function handleAnswerSelection(selectedVal, targetBtn) {
+    if (answered) return;
+    const currentQ = currentQuestions[currentIndex];
+    const isCorrect = (selectedVal === currentQ.answer);
+    
+    if (isCorrect) {
+      userScore++;
+      updateMetaDisplays();
+    }
+    answered = true;
+    selectedAnswerValue = selectedVal;
+    
+    // visual highlighting
+    const allButtons = document.querySelectorAll('.option-btn');
+    allButtons.forEach(btn => {
+      const val = btn.getAttribute('data-value');
+      if (val === currentQ.answer) {
+        btn.classList.add('correct-highlight');
+      }
+      if (val === selectedVal && val !== currentQ.answer) {
+        btn.classList.add('wrong-highlight');
+      }
+      btn.disabled = true;
+      btn.classList.add('disabled-opt');
+    });
+    
+    // --- ENHANCED EXPLANATION PART: show deep insight ---
+    const correctAnswerLabel = currentQ.answer === "finite" ? "FINITE" : "NON-FINITE";
+    const correctnessMessage = isCorrect 
+      ? `<span class="feedback-correct-badge">✓ CORRECT</span> — Great!` 
+      : `<span class="feedback-wrong-badge">✗ INCORRECT</span> — The right answer is <strong>${correctAnswerLabel}</strong>.`;
+    
+    // Build full explanation with rule and grammar detail
+    let ruleText = currentQ.rule || (currentQ.answer === "finite" 
+      ? "Finite verbs carry tense (past/present) and agree with the subject." 
+      : "Non-finite verbs are not limited by tense or subject. They include infinitives, -ing forms, and participles.");
+    
+    explanationTextEl.innerHTML = `
+      <div style="margin-bottom: 8px;">${correctnessMessage}</div>
+      <div style="background:#eef3fc; padding:10px 12px; border-radius:18px; margin: 5px 0;">
+        📖 <strong>Detailed explanation:</strong> ${currentQ.explanation}
+      </div>
+    `;
+    explanationDetailEl.innerHTML = `
+      <span style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span style="background:#e9ecef; padding:4px 10px; border-radius:40px;">🔍 <strong>Grammar rule:</strong> ${ruleText}</span>
+      </span>
+      <div style="margin-top: 10px; font-size:0.85rem;">🎯 <strong>Key hint:</strong> If the verb changes with 'he/she' or indicates time → finite. Else → non-finite.</div>
+    `;
+    
+    if (isCorrect) {
+      explanationPanel.style.borderLeftColor = "#28a745";
+    } else {
+      explanationPanel.style.borderLeftColor = "#dc3545";
+    }
+    
+    nextButton.disabled = false;
+  }
+
+  // next question handler + infinite loop at question 20
+  function goToNextQuestion() {
+    if (!answered) return;
+    // check if last question of the cycle
+    if (currentIndex + 1 >= currentQuestions.length) {
+      // End of 20 questions: show completion then auto-restart infinite loop
+      explanationTextEl.innerHTML = "🎉 <strong>Cycle completed!</strong> You've finished 20 questions. Starting a fresh infinite round with new shuffled questions in a moment... 🎉";
+      explanationDetailEl.innerHTML = "♾️ Infinite loop active — new set will appear. Keep practicing finite vs non-finite!";
+      explanationPanel.style.borderLeftColor = "#f4a261";
+      nextButton.disabled = true;
+      setTimeout(() => {
+        startNewInfiniteCycle();
+      }, 1500);
+      return;
+    }
+    // move to next question
+    currentIndex++;
+    answered = false;
+    selectedAnswerValue = null;
+    updateMetaDisplays();
+    renderCurrentQuestionUI();
+    nextButton.disabled = true;
+  }
+
+  function startNewInfiniteCycle() {
+    currentQuestions = shuffleArray([...MASTER_QUESTIONS]);
+    currentIndex = 0;
+    userScore = 0;
+    answered = false;
+    selectedAnswerValue = null;
+    updateMetaDisplays();
+    renderCurrentQuestionUI();
+    nextButton.disabled = true;
+    nextButton.textContent = "➡ NEXT QUESTION";
+    ensureResetButtonExists();
+    explanationTextEl.innerHTML = "🔄 New infinite cycle loaded! 20 brand-new shuffled questions. Tap any option for rich explanation.";
+    explanationDetailEl.innerHTML = "💡 <strong>Grammar reminder:</strong> Finite = tense & agreement; Non-finite = infinitive, gerund, participle.";
+    explanationPanel.style.borderLeftColor = "#4299c1";
+  }
+
+  function ensureResetButtonExists() {
+    if (!document.getElementById('dynamicResetBtn')) {
+      const resetBtn = document.createElement('button');
+      resetBtn.id = 'dynamicResetBtn';
+      resetBtn.className = 'next-btn restart-btn';
+      resetBtn.textContent = '🔄 RESTART CYCLE (Fresh 20)';
+      resetBtn.addEventListener('click', () => {
+        startNewInfiniteCycle();
+      });
+      resetWrapper.innerHTML = '';
+      resetWrapper.appendChild(resetBtn);
+    } else {
+      const existing = document.getElementById('dynamicResetBtn');
+      if (!resetWrapper.contains(existing)) {
+        resetWrapper.appendChild(existing);
+      }
+    }
+  }
+
+  function manualRestart() {
+    startNewInfiniteCycle();
+  }
+
+  nextButton.addEventListener('click', goToNextQuestion);
+  initNewCycle();
+</script>
+</body>
+</html>
