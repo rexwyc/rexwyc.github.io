@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Boeing 727 - City Siege (HUGE osama on Engine)</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation; /* Improves touch responsiveness */
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Game container adapts to screen size but keeps original canvas proportions */
+        .game-container {
+            background: #111;
+            border-radius: 24px;
+            padding: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 0 40px rgba(0, 210, 255, 0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: fit-content;
+            max-width: 98vw;
+            margin: auto;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+            background-color: #87CEEB; /* Original light blue sky, unchanged */
+            cursor: crosshair;
+            touch-action: none;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* UI bar optimized for phones: stack vertically on very narrow screens, but flexible */
+        .ui-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding: 8px 12px;
+            color: #00d2ff;
+            gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .ui-stats {
+            font-family: monospace;
+            font-size: 14px;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            background: #222;
+            border: 1px solid #00d2ff;
+            color: #00d2ff;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 40px;
+            font-weight: bold;
+            transition: 0.2s;
+            font-size: 14px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: scale(0.96);
+            background: #00d2ff;
+            color: #000;
+        }
+
+        .music-btn {
+            background: #222;
+            border: 1px solid #ffaa44;
+            color: #ffaa44;
+        }
+
+        .music-btn:active {
+            background: #ffaa44;
+            color: #000;
+        }
+
+        .music-btn.playing {
+            background: #ffaa44;
+            color: #000;
+        }
+
+        .debug-info {
+            position: fixed;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.75);
+            color: #0f0;
+            font-family: monospace;
+            font-size: 9px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 999;
+            backdrop-filter: blur(2px);
+            max-width: 80%;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        /* Phone-specific adjustments: maintain canvas size ratio but allow smaller screens */
+        @media (max-width: 1100px) {
+            .game-container {
+                padding: 10px;
+            }
+            .ui-stats {
+                font-size: 12px;
+                white-space: normal;
+                text-align: center;
+            }
+            button {
+                padding: 7px 14px;
+                font-size: 13px;
+            }
+            .debug-info {
+                font-size: 8px;
+                bottom: 4px;
+                left: 4px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .ui-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .ui-stats {
+                text-align: center;
+                white-space: normal;
+            }
+            .button-group {
+                justify-content: center;
+            }
+        }
+
+        /* prevent body scroll while playing */
+        body {
+            touch-action: pan-x pan-y; /* allow minimal pan but canvas handles drag */
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <canvas id="gameCanvas" width="1000" height="550" style="width:100%; height:auto; max-width:1000px; aspect-ratio:1000/550"></canvas>
+    <div class="ui-bar">
+        <div class="ui-stats">✈️ FLEET: ∞ | 🏙️ CITY SIEGE | 🔥 HUGE OSAMA</div>
+        <div class="button-group">
+            <button id="musicBtn" class="music-btn">🎵 PLAY MUSIC</button>
+            <button id="resetBtn">💥 RELOAD CITY</button>
+        </div>
+    </div>
+</div>
+<div id="debug" class="debug-info">⚡ Ready. Tap PLAY MUSIC | Drag plane to launch</div>
+
+<script>
+    (function(){
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 1000, H = 550;
+        
+        const GRAVITY = 0.25; 
+        const GROUND_Y = H - 40;
+        const SLING_X = 130, SLING_Y = 380;
+        const POWER_MULT = 0.18;
+
+        let blocks = [], lasers = [], adsUnits = [], currentPlane = null;
+        let isDragging = false;
+        
+        // HUGE osama image (same as original, no background change)
+        const putinImg = new Image();
+        putinImg.src = 'images/osama.png';
+        let putinImageLoaded = false;
+        
+        putinImg.onload = () => {
+            putinImageLoaded = true;
+            updateDebug('✓ HUGE osama image loaded! (55x55 on engine)');
+        };
+        
+        putinImg.onerror = () => {
+            updateDebug('✗ osama.png not found at images/osama.png — using fallback');
+            // Fallback continues, no background change
+        };
+        
+        // Background Music setup (preserved, phone-friendly autoplay policy handled)
+        let backgroundMusic = null;
+        let isMusicPlaying = false;
+        
+        function updateDebug(msg) {
+            const debugDiv = document.getElementById('debug');
+            if (debugDiv) {
+                debugDiv.innerHTML = msg;
+                setTimeout(() => {
+                    if (debugDiv.innerHTML === msg) {
+                        // keep visible but not permanent
+                    }
+                }, 3500);
+            }
+            console.log(msg);
+        }
+        
+        // Initialize audio with the same music/os.mp3 path
+        function initMusic() {
+            try {
+                backgroundMusic = new Audio();
+                backgroundMusic.src = 'music/os.mp3';
+                backgroundMusic.loop = true;
+                backgroundMusic.volume = 0.5;
+                backgroundMusic.preload = 'auto';
+                
+                updateDebug('🎵 Loading music/os.mp3...');
+                
+                backgroundMusic.addEventListener('canplaythrough', () => {
+                    updateDebug('✓ Music ready! Tap PLAY MUSIC');
+                    const musicBtn = document.getElementById('musicBtn');
+                    if (!isMusicPlaying) {
+                        musicBtn.textContent = '🎵 PLAY MUSIC';
+                        musicBtn.disabled = false;
+                    }
+                });
+                
+                backgroundMusic.addEventListener('error', (e) => {
+                    console.warn('Music error:', e);
+                    updateDebug('⚠️ music/os.mp3 not found. Music unavailable.');
+                    const musicBtn = document.getElementById('musicBtn');
+                    musicBtn.textContent = '🎵 NO MUSIC FILE';
+                    musicBtn.style.borderColor = '#ff8888';
+                    musicBtn.disabled = false;
+                });
+                
+                backgroundMusic.load();
+            } catch(e) {
+                console.error("Audio error:", e);
+                updateDebug('Audio not supported?');
+            }
+        }
+        
+        // Toggle music with user gesture (required for phone autoplay)
+        function toggleMusic() {
+            if (!backgroundMusic) {
+                initMusic();
+                setTimeout(() => {
+                    if (backgroundMusic) toggleMusic();
+                    else {
+                        updateDebug('❌ Music init failed');
+                    }
+                }, 200);
+                return;
+            }
+            
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+                isMusicPlaying = false;
+                const musicBtn = document.getElementById('musicBtn');
+                musicBtn.textContent = '🎵 PLAY MUSIC';
+                musicBtn.classList.remove('playing');
+                updateDebug('⏸ Music paused');
+            } else {
+                updateDebug('▶️ Playing music/os.mp3... (tap again if needed)');
+                const playPromise = backgroundMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isMusicPlaying = true;
+                        const musicBtn = document.getElementById('musicBtn');
+                        musicBtn.textContent = '🎵 MUSIC ON';
+                        musicBtn.classList.add('playing');
+                        updateDebug('🎶 Music playing!');
+                    }).catch(error => {
+                        console.error("Playback failed:", error);
+                        updateDebug(`⚠️ Playback error: ${error.message}. Tap again.`);
+                        if (error.name === 'NotAllowedError') {
+                            alert('🎧 Browser requires a direct tap to play audio.\n\nTap the PLAY MUSIC button again.');
+                        } else if (error.name === 'NotSupportedError') {
+                            alert('Audio format not supported. Ensure music/os.mp3 is valid MP3.');
+                        }
+                        isMusicPlaying = false;
+                        const musicBtn = document.getElementById('musicBtn');
+                        musicBtn.textContent = '🎵 PLAY MUSIC';
+                        musicBtn.classList.remove('playing');
+                    });
+                }
+            }
+        }
+        
+        initMusic();
+        
+        // --- Game logic ---
+        function initLevel() {
+            blocks = []; adsUnits = []; lasers = [];
+            // Two towers at classic positions
+            const towers = [{id: 1, x: 600}, {id: 2, x: 820}];
+            towers.forEach(tInfo => {
+                for(let i = 0; i < 7; i++) {
+                    blocks.push({
+                        towerId: tInfo.id,
+                        x: tInfo.x, y: GROUND_Y - (i+1)*65, 
+                        w: 90, h: 60, vx: 0, vy: 0, hit: false,
+                        windows: Array.from({length: 8}, () => Math.random() > 0.2)
+                    });
+                }
+                adsUnits.push({ 
+                    parentTowerId: tInfo.id, x: tInfo.x + 45, y: GROUND_Y - (7 * 65) - 10, 
+                    vx: 0, vy: 0, cooldown: 0, destroyed: false 
+                });
+            });
+            spawnPlane();
+        }
+
+        function spawnPlane() {
+            currentPlane = { x: SLING_X, y: SLING_Y, vx: 0, vy: 0, launched: false, dead: false };
+            isDragging = false;
+        }
+
+        // Touch & mouse events combined for phone + desktop
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;   // canvas native 1000px vs displayed size
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            canvasX = Math.min(Math.max(0, canvasX), W);
+            canvasY = Math.min(Math.max(0, canvasY), H);
+            return { mx: canvasX, my: canvasY };
+        }
+
+        function onDragStart(e) {
+            e.preventDefault();
+            if (currentPlane.launched) return;
+            const { mx, my } = getCanvasCoords(e);
+            if (Math.hypot(mx - currentPlane.x, my - currentPlane.y) < 60) {
+                isDragging = true;
+            }
+        }
+
+        function onDragMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const { mx, my } = getCanvasCoords(e);
+            const dx = mx - SLING_X;
+            const dy = my - SLING_Y;
+            const dist = Math.min(Math.hypot(dx, dy), 120);
+            const angle = Math.atan2(dy, dx);
+            currentPlane.x = SLING_X + Math.cos(angle) * dist;
+            currentPlane.y = SLING_Y + Math.sin(angle) * dist;
+        }
+
+        function onDragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            if (!currentPlane.launched) {
+                const dx = (SLING_X - currentPlane.x);
+                const dy = (SLING_Y - currentPlane.y);
+                currentPlane.vx = dx * POWER_MULT;
+                currentPlane.vy = dy * POWER_MULT;
+                currentPlane.launched = true;
+                setTimeout(spawnPlane, 3500);
+            }
+        }
+
+        // Register both mouse and touch events for full phone compatibility
+        canvas.addEventListener('mousedown', onDragStart);
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('mouseup', onDragEnd);
+        
+        canvas.addEventListener('touchstart', onDragStart, { passive: false });
+        canvas.addEventListener('touchmove', onDragMove, { passive: false });
+        canvas.addEventListener('touchend', onDragEnd);
+        canvas.addEventListener('touchcancel', onDragEnd);
+        
+        // Update & collision (original logic preserved)
+        function update() {
+            if (currentPlane && currentPlane.launched && !currentPlane.dead) {
+                currentPlane.vy += GRAVITY; 
+                currentPlane.x += currentPlane.vx; 
+                currentPlane.y += currentPlane.vy;
+                if (currentPlane.y > GROUND_Y) currentPlane.dead = true;
+
+                adsUnits.forEach(t => {
+                    if (!t.destroyed) {
+                        t.cooldown--;
+                        if (Math.hypot(currentPlane.x - t.x, currentPlane.y - t.y) < 400 && t.cooldown <= 0) {
+                            lasers.push({x1: t.x, y1: t.y, x2: currentPlane.x, y2: currentPlane.y, life: 10});
+                            currentPlane.dead = true;
+                            t.cooldown = 60;
+                        }
+                    }
+                });
+            }
+
+            blocks.forEach(b => {
+                if (b.hit) {
+                    b.vy += GRAVITY; 
+                    b.x += b.vx; 
+                    b.y += b.vy;
+                    if (b.y > GROUND_Y - b.h) { 
+                        b.y = GROUND_Y - b.h; 
+                        b.vy = 0; 
+                        b.vx *= 0.4; 
+                    }
+                } else if (currentPlane && currentPlane.launched && !currentPlane.dead) {
+                    if (currentPlane.x + 30 > b.x && currentPlane.x - 30 < b.x + b.w &&
+                        currentPlane.y + 10 > b.y && currentPlane.y - 10 < b.y + b.h) {
+                        blocks.forEach(nb => { if(nb.towerId === b.towerId) nb.hit = true; });
+                        adsUnits.forEach(a => { if(a.parentTowerId === b.towerId) a.destroyed = true; });
+                        currentPlane.dead = true;
+                    }
+                }
+            });
+            lasers = lasers.filter(l => l.life-- > 0);
+        }
+
+        function drawPlane(x, y, angle) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            
+            // Fuselage
+            ctx.fillStyle = "#fff"; 
+            ctx.beginPath(); 
+            ctx.ellipse(0, 0, 38, 8, 0, 0, Math.PI * 2); 
+            ctx.fill();
+            
+            // Main wings
+            ctx.fillStyle = "#aaa"; 
+            ctx.beginPath(); 
+            ctx.moveTo(-5,0); 
+            ctx.lineTo(-25, 30); 
+            ctx.lineTo(15, 0); 
+            ctx.fill();
+            ctx.beginPath(); 
+            ctx.moveTo(-5,0); 
+            ctx.lineTo(-25, -30); 
+            ctx.lineTo(15, 0); 
+            ctx.fill();
+            
+            // Cockpit frame
+            ctx.fillStyle = "#fff"; 
+            ctx.fillRect(-38, -20, 6, 20); 
+            ctx.fillRect(-42, -22, 18, 4);
+            
+            // Blue engine rectangle
+            ctx.fillStyle = "#3399ff"; 
+            ctx.fillRect(25, -4, 12, 6);
+            
+            // HUGE osama image on engine (55x55) — exactly as original, but phone-friendly scaling handled by canvas
+            if (putinImageLoaded) {
+                ctx.drawImage(putinImg, 6, -34, 55, 55);
+            } else {
+                ctx.fillStyle = "#8B4513";
+                ctx.fillRect(6, -34, 55, 55);
+                ctx.fillStyle = "#F4C542";
+                ctx.font = "bold 28px 'Segoe UI'";
+                ctx.fillText("П", 22, -4);
+            }
+            
+            ctx.restore();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            // Background is original sky (#87CEEB) because canvas background-color: #87CEEB; no changes!
+            // Ground overlay semi-transparent
+            ctx.fillStyle = "rgba(17, 17, 17, 0.8)"; 
+            ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+            
+            // Sling circle
+            ctx.strokeStyle = "#444"; 
+            ctx.lineWidth = 2; 
+            ctx.beginPath(); 
+            ctx.arc(SLING_X, SLING_Y, 50, 0, Math.PI*2); 
+            ctx.stroke();
+            
+            // Lasers
+            lasers.forEach(l => { 
+                ctx.strokeStyle = "red"; 
+                ctx.lineWidth = 3; 
+                ctx.beginPath(); 
+                ctx.moveTo(l.x1, l.y1); 
+                ctx.lineTo(l.x2, l.y2); 
+                ctx.stroke(); 
+            });
+
+            // Draw blocks (buildings)
+            blocks.forEach(b => {
+                ctx.fillStyle = b.hit ? "rgba(34, 34, 34, 0.7)" : "rgba(13, 27, 42, 0.9)";
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                ctx.strokeStyle = b.hit ? "#111" : "#00d2ff"; 
+                ctx.strokeRect(b.x, b.y, b.w, b.h);
+                if (!b.hit) {
+                    ctx.fillStyle = "#f1c40f";
+                    for(let r=0; r<2; r++) {
+                        for(let c=0; c<4; c++) {
+                            if(b.windows[r*4+c]) ctx.fillRect(b.x+15+c*20, b.y+15+r*25, 10, 12);
+                        }
+                    }
+                }
+            });
+
+            // Anti-air turrets
+            adsUnits.forEach(t => { 
+                ctx.fillStyle = t.destroyed ? "#333" : "red"; 
+                ctx.fillRect(t.x-15, t.y, 30, 15); 
+            });
+
+            // Draw plane if not dead
+            if (currentPlane && !currentPlane.dead) {
+                let angle = currentPlane.launched ? Math.atan2(currentPlane.vy, currentPlane.vx) : Math.atan2(SLING_Y - currentPlane.y, SLING_X - currentPlane.x);
+                drawPlane(currentPlane.x, currentPlane.y, angle);
+            }
+            
+            update();
+            requestAnimationFrame(draw);
+        }
+        
+        // UI button handlers
+        const musicButton = document.getElementById('musicBtn');
+        if (musicButton) {
+            musicButton.onclick = (e) => {
+                e.stopPropagation();
+                toggleMusic();
+            };
+        }
+        
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.onclick = () => {
+            initLevel();
+            updateDebug('🏙️ City reloaded! New siege begins.');
+            // reset music state text not needed
+        };
+        
+        // Helper to fix visual dragging after resize orientation (optional)
+        window.addEventListener('resize', () => {
+            // re-evaluate nothing, canvas scales gracefully
+        });
+        
+        // Additional phone improvement: avoid zoom while dragging
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.target === canvas) e.preventDefault();
+        }, { passive: false });
+        
+        // Initialize game
+        initLevel();
+        draw();
+        updateDebug('📱 Phone friendly mode active | Drag from circle to launch Boeing 727 | HUGE osama on engine!');
+    })();
+</script>
+</body>
+</html>
