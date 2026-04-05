@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Prefix & Suffix Quiz | Examples Included | Endless Loop</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1e2a3a 0%, #0f1724 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 16px;
+        }
+
+        .game-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            border-radius: 56px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.1);
+            padding: 20px 18px 30px;
+            transition: all 0.2s ease;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #FFE6B0, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            font-weight: 700;
+        }
+
+        .sub {
+            color: #cbd5e6;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .topic-switch {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin: 10px 0 8px;
+        }
+
+        .topic-btn {
+            flex: 1;
+            max-width: 160px;
+            background: #2d3e4f;
+            border: none;
+            padding: 12px 6px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 60px;
+            color: #eef4ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            font-family: inherit;
+        }
+
+        .topic-btn.active {
+            background: #f9b23f;
+            color: #1e2a2e;
+            box-shadow: 0 0 10px rgba(249, 178, 63, 0.6);
+        }
+
+        .topic-btn.prefix-active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .topic-btn.suffix-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 80px;
+            padding: 8px 18px;
+            margin: 16px 0 18px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        .badge {
+            background: #1f2c38;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #f0f3fa;
+        }
+
+        .score {
+            background: #ffb347;
+            color: #1f2c38;
+        }
+
+        .question-card {
+            background: #fef9f0;
+            border-radius: 48px;
+            padding: 24px 20px;
+            text-align: center;
+            margin: 12px 0 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05), 0 12px 24px rgba(0,0,0,0.2);
+        }
+
+        .question-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f2937;
+            word-break: break-word;
+            line-height: 1.2;
+            letter-spacing: 1px;
+            background: #ffe5c2;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 60px;
+        }
+
+        .example-box {
+            margin-top: 18px;
+            background: #e6f0fa;
+            border-radius: 28px;
+            padding: 12px 16px;
+            text-align: left;
+            border-left: 5px solid #ffb347;
+        }
+
+        .example-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: #d97706;
+            letter-spacing: 1px;
+        }
+
+        .example-sentence {
+            font-size: 0.95rem;
+            color: #2c3e44;
+            font-weight: 500;
+            margin-top: 5px;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .question-prompt {
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-top: 14px;
+            font-weight: 600;
+            background: #e9eef3;
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 40px;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0 18px;
+        }
+
+        .option-btn {
+            background: #2c3e44;
+            border: 2px solid rgba(255,215,150,0.5);
+            padding: 14px 18px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.15s linear;
+            font-family: inherit;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #3e5a64;
+            transform: scale(0.99);
+            border-color: #ffc857;
+        }
+
+        .option-prefix {
+            background: #3b82f6;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .option-suffix {
+            background: #10b981;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .feedback {
+            text-align: center;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 60px;
+            margin: 10px 0 8px;
+            font-size: 0.95rem;
+        }
+
+        .correct-feedback {
+            background: #10b981dd;
+            color: #fff;
+        }
+
+        .wrong-feedback {
+            background: #ef4444dd;
+            color: #fff;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .next-btn, .reset-btn {
+            flex: 1;
+            padding: 14px 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 60px;
+            background: #ffb347;
+            color: #1e2a2a;
+            cursor: pointer;
+            transition: 0.1s;
+            font-family: inherit;
+        }
+
+        .reset-btn {
+            background: #475569;
+            color: white;
+        }
+
+        .next-btn:disabled, .reset-btn:active {
+            opacity: 0.7;
+            transform: scale(0.97);
+        }
+
+        .infinite-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b9c7d9;
+            margin-top: 20px;
+            background: #00000040;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 6px 14px;
+            border-radius: 40px;
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 16px 12px 24px;
+            }
+            .question-text {
+                font-size: 1.6rem;
+            }
+            .option-btn {
+                padding: 12px 14px;
+            }
+            .example-sentence {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container" id="gameRoot">
+    <div class="game-header">
+        <h1>📖 AFFIX MASTER</h1>
+        <div class="sub">prefixes & suffixes · real examples · 20 each · endless loop</div>
+        <div class="topic-switch">
+            <button class="topic-btn" data-topic="prefix">🔤 PREFIXES</button>
+            <button class="topic-btn" data-topic="suffix">🔠 SUFFIXES</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <span class="badge" id="questionCounter">Q. 1 / 20</span>
+        <span class="badge score" id="scoreDisplay">⭐ 0 / 20</span>
+    </div>
+
+    <div class="question-card">
+        <div class="question-text" id="questionText">un-</div>
+        <div class="example-box" id="exampleBox">
+            <div class="example-label">📌 Example sentence</div>
+            <div class="example-sentence" id="exampleSentence">It was unfair to blame him without proof.</div>
+        </div>
+        <div class="question-prompt" id="promptHint">Choose the correct meaning of this affix</div>
+    </div>
+
+    <div id="optionsContainer" class="options-grid"></div>
+    <div id="feedbackArea" class="feedback"></div>
+    <div class="action-buttons">
+        <button class="reset-btn" id="resetGameBtn">🔄 Restart Round</button>
+        <button class="next-btn" id="nextQuestionBtn">➡️ Next Question</button>
+    </div>
+    <div class="infinite-note">♾️ After 20 questions, new round starts automatically — play forever!</div>
+</div>
+
+<script>
+    // ---------- PREFIX BANK (20) with EXAMPLES ----------
+    const PREFIX_QUESTIONS = [
+        { affix: "pre-", correctMeaning: "before", options: ["before", "after", "again", "against"], example: "preheat → Heat the oven before baking." },
+        { affix: "re-", correctMeaning: "again", options: ["again", "back", "not", "wrong"], example: "rewrite → Please rewrite your essay to improve it." },
+        { affix: "un-", correctMeaning: "not / opposite", options: ["not / opposite", "again", "before", "under"], example: "unfair → The decision was unfair and biased." },
+        { affix: "dis-", correctMeaning: "not / opposite", options: ["not / opposite", "together", "badly", "between"], example: "disagree → I strongly disagree with your opinion." },
+        { affix: "mis-", correctMeaning: "wrongly", options: ["wrongly", "before", "after", "again"], example: "misplace → I often misplace my car keys." },
+        { affix: "sub-", correctMeaning: "under", options: ["under", "above", "across", "beyond"], example: "submarine → A submarine travels deep underwater." },
+        { affix: "inter-", correctMeaning: "between", options: ["between", "inside", "outside", "over"], example: "interstate → The interstate highway connects different states." },
+        { affix: "super-", correctMeaning: "above / beyond", options: ["above / beyond", "under", "below", "across"], example: "superhero → A superhero has extraordinary powers." },
+        { affix: "anti-", correctMeaning: "against", options: ["against", "for", "with", "without"], example: "antibiotic → Antibiotics fight bacterial infections." },
+        { affix: "post-", correctMeaning: "after", options: ["after", "before", "during", "behind"], example: "postpone → We had to postpone the meeting until Friday." },
+        { affix: "over-", correctMeaning: "too much / above", options: ["too much / above", "under", "insufficient", "again"], example: "overcook → Don't overcook the pasta or it gets mushy." },
+        { affix: "under-", correctMeaning: "below / insufficient", options: ["below / insufficient", "above", "beyond", "wrong"], example: "underestimate → Never underestimate your opponent." },
+        { affix: "semi-", correctMeaning: "half / partly", options: ["half / partly", "full", "double", "again"], example: "semicircle → Draw a semicircle above the line." },
+        { affix: "micro-", correctMeaning: "small", options: ["small", "large", "medium", "tiny scale"], example: "microscope → A microscope reveals tiny organisms." },
+        { affix: "macro-", correctMeaning: "large", options: ["large", "small", "wide", "narrow"], example: "macroeconomics → He studies macroeconomics on a national scale." },
+        { affix: "ex-", correctMeaning: "former / out", options: ["former / out", "inside", "again", "not"], example: "ex-president → The ex-president gave a farewell speech." },
+        { affix: "co-", correctMeaning: "together", options: ["together", "apart", "opposite", "alone"], example: "cooperate → If we cooperate, we'll finish faster." },
+        { affix: "bi-", correctMeaning: "two", options: ["two", "one", "three", "many"], example: "bicycle → She rides her bicycle to work every day." },
+        { affix: "tri-", correctMeaning: "three", options: ["three", "two", "four", "multiple"], example: "triangle → A triangle has three sides and three angles." },
+        { affix: "trans-", correctMeaning: "across / beyond", options: ["across / beyond", "under", "before", "after"], example: "transatlantic → They flew on a transatlantic flight." }
+    ];
+
+    // ---------- SUFFIX BANK (20) with EXAMPLES ----------
+    const SUFFIX_QUESTIONS = [
+        { affix: "-ful", correctMeaning: "full of", options: ["full of", "without", "able to", "made of"], example: "joyful → The children were joyful at the birthday party." },
+        { affix: "-less", correctMeaning: "without", options: ["without", "full of", "quality of", "like"], example: "fearless → The fearless firefighter saved the cat." },
+        { affix: "-able / -ible", correctMeaning: "capable of", options: ["capable of", "without", "state of", "one who"], example: "washable → This fabric is machine washable." },
+        { affix: "-tion / -sion", correctMeaning: "state / action", options: ["state / action", "full of", "without", "person who"], example: "celebration → The celebration lasted all night." },
+        { affix: "-ment", correctMeaning: "result / action", options: ["result / action", "full of", "like", "without"], example: "achievement → Winning the award was a great achievement." },
+        { affix: "-ness", correctMeaning: "state / condition", options: ["state / condition", "full of", "one who", "capable"], example: "happiness → Happiness is found in small moments." },
+        { affix: "-er / -or", correctMeaning: "one who", options: ["one who", "without", "full of", "made of"], example: "teacher → My teacher explains lessons clearly." },
+        { affix: "-ist", correctMeaning: "person who", options: ["person who", "state of", "capable", "without"], example: "artist → The artist painted a beautiful mural." },
+        { affix: "-ism", correctMeaning: "belief / practice", options: ["belief / practice", "person", "full of", "result"], example: "optimism → Her optimism inspired everyone." },
+        { affix: "-ly", correctMeaning: "in a certain manner", options: ["in a certain manner", "full of", "state", "without"], example: "quickly → She quickly finished her homework." },
+        { affix: "-y", correctMeaning: "characterized by", options: ["characterized by", "without", "full of", "act of"], example: "messy → His desk is always messy." },
+        { affix: "-ous", correctMeaning: "full of", options: ["full of", "without", "like", "capable"], example: "dangerous → Climbing that cliff is dangerous." },
+        { affix: "-ive", correctMeaning: "tending to", options: ["tending to", "without", "state", "one who"], example: "creative → She has a very creative imagination." },
+        { affix: "-al", correctMeaning: "related to", options: ["related to", "full of", "without", "action"], example: "musical → He plays several musical instruments." },
+        { affix: "-ic", correctMeaning: "relating to", options: ["relating to", "state of", "made of", "able"], example: "dramatic → The weather change was dramatic." },
+        { affix: "-ance / -ence", correctMeaning: "state / quality", options: ["state / quality", "full of", "person", "without"], example: "patience → Learning a language requires patience." },
+        { affix: "-ship", correctMeaning: "state / condition", options: ["state / condition", "full of", "one who", "capable"], example: "friendship → Their friendship lasted for decades." },
+        { affix: "-hood", correctMeaning: "state / period", options: ["state / period", "without", "like", "able"], example: "childhood → My childhood was full of adventure." },
+        { affix: "-ward", correctMeaning: "direction", options: ["direction", "full of", "state", "without"], example: "forward → Take a step forward." },
+        { affix: "-en", correctMeaning: "made of / to become", options: ["made of / to become", "full of", "without", "state"], example: "lengthen → We need to lengthen the rope." }
+    ];
+
+    // ----- GAME STATE -----
+    let currentTopic = "prefix";
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let userScore = 0;
+    let answerLocked = false;
+    let currentQuestionObj = null;
+
+    // DOM elements
+    const questionTextEl = document.getElementById("questionText");
+    const exampleSentenceEl = document.getElementById("exampleSentence");
+    const promptHintEl = document.getElementById("promptHint");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const feedbackArea = document.getElementById("feedbackArea");
+    const questionCounterSpan = document.getElementById("questionCounter");
+    const scoreDisplaySpan = document.getElementById("scoreDisplay");
+    const nextBtn = document.getElementById("nextQuestionBtn");
+    const resetBtn = document.getElementById("resetGameBtn");
+    const topicBtns = document.querySelectorAll(".topic-btn");
+
+    function getTopicQuestions(topic) {
+        if (topic === "prefix") {
+            return PREFIX_QUESTIONS.map(q => ({ ...q }));
+        } else {
+            return SUFFIX_QUESTIONS.map(q => ({ ...q }));
+        }
+    }
+
+    function resetGame() {
+        currentQuestions = getTopicQuestions(currentTopic);
+        currentIndex = 0;
+        userScore = 0;
+        answerLocked = false;
+        updateScoreAndCounterDisplay();
+        clearFeedback();
+        loadQuestionByIndex();
+        enableOptions(true);
+        nextBtn.disabled = false;
+    }
+
+    function switchTopic(topic) {
+        currentTopic = topic;
+        topicBtns.forEach(btn => {
+            const btnTopic = btn.getAttribute("data-topic");
+            if (btnTopic === topic) {
+                btn.classList.add("active");
+                if (topic === "prefix") btn.classList.add("prefix-active");
+                else btn.classList.add("suffix-active");
+            } else {
+                btn.classList.remove("active", "prefix-active", "suffix-active");
+            }
+        });
+        currentQuestions = getTopicQuestions(currentTopic);
+        currentIndex = 0;
+        userScore = 0;
+        answerLocked = false;
+        updateScoreAndCounterDisplay();
+        clearFeedback();
+        loadQuestionByIndex();
+        enableOptions(true);
+        nextBtn.disabled = false;
+    }
+
+    function updateScoreAndCounterDisplay() {
+        scoreDisplaySpan.innerText = `⭐ ${userScore} / 20`;
+        questionCounterSpan.innerText = `Q. ${currentIndex + 1} / 20`;
+    }
+
+    function clearFeedback() {
+        feedbackArea.innerHTML = "";
+        feedbackArea.className = "feedback";
+    }
+
+    function showFeedback(isCorrect, correctMeaning, selectedMeaning) {
+        if (isCorrect) {
+            feedbackArea.innerHTML = `✅ Perfect! "${selectedMeaning}" is the correct meaning.`;
+            feedbackArea.className = "feedback correct-feedback";
+        } else {
+            feedbackArea.innerHTML = `❌ Not quite. "${selectedMeaning}" is incorrect. Correct meaning: "${correctMeaning}".`;
+            feedbackArea.className = "feedback wrong-feedback";
+        }
+    }
+
+    function loadQuestionByIndex() {
+        if (!currentQuestions.length) return;
+        const q = currentQuestions[currentIndex];
+        currentQuestionObj = q;
+        questionTextEl.innerText = q.affix;
+        exampleSentenceEl.innerText = q.example;
+        promptHintEl.innerText = currentTopic === "prefix" ? "🔍 What does this PREFIX mean?" : "🔍 What does this SUFFIX mean?";
+        
+        optionsContainer.innerHTML = "";
+        const opts = q.options;
+        const shuffled = [...opts];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        shuffled.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            const iconSpan = document.createElement("span");
+            if (currentTopic === "prefix") {
+                iconSpan.className = "option-prefix";
+                iconSpan.innerText = "🔹";
+            } else {
+                iconSpan.className = "option-suffix";
+                iconSpan.innerText = "🔸";
+            }
+            const textSpan = document.createElement("span");
+            textSpan.className = "option-text";
+            textSpan.innerText = opt;
+            btn.appendChild(iconSpan);
+            btn.appendChild(textSpan);
+            btn.setAttribute("data-value", opt);
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (answerLocked) return;
+                handleAnswer(opt, btn);
+            });
+            optionsContainer.appendChild(btn);
+        });
+        enableOptions(true);
+        answerLocked = false;
+    }
+
+    function handleAnswer(selectedMeaning, clickedBtn) {
+        if (answerLocked) return;
+        const currentQ = currentQuestions[currentIndex];
+        const isCorrect = (selectedMeaning === currentQ.correctMeaning);
+        
+        if (isCorrect) {
+            userScore++;
+            updateScoreAndCounterDisplay();
+        }
+        
+        showFeedback(isCorrect, currentQ.correctMeaning, selectedMeaning);
+        
+        const allOptBtns = document.querySelectorAll(".option-btn");
+        allOptBtns.forEach(btn => {
+            btn.style.opacity = "0.6";
+            btn.style.cursor = "default";
+            btn.disabled = true;
+        });
+        
+        if (clickedBtn) {
+            if (isCorrect) {
+                clickedBtn.style.border = "3px solid #2ecc71";
+                clickedBtn.style.backgroundColor = "#2e7d5e";
+            } else {
+                clickedBtn.style.border = "3px solid #e74c3c";
+                clickedBtn.style.backgroundColor = "#b3413b";
+                allOptBtns.forEach(btn => {
+                    if (btn.querySelector(".option-text")?.innerText === currentQ.correctMeaning) {
+                        btn.style.border = "3px solid #2ecc71";
+                        btn.style.backgroundColor = "#2c6e4f";
+                    }
+                });
+            }
+        }
+        answerLocked = true;
+        nextBtn.disabled = false;
+    }
+    
+    function enableOptions(enabled) {
+        const btns = document.querySelectorAll(".option-btn");
+        btns.forEach(btn => {
+            if (enabled) {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
+                btn.style.border = "2px solid rgba(255,215,150,0.5)";
+                btn.style.backgroundColor = "#2c3e44";
+            } else {
+                btn.disabled = true;
+            }
+        });
+    }
+    
+    function nextQuestion() {
+        if (!answerLocked) {
+            feedbackArea.innerHTML = "⚠️ Please select an answer before moving on!";
+            feedbackArea.className = "feedback wrong-feedback";
+            setTimeout(() => {
+                if (feedbackArea.innerHTML.includes("select an answer")) clearFeedback();
+            }, 1500);
+            return;
+        }
+        
+        let nextIdx = currentIndex + 1;
+        if (nextIdx >= 20) {
+            // INFINITE LOOP: fresh round
+            currentIndex = 0;
+            userScore = 0;
+            updateScoreAndCounterDisplay();
+            currentQuestions = getTopicQuestions(currentTopic);
+            clearFeedback();
+            loadQuestionByIndex();
+            enableOptions(true);
+            answerLocked = false;
+            nextBtn.disabled = false;
+            return;
+        }
+        
+        currentIndex = nextIdx;
+        updateScoreAndCounterDisplay();
+        clearFeedback();
+        loadQuestionByIndex();
+        enableOptions(true);
+        answerLocked = false;
+        nextBtn.disabled = false;
+    }
+    
+    nextBtn.addEventListener("click", nextQuestion);
+    resetBtn.addEventListener("click", () => resetGame());
+    topicBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const topic = btn.getAttribute("data-topic");
+            if (topic === currentTopic) return;
+            switchTopic(topic);
+        });
+    });
+    
+    function init() {
+        currentTopic = "prefix";
+        currentQuestions = getTopicQuestions("prefix");
+        currentIndex = 0;
+        userScore = 0;
+        answerLocked = false;
+        updateScoreAndCounterDisplay();
+        topicBtns.forEach(btn => {
+            if (btn.getAttribute("data-topic") === "prefix") {
+                btn.classList.add("active", "prefix-active");
+            } else {
+                btn.classList.remove("active", "prefix-active", "suffix-active");
+            }
+        });
+        loadQuestionByIndex();
+        enableOptions(true);
+        nextBtn.disabled = false;
+    }
+    
+    init();
+</script>
+</body>
+</html>

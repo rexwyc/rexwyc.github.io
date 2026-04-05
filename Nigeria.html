@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Master Chef: 50+ Recipes Edition</title>
+    <style>
+        :root { --wood: #4e342e; --marble: #fcfcfc; --gold: #ffd700; --accent: #ff5722; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #e0e0e0; display: flex; justify-content: center; padding: 20px; margin: 0; height: 100vh; overflow: hidden; }
+        #main-app { display: flex; gap: 20px; max-width: 1450px; width: 100%; height: 92vh; }
+
+        /* Pantry Section */
+        #pantry { background: white; padding: 20px; border-radius: 24px; flex: 2.2; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow-y: auto; display: flex; flex-direction: column; }
+        .stats { display: flex; gap: 20px; background: #263238; color: white; padding: 12px 20px; border-radius: 15px; margin-bottom: 20px; align-items: center; justify-content: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; }
+        .item { padding: 10px 5px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; text-align: center; transition: 0.2s; background: #fff; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .item span.emoji { font-size: 28px; margin-bottom: 5px; }
+        .item span.name { font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase; white-space: nowrap; overflow: hidden; width: 100%; text-overflow: ellipsis; }
+        .item.locked { filter: grayscale(1) opacity(0.3); cursor: not-allowed; border-style: dashed; }
+        .item.selected { border-color: var(--accent); background: #fff3e0; transform: scale(0.95); box-shadow: inset 0 0 10px rgba(255,87,34,0.1); }
+        .item-lvl { position: absolute; top: -5px; right: -5px; font-size: 9px; background: #444; color: white; padding: 2px 5px; border-radius: 5px; font-weight: bold; }
+
+        /* Cooking Counter */
+        #kitchen-core { width: 340px; background: var(--wood); border-radius: 24px; padding: 20px; color: white; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+        .stove { background: var(--marble); width: 100%; height: 200px; border-radius: 20px; border: 8px solid #3e2723; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        #final-dish { font-size: 80px; transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform: scale(0); }
+        #final-dish.reveal { transform: scale(1); }
+
+        /* History Panel */
+        #history-box { width: 280px; background: #cfd8dc; border-radius: 24px; display: flex; flex-direction: column; padding: 15px; }
+        #history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .history-card { background: white; padding: 10px; border-radius: 10px; border-left: 5px solid var(--accent); animation: slideIn 0.3s ease; font-size: 0.85em; }
+        @keyframes slideIn { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform: translateX(0); } }
+
+        /* Toast Notifications */
+        #notif-stack { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
+        .toast { background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 50px; margin-bottom: 8px; border-left: 4px solid var(--gold); animation: toastIn 0.4s, toastOut 0.4s 2.6s forwards; display: flex; align-items: center; gap: 10px; }
+        @keyframes toastIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes toastOut { to { opacity: 0; transform: translateY(-20px); } }
+
+        button { background: #43a047; color: white; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #2e7d32; }
+        button:disabled { background: #78909c; box-shadow: 0 5px 0 #546e7a; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div id="notif-stack"></div>
+
+<div id="main-app">
+    <div id="pantry">
+        <div class="stats">
+            <span>🏆 LVL: <b id="lvl">1</b></span>
+            <span>✨ EXP: <b id="exp">0</b> / <span id="target">100</span></span>
+        </div>
+        <div id="ingredient-grid" class="grid"></div>
+        <div style="margin-top:auto; padding-top:15px;">
+            <button id="cook-btn" onclick="startCooking()" disabled>COOK WORLD CUISINE (3 Items) 🛎️</button>
+        </div>
+    </div>
+
+    <div id="kitchen-core">
+        <h2 style="margin: 0 0 15px 0;">SERVING DESK</h2>
+        <div class="stove">
+            <div id="final-dish">🍲</div>
+        </div>
+        <div id="dish-details" style="text-align:center;">
+            <h3 id="dish-title" style="margin: 5px 0; color:var(--gold);">Pick 3 Items</h3>
+            <p id="dish-country" style="font-size: 0.8em; color: #fff; font-weight: bold; margin: 5px 0;"></p>
+            <p id="dish-story" style="font-size: 0.85em; opacity: 0.9; line-height: 1.4;"></p>
+        </div>
+    </div>
+
+    <div id="history-box">
+        <h3 style="margin:0; text-align:center; color:#37474f;">📜 DISCOVERY LOG</h3>
+        <div id="history-list"></div>
+    </div>
+</div>
+
+<script>
+// --- Comprehensive Ingredient Database ---
+const db = [
+    {icon: "🍏", name: "Apple", lvl: 1}, {icon: "🍎", name: "Red Apple", lvl: 1}, {icon: "🍞", name: "Bread", lvl: 1}, 
+    {icon: "🍅", name: "Tomato", lvl: 1}, {icon: "🥚", name: "Egg", lvl: 1}, {icon: "🍚", name: "Rice", lvl: 1},
+    {icon: "🧀", name: "Cheese", lvl: 2}, {icon: "🥩", name: "Beef", lvl: 2}, {icon: "🧅", name: "Onion", lvl: 2}, 
+    {icon: "🍋", name: "Lemon", lvl: 2}, {icon: "🍝", name: "Pasta", lvl: 3}, {icon: "🥓", name: "Bacon", lvl: 3},
+    {icon: "🥔", name: "Potato", lvl: 3}, {icon: "🥕", name: "Carrot", lvl: 3}, {icon: "🥦", name: "Broccoli", lvl: 4}, 
+    {icon: "🐟", name: "Fish", lvl: 4}, {icon: "🍤", name: "Shrimp", lvl: 4}, {icon: "🌶️", name: "Chili", lvl: 5},
+    {icon: "🧄", name: "Garlic", lvl: 5}, {icon: "🍄", name: "Mushroom", lvl: 5}, {icon: "🍕", name: "Pizza Base", lvl: 6}, 
+    {icon: "🍔", name: "Patty", lvl: 6}, {icon: "🍟", name: "Fries", lvl: 6}, {icon: "🍜", name: "Noodle", lvl: 7},
+    {icon: "🥑", name: "Avocado", lvl: 7}, {icon: "🌽", name: "Corn", lvl: 8}, {icon: "🍍", name: "Pineapple", lvl: 8}, 
+    {icon: "🥟", name: "Dumpling", lvl: 9}, {icon: "🍗", name: "Chicken", lvl: 9}, {icon: "🥜", name: "Peanut", lvl: 10},
+    {icon: "🥛", name: "Milk", lvl: 10}, {icon: "🍷", name: "Wine", lvl: 11}, {icon: "🍯", name: "Honey", lvl: 11}, 
+    {icon: "🥐", name: "Croissant", lvl: 12}, {icon: "🥧", name: "Pie Crumb", lvl: 13}, {icon: "🍰", name: "Cake", lvl: 14},
+    {icon: "🍛", name: "Curry", lvl: 15}, {icon: "🍣", name: "Sushi", lvl: 16}, {icon: "🍱", name: "Bento Plate", lvl: 17}, 
+    {icon: "🍫", name: "Chocolate", lvl: 18}
+];
+
+let state = { lvl: 1, exp: 0, next: 100 };
+let selected = [];
+
+function init() { render(); updateUI(); }
+
+function render() {
+    const grid = document.getElementById('ingredient-grid');
+    grid.innerHTML = '';
+    db.forEach(item => {
+        const div = document.createElement('div');
+        const locked = item.lvl > state.lvl;
+        div.className = `item ${locked ? 'locked' : ''} ${selected.includes(item.icon) ? 'selected' : ''}`;
+        div.innerHTML = `<span class="item-lvl">L${item.lvl}</span><span class="emoji">${item.icon}</span><span class="name">${item.name}</span>`;
+        if(!locked) div.onclick = () => toggle(item.icon);
+        grid.appendChild(div);
+    });
+}
+
+function toggle(icon) {
+    if(selected.includes(icon)) selected = selected.filter(i => i !== icon);
+    else if(selected.length < 3) selected.push(icon);
+    document.getElementById('cook-btn').disabled = selected.length !== 3;
+    render();
+}
+
+function startCooking() {
+    const dishEl = document.getElementById('final-dish');
+    dishEl.classList.remove('reveal');
+    document.getElementById('cook-btn').disabled = true;
+
+    setTimeout(() => {
+        const dish = getDishData(selected);
+        dishEl.innerText = dish.icon;
+        dishEl.classList.add('reveal');
+        document.getElementById('dish-title').innerText = dish.name;
+        document.getElementById('dish-country').innerText = dish.country;
+        document.getElementById('dish-story').innerText = dish.desc;
+
+        state.exp += 50;
+        if(state.exp >= state.next) {
+            state.lvl++;
+            state.exp = 0;
+            state.next += 50;
+            toast(`LEVEL UP: ${state.lvl}`, '🏅');
+            db.filter(i => i.lvl === state.lvl).forEach(i => toast(`Unlocked: ${i.icon} ${i.name}`, '🔓'));
+        }
+        
+        updateUI();
+        addToLog(dish);
+        selected = [];
+        render();
+    }, 600);
+}
+
+function getDishData(items) {
+    const s = items.sort().join(' ');
+    
+    // --- 50+ WORLD RECIPES ---
+    // Italy
+    if(s.includes('🍕') && s.includes('🍅') && s.includes('🧀')) return {name: "Margherita Pizza", icon: "🍕", country: "🇮🇹 Italy", desc: "Classic Neapolitan crispy thin crust."};
+    if(s.includes('🍝') && s.includes('🥚') && s.includes('🥓')) return {name: "Carbonara", icon: "🍝", country: "🇮🇹 Italy", desc: "Rich egg and guanciale sauce."};
+    if(s.includes('🍝') && s.includes('🥩') && s.includes('🍅')) return {name: "Bolognese", icon: "🍝", country: "🇮🇹 Italy", desc: "Traditional meat and tomato pasta."};
+    // Japan
+    if(s.includes('🍣') || (s.includes('🐟') && s.includes('🍚'))) return {name: "Edomae Sushi", icon: "🍣", country: "🇯🇵 Japan", desc: "Fresh fish over vinegared rice."};
+    if(s.includes('🍜') && s.includes('🥚') && s.includes('🥩')) return {name: "Tonkotsu Ramen", icon: "🍜", country: "🇯🇵 Japan", desc: "Rich pork bone broth noodle soup."};
+    if(s.includes('🍤') && s.includes('🍚')) return {name: "Tempura Don", icon: "🍤", country: "🇯🇵 Japan", desc: "Lightly battered shrimp over rice."};
+    // Mexico
+    if(s.includes('🥩') && s.includes('🌶️') && s.includes('🥑')) return {name: "Beef Tacos", icon: "🌮", country: "🇲🇽 Mexico", desc: "Spicy grilled meat street-style tacos."};
+    if(s.includes('🥑') && s.includes('🍅') && s.includes('🧅')) return {name: "Guacamole", icon: "🥑", country: "🇲🇽 Mexico", desc: "Fresh mashed avocado dip."};
+    // USA
+    if(s.includes('🍔') || (s.includes('🥩') && s.includes('🧀') && s.includes('🍞'))) return {name: "Cheese Burger", icon: "🍔", country: "🇺🇸 USA", desc: "Juicy beef patty with melted cheddar."};
+    if(s.includes('🍟') && s.includes('🍔')) return {name: "Burger Combo", icon: "🍔", country: "🇺🇸 USA", desc: "The ultimate fast food meal."};
+    if(s.includes('🍎') && s.includes('🥧')) return {name: "Apple Pie", icon: "🥧", country: "🇺🇸 USA", desc: "Warm homemade fruit tart."};
+    // China
+    if(s.includes('🥟') || (s.includes('🥩') && s.includes('🥬'))) return {name: "Pork Dumplings", icon: "🥟", country: "🇨🇳 China", desc: "Hand-folded steamed meat parcels."};
+    if(s.includes('🍚') && s.includes('🥚') && s.includes('🧅')) return {name: "Fried Rice", icon: "🍚", country: "🇨🇳 China", desc: "Wok-tossed savory rice."};
+    // India
+    if(s.includes('🍛') && s.includes('🍗')) return {name: "Butter Chicken", icon: "🥘", country: "🇮🇳 India", desc: "Rich and creamy spiced tomato curry."};
+    if(s.includes('🍚') && s.includes('🥩') && s.includes('🌶️')) return {name: "Biryani", icon: "🍚", country: "🇮🇳 India", desc: "Aromatic layered spiced rice bowl."};
+    // Thailand
+    if(s.includes('🍤') && s.includes('🌶️') && s.includes('🍋')) return {name: "Tom Yum Goong", icon: "🥣", country: "🇹🇭 Thailand", desc: "Spicy and sour herbal shrimp soup."};
+    if(s.includes('🍜') && s.includes('🍤') && s.includes('🥜')) return {name: "Pad Thai", icon: "🍜", country: "🇹🇭 Thailand", desc: "Sweet and tangy stir-fried noodles."};
+    // France
+    if(s.includes('🥖') && s.includes('🧀')) return {name: "Brie Baguette", icon: "🥖", country: "🇫🇷 France", desc: "Sophisticated crunchy bread and cheese."};
+    if(s.includes('🍷') && s.includes('🥩') && s.includes('🥕')) return {name: "Boeuf Bourguignon", icon: "🥘", country: "🇫🇷 France", desc: "Beef slow-cooked in red wine."};
+    // UK
+    if(s.includes('🐟') && s.includes('🍟')) return {name: "Fish & Chips", icon: "🐟", country: "🇬🇧 UK", desc: "Seaside classic battered fish."};
+    if(s.includes('🍞') && s.includes('🥚') && s.includes('🥓')) return {name: "Full Breakfast", icon: "🍳", country: "🇬🇧 UK", desc: "Hearty morning plate of energy."};
+    // Korea
+    if(s.includes('🥩') && s.includes('🧅') && s.includes('🍯')) return {name: "Bulgogi", icon: "🥩", country: "🇰🇷 Korea", desc: "Savory-sweet marinated grilled beef."};
+    if(s.includes('🍚') && s.includes('🥚') && s.includes('🌶️')) return {name: "Bibimbap", icon: "🍱", country: "🇰🇷 Korea", desc: "Healthy mixed veggie and egg rice."};
+
+    return {name: "Dark Cuisine", icon: "💩", country: "🌐 Global", desc: `A unique blend of ${items}.`};
+}
+
+function updateUI() {
+    document.getElementById('lvl').innerText = state.lvl;
+    document.getElementById('exp').innerText = state.exp;
+    document.getElementById('target').innerText = state.next;
+}
+
+function addToLog(dish) {
+    const list = document.getElementById('history-list');
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.innerHTML = `<b>${dish.icon} ${dish.name}</b><br><small>${dish.country}</small>`;
+    list.prepend(card);
+}
+
+function toast(msg, icon = '✨') {
+    const stack = document.getElementById('notif-stack');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<span>${icon}</span> <b>${msg}</b>`;
+    stack.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
