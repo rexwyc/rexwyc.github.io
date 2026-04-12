@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>F-35: 防空系統突破任務</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Consolas', monospace; }
+        canvas { border: 2px solid #00ff00; background: #050a10; }
+        #ui { position: absolute; top: 20px; color: #00ff00; pointer-events: none; text-align: center; background: rgba(0,0,0,0.7); padding: 10px; border: 1px solid #00ff00; z-index: 10; }
+        #death-screen { position: absolute; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; background: rgba(0,0,0,0.8); color: white; z-index: 20; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        [ MISSION: DESTROY SAM SITES ]<br>
+        SCORE: <span id="score">0</span><br>
+        B: AIM-120 | SPACE: BOMB | R: RESTART
+    </div>
+    
+    <div id="death-screen">
+        <h1 style="color:red;">MISSION FAILED</h1>
+        <h2 style="color:yellow;">PRESS [ R ] TO RE-DEPLOY</h2>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const deathScreen = document.getElementById('death-screen');
+
+        canvas.width = 500;
+        canvas.height = 700;
+
+        let score, keys, myMissiles, enemyMissiles, bombs, defenses, particles, f35, isGameOver;
+
+        function initGame() {
+            score = 0; keys = {}; myMissiles = []; enemyMissiles = []; bombs = []; defenses = []; particles = [];
+            isGameOver = false;
+            f35 = { x: 250, y: 600, speed: 8, roll: 0, lastFire: 0, lastBomb: 0 };
+            deathScreen.style.display = 'none';
+            scoreEl.innerText = "0";
+        }
+
+        function createExplosion(x, y, color, size = 15) {
+            for (let i = 0; i < size; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1.0,
+                    color: color || '#ff5500'
+                });
+            }
+        }
+
+        window.addEventListener('keydown', e => {
+            keys[e.code] = true;
+            if (isGameOver && e.code === 'KeyR') initGame();
+        });
+        window.addEventListener('keyup', e => keys[e.code] = false);
+
+        function update() {
+            if (isGameOver) return;
+
+            // F-35 控制
+            f35.roll *= 0.8;
+            if (keys['ArrowUp'] && f35.y > 50) f35.y -= f35.speed;
+            if (keys['ArrowDown'] && f35.y < canvas.height - 50) f35.y += f35.speed;
+            if (keys['ArrowLeft'] && f35.x > 30) { f35.x -= f35.speed; f35.roll = -0.5; }
+            if (keys['ArrowRight'] && f35.x < canvas.width - 30) { f35.x += f35.speed; f35.roll = 0.5; }
+
+            const now = Date.now();
+
+            // 玩家武器
+            if (keys['KeyB'] && now - f35.lastFire > 400) {
+                myMissiles.push({ x: f35.x, y: f35.y, angle: -Math.PI/2, speed: 12, target: null });
+                f35.lastFire = now;
+            }
+            if (keys['Space'] && now - f35.lastBomb > 300) {
+                bombs.push({ x: f35.x, y: f35.y, speed: 6, size: 15, targetSize: 5 });
+                f35.lastBomb = now;
+            }
+
+            // 炸彈攻擊防空系統
+            bombs.forEach((b, bi) => {
+                b.y -= b.speed;
+                b.size -= 0.3;
+                if (b.size <= b.targetSize) {
+                    let hit = false;
+                    defenses.forEach((d, di) => {
+                        let dist = Math.sqrt((b.x - d.x)**2 + (b.y - d.y)**2);
+                        if (dist < 60) { 
+                            createExplosion(d.x, d.y, '#ffaa00', 30);
+                            defenses.splice(di, 1);
+                            score += 1000;
+                            hit = true;
+                        }
+                    });
+                    createExplosion(b.x, b.y, hit ? '#ffaa00' : '#555', 10);
+                    bombs.splice(bi, 1);
+                }
+            });
+
+            // 地面防空系統與發射邏輯
+            if (Math.random() < 0.012) defenses.push({ x: Math.random()*(canvas.width-60)+30, y: -50, lastFire: now + 1000 });
+            
+            defenses.forEach(d => {
+                d.y += 1.0;
+                // 飛彈從防空系統位置發射
+                if (now - d.lastFire > 4000 && d.y > 0) { 
+                    enemyMissiles.push({ 
+                        x: d.x, 
+                        y: d.y - 10, // 從車頂發射
+                        angle: -Math.PI / 2, // 初始向上噴射
+                        speed: 3.0 
+                    });
+                    d.lastFire = now;
+                }
+            });
+
+            // 敵方飛彈追蹤判定
+            enemyMissiles.forEach((em, i) => {
+                const targetAngle = Math.atan2(f35.y - em.y, f35.x - em.x);
+                let diff = targetAngle - em.angle;
+                while(diff < -Math.PI) diff += Math.PI*2;
+                while(diff > Math.PI) diff -= Math.PI*2;
+                em.angle += diff * 0.04; // 轉向
+
+                em.x += Math.cos(em.angle) * em.speed;
+                em.y += Math.sin(em.angle) * em.speed;
+
+                if (Math.sqrt((f35.x-em.x)**2 + (f35.y-em.y)**2) < 12) {
+                    isGameOver = true;
+                    deathScreen.style.display = 'flex';
+                }
+                if (em.y > canvas.height + 100) enemyMissiles.splice(i, 1);
+            });
+
+            // 玩家 AIM-120 自動攔截
+            myMissiles.forEach((m, i) => {
+                if (!m.target || !enemyMissiles.includes(m.target)) {
+                    let minDist = 2000;
+                    enemyMissiles.forEach(em => {
+                        let d = Math.sqrt((em.x-m.x)**2 + (em.y-m.y)**2);
+                        if (d < minDist) { minDist = d; m.target = em; }
+                    });
+                }
+                if (m.target) {
+                    let ta = Math.atan2(m.target.y - m.y, m.target.x - m.x);
+                    let diff = ta - m.angle;
+                    while(diff < -Math.PI) diff += Math.PI*2;
+                    while(diff > Math.PI) diff -= Math.PI*2;
+                    m.angle += diff * 0.25;
+                }
+                m.x += Math.cos(m.angle) * m.speed;
+                m.y += Math.sin(m.angle) * m.speed;
+
+                enemyMissiles.forEach((em, ei) => {
+                    if (Math.sqrt((m.x-em.x)**2 + (m.y-em.y)**2) < 35) {
+                        createExplosion(em.x, em.y, '#00e1ff', 10);
+                        enemyMissiles.splice(ei, 1);
+                        myMissiles.splice(i, 1);
+                        score += 500;
+                    }
+                });
+                if (m.y < -50 || m.x < -50 || m.x > canvas.width+50) myMissiles.splice(i, 1);
+            });
+
+            particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life -= 0.03; if (p.life <= 0) particles.splice(i, 1); });
+            scoreEl.innerText = score;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
+            ctx.globalAlpha = 1.0;
+
+            // 畫防空系統 (SAM Site)
+            defenses.forEach(d => {
+                ctx.fillStyle = '#2d4a22'; ctx.fillRect(d.x-15, d.y-10, 30, 20); // 車身
+                ctx.fillStyle = '#111'; ctx.fillRect(d.x-10, d.y-18, 20, 8);  // 發射管
+            });
+
+            bombs.forEach(b => { ctx.fillStyle = 'yellow'; ctx.beginPath(); ctx.arc(b.x, b.y, b.size, 0, 7); ctx.fill(); });
+            myMissiles.forEach(m => {
+                ctx.save(); ctx.translate(m.x, m.y); ctx.rotate(m.angle);
+                ctx.fillStyle = '#00faff'; ctx.fillRect(0, -2, 20, 4); ctx.restore();
+            });
+            enemyMissiles.forEach(em => {
+                ctx.save(); ctx.translate(em.x, em.y); ctx.rotate(em.angle);
+                ctx.fillStyle = '#ff4400'; ctx.fillRect(0, -2, 12, 4);
+                ctx.fillStyle = '#fff'; ctx.fillRect(10, -2, 4, 4); // 彈頭
+                ctx.restore();
+            });
+
+            if (!isGameOver) {
+                ctx.save(); ctx.translate(f35.x, f35.y);
+                ctx.fillStyle = '#8899aa'; ctx.beginPath();
+                ctx.moveTo(0, -25); ctx.lineTo(-25*(1-Math.abs(f35.roll)), 15); ctx.lineTo(25*(1-Math.abs(f35.roll)), 15); ctx.closePath(); ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function loop() { update(); draw(); requestAnimationFrame(loop); }
+        initGame();
+        loop();
+    </script>
+</body>
+</html>
