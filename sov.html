@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>SVO Quiz: Subject - Verb - Object</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c2c 0%, #0e2a1f 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* main card */
+        .quiz-container {
+            max-width: 620px;
+            width: 100%;
+            background: #fef9ef;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header */
+        .quiz-header {
+            background: #f4a261;
+            background: linear-gradient(115deg, #e76f51, #f4a261);
+            padding: 1.4rem 1.5rem;
+            text-align: center;
+            color: white;
+        }
+
+        .quiz-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .quiz-header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 0.2rem;
+        }
+
+        /* content */
+        .quiz-body {
+            padding: 2rem 1.5rem 1.8rem;
+        }
+
+        /* sentence display in the style "I eat rice" */
+        .sentence-card {
+            background: #fff3e0;
+            border-radius: 2rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 2px solid #ffe0b5;
+            box-shadow: 0 8px 0 #e9c99e;
+        }
+
+        .sentence-display {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #2d3e2b;
+            letter-spacing: -0.3px;
+            word-break: break-word;
+            font-family: monospace, 'Courier New', system-ui;
+            background: #fffaf2;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 60px;
+        }
+
+        /* question text */
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0.8rem 0 1.2rem 0;
+            color: #2c3e2f;
+            text-align: center;
+            background: #e9f0e6;
+            padding: 0.5rem;
+            border-radius: 40px;
+        }
+
+        /* options area */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin: 1rem 0 1.5rem;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #ddd6c8;
+            border-radius: 100px;
+            padding: 1rem 1.2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            color: #2c3e2f;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .option-prefix {
+            background: #e9c46a;
+            width: 2.2rem;
+            height: 2.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60px;
+            font-weight: 800;
+            color: #2d3e2b;
+            font-size: 1.1rem;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+            background: #fef2e0;
+        }
+
+        /* correct / wrong feedback */
+        .feedback-area {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.8rem;
+            border-radius: 60px;
+            margin: 0.8rem 0 1rem;
+            background: #f1f0ea;
+        }
+
+        .feedback-correct {
+            background: #d9f0da;
+            color: #2b6e3c;
+            border-left: 8px solid #2ecc71;
+        }
+
+        .feedback-wrong {
+            background: #ffe0db;
+            color: #b33c1f;
+            border-left: 8px solid #e76f51;
+        }
+
+        /* counters and next button */
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            background: #e2e6db;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            margin-bottom: 1.4rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .q-counter {
+            background: #2d3e2b;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            color: white;
+        }
+
+        .infinite-badge {
+            background: #f4a261;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .next-btn {
+            width: 100%;
+            background: #e76f51;
+            border: none;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 0 #a4442a;
+            margin-top: 0.4rem;
+        }
+
+        .next-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #a4442a;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+            box-shadow: 0 3px 0 #a4442a;
+        }
+
+        .reset-btn {
+            background: #6c757d;
+            border: none;
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 40px;
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+            width: 48%;
+        }
+
+        .reset-btn:active {
+            transform: scale(0.97);
+        }
+
+        .double-buttons {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            margin-top: 0.8rem;
+        }
+
+        .hint-note {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #6b5e4a;
+            margin-top: 1rem;
+            border-top: 1px solid #e9dccc;
+            padding-top: 1rem;
+        }
+
+        @media (max-width: 500px) {
+            .sentence-display {
+                font-size: 1.6rem;
+            }
+            .option-btn {
+                padding: 0.8rem 1rem;
+                font-size: 1rem;
+            }
+            .quiz-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>📖 SVO Trainer</h1>
+        <p>Subject · Verb · Object | Choose the correct answer</p>
+    </div>
+    <div class="quiz-body">
+        <!-- sentence display like "I eat rice" -->
+        <div class="sentence-card">
+            <span class="sentence-display" id="sentenceDisplay">I eat rice</span>
+        </div>
+
+        <!-- dynamic question: "Which is the verb?" etc -->
+        <div class="question-text" id="questionPrompt">Which is the verb?</div>
+
+        <!-- options A, B, C -->
+        <div class="options-list" id="optionsContainer">
+            <!-- dynamic JS will fill a. / b. / c. -->
+        </div>
+
+        <!-- feedback message -->
+        <div class="feedback-area" id="feedbackMsg">✨ Tap an option to answer ✨</div>
+
+        <!-- info: counter + infinite loop -->
+        <div class="info-bar">
+            <span>📌 Question <span id="currentQNumber">1</span> / <span id="totalQ">20</span></span>
+            <span class="infinite-badge">♾️ INFINITE LOOP</span>
+        </div>
+
+        <!-- next + reset -->
+        <button class="next-btn" id="nextBtn">➡️ NEXT QUESTION</button>
+        <div class="double-buttons">
+            <button class="reset-btn" id="resetBtn">⟳ RESTART</button>
+        </div>
+        <div class="hint-note">
+            💡 For each sentence, choose the correct part (Subject, Verb, or Object).<br>
+            After a correct answer, press NEXT → (infinite loop from #1 to #20)
+        </div>
+    </div>
+</div>
+
+<script>
+    // ----- 20 SVO QUESTIONS (exactly the same dataset) -----
+    const QUESTIONS = [
+        { text: "The cat chased the mouse.", subject: "The cat", verb: "chased", object: "the mouse" },
+        { text: "Sarah writes poems.", subject: "Sarah", verb: "writes", object: "poems" },
+        { text: "The rain soaked the field.", subject: "The rain", verb: "soaked", object: "the field" },
+        { text: "My brother fixed the bike.", subject: "My brother", verb: "fixed", object: "the bike" },
+        { text: "Dogs love treats.", subject: "Dogs", verb: "love", object: "treats" },
+        { text: "The teacher explained the lesson.", subject: "The teacher", verb: "explained", object: "the lesson" },
+        { text: "Emma opened the window.", subject: "Emma", verb: "opened", object: "the window" },
+        { text: "Lightning struck the tower.", subject: "Lightning", verb: "struck", object: "the tower" },
+        { text: "The child drew a circle.", subject: "The child", verb: "drew", object: "a circle" },
+        { text: "We ate dinner.", subject: "We", verb: "ate", object: "dinner" },
+        { text: "The chef cooked pasta.", subject: "The chef", verb: "cooked", object: "pasta" },
+        { text: "The phone woke me.", subject: "The phone", verb: "woke", object: "me" },
+        { text: "Birds build nests.", subject: "Birds", verb: "build", object: "nests" },
+        { text: "The artist painted a mural.", subject: "The artist", verb: "painted", object: "a mural" },
+        { text: "My friend lost her keys.", subject: "My friend", verb: "lost", object: "her keys" },
+        { text: "The wind slammed the door.", subject: "The wind", verb: "slammed", object: "the door" },
+        { text: "Mom read a story.", subject: "Mom", verb: "read", object: "a story" },
+        { text: "The robot cleaned the floor.", subject: "The robot", verb: "cleaned", object: "the floor" },
+        { text: "That song reminds me of summer.", subject: "That song", verb: "reminds", object: "me of summer" },
+        { text: "The detective solved the case.", subject: "The detective", verb: "solved", object: "the case" }
+    ];
+
+    // ----- QUIZ STATE -----
+    let currentIndex = 0;               // 0-based
+    let currentQuestionAnswered = false;
+    let currentTargetRole = "verb";     // will be randomly selected among subject, verb, object each time? But we want variety: For each sentence, we'll ask one specific role randomly, but also keep cycling.
+    // Actually to make it interesting and cover all three parts, we'll randomly pick which role to ask (subject, verb, or object) for each question.
+    // But to be consistent with the format "Which is the verb?" and show three options (one correct, two other words from the sentence).
+    // This is more dynamic: for each new question we:
+    // - pick a random role to ask (subject, verb, or object)
+    // - generate 3 options: correct answer word/phrase + two distractors taken from the other two parts of the same sentence.
+    // This matches "I eat rice" style: question "Which is the verb?" -> options: a. I , b. eat , c. rice
+
+    // Helper: extract correct phrase based on role
+    function getCorrectPhrase(questionObj, role) {
+        if (role === 'subject') return questionObj.subject;
+        if (role === 'verb') return questionObj.verb;
+        return questionObj.object;
+    }
+
+    // Get all three possible answers (subject, verb, object) as an array of {text, type}
+    function getAllParts(q) {
+        return [
+            { text: q.subject, type: 'subject' },
+            { text: q.verb, type: 'verb' },
+            { text: q.object, type: 'object' }
+        ];
+    }
+
+    // For a given target role, generate shuffled options (correct + two distractors)
+    function generateOptions(questionObj, targetRole) {
+        const allParts = getAllParts(questionObj);
+        const correctItem = allParts.find(p => p.type === targetRole);
+        const distractors = allParts.filter(p => p.type !== targetRole);
+        // distractors are the two other parts
+        let options = [
+            { text: correctItem.text, type: targetRole, isCorrect: true },
+            { text: distractors[0].text, type: distractors[0].type, isCorrect: false },
+            { text: distractors[1].text, type: distractors[1].type, isCorrect: false }
+        ];
+        // shuffle options randomly for variety
+        for (let i = options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [options[i], options[j]] = [options[j], options[i]];
+        }
+        return options;
+    }
+
+    // render current question: sentence, question prompt, options (A, B, C)
+    let currentOptions = [];   // store { text, isCorrect }
+
+    function renderCurrentQuestion() {
+        const q = QUESTIONS[currentIndex];
+        // Randomly pick which role to ask: subject, verb, or object
+        const roles = ['subject', 'verb', 'object'];
+        const randomRole = roles[Math.floor(Math.random() * 3)];
+        currentTargetRole = randomRole;
+
+        // generate fresh options
+        currentOptions = generateOptions(q, currentTargetRole);
+
+        // update sentence display
+        document.getElementById('sentenceDisplay').innerText = q.text;
+
+        // update question prompt
+        let roleName = '';
+        if (currentTargetRole === 'subject') roleName = 'subject';
+        else if (currentTargetRole === 'verb') roleName = 'verb';
+        else roleName = 'object';
+        document.getElementById('questionPrompt').innerHTML = `❓ Which is the <strong style="background:#ffe0b5; padding:0.2rem 0.6rem; border-radius:30px;">${roleName.toUpperCase()}</strong>?`;
+
+        // render option buttons
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = '';
+        const prefixLetters = ['a', 'b', 'c'];
+        currentOptions.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.setAttribute('data-correct', opt.isCorrect);
+            btn.setAttribute('data-opt-text', opt.text);
+            btn.innerHTML = `
+                <span class="option-prefix">${prefixLetters[idx]}</span>
+                <span class="option-text">${opt.text}</span>
+            `;
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleOptionClick(opt.isCorrect, opt.text);
+            });
+            container.appendChild(btn);
+        });
+
+        // reset answered flag for new question
+        currentQuestionAnswered = false;
+        // enable all options visually (they get recreated, so fresh)
+        // disable next button
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.disabled = true;
+        nextBtn.style.opacity = '0.6';
+        // reset feedback
+        const feedbackDiv = document.getElementById('feedbackMsg');
+        feedbackDiv.innerHTML = '🤔 Choose the correct option (A, B, or C)';
+        feedbackDiv.className = 'feedback-area';
+        // update counter display
+        document.getElementById('currentQNumber').innerText = currentIndex + 1;
+        document.getElementById('totalQ').innerText = QUESTIONS.length;
+    }
+
+    // handle answer click
+    function handleOptionClick(isCorrect, chosenText) {
+        if (currentQuestionAnswered) {
+            const feedbackDiv = document.getElementById('feedbackMsg');
+            feedbackDiv.innerHTML = '✅ Already answered! Press NEXT to continue.';
+            feedbackDiv.className = 'feedback-area feedback-correct';
+            return;
+        }
+
+        const q = QUESTIONS[currentIndex];
+        let correctPhrase = getCorrectPhrase(q, currentTargetRole);
+        
+        if (isCorrect) {
+            // correct answer!
+            currentQuestionAnswered = true;
+            // disable all option buttons after correct
+            const allOptions = document.querySelectorAll('.option-btn');
+            allOptions.forEach(btn => {
+                btn.style.opacity = '0.7';
+                btn.style.pointerEvents = 'none';
+                btn.style.cursor = 'default';
+            });
+            const feedbackDiv = document.getElementById('feedbackMsg');
+            feedbackDiv.innerHTML = `🎉 CORRECT! "${chosenText}" is the ${currentTargetRole.toUpperCase()}. Great! Press NEXT. 🎉`;
+            feedbackDiv.className = 'feedback-area feedback-correct';
+            // enable next button
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '1';
+        } else {
+            // wrong answer: show correct answer
+            const qObj = QUESTIONS[currentIndex];
+            const correctAnswerText = getCorrectPhrase(qObj, currentTargetRole);
+            const feedbackDiv = document.getElementById('feedbackMsg');
+            feedbackDiv.innerHTML = `❌ Oops! "${chosenText}" is not the ${currentTargetRole}. The correct ${currentTargetRole} is: “${correctAnswerText}”. Try next question after answering correctly. ❌`;
+            feedbackDiv.className = 'feedback-area feedback-wrong';
+            // keep next button disabled, user must click correct option
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = '0.6';
+            // do NOT mark answered, they can still try other options
+            // but we won't disable options — they can pick again until correct
+            // However, we must ensure they can still click remaining buttons. Buttons are still active because we didn't disable them globally.
+            // We'll keep them enabled: but if they click another option after wrong, that's fine.
+            // But we must prevent double answer marking? We only mark correct if isCorrect. So it's fine.
+        }
+    }
+
+    // move to next question (infinite loop)
+    function nextQuestion() {
+        if (!currentQuestionAnswered) {
+            const feedbackDiv = document.getElementById('feedbackMsg');
+            feedbackDiv.innerHTML = '⚠️ Please answer the current question correctly before moving on! ⚠️';
+            feedbackDiv.className = 'feedback-area feedback-wrong';
+            return;
+        }
+        // infinite loop: increment with wrap-around
+        let newIndex = currentIndex + 1;
+        if (newIndex >= QUESTIONS.length) {
+            newIndex = 0;
+        }
+        currentIndex = newIndex;
+        // re-render everything (new sentence, new random role, fresh options)
+        renderCurrentQuestion();
+    }
+
+    // reset to question #1
+    function resetQuiz() {
+        currentIndex = 0;
+        // reset answered flag and re-render
+        currentQuestionAnswered = false;
+        renderCurrentQuestion();
+        // additionally re-enable next button (render disables it anyway)
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.disabled = true;
+        nextBtn.style.opacity = '0.6';
+        const feedbackDiv = document.getElementById('feedbackMsg');
+        feedbackDiv.innerHTML = '🔄 Restarted from sentence #1. Choose the correct part!';
+        feedbackDiv.className = 'feedback-area';
+    }
+
+    // initial load & event binding
+    function init() {
+        renderCurrentQuestion();
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        nextBtn.addEventListener('click', nextQuestion);
+        resetBtn.addEventListener('click', resetQuiz);
+    }
+
+    init();
+</script>
+</body>
+</html>

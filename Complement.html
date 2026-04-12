@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>Complement Quest | 20 English Quizzes</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f2f6fc 0%, #e9eef4 100%);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      touch-action: manipulation;
+    }
+
+    /* main card container */
+    .game-container {
+      max-width: 650px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 56px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(156, 180, 204, 0.3);
+      overflow: hidden;
+      backdrop-filter: blur(0px);
+      transition: all 0.2s ease;
+    }
+
+    /* header with score and question counter */
+    .quiz-header {
+      background: #1e2b3c;
+      padding: 20px 24px 16px 24px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .score-box, .q-counter {
+      background: rgba(255,255,240,0.12);
+      backdrop-filter: blur(2px);
+      padding: 8px 18px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1.15rem;
+      letter-spacing: 0.3px;
+    }
+
+    .score-box span, .q-counter span {
+      font-weight: 400;
+      opacity: 0.8;
+      margin-right: 8px;
+    }
+
+    .q-counter {
+      background: #2f4b6e;
+    }
+
+    /* progress ring / subtle bar */
+    .progress-bar {
+      height: 5px;
+      background: #cfdfed;
+      width: 100%;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #ffb347;
+      background: linear-gradient(90deg, #f9a826, #ffcd7e);
+      transition: width 0.25s ease;
+    }
+
+    /* question area */
+    .question-area {
+      padding: 32px 24px 20px 24px;
+    }
+
+    .question-text {
+      font-size: 1.75rem;
+      font-weight: 650;
+      line-height: 1.35;
+      color: #0c2a3b;
+      margin-bottom: 28px;
+      word-break: break-word;
+      background: #fef9e6;
+      padding: 18px 20px;
+      border-radius: 40px;
+      box-shadow: inset 0 1px 3px #0001, 0 4px 8px #0001;
+    }
+
+    /* options grid - phone friendly large taps */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .opt-btn {
+      background: white;
+      border: 1.5px solid #cddfeb;
+      border-radius: 100px;
+      padding: 16px 20px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      text-align: left;
+      color: #1f3e4b;
+      font-family: inherit;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      touch-action: manipulation;
+      backdrop-filter: blur(2px);
+      letter-spacing: -0.2px;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.02);
+    }
+
+    .opt-btn:active {
+      transform: scale(0.98);
+      background: #f6fafe;
+    }
+
+    /* feedback message + next button */
+    .feedback-area {
+      padding: 0 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feedback-msg {
+      background: #eef3fc;
+      border-radius: 36px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      text-align: center;
+      font-weight: 500;
+      color: #1e4663;
+      border-left: 6px solid #ffb347;
+    }
+
+    .next-btn {
+      background: #1e2b3c;
+      border: none;
+      padding: 16px 10px;
+      border-radius: 60px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      letter-spacing: 0.8px;
+      transition: 0.1s linear;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 6px 0 #0f1a24;
+      transform: translateY(-2px);
+    }
+
+    .next-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #0f1a24;
+    }
+
+    .next-btn:disabled {
+      opacity: 0.5;
+      transform: translateY(0);
+      box-shadow: 0 4px 0 #0f1a24;
+      cursor: not-allowed;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1.5px solid #b7cfdf;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #2c5775;
+      margin: 0 24px 24px auto;
+      display: inline-flex;
+      width: fit-content;
+      cursor: pointer;
+      transition: 0.1s;
+      touch-action: manipulation;
+    }
+
+    .reset-btn:active {
+      background: #e2ecf5;
+    }
+
+    /* infinite loop / session info */
+    .session-note {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #6f8ea3;
+      padding: 12px 24px 20px;
+      border-top: 1px solid #e2edf5;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .question-text {
+        font-size: 1.45rem;
+        padding: 14px 18px;
+      }
+      .opt-btn {
+        padding: 14px 18px;
+        font-size: 1rem;
+      }
+      .quiz-header {
+        padding: 16px 20px;
+      }
+      .score-box, .q-counter {
+        font-size: 0.95rem;
+        padding: 6px 14px;
+      }
+    }
+
+    /* correct / wrong highlight temp (js will add class) */
+    .opt-correct {
+      background: #c8f0d1 !important;
+      border-color: #2e7d5e !important;
+      color: #1a4d3e;
+    }
+    .opt-wrong {
+      background: #ffe0db !important;
+      border-color: #cd5c5c !important;
+      color: #992222;
+      text-decoration: line-through;
+    }
+    button:disabled {
+      cursor: default;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+<div class="game-container" id="quizRoot">
+  <div class="quiz-header">
+    <div class="score-box"><span>⭐ SCORE</span> <span id="scoreValue">0</span></div>
+    <div class="q-counter"><span>📋 Q.</span> <span id="questionNumber">1</span><span> / 20</span></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="question-area">
+    <div class="question-text" id="questionText">Loading questions...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+  </div>
+  <div class="feedback-area">
+    <div class="feedback-msg" id="feedbackMsg">✨ Tap an option to complete the complement phrase.</div>
+    <button class="next-btn" id="nextButton" disabled>➡️ NEXT QUESTION</button>
+  </div>
+  <button class="reset-btn" id="resetButton">🔄 RESTART QUIZ (infinite loop)</button>
+  <div class="session-note">♾️ Infinite loop — after 20 questions, the set shuffles & repeats. Keep learning!</div>
+</div>
+
+<script>
+  // ---------- 20 carefully curated "Complement (English)" questions ----------
+  // Each question: a sentence with a missing complement (subject complement, object complement,
+  // adjective complement, or common phrase completion). Users choose correct word/phrase.
+  // The focus: complement structures in English (predicate adjectives, predicate nominatives, objective complements).
+  const QUESTION_SET = [
+    { text: "After the long hike, everyone felt ______.", options: ["exhausted", "exhaustingly", "an exhaustion", "to exhaust"], correct: "exhausted" },
+    { text: "The committee declared the new policy ______.", options: ["a success", "succeed", "successfully", "successful"], correct: "a success" },
+    { text: "This soup tastes absolutely ______.", options: ["wonderfully", "wonderful", "wonder", "to wonder"], correct: "wonderful" },
+    { text: "The coach painted the locker room ______.", options: ["motivational blue", "motivationally blue", "blue motivational", "blued"], correct: "motivational blue" },
+    { text: "His greatest achievement was ______ a loving father.", options: ["be", "to being", "being", "been"], correct: "being" },
+    { text: "The storm made the journey ______.", options: ["dangerous", "dangerously", "in danger", "dangered"], correct: "dangerous" },
+    { text: "That movie turned out to be quite ______.", options: ["entertain", "entertaining", "entertained", "entertainment"], correct: "entertaining" },
+    { text: "The jury found the defendant ______.", options: ["guilty", "guilt", "guiltily", "be guilty"], correct: "guilty" },
+    { text: "She remained ______ despite the chaos.", options: ["calmly", "calmness", "calm", "to calm"], correct: "calm" },
+    { text: "The students elected him ______ of the club.", options: ["president", "to president", "presidential", "a president"], correct: "president" },
+    { text: "The old building looks ______.", options: ["beautifully", "beautiful", "beauty", "more beautiful"], correct: "beautiful" },
+    { text: "His speech proved ______ to the audience.", options: ["inspiring", "inspire", "inspirationally", "inspired"], correct: "inspiring" },
+    { text: "They named their daughter ______.", options: ["Lily", "Lilys", "as Lily", "to Lily"], correct: "Lily" },
+    { text: "This new evidence makes the situation ______.", options: ["complicated", "complicate", "complication", "complicatingly"], correct: "complicated" },
+    { text: "I consider her ______ the best artist in town.", options: ["being", "to be", "be", "as"], correct: "to be" },
+    { text: "The fresh bread smells ______.", options: ["divine", "divinely", "divinity", "to divine"], correct: "divine" },
+    { text: "The magician made the rabbit ______.", options: ["disappear", "disappeared", "disappearing", "to disappear"], correct: "disappear" },
+    { text: "After the promotion, he seemed ______.", options: ["overjoyed", "overjoy", "overjoying", "overjoyfully"], correct: "overjoyed" },
+    { text: "We all thought the plan ______ brilliant.", options: ["was", "is", "be", "being"], correct: "was" },
+    { text: "The test results came back ______.", options: ["negative", "negatively", "negativity", "negate"], correct: "negative" }
+  ];
+
+  // make sure exactly 20 items
+  console.assert(QUESTION_SET.length === 20, "Must have 20 questions for infinite loop core");
+
+  // ---------- Game state ----------
+  let currentQuestions = [];      // shuffled copy of the 20 questions (resets when round ends)
+  let currentIndex = 0;          // index within currentQuestions (0..19)
+  let score = 0;                 // score for current full cycle (0-20)
+  let answered = false;          // whether current question already answered
+  let selectedAnswer = null;     // store selected answer text for highlight
+  let isCorrectSelected = false;  // for tracking feedback style
+
+  // DOM elements
+  const questionTextEl = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const scoreValueEl = document.getElementById('scoreValue');
+  const questionNumberEl = document.getElementById('questionNumber');
+  const progressFillEl = document.getElementById('progressFill');
+  const feedbackMsgEl = document.getElementById('feedbackMsg');
+  const nextButton = document.getElementById('nextButton');
+  const resetButton = document.getElementById('resetButton');
+
+  // Helper: shuffle array (Fisher-Yates)
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Initialize or reset full cycle (infinite loop ready)
+  function initNewCycle() {
+    // create fresh copy of the original 20 questions, then shuffle them
+    currentQuestions = shuffleArray([...QUESTION_SET]);
+    currentIndex = 0;
+    score = 0;
+    answered = false;
+    selectedAnswer = null;
+    isCorrectSelected = false;
+    updateScoreUI();
+    updateQuestionCounterUI();
+    updateProgressBar();
+    // load first question
+    loadCurrentQuestion();
+    enableOptions(true);
+    nextButton.disabled = true;
+    feedbackMsgEl.innerHTML = "✨ New round! Choose the correct complement.";
+  }
+
+  // update score display
+  function updateScoreUI() {
+    scoreValueEl.textContent = score;
+  }
+
+  // update question number (1-indexed) & total 20
+  function updateQuestionCounterUI() {
+    if (currentQuestions.length) {
+      questionNumberEl.textContent = `${currentIndex + 1}`;
+    } else {
+      questionNumberEl.textContent = "0";
+    }
+  }
+
+  // progress bar (0 to 100% based on currentIndex)
+  function updateProgressBar() {
+    const percent = ((currentIndex) / 20) * 100;  // after answering 0/20 => 0%, 20/20 => 100%
+    progressFillEl.style.width = `${Math.min(100, percent)}%`;
+  }
+
+  // load current question based on currentIndex (reset styles)
+  function loadCurrentQuestion() {
+    if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
+      // safety: should not happen but handle gracefully
+      if (currentIndex >= 20) completeRoundAndReset();
+      return;
+    }
+    const qData = currentQuestions[currentIndex];
+    questionTextEl.textContent = qData.text;
+    // render option buttons
+    renderOptions(qData.options, qData.correct);
+    // clear any lingering highlight classes from previous
+    answered = false;
+    selectedAnswer = null;
+    isCorrectSelected = false;
+    nextButton.disabled = true;
+    // reset feedback to neutral (unless we want to show waiting)
+    feedbackMsgEl.innerHTML = "💡 Tap an option to complete the complement.";
+    // enable all option buttons (if they got disabled)
+    enableOptions(true);
+  }
+
+  // renders options, attaches fresh click handlers
+  function renderOptions(options, correctAnswer) {
+    optionsContainer.innerHTML = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.textContent = opt;
+      btn.className = 'opt-btn';
+      btn.setAttribute('data-value', opt);
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (answered) {
+          feedbackMsgEl.innerHTML = "⚠️ Already answered! Press 'Next Question' to continue.";
+          return;
+        }
+        handleAnswer(opt, correctAnswer, btn);
+      });
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  // handling answer selection
+  function handleAnswer(selectedOpt, correctAnswer, targetBtn) {
+    if (answered) return;
+    answered = true;
+    selectedAnswer = selectedOpt;
+    const isCorrect = (selectedOpt === correctAnswer);
+    if (isCorrect) {
+      score++;
+      updateScoreUI();
+      feedbackMsgEl.innerHTML = `✅ Perfect! "${selectedOpt}" is the right complement. +1 point!`;
+      isCorrectSelected = true;
+    } else {
+      feedbackMsgEl.innerHTML = `❌ Oops! "${selectedOpt}" is not correct. The correct complement is: “${correctAnswer}”. Keep learning!`;
+      isCorrectSelected = false;
+    }
+    // highlight all option buttons: show correct answer & mark user's wrong answer (if any)
+    const allOptionBtns = document.querySelectorAll('.opt-btn');
+    allOptionBtns.forEach(btn => {
+      btn.disabled = true;
+      const btnValue = btn.getAttribute('data-value');
+      if (btnValue === correctAnswer) {
+        btn.classList.add('opt-correct');
+      }
+      if (btnValue === selectedOpt && selectedOpt !== correctAnswer) {
+        btn.classList.add('opt-wrong');
+      }
+      if (btnValue === selectedOpt && selectedOpt === correctAnswer) {
+        btn.classList.add('opt-correct'); // green also
+      }
+    });
+    // enable next button so user can proceed
+    nextButton.disabled = false;
+  }
+
+  // enable/disable option buttons (used when resetting question state)
+  function enableOptions(enable) {
+    const btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(btn => {
+      if (enable) {
+        btn.disabled = false;
+        // remove any highlight classes to reset look
+        btn.classList.remove('opt-correct', 'opt-wrong');
+      } else {
+        btn.disabled = true;
+      }
+    });
+  }
+
+  // Move to next question OR complete round and start infinite loop again
+  function goToNextQuestion() {
+    if (!answered) {
+      // minor guard: user shouldn't be able to click but just in case
+      feedbackMsgEl.innerHTML = "🔔 Please answer the current question first.";
+      return;
+    }
+    // increase index
+    currentIndex++;
+    updateQuestionCounterUI();
+    updateProgressBar();
+
+    // check if we completed 20 questions (end of cycle)
+    if (currentIndex >= 20) {
+      // end of round, show round summary, then automatically reset new cycle
+      completeRoundAndReset();
+    } else {
+      // load next question within same shuffled set
+      loadCurrentQuestion();
+    }
+  }
+
+  // End of round: display summary, then reset for infinite loop
+  function completeRoundAndReset() {
+    const finalScore = score;
+    const totalQuestions = 20;
+    let congratsMsg = "";
+    if (finalScore === 20) congratsMsg = "🏆 PERFECT! Master of complements! 🏆";
+    else if (finalScore >= 15) congratsMsg = "🌟 Excellent! You really understand complements!";
+    else if (finalScore >= 10) congratsMsg = "👍 Good job! Review a bit & try again for perfection!";
+    else congratsMsg = "📚 Keep practicing! Complements will become natural.";
+
+    // Show feedback with round completion info
+    feedbackMsgEl.innerHTML = `🎉 Round completed! ${congratsMsg} Score: ${finalScore}/${totalQuestions}. ♾️ Starting new round automatically...`;
+    // Disable next button temporarily while resetting
+    nextButton.disabled = true;
+    // disable options during reset to avoid clicks (they'll be re-enabled after init)
+    enableOptions(false);
+
+    // slight delay to show summary message, then restart new cycle (infinite loop)
+    setTimeout(() => {
+      // reset entire state with new shuffled question order
+      initNewCycle();
+      // after init new cycle, options enabled and fresh question displayed
+    }, 1800);
+  }
+
+  // Manual reset from button (restart current round with fresh shuffle, keep infinite loop pattern)
+  function manualReset() {
+    // cancel any ongoing timeout if reset during delay? We'll just reset state clean
+    // prevents weird double reset scenarios: clear any lingering timeouts? but we can just reinit
+    initNewCycle();
+    feedbackMsgEl.innerHTML = "🔄 Quiz reset! A brand new shuffled set begins. Infinite loop active!";
+    // make sure next button state is correct (disabled until answer)
+    nextButton.disabled = true;
+  }
+
+  // event listeners
+  nextButton.addEventListener('click', goToNextQuestion);
+  resetButton.addEventListener('click', manualReset);
+
+  // initial boot: shuffle and start first cycle (infinite loop ready)
+  initNewCycle();
+</script>
+</body>
+</html>

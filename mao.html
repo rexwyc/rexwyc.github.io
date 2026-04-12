@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Little Red Book Quiz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #cc0000; border-bottom: 2px solid #cc0000; padding-bottom: 10px; }
+        .question-block { margin-bottom: 20px; padding: 15px; border-left: 5px solid #eee; transition: 0.3s; }
+        .question-block:hover { border-left: 5px solid #cc0000; background: #fff9f9; }
+        .question { font-weight: bold; font-size: 1.1em; color: #444; }
+        .answer { display: none; margin-top: 10px; color: #555; font-style: italic; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+        button { background: #cc0000; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; margin-top: 10px; }
+        button:hover { background: #990000; }
+        .toggle-all { margin-bottom: 20px; padding: 10px 20px; font-size: 1em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Quiz: Quotations from Chairman Mao</h1>
+    <p>Test your knowledge about the history and content of the "Little Red Book". Click the buttons to reveal answers.</p>
+    
+    <button class="toggle-all" onclick="toggleAll()">Show/Hide All Answers</button>
+
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+    const quizData = [
+        { q: "What is the formal title of the book in English?", a: "Quotations from Chairman Mao Tse-tung." },
+        { q: "What is its common nickname in the West?", a: "The Little Red Book." },
+        { q: "In which year was the first edition published?", a: "1964." },
+        { q: "Who was the primary target audience for the initial publication?", a: "The People's Liberation Army (PLA)." },
+        { q: "Who wrote the famous foreword to the second edition?", a: "Lin Biao." },
+        { q: "How many chapters (thematic sections) are in the standard version?", a: "33 chapters." },
+        { q: "What is the topic of the very first chapter?", a: "The Communist Party." },
+        { q: "Complete the quote: 'Political power grows out of the barrel of a...'", a: "...gun.'" },
+        { q: "How did Mao famously describe a revolution? (It is not a...)", a: "It is not a dinner party, or writing an essay, or painting a picture." },
+        { q: "What animal did Mao use to describe imperialists and reactionaries?", a: "Paper Tigers." },
+        { q: "What is the 'Fish and Water' metaphor used for?", a: "The relationship between the masses (water) and the army/party (fish)." },
+        { q: "During which decade did the book reach its peak popularity?", a: "The Cultural Revolution (1966–1976)." },
+        { q: "Why was the book bound in red plastic?", a: "To make it durable, waterproof for soldiers, and to symbolize revolution." },
+        { q: "What was the 'Morning Service' or 'Evening Report' ritual?", a: "A practice where people read from the book to check their thoughts against Mao's teachings." },
+        { q: "What happened to the book's official distribution in China after the late 1970s?", a: "Mass distribution was halted as the country shifted its political focus." },
+        { q: "What is the estimated total global circulation of the book?", a: "Over 1 billion copies, making it one of the most printed books in history." },
+        { q: "Which Western movement in the late 60s notably adopted the book?", a: "The 1968 student protests (e.g., in France and the US)." },
+        { q: "Approximately how many languages has the book been translated into?", a: "Over 50 languages." },
+        { q: "How is the book often viewed in modern Pop Art?", a: "As a classic political symbol or icon representing a specific era." },
+        { q: "Where is the most common place to find a physical copy in China today?", a: "Souvenir shops or antique markets for nostalgic purposes." }
+    ];
+
+    const container = document.getElementById('quiz-container');
+
+    quizData.forEach((item, index) => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        block.innerHTML = `
+            <div class="question">${index + 1}. ${item.q}</div>
+            <div class="answer" id="ans-${index}">${item.a}</div>
+            <button onclick="toggleAnswer(${index})">Show Answer</button>
+        `;
+        container.appendChild(block);
+    });
+
+    function toggleAnswer(index) {
+        const ans = document.getElementById(`ans-${index}`);
+        ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function toggleAll() {
+        const answers = document.querySelectorAll('.answer');
+        const isAnyHidden = Array.from(answers).some(a => a.style.display !== 'block');
+        answers.forEach(a => a.style.display = isAnyHidden ? 'block' : 'none');
+    }
+</script>
+
+</body>
+</html>
