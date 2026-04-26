@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Subject & Predicate Quiz | 20 Questions | Infinite Loop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 20px 16px 40px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main card container */
+        .quiz-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(0px);
+            border-radius: 48px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header area */
+        .quiz-header {
+            background: #1e2a3e;
+            padding: 1.5rem 1.8rem;
+            color: white;
+            text-align: center;
+        }
+
+        .quiz-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quiz-header h1 span {
+            background: #ffb347;
+            font-size: 1.2rem;
+            padding: 4px 12px;
+            border-radius: 60px;
+            color: #1e2a3e;
+        }
+
+        .sub {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-top: 6px;
+        }
+
+        /* progress + score row */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            background: #ffffffd9;
+            backdrop-filter: blur(4px);
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+
+        .question-counter, .score-badge {
+            background: #f1f5f9;
+            padding: 5px 14px;
+            border-radius: 40px;
+        }
+
+        .score-badge {
+            background: #2c3e66;
+            color: white;
+        }
+
+        /* question card */
+        .question-card {
+            padding: 28px 22px 20px;
+        }
+
+        .question-text {
+            font-size: 1.65rem;
+            font-weight: 600;
+            line-height: 1.35;
+            color: #0b2b3b;
+            margin-bottom: 28px;
+            background: #f8fafd;
+            padding: 18px 16px;
+            border-radius: 32px;
+            box-shadow: inset 0 0 0 1px #ffffff80, 0 6px 12px -8px rgba(0,0,0,0.1);
+        }
+
+        /* options as big clickable cards - phone friendly */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 20px 0 10px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #e2edf7;
+            border-radius: 80px;
+            padding: 16px 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #0f172a;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .option-prefix {
+            background: #eef3fc;
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e2a3e;
+        }
+
+        .option-btn span:last-child {
+            flex: 1;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* feedback & next area */
+        .feedback-area {
+            margin: 18px 0 16px;
+            padding: 0 4px;
+        }
+
+        .feedback-message {
+            background: #f1f5f9;
+            border-radius: 60px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .correct-feedback {
+            background: #dff9e6;
+            color: #1f6e43;
+            border-left: 5px solid #2b9348;
+        }
+
+        .wrong-feedback {
+            background: #ffe9e9;
+            color: #b91c1c;
+            border-left: 5px solid #e03a3a;
+        }
+
+        .next-btn {
+            width: 100%;
+            background: #1e2a3e;
+            border: none;
+            border-radius: 80px;
+            padding: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            margin: 12px 0 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .next-btn:active {
+            transform: scale(0.97);
+            background: #0f1a2a;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        /* restart / infinite reset hint */
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            border-radius: 60px;
+            padding: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #334155;
+            margin: 8px 0 16px;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .reset-btn:active {
+            background: #eef2f6;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 16px 0 20px;
+            color: #5b6e8c;
+            background: #f9fcff;
+            border-top: 1px solid #e9edf2;
+        }
+
+        /* infinite notification */
+        .infinite-note {
+            background: #eef2ff;
+            margin: 10px 22px 20px;
+            border-radius: 40px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #2c3e66;
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                border-radius: 32px;
+            }
+            .question-text {
+                font-size: 1.35rem;
+                padding: 14px;
+            }
+            .option-btn {
+                padding: 12px 18px;
+                font-size: 1rem;
+            }
+            .stats-row {
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizApp">
+    <div class="quiz-header">
+        <h1>
+            📚 Subject & Predicate
+            <span>20Q</span>
+        </h1>
+        <div class="sub">Identify the underlined part → infinite play</div>
+    </div>
+    <div class="stats-row">
+        <div class="question-counter" id="questionCounter">Question 1 / 20</div>
+        <div class="score-badge" id="scoreDisplay">⭐ 0 / 20</div>
+    </div>
+    <div class="question-card">
+        <div class="question-text" id="questionText">Loading ...</div>
+        <div class="options-list" id="optionsContainer"></div>
+        <div class="feedback-area" id="feedbackArea"></div>
+        <button class="next-btn" id="nextButton" disabled>➡️ Next Question</button>
+        <button class="reset-btn" id="resetButton">🔄 Restart Quiz (infinite loop)</button>
+    </div>
+    <div class="infinite-note">
+        ♾️ Infinite loop: after 20 questions, score resets & new shuffled cycle begins!
+    </div>
+    <footer>
+        📖 Subject = who/what does action. Predicate = tells about subject (verb + rest)
+    </footer>
+</div>
+
+<script>
+    // ---------- 20 QUESTIONS: SUBJECT & PREDICATE ----------
+    // Each question: full sentence, underlinePart: "subject" or "predicate", 
+    // explanation (shown after answer)
+    // For clarity, part to identify is marked with [brackets] in sentence, but we show within question.
+    // We'll store: sentenceWithUnderline (display text with visual underline feel by using brackets or strong?)
+    // To make it phone friendly and clear, we will show the sentence with *** underlined word/phrase in context? 
+    // Instead we use format:  "The quick brown fox jumps over the lazy dog."  Underlined part: "The quick brown fox"
+    // But we present the sentence and ask: Identify the underlined part.
+    // For better UI, we indicate by “underlined: [ ... ]” but ideally show with style. We'll prepend “✏️ Underlined:” before the specific phrase.
+    // However for simplicity and clarity: each question item shows the sentence, then a separate indicator "🔍 Underlined portion: '..... '"
+    // This avoids ambiguity. We'll also highlight question style.
+    
+    const QUESTIONS_DB = [
+        { sentence: "The old oak tree stood tall in the storm.", underlinedText: "The old oak tree", correctAnswer: "subject", explanation: "The old oak tree is the subject (who/what the sentence is about)." },
+        { sentence: "Maria and her brother are playing chess.", underlinedText: "are playing chess", correctAnswer: "predicate", explanation: "'are playing chess' tells what Maria and her brother do → predicate." },
+        { sentence: "A flock of geese flew across the sunset sky.", underlinedText: "A flock of geese", correctAnswer: "subject", explanation: "The subject is what the sentence is about: the flock of geese." },
+        { sentence: "The delicious chocolate cake was baked by grandma.", underlinedText: "was baked by grandma", correctAnswer: "predicate", explanation: "The predicate includes the verb and tells what happened to the cake." },
+        { sentence: "Every student in the class passed the exam.", underlinedText: "passed the exam", correctAnswer: "predicate", explanation: "'passed the exam' is the action performed by the subject." },
+        { sentence: "The quiet library at midnight feels mysterious.", underlinedText: "The quiet library at midnight", correctAnswer: "subject", explanation: "The subject is 'The quiet library at midnight' (what feels mysterious)." },
+        { sentence: "Under the heavy rain, the children ran inside.", underlinedText: "the children", correctAnswer: "subject", explanation: "The subject is 'the children' (who ran inside)." },
+        { sentence: "My best friend from Tokyo sent me a postcard.", underlinedText: "sent me a postcard", correctAnswer: "predicate", explanation: "Describes the action done by the subject → predicate." },
+        { sentence: "The energetic puppy barked loudly all night.", underlinedText: "The energetic puppy", correctAnswer: "subject", explanation: "The puppy is the subject (who barked)." },
+        { sentence: "Those bright stars in the sky have guided sailors for centuries.", underlinedText: "have guided sailors for centuries", correctAnswer: "predicate", explanation: "'have guided...' tells the action/state of subject → predicate." },
+        { sentence: "The author of that famous novel won multiple awards.", underlinedText: "won multiple awards", correctAnswer: "predicate", explanation: "Won multiple awards is the predicate describing the subject's action." },
+        { sentence: "Both the manager and the assistant reviewed the report.", underlinedText: "Both the manager and the assistant", correctAnswer: "subject", explanation: "Compound subject: who reviewed the report." },
+        { sentence: "The beautiful rainbow after the storm quickly disappeared.", underlinedText: "quickly disappeared", correctAnswer: "predicate", explanation: "Predicate tells what the rainbow did." },
+        { sentence: "In the middle of the night, a strange noise woke everyone up.", underlinedText: "a strange noise", correctAnswer: "subject", explanation: "Subject = the strange noise (what woke everyone)." },
+        { sentence: "The entire team celebrated their victory with joy.", underlinedText: "celebrated their victory with joy", correctAnswer: "predicate", explanation: "Predicate: action of celebrating." },
+        { sentence: "High above the mountains, an eagle soared gracefully.", underlinedText: "an eagle", correctAnswer: "subject", explanation: "Subject = an eagle (what soared)." },
+        { sentence: "These fresh strawberries from the garden taste delicious.", underlinedText: "taste delicious", correctAnswer: "predicate", explanation: "Predicate describes the state/taste of strawberries." },
+        { sentence: "The professor with the glasses explained complex theories.", underlinedText: "The professor with the glasses", correctAnswer: "subject", explanation: "Whole noun phrase is the subject." },
+        { sentence: "All passengers must fasten their seatbelts before takeoff.", underlinedText: "must fasten their seatbelts before takeoff", correctAnswer: "predicate", explanation: "Tells what passengers must do → predicate." },
+        { sentence: "The ancient castle on the hill attracts many tourists.", underlinedText: "The ancient castle on the hill", correctAnswer: "subject", explanation: "Subject = the castle (what attracts tourists)." }
+    ];
+    
+    // total fixed 20 questions
+    const TOTAL_QS = QUESTIONS_DB.length; // =20
+    
+    // GAME STATE (infinite loop mechanism)
+    let currentQuestionsOrder = [];      // stores shuffled indices for current cycle
+    let currentCycleIndex = 0;           // position within currentQuestionsOrder
+    let userScore = 0;                   // score in current 20-question cycle
+    let answered = false;                // whether current question already answered
+    let currentQuestionObj = null;       // stores data of current active q
+    let currentAnswerSelected = null;     // string "subject" or "predicate"
+    
+    // DOM elements
+    const questionTextEl = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const nextButton = document.getElementById("nextButton");
+    const resetButton = document.getElementById("resetButton");
+    const questionCounterSpan = document.getElementById("questionCounter");
+    const scoreDisplaySpan = document.getElementById("scoreDisplay");
+    const feedbackArea = document.getElementById("feedbackArea");
+    
+    // helper: shuffle array (Fisher-Yates)
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    
+    // create a fresh order of 20 shuffled question indices (0..19)
+    function createShuffledOrder() {
+        let indices = Array.from({ length: TOTAL_QS }, (_, i) => i);
+        return shuffleArray(indices);
+    }
+    
+    // Initialize or reset a new cycle (infinite loop: after 20, create new shuffled order and reset score)
+    function resetFullCycle() {
+        currentQuestionsOrder = createShuffledOrder(); // brand new shuffled sequence
+        currentCycleIndex = 0;
+        userScore = 0;
+        answered = false;
+        currentAnswerSelected = null;
+        updateScoreUI();
+        loadCurrentQuestion();
+        enableOptions(true);
+        nextButton.disabled = true;
+        clearFeedback();
+    }
+    
+    // Load question at currentCycleIndex from currentQuestionsOrder
+    function loadCurrentQuestion() {
+        if (currentCycleIndex >= TOTAL_QS) {
+            // END OF CYCLE: infinite loop -> automatically start new cycle
+            // Show a toast-like effect: but we silently reset everything and start new round
+            // Provide user friendly transition message, then reinitialize
+            const oldScore = userScore;
+            // reset full cycle with new shuffled questions
+            currentQuestionsOrder = createShuffledOrder();
+            currentCycleIndex = 0;
+            userScore = 0;
+            answered = false;
+            currentAnswerSelected = null;
+            updateScoreUI();
+            // show a quick feedback that round completed
+            feedbackArea.innerHTML = `<div class="feedback-message" style="background:#e2e3ff;">🎉 Cycle completed! Starting a fresh set of 20 questions. Your new score resets. 🎉</div>`;
+            setTimeout(() => {
+                if (!answered) clearFeedback();
+                else if (answered && !nextButton.disabled) { /* keep maybe? */ }
+            }, 1800);
+            loadCurrentQuestion();  // load the first question of new cycle
+            enableOptions(true);
+            nextButton.disabled = true;
+            return;
+        }
+        
+        const qIndex = currentQuestionsOrder[currentCycleIndex];
+        const qData = { ...QUESTIONS_DB[qIndex] }; // clone
+        currentQuestionObj = qData;
+        
+        // Build beautiful display text with underlined part highlighted using a special marker
+        // We'll show sentence + highlighted portion as "underlined part"
+        const sentenceRaw = qData.sentence;
+        const underlinedPhrase = qData.underlinedText;
+        // Construct nice readable question
+        const displayHtml = `
+            <div style="margin-bottom: 14px; font-size: 1.2rem; font-weight:500;">📖 ${escapeHtml(sentenceRaw)}</div>
+            <div style="background: #eef2ff; padding: 12px 14px; border-radius: 28px; margin-top: 6px;">
+                ✏️ <strong style="text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px;">"${escapeHtml(underlinedPhrase)}"</strong> is the:
+            </div>
+        `;
+        questionTextEl.innerHTML = displayHtml;
+        
+        // update counter UI: show current question number (1-based) and total cycle always 20
+        questionCounterSpan.innerText = `Question ${currentCycleIndex+1} / ${TOTAL_QS}`;
+        
+        // generate fresh option buttons
+        renderOptions();
+        // reset feedback area if needed
+        clearFeedback();
+        answered = false;
+        currentAnswerSelected = null;
+        nextButton.disabled = true;
+        enableOptions(true);
+    }
+    
+    function renderOptions() {
+        optionsContainer.innerHTML = '';
+        const options = [
+            { value: "subject", label: "📖 SUBJECT (who or what the sentence is about)" },
+            { value: "predicate", label: "⚡ PREDICATE (tells what the subject does/is)" }
+        ];
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.setAttribute('data-value', opt.value);
+            const prefixSpan = document.createElement('span');
+            prefixSpan.className = 'option-prefix';
+            prefixSpan.innerText = opt.value === "subject" ? "S" : "P";
+            const textSpan = document.createElement('span');
+            textSpan.innerText = opt.label;
+            btn.appendChild(prefixSpan);
+            btn.appendChild(textSpan);
+            btn.addEventListener('click', () => handleAnswer(opt.value, btn));
+            optionsContainer.appendChild(btn);
+        });
+    }
+    
+    function handleAnswer(selectedValue, clickedBtn) {
+        if (answered) {
+            // prevent multiple answers
+            return;
+        }
+        const isCorrect = (selectedValue === currentQuestionObj.correctAnswer);
+        if (isCorrect) {
+            userScore++;
+            updateScoreUI();
+        }
+        answered = true;
+        currentAnswerSelected = selectedValue;
+        
+        // provide feedback message with explanation
+        const correctAnsStr = currentQuestionObj.correctAnswer === "subject" ? "SUBJECT" : "PREDICATE";
+        const explanation = currentQuestionObj.explanation;
+        let feedbackHtml = '';
+        if (isCorrect) {
+            feedbackHtml = `<div class="feedback-message correct-feedback">✅ Correct! The underlined part is the ${correctAnsStr}.<br>📘 ${explanation}</div>`;
+        } else {
+            feedbackHtml = `<div class="feedback-message wrong-feedback">❌ Oops! That's not right. The correct answer is ${correctAnsStr}.<br>📘 ${explanation}</div>`;
+        }
+        feedbackArea.innerHTML = feedbackHtml;
+        
+        // visually disable all option buttons
+        const allOptions = document.querySelectorAll('.option-btn');
+        allOptions.forEach(btn => {
+            btn.style.opacity = '0.7';
+            btn.style.pointerEvents = 'none';
+            if (btn.getAttribute('data-value') === currentQuestionObj.correctAnswer) {
+                btn.style.border = '2px solid #2b9348';
+                btn.style.backgroundColor = '#e6f7ec';
+            }
+            if (btn.getAttribute('data-value') === selectedValue && !isCorrect) {
+                btn.style.border = '2px solid #e03a3a';
+                btn.style.backgroundColor = '#ffe6e6';
+            }
+        });
+        
+        // enable next button
+        nextButton.disabled = false;
+    }
+    
+    function nextQuestion() {
+        if (!answered) return; // must answer first
+        
+        // move to next index
+        currentCycleIndex++;
+        
+        // after increment, check if we completed a full cycle of 20 (currentCycleIndex === TOTAL_QS)
+        if (currentCycleIndex === TOTAL_QS) {
+            // cycle finished – we will trigger new cycle inside loadCurrentQuestion but we need to reset UI and load fresh
+            // loadCurrentQuestion will handle end-of-cycle and start fresh with new shuffled order
+            // but also we must keep nice transition: show next cycle after resetting score.
+            // we'll call loadCurrentQuestion which internally checks and does reset.
+            loadCurrentQuestion();  // this will detect index >= TOTAL_QS and launch new cycle
+            updateScoreUI();       // score already reset inside resetFullCycle call from load logic? will be set. keep.
+        } else {
+            // normal load next
+            loadCurrentQuestion();
+        }
+        enableOptions(true);
+        answered = false;
+        currentAnswerSelected = null;
+        nextButton.disabled = true;
+    }
+    
+    function enableOptions(enabled) {
+        const btns = document.querySelectorAll('.option-btn');
+        if (enabled) {
+            btns.forEach(btn => {
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+                btn.style.border = '2px solid #e2edf7';
+                btn.style.backgroundColor = 'white';
+            });
+        } else {
+            btns.forEach(btn => {
+                btn.style.pointerEvents = 'none';
+            });
+        }
+    }
+    
+    function clearFeedback() {
+        feedbackArea.innerHTML = ''; 
+    }
+    
+    function updateScoreUI() {
+        scoreDisplaySpan.innerText = `⭐ ${userScore} / ${TOTAL_QS}`;
+    }
+    
+    function resetQuiz() {
+        // manual reset by user -> full new infinite cycle (reset everything, fresh shuffle)
+        currentQuestionsOrder = createShuffledOrder();
+        currentCycleIndex = 0;
+        userScore = 0;
+        answered = false;
+        currentAnswerSelected = null;
+        updateScoreUI();
+        loadCurrentQuestion();    // loads first question of fresh order
+        enableOptions(true);
+        nextButton.disabled = true;
+        clearFeedback();
+        // optional extra feedback
+        feedbackArea.innerHTML = `<div class="feedback-message" style="background:#dddffc;">🔄 Restarted! New 20-question cycle. Good luck!</div>`;
+        setTimeout(() => {
+            if (!answered) clearFeedback();
+        }, 1500);
+    }
+    
+    // helper to prevent XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // attach event listeners
+    nextButton.addEventListener('click', nextQuestion);
+    resetButton.addEventListener('click', resetQuiz);
+    
+    // initialize infinite loop system
+    function init() {
+        currentQuestionsOrder = createShuffledOrder();
+        currentCycleIndex = 0;
+        userScore = 0;
+        answered = false;
+        updateScoreUI();
+        loadCurrentQuestion();
+        nextButton.disabled = true;
+    }
+    
+    init();
+</script>
+</body>
+</html>
