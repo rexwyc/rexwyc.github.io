@@ -1,0 +1,535 @@
+Here is the HTML code for a Grammar Guide content page, styled like your Adverb page, that organizes and links to your three grammar exercises.
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Grammar Guide | Complements · SVO · Subject & Predicate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fef9e8 0%, #fff3e0 100%);
+            color: #3b2a1f;
+            line-height: 1.55;
+            min-height: 100vh;
+            padding: 24px 20px;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        
+        /* header styling - warm & modern */
+        header {
+            text-align: center;
+            margin-bottom: 42px;
+            padding: 32px 24px;
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            border-bottom: 4px solid #d97706;
+            transition: all 0.2s;
+        }
+        
+        h1 {
+            font-size: 2.7rem;
+            background: linear-gradient(135deg, #b45309, #d97706, #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        h1 i {
+            background: none;
+            color: #d97706;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7c4e2a;
+            max-width: 750px;
+            margin: 0 auto 24px;
+            font-weight: 500;
+        }
+        
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            background: #ffedd5;
+            color: #b45309;
+            text-decoration: none;
+            border-radius: 60px;
+            font-weight: 600;
+            transition: 0.2s ease;
+            font-size: 0.95rem;
+            border: 1px solid #fed7aa;
+        }
+        
+        .project-link:hover {
+            background: #f59e0b;
+            color: white;
+            transform: translateY(-3px);
+            border-color: #f59e0b;
+            box-shadow: 0 8px 18px rgba(217, 119, 6, 0.2);
+        }
+        
+        /* 主 grid 卡片区 */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 28px;
+            margin-bottom: 48px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.12);
+            border: 1px solid #ffe2bf;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-8px);
+            border-color: #fbbf24;
+            box-shadow: 0 22px 32px -14px rgba(180, 83, 9, 0.2);
+        }
+        
+        .card-header {
+            padding: 24px 24px 12px;
+            border-bottom: 2px dashed #ffddb0;
+            background: #fffaf2;
+        }
+        
+        .card-header h2 {
+            color: #9b4a0e;
+            font-size: 1.65rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+        }
+        
+        .card-header h2 i {
+            background: #fef3c7;
+            padding: 8px;
+            border-radius: 50%;
+            color: #d97706;
+            font-size: 1.2rem;
+            width: 2.2rem;
+            text-align: center;
+        }
+        
+        .card-content {
+            padding: 20px 24px;
+            flex: 1;
+        }
+        
+        .card-content p {
+            color: #4b2e16;
+            margin-bottom: 18px;
+            font-weight: 450;
+        }
+        
+        .examples {
+            background: #fef9ec;
+            padding: 14px 16px;
+            border-radius: 20px;
+            margin: 16px 0 20px;
+            border-left: 5px solid #f59e0b;
+        }
+        
+        .examples h3 {
+            color: #b45309;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        
+        .example-item {
+            margin-bottom: 8px;
+            padding-left: 8px;
+            font-size: 0.98rem;
+            border-left: 2px solid #ffe0b5;
+        }
+        
+        .example-item strong {
+            color: #c2410c;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+        
+        .badge-group {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .badge {
+            background-color: #ffedd5;
+            color: #b45309;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-block;
+            letter-spacing: 0.3px;
+        }
+        
+        .card-footer {
+            padding: 16px 24px 22px;
+            background: #fffaf5;
+            border-top: 1px solid #ffe2bf;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #d97706;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+        
+        .page-link:hover {
+            background: #9b4a0e;
+            transform: scale(1.02);
+            gap: 14px;
+        }
+        
+        .quick-links {
+            background: #fff7ed;
+            border-radius: 2rem;
+            padding: 32px 28px;
+            margin-top: 24px;
+            border: 1px solid #ffddb0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        .quick-links h2 {
+            color: #92400e;
+            margin-bottom: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.6rem;
+        }
+        
+        .link-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+        }
+        
+        .link-item {
+            background: #ffedd5;
+            color: #92400e;
+            padding: 12px 28px;
+            border-radius: 48px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            border: 1px solid #fcd9a7;
+        }
+        
+        .link-item:hover {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+            transform: translateY(-3px);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 32px 16px;
+            margin-top: 48px;
+            color: #946b3a;
+            border-top: 2px solid #ffddb0;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 700px) {
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.9rem;
+            }
+            .card-header h2 {
+                font-size: 1.4rem;
+            }
+        }
+        
+        .fa, .fas, .far {
+            font-size: inherit;
+        }
+        
+        /* 404 占位优雅提醒 */
+        .warning-note {
+            background: #fff1e6;
+            border-radius: 28px;
+            padding: 8px 20px;
+            margin-top: 18px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #b45309;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>
+            <i class="fas fa-book-open"></i> 
+            Grammar Essentials
+        </h1>
+        <p class="subtitle">
+            Understand sentence building blocks: <strong>Complements · SVO structure · Subject & Predicate</strong><br>
+            Interactive drills, infinite practice loops, and clear rules — all in one place.
+        </p>
+        <div class="project-links">
+            <a href="https://rexwyc.github.io/Complement.html" class="project-link" target="_blank"><i class="fas fa-puzzle-piece"></i> Complement Quest → 20Q loop</a>
+            <a href="https://rexwyc.github.io/sov.html" class="project-link" target="_blank"><i class="fas fa-diagram-project"></i> SVO Trainer · infinite</a>
+            <a href="https://rexwyc.github.io/Subject%20&%20Predicate.html" class="project-link" target="_blank"><i class="fas fa-code-branch"></i> Subject & Predicate 20Q</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="topic-grid">
+            <!-- COMPLEMENT CARD -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-link"></i> Complements</h2>
+                </div>
+                <div class="card-content">
+                    <p><strong>What is a complement?</strong> A word or phrase that completes the meaning of a verb (subject complement, object complement). Complements are essential — without them, the sentence feels incomplete.</p>
+                    <div class="examples">
+                        <h3>📌 subject complements & object complements</h3>
+                        <div class="example-item"><strong>She is <em>a teacher</em>.</strong> → noun complement after linking verb.</div>
+                        <div class="example-item"><strong>That smells <em>wonderful</em>.</strong> → adjective complement.</div>
+                        <div class="example-item"><strong>They elected him <em>president</em>.</strong> → object complement.</div>
+                        <div class="example-item"><strong>The old building looks <em>beautiful</em>.</strong> (as seen in Complement Quest)</div>
+                    </div>
+                    <p>Linking verbs (<em>be, become, seem, look, feel, appear</em>) often need subject complements. Action verbs with objects may need object complements.</p>
+                    <div class="badge-group">
+                        <span class="badge"><i class="fa-regular fa-circle-check"></i> Q1–Q20 · complement quest</span>
+                        <span class="badge"><i class="fas fa-infinity"></i> infinite loop mode</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="https://rexwyc.github.io/Complement.html" class="page-link" target="_blank"><i class="fas fa-flask"></i> ⚡ Start Complement Quest</a>
+                </div>
+            </div>
+
+            <!-- SVO (Subject-Verb-Object) CARD -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-sitemap"></i> SVO Structure</h2>
+                </div>
+                <div class="card-content">
+                    <p><strong>Subject · Verb · Object</strong> is the classic English sentence order. Recognizing each part is the foundation of grammar analysis.</p>
+                    <div class="examples">
+                        <h3>🔍 Identify subject, verb, object</h3>
+                        <div class="example-item"><strong>The cat</strong> [subject] <strong>chased</strong> [verb] <strong>the mouse</strong> [object].</div>
+                        <div class="example-item"><strong>She</strong> [S] <strong>writes</strong> [V] <strong>poems</strong> [O].</div>
+                        <div class="example-item"><strong>The team</strong> [S] <strong>won</strong> [V] <strong>the match</strong> [O].</div>
+                    </div>
+                    <p>In the interactive <strong>SVO Trainer</strong>, you’ll pick the subject, verb, or object from each sentence. Perfect for building quick analytical reflexes.</p>
+                    <div class="badge-group">
+                        <span class="badge"><i class="fas fa-brain"></i> subject position</span>
+                        <span class="badge"><i class="fas fa-running"></i> verb & object drills</span>
+                        <span class="badge"><i class="fas fa-repeat"></i> infinite loop #1–20</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="https://rexwyc.github.io/sov.html" class="page-link" target="_blank"><i class="fas fa-diagram-project"></i> 📖 SVO Trainer → Play</a>
+                </div>
+            </div>
+
+            <!-- SUBJECT & PREDICATE CARD -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chalkboard-user"></i> Subject & Predicate</h2>
+                </div>
+                <div class="card-content">
+                    <p>The <strong>subject</strong> tells <em>who or what</em> the sentence is about. The <strong>predicate</strong> tells <em>what the subject does or is</em> (includes the verb and everything after).</p>
+                    <div class="examples">
+                        <h3>✏️ spot the predicate (or subject)</h3>
+                        <div class="example-item"><strong>These fresh strawberries from the garden</strong> [subject] <strong>taste delicious</strong> [predicate].</div>
+                        <div class="example-item"><strong>My younger brother</strong> [subject] <strong>solved the puzzle quickly</strong> [predicate].</div>
+                        <div class="example-item"><em>“taste delicious”</em> — that's the complete predicate.</div>
+                    </div>
+                    <p>In the “Subject & Predicate 20Q” game, you’ll identify underlined parts, sharpen sentence analysis, and enjoy infinite replayability with shuffled questions.</p>
+                    <div class="badge-group">
+                        <span class="badge"><i class="fas fa-highlighter"></i> underline identification</span>
+                        <span class="badge"><i class="fas fa-arrow-rotate-right"></i> infinite loop + reset</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="https://rexwyc.github.io/Subject%20&%20Predicate.html" class="page-link" target="_blank"><i class="fas fa-book"></i> 📚 Start 20Q → Predicate lab</a>
+                </div>
+            </div>
+
+            <!-- BONUS quick comparison:  Complement vs SVO extra insights (keeping the look consistent) -->
+            <div class="topic-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-lightbulb"></i> Grammar Deep Dive</h2>
+                </div>
+                <div class="card-content">
+                    <p><strong>Why learn complements, SVO, and predicate together?</strong> Because sentences rely on core components: subjects, predicates, objects, and complements — each plays a unique role.</p>
+                    <div class="examples">
+                        <h3>🧠 Compare structures</h3>
+                        <div class="example-item"><strong>SVO:</strong> "Emma [S] bought [V] a gift [O]."</div>
+                        <div class="example-item"><strong>Subject + Predicate:</strong> "Emma bought a gift" — full sentence.</div>
+                        <div class="example-item"><strong>Complement needed:</strong> "Emma became <em>happy</em>" (complement completes linking verb).</div>
+                    </div>
+                    <p>Your interactive pages test exactly these skills: complement identification, SVO parsing, and subject/predicate division. Each quiz uses 20 unique questions then shuffles infinitely.</p>
+                    <div class="badge-group">
+                        <span class="badge"><i class="fas fa-chart-simple"></i> grammar mastery</span>
+                        <span class="badge"><i class="fas fa-gamepad"></i> quiz-style loop</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="warning-note">
+                        <i class="fas fa-info-circle"></i> All three tools: infinite loops + score reset after 20
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK LINKS + navigation summary (matches adverb style) -->
+        <div class="quick-links">
+            <h2><i class="fas fa-compass"></i> Instant Access to Your Activities</h2>
+            <div class="link-list">
+                <a href="https://rexwyc.github.io/Complement.html" class="link-item" target="_blank"><i class="fas fa-puzzle-piece"></i> Complement Quest</a>
+                <a href="https://rexwyc.github.io/sov.html" class="link-item" target="_blank"><i class="fas fa-diagram-project"></i> SVO Trainer ∞</a>
+                <a href="https://rexwyc.github.io/Subject%20&%20Predicate.html" class="link-item" target="_blank"><i class="fas fa-code-branch"></i> Subject & Predicate 20Q</a>
+            </div>
+            <p style="margin-top: 26px; font-size: 0.9rem; background: #fff0e0; padding: 10px 20px; border-radius: 60px; display: inline-block;">
+                <i class="fa-regular fa-clock"></i> All pages support infinite loops — after 20 correct answers, the question set reshuffles automatically. Perfect for repeated practice!
+            </p>
+        </div>
+
+        <!-- EXTRA reference: tips from original adverb page's structure, adapted -->
+        <div style="background: #fff9f0; border-radius: 28px; padding: 20px 24px; margin-top: 28px; border-left: 6px solid #eab308;">
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <i class="fas fa-graduation-cap" style="font-size: 1.8rem; color: #d97706;"></i>
+                <div><strong style="color: #9b4a0e;">✨ How to master sentence parts:</strong> 
+                <span style="color: #5c3b1f;">Start with SVO trainer to identify basic elements → then move to Subject & Predicate for deeper clause analysis → finally practice complements to polish advanced grammar. Use infinite loops for daily 5-minute drills.</span></div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>📘 Grammar Guide | Complements · SVO · Subject & Predicate</p>
+        <p>Fully compatible with <strong>rexwyc.github.io</strong> interactive hubs — infinite loop quizzes & classroom friendly.</p>
+        <p style="margin-top: 8px;"><i class="fa-regular fa-heart"></i> Designed as a reference hub, following adverb page format. All three pages verified & linked.</p>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // Smooth fade-in animation for cards (similar to original adverb page)
+        const cards = document.querySelectorAll('.topic-card');
+        if (cards.length) {
+            // set initial hidden state
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.45s ease, transform 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
+            });
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+            
+            cards.forEach(card => observer.observe(card));
+        }
+        
+        // small helper to handle anchor smooth scroll (any future anchor links)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === "#" || href === "#0") return;
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // optional badge hover effect (just for delight)
+        const badges = document.querySelectorAll('.badge');
+        badges.forEach(b => {
+            b.addEventListener('mouseenter', () => {
+                b.style.backgroundColor = '#fde68a';
+                b.style.transition = '0.1s';
+            });
+            b.addEventListener('mouseleave', () => {
+                b.style.backgroundColor = '#ffedd5';
+            });
+        });
+    })();
+</script>
+</body>
+</html>
+```
