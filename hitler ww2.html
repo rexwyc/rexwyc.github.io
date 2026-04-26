@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>10 Nations War: Global Conquest</title>
+    <style>
+        body { margin: 0; background: #050508; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
+        canvas { display: block; cursor: crosshair; }
+        #ui { position: absolute; top: 20px; left: 20px; pointer-events: none; z-index: 10; }
+        .panel { background: rgba(0,0,0,0.85); padding: 15px; border-left: 5px solid #ff0000; border-radius: 4px; box-shadow: 0 0 15px rgba(255,0,0,0.3); }
+        #timer { color: #ff3333; font-size: 32px; font-weight: bold; }
+        #status { color: #00ff00; font-size: 14px; margin-top: 5px; font-weight: bold; }
+        .hint { font-size: 11px; color: #888; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div class="panel">
+            <div>TIME UNTIL TOTAL PURGE: <span id="timer">60s</span></div>
+            <div id="status">Select a base to start! (Except Red)</div>
+            <div class="hint">Jet: -0.2% | Missile: -0.1% | Destroy Red to stop the purge!</div>
+        </div>
+    </div>
+    <canvas id="warCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('warCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let timeLeft = 60;
+        let isFinalPhase = false;
+        let playerCountry = null;
+        let redDefeated = false;
+        const countries = [];
+        const units = [];
+
+        // Audio & Assets
+        const macarenaMusic = new Audio('music/macarena.mp3');
+        const germanMusic = new Audio('music/german copy.mp3');
+        const germanFlag = new Image();
+        germanFlag.src = 'images/german flag copy.png';
+        macarenaMusic.loop = true;
+        germanMusic.loop = true;
+
+        const colors = ['#ff0000', '#0077ff', '#00ff44', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ffffff', '#8b4513', '#708090'];
+        const names = ["Red Empire", "Blue Union", "Green Forest", "Gold Kingdom", "Pink Fed", "Cyan Realm", "Orange Tribe", "Silver Guard", "Brown Fort", "Grey Iron"];
+
+        for (let i = 0; i < 10; i++) {
+            countries.push({
+                id: i, name: names[i], color: colors[i],
+                x: Math.random() * (canvas.width - 200) + 100,
+                y: Math.random() * (canvas.height - 200) + 100,
+                hp: 100, isColoniser: i === 0, isDestroyed: false
+            });
+        }
+
+        class Projectile {
+            constructor(startX, startY, target, color, type, isSuper) {
+                this.x = startX; this.y = startY;
+                this.target = target; this.color = color;
+                this.type = type;
+                this.speed = isSuper ? 16 : (type === 'JET' ? 3.5 : 5.5);
+                this.active = true;
+                this.angle = Math.atan2(target.y - startY, target.x - startX);
+                this.isSuper = isSuper;
+            }
+            update() {
+                let dx = this.target.x - this.x, dy = this.target.y - this.y;
+                this.angle += (Math.atan2(dy, dx) - this.angle) * 0.1;
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                if (Math.sqrt(dx*dx + dy*dy) < 15) { this.active = false; this.hit(); }
+            }
+            hit() {
+                let damage = this.isSuper ? 12 : (this.type === 'JET' ? 0.2 : 0.1);
+                if (this.target.hp > 0) {
+                    this.target.hp -= damage;
+                    if (this.target.hp <= 0) {
+                        this.target.hp = 0;
+                        this.target.isDestroyed = true;
+                        if (this.target.isColoniser) redDefeated = true;
+                    }
+                }
+            }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                if (this.type === 'JET') {
+                    ctx.beginPath(); ctx.moveTo(10,0); ctx.lineTo(-6,-5); ctx.lineTo(-6,5); ctx.fill();
+                } else {
+                    ctx.fillRect(-5, -1, 10, 2);
+                }
+                ctx.restore();
+            }
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            if (!playerCountry) {
+                for (let c of countries) {
+                    if (Math.sqrt((mx-c.x)**2 + (my-c.y)**2) < 30 && !c.isColoniser) {
+                        playerCountry = c;
+                        document.getElementById('status').innerText = `Selected: ${c.name}. Music Started!`;
+                        macarenaMusic.play().catch(() => {});
+                        return;
+                    }
+                }
+            } else if (!playerCountry.isDestroyed && !isFinalPhase) {
+                let target = countries.find(c => Math.sqrt((mx-c.x)**2 + (my-c.y)**2) < 30 && c.id !== playerCountry.id);
+                if (target) {
+                    units.push(new Projectile(playerCountry.x, playerCountry.y, target, playerCountry.color, 'JET', false));
+                    units.push(new Projectile(playerCountry.x, playerCountry.y, target, playerCountry.color, 'MISSILE', false));
+                }
+            }
+        });
+
+        function gameLoop() {
+            ctx.fillStyle = "rgba(5, 5, 8, 0.3)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            countries.forEach(c => {
+                const isEliminated = c.hp <= 0;
+                
+                // Image Change Logic
+                if ((isFinalPhase && c.isColoniser && !redDefeated) || isEliminated) {
+                    ctx.drawImage(germanFlag, c.x - 25, c.y - 15, 50, 30);
+                } else {
+                    ctx.fillStyle = c.color;
+                    ctx.fillRect(c.x - 25, c.y - 15, 50, 30);
+                }
+
+                if (playerCountry && c.id === playerCountry.id) {
+                    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.strokeRect(c.x-28, c.y-18, 56, 36);
+                }
+
+                // HP Bar
+                ctx.fillStyle = "#222"; ctx.fillRect(c.x - 25, c.y + 20, 50, 4);
+                ctx.fillStyle = isEliminated ? "#ff0000" : "#00ff00";
+                ctx.fillRect(c.x - 25, c.y + 20, (c.hp/100)*50, 4);
+
+                ctx.fillStyle = "#fff"; ctx.font = "bold 10px sans-serif";
+                ctx.fillText(`${c.name} ${Math.max(0, c.hp).toFixed(1)}%`, c.x - 25, c.y - 20);
+
+                // AI Skirmish
+                if (!isEliminated && !isFinalPhase && Math.random() < 0.02) {
+                    let targets = countries.filter(t => t.id !== c.id && t.hp > 0);
+                    if (targets.length > 0) {
+                        let t = targets[Math.floor(Math.random() * targets.length)];
+                        units.push(new Projectile(c.x, c.y, t, c.color, Math.random()>0.5?'JET':'MISSILE', false));
+                    }
+                }
+
+                // Final Phase Launch
+                if (isFinalPhase && c.isColoniser && !isEliminated && !redDefeated) {
+                    let targets = countries.filter(t => t.id !== 0 && t.hp > 0);
+                    if (targets.length > 0 && Math.random() < 0.7) {
+                        let t = targets[Math.floor(Math.random() * targets.length)];
+                        units.push(new Projectile(c.x, c.y, t, "#ff0000", "MISSILE", true));
+                        units.push(new Projectile(c.x, c.y, t, "#ff0000", "JET", true));
+                    }
+                }
+            });
+
+            for (let i = units.length - 1; i >= 0; i--) {
+                units[i].update(); units[i].draw();
+                if (!units[i].active) units.splice(i, 1);
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        const clock = setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft + "s";
+                
+                if (countries[0].hp <= 0 && !redDefeated) {
+                    redDefeated = true;
+                    document.getElementById('status').innerText = "VICTORY: Red Empire Destroyed!";
+                    document.getElementById('status').style.color = "cyan";
+                }
+            } else {
+                if (!redDefeated) {
+                    isFinalPhase = true;
+                    countries[0].hp = 100;
+                    document.getElementById('status').innerText = "PURGE STARTED: Total Colonisation!";
+                    document.getElementById('status').style.color = "red";
+                    macarenaMusic.pause();
+                    germanMusic.play().catch(() => {});
+                } else {
+                    document.getElementById('status').innerText = "PEACE: The Red Threat has been neutralised.";
+                }
+                clearInterval(clock);
+            }
+        }, 1000);
+
+        gameLoop();
+    </script>
+</body>
+</html>
