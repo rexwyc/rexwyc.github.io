@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>Active Voice Challenge | Infinite Loop Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(145deg, #10141e 0%, #1a1f2c 100%);
+      font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* main card container */
+    .quiz-container {
+      max-width: 620px;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(22, 28, 40, 0.75);
+      backdrop-filter: blur(2px);
+      border-radius: 3rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(90, 150, 220, 0.2);
+    }
+
+    /* header area: infinite loop badge & progress */
+    .quiz-header {
+      background: rgba(12, 17, 26, 0.85);
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid rgba(72, 187, 255, 0.3);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0b1120;
+      padding: 8px 18px;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: #9ad7ff;
+      border: 1px solid #2c4f7a;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      margin-bottom: 12px;
+    }
+
+    .badge span:first-child {
+      font-size: 1.2rem;
+    }
+
+    .infinite-symbol {
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #b9d0f0;
+    }
+
+    .question-counter {
+      background: #0f1622;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-weight: 500;
+    }
+
+    .score-area {
+      background: #0f1622;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #d9f0ff;
+    }
+
+    /* main content */
+    .quiz-body {
+      padding: 2rem 1.8rem 2rem 1.8rem;
+    }
+
+    .question-text {
+      font-size: 1.65rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #f0f3fa;
+      margin-bottom: 2rem;
+      word-break: break-word;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.8rem 1rem;
+      border-radius: 2rem;
+      border-left: 5px solid #3b82f6;
+    }
+
+    /* options grid (phone friendly touch) */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 2rem;
+    }
+
+    .option-btn {
+      background: #1e2a3a;
+      border: 1px solid #2d3e54;
+      padding: 1rem 1.2rem;
+      border-radius: 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      color: #eef4ff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: 0.2px;
+      backdrop-filter: blur(4px);
+    }
+
+    .option-prefix {
+      font-weight: 700;
+      background: #0f1a24;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 60px;
+      font-size: 1rem;
+      color: #7ab3ff;
+    }
+
+    .option-btn:hover {
+      background: #2b3c4e;
+      border-color: #4f7aa6;
+      transform: scale(0.99);
+    }
+
+    .option-btn:active {
+      transform: scale(0.97);
+      background: #264c6e;
+    }
+
+    /* feedback message */
+    .feedback {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 2rem;
+      padding: 0.9rem 1.2rem;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 0.95rem;
+      backdrop-filter: blur(8px);
+      transition: 0.15s;
+    }
+
+    .feedback.correct {
+      background: rgba(34, 197, 94, 0.2);
+      border-left: 4px solid #22c55e;
+      color: #bef264;
+    }
+
+    .feedback.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      border-left: 4px solid #ef4444;
+      color: #ffb3b3;
+    }
+
+    .next-area {
+      display: flex;
+      justify-content: center;
+    }
+
+    .next-btn {
+      background: #3b82f6;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 3rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      width: 85%;
+      max-width: 260px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px rgba(0, 100, 200, 0.3);
+      letter-spacing: 1px;
+    }
+
+    .next-btn:active {
+      transform: scale(0.96);
+      background: #2563eb;
+    }
+
+    .next-btn:disabled {
+      background: #4b5563;
+      opacity: 0.6;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    /* reset / restart subtle button */
+    .reset-link {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .reset-btn {
+      background: none;
+      border: 1px solid #4c6f8c;
+      color: #aac8ff;
+      padding: 8px 22px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .reset-btn:active {
+      background: #1f3b4f;
+      color: white;
+    }
+
+    footer {
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 1rem;
+      color: #5a7192;
+      border-top: 1px solid rgba(72, 120, 184, 0.2);
+    }
+
+    @media (max-width: 480px) {
+      .quiz-body {
+        padding: 1.5rem 1.2rem;
+      }
+      .question-text {
+        font-size: 1.35rem;
+      }
+      .option-btn {
+        padding: 0.85rem 1rem;
+      }
+      .next-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizRoot">
+  <div class="quiz-header">
+    <div class="badge">
+      <span>📢</span>
+      <span>ACTIVE VOICE · INFINITE LOOP</span>
+      <span class="infinite-symbol">∞</span>
+    </div>
+    <div class="progress-stats">
+      <span class="question-counter" id="qNumDisplay">Question #1</span>
+      <span class="score-area" id="scoreDisplay">✨ Score: 0</span>
+    </div>
+  </div>
+  <div class="quiz-body" id="quizBody">
+    <!-- dynamic content injected here -->
+  </div>
+  <footer>
+    ♾️ endless active voice training | 30 unique questions | loops forever
+  </footer>
+</div>
+
+<script>
+  // 30 unique questions in ACTIVE VOICE (each sentence is in active voice; user verifies correct active transformation)
+  // The quiz style: For each question, we present a sentence in active voice or a transformation task where
+  // user must PICK the option that is ALSO in active voice and grammatically correct version.
+  // But to emphasize "Active Voice" theme, each question asks: "Which sentence uses ACTIVE VOICE correctly?" 
+  // or "Select the active voice version". All correct answers are active voice constructions, distractors may be passive or incorrect.
+  // This ensures learning active voice while being 100% relevant.
+  
+  const QUESTIONS = [
+    { text: "Which sentence is in ACTIVE VOICE?", options: ["The cake was baked by Lisa.", "Lisa baked the cake.", "The cake is being baked.", "The cake has been baked."], correct: 1 },
+    { text: "Choose the active voice sentence:", options: ["The ball was kicked by Tom.", "Tom kicked the ball.", "The ball was being kicked.", "The ball had been kicked."], correct: 1 },
+    { text: "Identify the active voice construction:", options: ["The novel was written by the author.", "The author wrote the novel.", "The novel has been written.", "The novel is written."], correct: 1 },
+    { text: "Which option uses active voice correctly?", options: ["Mistakes were made by the team.", "The team made mistakes.", "Mistakes are made often.", "Mistakes have been made."], correct: 1 },
+    { text: "Select the active voice phrase:", options: ["The window was broken by the child.", "The child broke the window.", "The window got broken.", "The window is broken."], correct: 1 },
+    { text: "Which sentence is active?", options: ["The song was sung by Mia.", "Mia sang the song.", "The song is being sung.", "The song has been sung."], correct: 1 },
+    { text: "Pick the active voice alternative:", options: ["The homework was finished by John.", "John finished the homework.", "The homework is finished.", "The homework had been finished."], correct: 1 },
+    { text: "Choose the sentence written in active voice:", options: ["The email was sent by the secretary.", "The secretary sent the email.", "The email is being sent.", "The email has been sent."], correct: 1 },
+    { text: "Which one is ACTIVE VOICE?", options: ["The treasure was hidden by pirates.", "Pirates hid the treasure.", "The treasure is hidden.", "The treasure has been hidden."], correct: 1 },
+    { text: "Select the active voice form:", options: ["The car was repaired by the mechanic.", "The mechanic repaired the car.", "The car is repaired.", "The car has been repaired."], correct: 1 },
+    { text: "Which sentence uses active voice?", options: ["The problem was solved by Anna.", "Anna solved the problem.", "The problem is solved.", "The problem had been solved."], correct: 1 },
+    { text: "Identify active voice:", options: ["The letter was delivered by the postman.", "The postman delivered the letter.", "The letter is delivered.", "The letter has been delivered."], correct: 1 },
+    { text: "Pick the active sentence:", options: ["The walls were painted by the artist.", "The artist painted the walls.", "The walls are painted.", "The walls have been painted."], correct: 1 },
+    { text: "Which option is in active voice?", options: ["The package was opened by Sarah.", "Sarah opened the package.", "The package is opened.", "The package has been opened."], correct: 1 },
+    { text: "Choose active voice:", options: ["The bridge was built by engineers.", "Engineers built the bridge.", "The bridge is built.", "The bridge has been built."], correct: 1 },
+    { text: "Select the correct active voice sentence:", options: ["The speech was given by the president.", "The president gave the speech.", "The speech is given.", "The speech has been given."], correct: 1 },
+    { text: "Which sentence demonstrates active voice?", options: ["The experiment was conducted by the scientist.", "The scientist conducted the experiment.", "The experiment is conducted.", "The experiment has been conducted."], correct: 1 },
+    { text: "Pick the active voice variant:", options: ["The game was won by our team.", "Our team won the game.", "The game is won.", "The game had been won."], correct: 1 },
+    { text: "Identify the active construction:", options: ["The dinner was cooked by Mark.", "Mark cooked the dinner.", "The dinner is cooked.", "The dinner has been cooked."], correct: 1 },
+    { text: "Which phrase is active voice?", options: ["The masterpiece was painted by Van Gogh.", "Van Gogh painted the masterpiece.", "The masterpiece is painted.", "The masterpiece has been painted."], correct: 1 },
+    { text: "Select the active voice sentence:", options: ["The message was forwarded by Lucy.", "Lucy forwarded the message.", "The message is forwarded.", "The message had been forwarded."], correct: 1 },
+    { text: "Which is an active voice example?", options: ["The room was cleaned by the maid.", "The maid cleaned the room.", "The room is cleaned.", "The room has been cleaned."], correct: 1 },
+    { text: "Choose active voice:", options: ["The book was returned by David.", "David returned the book.", "The book is returned.", "The book had been returned."], correct: 1 },
+    { text: "Pick active voice sentence:", options: ["The assignment was completed by Emma.", "Emma completed the assignment.", "The assignment is completed.", "The assignment has been completed."], correct: 1 },
+    { text: "Which option has active voice?", options: ["The door was locked by the guard.", "The guard locked the door.", "The door is locked.", "The door has been locked."], correct: 1 },
+    { text: "Select the active voice:", options: ["The photo was taken by the photographer.", "The photographer took the photo.", "The photo is taken.", "The photo has been taken."], correct: 1 },
+    { text: "Identify the active voice:", options: ["The project was managed by Clara.", "Clara managed the project.", "The project is managed.", "The project has been managed."], correct: 1 },
+    { text: "Which sentence is active voice?", options: ["The computer was fixed by the technician.", "The technician fixed the computer.", "The computer is fixed.", "The computer had been fixed."], correct: 1 },
+    { text: "Choose active voice correctly:", options: ["The flowers were watered by the gardener.", "The gardener watered the flowers.", "The flowers are watered.", "The flowers have been watered."], correct: 1 },
+    { text: "Pick the active voice statement:", options: ["The truth was revealed by the witness.", "The witness revealed the truth.", "The truth is revealed.", "The truth has been revealed."], correct: 1 }
+  ];
+  
+  // verify all questions length = 30
+  console.assert(QUESTIONS.length === 30, "Should have 30 questions");
+  
+  // ---------- INFINITE LOOP STATE ----------
+  // We'll loop infinitely over the 30-question bank.
+  // currentQuestionIndex cycles 0..29 and then wraps around infinitely.
+  let currentIdx = 0;          // index in QUESTIONS array (0-29)
+  let userScore = 0;
+  let answerLock = false;      // prevent multiple answer clicks until next
+  let selectedOptionIndex = null;
+  let feedbackMsg = "";
+  let feedbackType = "";       // 'correct' or 'wrong'
+  
+  // DOM elements
+  const quizBody = document.getElementById("quizBody");
+  const qNumDisplay = document.getElementById("qNumDisplay");
+  const scoreDisplay = document.getElementById("scoreDisplay");
+  
+  // Helper: update score display
+  function updateScoreUI() {
+    scoreDisplay.innerHTML = `✨ Score: ${userScore}`;
+  }
+  
+  // Render current question (depends on currentIdx)
+  function renderQuestion() {
+    const qData = QUESTIONS[currentIdx];
+    if (!qData) return;
+    // Compute absolute attempt number (infinite loop awareness)
+    const absoluteAttempt = (currentIdx + 1) + " (∞ loop)";
+    qNumDisplay.innerHTML = `Question #${currentIdx+1}  ♾️`;
+    
+    // build options html with prefix A,B,C,D
+    const optionLetters = ['A', 'B', 'C', 'D'];
+    const optionsHtml = qData.options.map((opt, idx) => {
+      const isSelected = (selectedOptionIndex === idx);
+      const selectedClass = isSelected ? 'option-btn selected-temp' : '';
+      return `
+        <div class="option-btn ${selectedClass}" data-opt-index="${idx}">
+          <span class="option-prefix">${optionLetters[idx]}</span>
+          <span>${escapeHtml(opt)}</span>
+        </div>
+      `;
+    }).join('');
+    
+    let feedbackHtml = '';
+    if (feedbackMsg) {
+      feedbackHtml = `<div class="feedback ${feedbackType}">${escapeHtml(feedbackMsg)}</div>`;
+    } else {
+      feedbackHtml = `<div class="feedback" style="opacity:0.6;">⚡ Choose the active voice sentence</div>`;
+    }
+    
+    const nextDisabled = (selectedOptionIndex === null || answerLock === false) ? 'disabled' : '';
+    // But note: answerLock true & selectedOptionIndex exists -> we can allow next.
+    // Actually next button should be enabled only after answered (selected and answerLock true to prevent reanswer)
+    const nextEnabled = (selectedOptionIndex !== null && answerLock === true) ? '' : 'disabled';
+    
+    const html = `
+      <div class="question-text">${escapeHtml(qData.text)}</div>
+      <div class="options-list" id="optionsContainer">
+        ${optionsHtml}
+      </div>
+      ${feedbackHtml}
+      <div class="next-area">
+        <button class="next-btn" id="nextBtn" ${nextEnabled}>➡ NEXT QUESTION</button>
+      </div>
+      <div class="reset-link">
+        <button class="reset-btn" id="resetBtn">🔄 RESTART SCORE & LOOP</button>
+      </div>
+    `;
+    
+    quizBody.innerHTML = html;
+    
+    // attach listeners to option buttons
+    const optButtons = document.querySelectorAll('.option-btn');
+    optButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (answerLock) return;  // already answered this question
+        const idxAttr = btn.getAttribute('data-opt-index');
+        if (idxAttr === null) return;
+        const optIdx = parseInt(idxAttr, 10);
+        handleAnswer(optIdx);
+      });
+    });
+    
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (!answerLock || selectedOptionIndex === null) return;
+        moveToNextQuestion();
+      });
+    }
+    
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        resetGame();
+      });
+    }
+  }
+  
+  // Handle user selecting an answer
+  function handleAnswer(selectedIdx) {
+    if (answerLock) return;
+    const currentQ = QUESTIONS[currentIdx];
+    const isCorrect = (selectedIdx === currentQ.correct);
+    
+    // lock question
+    answerLock = true;
+    selectedOptionIndex = selectedIdx;
+    
+    // update score if correct
+    if (isCorrect) {
+      userScore++;
+      feedbackMsg = "✅ CORRECT! That's active voice. +1 point.";
+      feedbackType = "correct";
+    } else {
+      const correctAnswerLetter = String.fromCharCode(65 + currentQ.correct);
+      const correctAnswerText = currentQ.options[currentQ.correct];
+      feedbackMsg = `❌ WRONG. Active voice requires subject doing action. Correct: ${correctAnswerLetter}. "${correctAnswerText}". No points deducted.`;
+      feedbackType = "wrong";
+    }
+    
+    updateScoreUI();
+    
+    // re-render to show feedback + disable options & enable next button
+    // but keep same selected index visual. Also we highlight correct? there's style
+    renderCurrentWithLock();
+  }
+  
+  // Rerender preserving lock state, selected index
+  function renderCurrentWithLock() {
+    const qData = QUESTIONS[currentIdx];
+    if (!qData) return;
+    const optionLetters = ['A', 'B', 'C', 'D'];
+    const optionsHtml = qData.options.map((opt, idx) => {
+      let additionalClass = '';
+      // highlight selected option with a specific look
+      if (selectedOptionIndex === idx) {
+        additionalClass = 'option-btn';
+        if (idx === qData.correct && feedbackType === 'correct') {
+          additionalClass += ' correct-highlight';
+        } else if (idx !== qData.correct && feedbackType === 'wrong') {
+          additionalClass += ' wrong-highlight';
+        }
+      }
+      // For additional clarity add background classes dynamically
+      let styleBg = '';
+      if (selectedOptionIndex === idx) {
+        if (idx === qData.correct && feedbackType === 'correct') styleBg = 'style="background: #1f543b; border-color:#2ecc71;"';
+        else if (idx !== qData.correct && feedbackType === 'wrong') styleBg = 'style="background: #5e2a2a; border-color:#e74c3c;"';
+        else styleBg = 'style="background: #2c3e50;"';
+      } else {
+        styleBg = '';
+      }
+      return `
+        <div class="option-btn" data-opt-index="${idx}" ${styleBg}>
+          <span class="option-prefix">${optionLetters[idx]}</span>
+          <span>${escapeHtml(opt)}</span>
+        </div>
+      `;
+    }).join('');
+    
+    let feedbackHtml = `<div class="feedback ${feedbackType}">${escapeHtml(feedbackMsg)}</div>`;
+    
+    const nextDisabledAttr = (answerLock && selectedOptionIndex !== null) ? '' : 'disabled';
+    const html = `
+      <div class="question-text">${escapeHtml(qData.text)}</div>
+      <div class="options-list" id="optionsContainer">
+        ${optionsHtml}
+      </div>
+      ${feedbackHtml}
+      <div class="next-area">
+        <button class="next-btn" id="nextBtn" ${answerLock ? '' : 'disabled'}>➡ NEXT QUESTION</button>
+      </div>
+      <div class="reset-link">
+        <button class="reset-btn" id="resetBtn">🔄 RESTART SCORE & LOOP</button>
+      </div>
+    `;
+    quizBody.innerHTML = html;
+    
+    // Reattach next button event
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (!answerLock) return;
+        moveToNextQuestion();
+      });
+    }
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) resetBtn.addEventListener('click', () => resetGame());
+    // Disable any option clicks (they are present but we set global answerLock, also prevent inside handleAnswer, but also attach dummy)
+    const opts = document.querySelectorAll('.option-btn');
+    opts.forEach(btn => {
+      btn.style.cursor = 'not-allowed';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!answerLock) return;
+        // already answered no effect
+      });
+    });
+  }
+  
+  // Move to next question (infinite loop over 30 questions)
+  function moveToNextQuestion() {
+    // cycle to next index, wrap around infinitely
+    let nextIdx = currentIdx + 1;
+    if (nextIdx >= QUESTIONS.length) {
+      nextIdx = 0;
+    }
+    currentIdx = nextIdx;
+    // reset answer state for new question
+    answerLock = false;
+    selectedOptionIndex = null;
+    feedbackMsg = "";
+    feedbackType = "";
+    // render fresh question
+    renderQuestion();
+  }
+  
+  // reset score & keep current index? better reset: score = 0, but keep current question index as is or reset to 0? 
+  // For friendly experience: reset score to 0, and current question index to 0 (start from beginning again, still infinite loop nature)
+  function resetGame() {
+    userScore = 0;
+    currentIdx = 0;
+    answerLock = false;
+    selectedOptionIndex = null;
+    feedbackMsg = "";
+    feedbackType = "";
+    updateScoreUI();
+    renderQuestion();
+  }
+  
+  // helper to escape HTML
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+  
+  // initial render
+  renderQuestion();
+  updateScoreUI();
+</script>
+</body>
+</html>
