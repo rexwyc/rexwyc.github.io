@@ -57,9 +57,16 @@
         const playerImg = new Image();
         playerImg.src = 'images/usa.png';
 
+        // Music & Sounds
         const bgm = new Audio('music/german copy.mp3');
         bgm.loop = true;
         bgm.volume = 0.5;
+
+        const bombSound = new Audio('music/downfall.wav');
+        bombSound.volume = 0.8;
+
+        const starSound = new Audio('music/bing.wav'); // Added star sound
+        starSound.volume = 0.7;
 
         let score, gameActive, animationId, platformSpeed;
         let player, platforms, items;
@@ -154,8 +161,16 @@
                 it.y -= platformSpeed;
                 const dist = Math.hypot(player.x - it.x, player.y - it.y);
                 if (dist < player.radius + it.radius) {
-                    if (it.type === 'star') score += 1;
-                    else if (it.type === 'bomb') score = Math.max(0, score - 2); 
+                    if (it.type === 'star') {
+                        score += 1;
+                        // Play Bing sound on star touch
+                        starSound.currentTime = 0;
+                        starSound.play();
+                    } else if (it.type === 'bomb') {
+                        score = Math.max(0, score - 2); 
+                        bombSound.currentTime = 0;
+                        bombSound.play();
+                    }
                     items.splice(i, 1);
                     ui.innerText = `Score: ${score}`;
                 } else if (it.y < -70) {
