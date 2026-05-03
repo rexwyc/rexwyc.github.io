@@ -26,7 +26,7 @@
         <canvas id="gameCanvas"></canvas>
         <div id="startOverlay" class="overlay">
             <h1 style="color: #00ffcc; letter-spacing: 2px;">DOWNFALL</h1>
-            <button id="startBtn">START GAME & PLAY MUSIC</button>
+            <button id="startBtn">START & PLAY MUSIC</button>
         </div>
         <div id="gameOverOverlay" class="overlay" style="display: none;">
             <h1 style="font-size: 40px; color: #ff3366;">GAME OVER</h1>
@@ -34,7 +34,7 @@
             <button id="restartBtn">TRY AGAIN</button>
         </div>
     </div>
-    <div class="instructions">Arrows ← → Move | Space Jump | Collect Trump +1 | 🚩 Flags -2</div>
+    <div class="instructions">Arrows ← → Move | Space Jump | Trump +1 | 🚩 Flag -2</div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -65,7 +65,7 @@
         const bombSound = new Audio('music/downfall.wav');
         bombSound.volume = 0.8;
 
-        const starSound = new Audio('music/bing.wav'); // Added star sound
+        const starSound = new Audio('music/bing.wav');
         starSound.volume = 0.7;
 
         let score, gameActive, animationId, platformSpeed;
@@ -77,19 +77,18 @@
         function init() {
             startOverlay.style.display = 'none';
             gameOverOverlay.style.display = 'none';
-            bgm.play().catch(e => console.log("Audio play failed"));
+            bgm.play().catch(() => console.log("Audio waiting for interaction"));
             
             if (animationId) cancelAnimationFrame(animationId);
             score = 0;
-            platformSpeed = 1.5;
+            platformSpeed = 2.0; // Constant speed
             gameActive = true;
             ui.innerText = `Score: ${score}`;
 
             player = { 
                 x: 200, y: 150, 
                 radius: 12, 
-                width: 30,  
-                height: 30, 
+                width: 30, height: 30, 
                 speed: 5, dy: 0, gravity: 0.5, jumpPower: -10 
             };
             
@@ -152,7 +151,6 @@
                 if (p.y < -platformHeight) {
                     platforms.splice(i, 1);
                     addPlatform(canvas.height);
-                    platformSpeed += 0.02; 
                 }
             }
 
@@ -163,7 +161,6 @@
                 if (dist < player.radius + it.radius) {
                     if (it.type === 'star') {
                         score += 1;
-                        // Play Bing sound on star touch
                         starSound.currentTime = 0;
                         starSound.play();
                     } else if (it.type === 'bomb') {
