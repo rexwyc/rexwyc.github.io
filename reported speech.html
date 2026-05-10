@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reported Speech Hub | Grammar Guide & Interactive Trainers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fef9e8 0%, #fff4e6 100%);
+            color: #5c3e1f;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(92, 62, 31, 0.15);
+            border-bottom: 4px solid #e07c2c;
+        }
+        
+        h1 {
+            color: #b45f2b;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #e07c2c, #b45f2b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ad6b3a;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .three-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(92, 62, 31, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ffe0bc;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(92, 62, 31, 0.2);
+            border-color: #e07c2c;
+        }
+        
+        .card-header {
+            padding: 25px 25px 15px;
+            border-bottom: 1px solid #ffe0bc;
+            background: linear-gradient(to right, #fffaf5, white);
+        }
+        
+        .card-header h2 {
+            color: #8e4a22;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h2 i {
+            color: #e07c2c;
+            font-size: 1.3rem;
+        }
+        
+        .card-content {
+            padding: 20px 25px;
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            color: #5e3a1f;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background-color: #fef7ef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e07c2c;
+        }
+        
+        .examples h3 {
+            color: #b35724;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .example-item {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        .example-item strong {
+            color: #bf6a2d;
+            margin-right: 5px;
+        }
+        
+        .badge {
+            background-color: #e07c2c;
+            color: white;
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-left: 10px;
+            vertical-align: middle;
+            display: inline-block;
+        }
+        
+        .rule-note {
+            background: #fff4e8;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px;
+            background-color: #fff9f2;
+            border-top: 1px solid #ffe0bc;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #e07c2c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background-color: #b4581d;
+            transform: scale(1.03);
+        }
+        
+        .info-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(92, 62, 31, 0.08);
+            border: 1px solid #ffe0bc;
+            text-align: center;
+        }
+        
+        .info-bar h3 {
+            color: #b45f2b;
+            margin-bottom: 12px;
+        }
+        
+        .info-bar p {
+            color: #7a4a24;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #b17442;
+            border-top: 1px solid #ffddb0;
+        }
+        
+        @media (max-width: 900px) {
+            .three-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-comment-dots"></i> Reported Speech Hub</h1>
+            <p class="subtitle">Master indirect speech with three interactive trainers: pronoun & time/place changes, time shifts, and reported questions.</p>
+        </header>
+        
+        <main>
+            <div class="three-grid">
+                <!-- Card 1: Pronoun & Time/Place Word Changes -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-arrows-spin"></i> Pronoun & Time/Place Changes</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Transform direct speech to reported speech by adjusting <strong>pronouns, possessive adjectives, time expressions, and place words</strong>.</p>
+                        
+                        <div class="examples">
+                            <h3>Key Changes:</h3>
+                            <div class="example-item"><strong>Pronouns:</strong> I → he/she · we → they · my → his/her</div>
+                            <div class="example-item"><strong>Time:</strong> now → then · today → that day · yesterday → the day before</div>
+                            <div class="example-item"><strong>Place:</strong> here → there · this → that · these → those</div>
+                            <div class="example-item"><strong>Example:</strong> "I am happy," said Tom → Tom said that <em>he</em> was happy.</div>
+                        </div>
+                        
+                        <div class="rule-note">
+                            <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Always consider the reporter's perspective. First/second person pronouns shift to third person unless reporting about yourself.
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Pronoun%20&%20Time:Place%20Word%20Changes(reported%20speech).html" class="page-link" target="_blank">
+                            <i class="fas fa-user-edit"></i> Launch Trainer
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Card 2: Time Changes (Backshifting & Time Words) -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-calendar-week"></i> Time & Tense Shifts</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Master <strong>tense backshifting</strong> and <strong>time expression changes</strong> when reporting speech from a past perspective.</p>
+                        
+                        <div class="examples">
+                            <h3>Tense Backshifting:</h3>
+                            <div class="example-item"><strong>Present Simple → Past Simple:</strong> "I am busy" → he <em>was</em> busy</div>
+                            <div class="example-item"><strong>Present Continuous → Past Continuous:</strong> "I am reading" → she <em>was reading</em></div>
+                            <div class="example-item"><strong>will → would · can → could · may → might</strong></div>
+                            <div class="example-item"><strong>Example:</strong> "I am busy," said Tom → Tom said that he <em>was</em> busy.</div>
+                        </div>
+                        
+                        <div class="rule-note">
+                            <i class="fas fa-hourglass-half"></i> <strong>Exception:</strong> General truths or still-true facts can keep present tense: "The sun rises in the east" → He said the sun <em>rises</em> in the east.
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/time(reported%20speech).html" class="page-link" target="_blank">
+                            <i class="fas fa-clock"></i> Launch Trainer
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Card 3: Reported Questions & Commands -->
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-question-circle"></i> Reported Questions & Commands</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Learn how to report <strong>yes/no questions, WH-questions, and imperative commands</strong> correctly.</p>
+                        
+                        <div class="examples">
+                            <h3>Question Patterns:</h3>
+                            <div class="example-item"><strong>Yes/No:</strong> "Do you live here?" → He asked <em>if</em> I lived there.</div>
+                            <div class="example-item"><strong>WH-:</strong> "Where is the station?" → She asked <em>where</em> the station was.</div>
+                            <div class="example-item"><strong>Commands:</strong> "Close the door" → He told me <em>to close</em> the door.</div>
+                            <div class="example-item"><strong>Example:</strong> "Do you live here?" → He asked _______ I lived there. <em>(if/whether)</em></div>
+                        </div>
+                        
+                        <div class="rule-note">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Remember:</strong> Reported questions use statement word order (no inversion), no question mark, and add "if/whether" for yes/no questions.
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/reported%20questions.html" class="page-link" target="_blank">
+                            <i class="fas fa-question"></i> Launch Trainer
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-bar">
+                <h3><i class="fas fa-compass"></i> Quick Reference: Reported Speech Essentials</h3>
+                <p>🔹 <strong>Pronoun shift:</strong> I/you → he/she/they &nbsp;|&nbsp; 🔹 <strong>Tense backshift:</strong> present → past → past perfect &nbsp;|&nbsp; 🔹 <strong>Time change:</strong> now → then, today → that day &nbsp;|&nbsp; 🔹 <strong>Questions:</strong> no inversion + if/wh- word</p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Reported Speech Grammar Guide &copy; 2025 | Created for rexwyc.github.io</p>
+            <p>Three interactive trainers: Pronoun & Time/Place Changes · Time Shifts · Reported Questions & Commands</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Smooth fade-in animation for cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -30px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.topic-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+        
+        // Smooth scroll for any anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
