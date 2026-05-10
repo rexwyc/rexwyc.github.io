@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reported Speech Trainer</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; box-sizing: border-box; }
+        #game-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+        h2 { color: #333; margin-top: 0; font-size: 1.4rem; }
+        .question { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; line-height: 1.5; color: #444; min-height: 80px; }
+        input { width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 10px; outline: none; transition: 0.3s; box-sizing: border-box; }
+        input:focus { border-color: #007bff; box-shadow: 0 0 8px rgba(0,123,255,0.2); }
+        button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; cursor: pointer; margin-top: 15px; width: 100%; font-weight: bold; }
+        #feedback { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; text-align: left; font-size: 0.95rem; }
+        .correct { background: #e6fffa; color: #234e52; border: 1px solid #b2f5ea; }
+        .incorrect { background: #fff5f5; color: #742a2a; border: 1px solid #feb2b2; }
+        .explanation { margin-top: 8px; font-size: 0.85rem; color: #4a5568; line-height: 1.4; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px; }
+        #score { font-weight: bold; color: #718096; margin-bottom: 10px; display: block; }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <span id="score">Score: 0</span>
+        <h2>Reported Speech Quiz</h2>
+        <div id="question-box" class="question">Loading...</div>
+        <input type="text" id="answer-input" placeholder="Type the missing word(s)..." autocomplete="off" autocapitalize="none">
+        <button id="submit-btn">Check Answer</button>
+        <button id="next-btn" style="display:none; background: #38a169;">Next Question →</button>
+        <div id="feedback"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "Direct: 'I am happy,' said Tom. <br>Reported: Tom said that ___ was happy.", a: "he", exp: "Pronouns change to match the speaker (Tom = he)."},
+            {q: "Direct: 'We are ready,' they said. <br>Reported: They said that ___ were ready.", a: "they", exp: "'We' usually changes to 'they' in reported speech."},
+            {q: "Direct: 'I like your cat,' she told me. <br>Reported: She told me she liked ___ cat.", a: "my", exp: "'Your' changes based on who is being spoken to (me = my)."},
+            {q: "Direct: 'I'll see you tomorrow,' he said. <br>Reported: He said he'd see me ___.", a: "the next day", exp: "'Tomorrow' changes to 'the next day' or 'the following day'."},
+            {q: "Direct: 'I am here,' she said. <br>Reported: She said she was ___.", a: "there", exp: "'Here' changes to 'there'."},
+            {q: "Direct: 'I bought this today,' he said. <br>Reported: He said he'd bought it ___.", a: "that day", exp: "'Today' changes to 'that day'."},
+            {q: "Direct: 'I like these shoes,' she said. <br>Reported: She said she liked ___ shoes.", a: "those", exp: "'These' changes to 'those'."},
+            {q: "Direct: 'I saw him yesterday,' she said. <br>Reported: She said she'd seen him ___.", a: "the day before", exp: "'Yesterday' changes to 'the day before' or 'the previous day'."},
+            {q: "Direct: 'I'll do it now,' he said. <br>Reported: He said he would do it ___.", a: "then", exp: "'Now' usually changes to 'then'."},
+            {q: "Direct: 'I'm busy tonight,' she said. <br>Reported: She said she was busy ___.", a: "that night", exp: "'Tonight' changes to 'that night'."},
+            {q: "Direct: 'This is my bag,' he said. <br>Reported: He said that ___ was his bag.", a: "that", exp: "'This' (as a pronoun) becomes 'that'."},
+            {q: "Direct: 'I can't find my keys,' he said. <br>Reported: He said he couldn't find ___ keys.", a: "his", exp: "Possessive adjectives change: 'my' becomes 'his' or 'her'."},
+            {q: "Direct: 'You must help us,' they said. <br>Reported: They said I had to help ___.", a: "them", exp: "'Us' changes to 'them'."},
+            {q: "Direct: 'We moved here a year ago,' they said. <br>Reported: They said they'd moved there a year ___.", a: "before", exp: "'Ago' changes to 'before'."},
+            {q: "Direct: 'I'll call you next week,' he said. <br>Reported: He said he'd call me ___.", a: "the following week", exp: "'Next week' becomes 'the following week'."},
+            {q: "Direct: 'I was there last night,' she said. <br>Reported: She said she'd been there ___.", a: "the night before", exp: "'Last night' becomes 'the night before'."},
+            {q: "Direct: 'These are my books,' he said. <br>Reported: He said ___ were his books.", a: "those", exp: "Plural 'these' becomes 'those'."},
+            {q: "Direct: 'Our team won,' they said. <br>Reported: They said ___ team had won.", a: "their", exp: "'Our' changes to 'their'."},
+            {q: "Direct: 'I am staying in this hotel,' she said. <br>Reported: She said she was staying in ___ hotel.", a: "that", exp: "Determiner 'this' becomes 'that'."},
+            {q: "Direct: 'We will visit you next month,' they said. <br>Reported: They said they'd visit us ___.", a: "the following month", exp: "'Next month' becomes 'the following month'."},
+            {q: "Direct: 'I saw you at the park,' he told me. <br>Reported: He told me he'd seen ___ at the park.", a: "me", exp: "'You' changes to 'me' when you are the one being addressed."},
+            {q: "Direct: 'I have finished my work,' she said. <br>Reported: She said she had finished ___ work.", a: "her", exp: "'My' becomes 'her' because the speaker is female."},
+            {q: "Direct: 'Put those here,' he said. <br>Reported: He told me to put them ___.", a: "there", exp: "Place change: 'here' always becomes 'there'."},
+            {q: "Direct: 'I will be home this evening,' he said. <br>Reported: He said he would be home ___ evening.", a: "that", exp: "'This evening' changes to 'that evening'."},
+            {q: "Direct: 'You are late,' the teacher told us. <br>Reported: The teacher told us that ___ were late.", a: "we", exp: "'You' changes to 'we' because the teacher is talking to 'us'."},
+            {q: "Direct: 'I was at the mall yesterday,' he said. <br>Reported: He said he'd been at the mall ___.", a: "the day before", exp: "Time change: 'yesterday' to 'the day before'."},
+            {q: "Direct: 'These apples are sour,' she said. <br>Reported: She said ___ apples were sour.", a: "those", exp: "'These' becomes 'those'."},
+            {q: "Direct: 'I'll give you my number,' he said. <br>Reported: He said he'd give me ___ number.", a: "his", exp: "Possessive 'my' changes to 'his' for a male speaker."},
+            {q: "Direct: 'Wait for us here,' they said. <br>Reported: They told me to wait for ___ there.", a: "them", exp: "Object pronoun 'us' becomes 'them'."},
+            {q: "Direct: 'I'm leaving now,' she said. <br>Reported: She said she was leaving ___.", a: "then", exp: "Time change: 'now' to 'then'."}
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+
+        const qBox = document.getElementById('question-box');
+        const input = document.getElementById('answer-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback');
+        const scoreDisplay = document.getElementById('score');
+
+        function loadQuestion() {
+            const q = questions[currentIndex];
+            qBox.innerHTML = q.q;
+            input.value = '';
+            feedback.style.display = 'none';
+            submitBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+            input.focus();
+        }
+
+        function checkAnswer() {
+            const userAnswer = input.value.trim().toLowerCase();
+            const correctAnswer = questions[currentIndex].a.toLowerCase();
+            
+            feedback.style.display = 'block';
+            submitBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+
+            if (userAnswer === correctAnswer) {
+                feedback.className = 'correct';
+                feedback.innerHTML = `<strong>Correct!</strong><div class="explanation">${questions[currentIndex].exp}</div>`;
+                score++;
+                scoreDisplay.innerText = `Score: ${score}`;
+            } else {
+                feedback.className = 'incorrect';
+                feedback.innerHTML = `<strong>Not quite.</strong> The answer is: <strong>${questions[currentIndex].a}</strong><div class="explanation">${questions[currentIndex].exp}</div>`;
+            }
+        }
+
+        submitBtn.onclick = checkAnswer;
+        nextBtn.onclick = () => {
+            currentIndex = (currentIndex + 1) % questions.length;
+            loadQuestion();
+        };
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (submitBtn.style.display !== 'none') checkAnswer();
+                else nextBtn.click();
+            }
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>

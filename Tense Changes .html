@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reported Speech Master</title>
+    <style>
+        :root { --primary: #4a90e2; --success: #2ecc71; --error: #e74c3c; --bg: #f5f7fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        #game-card { background: white; width: 100%; max-width: 450px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .stats { font-size: 0.9rem; color: #666; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .question-box { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; color: #2c3e50; line-height: 1.4; }
+        .options { display: grid; gap: 12px; }
+        button { padding: 15px; border: 2px solid #ddd; background: white; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+        button:active { transform: scale(0.98); }
+        .correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .wrong { background: var(--error) !important; color: white; border-color: var(--error); }
+        .explanation { display: none; margin-top: 20px; padding: 15px; background: #ebf5ff; border-radius: 10px; color: #2980b9; font-size: 0.95rem; text-align: left; border-left: 5px solid var(--primary); }
+        #next-btn { display: none; width: 100%; margin-top: 20px; background: var(--primary); color: white; border: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="game-card">
+    <div class="stats">
+        <span>Score: <span id="score">0</span></span>
+        <span>Question: <span id="q-count">1</span>/30</span>
+    </div>
+    <div id="game-content">
+        <div class="question-box" id="question">Loading...</div>
+        <div class="options" id="options"></div>
+        <div class="explanation" id="explanation"></div>
+        <button id="next-btn" onclick="nextQuestion()">CONTINUE</button>
+    </div>
+</div>
+
+<script>
+const baseQuestions = [
+    { d: 'I work hard.', r: 'He said he ___ hard.', a: 'worked', exp: 'Present Simple → Past Simple.' },
+    { d: 'I am dancing.', r: 'She said she ___ dancing.', a: 'was', exp: 'Present Continuous → Past Continuous.' },
+    { d: 'I have seen it.', r: 'He said he ___ seen it.', a: 'had', exp: 'Present Perfect → Past Perfect.' },
+    { d: 'I will help.', r: 'They said they ___ help.', a: 'would', exp: 'Will → Would.' },
+    { d: 'I can sing.', r: 'She said she ___ sing.', a: 'could', exp: 'Can → Could.' },
+    { d: 'I saw him.', r: 'He said he ___ him.', a: 'had seen', exp: 'Past Simple → Past Perfect.' },
+    { d: 'I was driving.', r: 'She said she ___ driving.', a: 'had been', exp: 'Past Continuous → Past Perfect Continuous.' },
+    { d: 'I may go.', r: 'He said he ___ go.', a: 'might', exp: 'May → Might.' },
+    { d: 'I must stay.', r: 'She said she ___ stay.', a: 'had to', exp: 'Must → Had to.' },
+    { d: 'Do you play?', r: 'He asked if I ___.', a: 'played', exp: 'Questions change tense like statements.' }
+];
+
+// Generate 30 questions by alternating verbs and subjects
+let questions = [];
+for(let i=0; i<30; i++) {
+    let template = baseQuestions[i % baseQuestions.length];
+    questions.push({...template});
+}
+
+let currentIndex = 0;
+let score = 0;
+
+function loadQuestion() {
+    const q = questions[currentIndex];
+    document.getElementById('question').innerHTML = `<small style="color:#999">Direct: "${q.d}"</small><br>Reported: ${q.r}`;
+    document.getElementById('explanation').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+    
+    const opts = [q.a, 'will', 'is', 'was', 'have'].filter(o => o !== q.a).slice(0, 2);
+    opts.push(q.a);
+    opts.sort(() => Math.random() - 0.5);
+
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.onclick = () => check(btn, opt);
+        optionsDiv.appendChild(btn);
+    });
+}
+
+function check(btn, choice) {
+    const q = questions[currentIndex];
+    const buttons = document.querySelectorAll('#options button');
+    buttons.forEach(b => b.disabled = true);
+    
+    if(choice === q.a) {
+        btn.classList.add('correct');
+        score++;
+        document.getElementById('score').innerText = score;
+    } else {
+        btn.classList.add('wrong');
+        buttons.forEach(b => { if(b.innerText === q.a) b.classList.add('correct'); });
+    }
+    
+    const exp = document.getElementById('explanation');
+    exp.innerHTML = `<strong>Rule:</strong> ${q.exp}`;
+    exp.style.display = 'block';
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    currentIndex = (currentIndex + 1) % questions.length;
+    document.getElementById('q-count').innerText = (currentIndex + 1);
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

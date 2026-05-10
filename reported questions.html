@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reported Speech: Questions & Commands</title>
+    <style>
+        :root { --primary: #6B46C1; --success: #38A169; --error: #E53E3E; --bg: #F7FAFC; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; padding: 15px; }
+        #game-card { background: white; width: 100%; max-width: 480px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 20px; box-sizing: border-box; }
+        .stats { display: flex; justify-content: space-between; color: #718096; font-size: 0.9rem; margin-bottom: 15px; font-weight: bold; }
+        .type-tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 10px; font-weight: 800; letter-spacing: 0.5px; }
+        .tag-q { background: #EBF4FF; color: #3182CE; }
+        .tag-c { background: #FEF3C7; color: #D97706; }
+        .direct-speech { background: #EDF2F7; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-style: italic; color: #2D3748; border-left: 4px solid #CBD5E0; }
+        .reported-speech { font-size: 1.05rem; color: #1A202C; line-height: 1.5; margin-bottom: 15px; }
+        .blank { border-bottom: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
+        input { width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 1.1rem; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 12px; }
+        .btn-check { background: var(--primary); color: white; }
+        .btn-next { background: var(--success); color: white; display: none; }
+        #feedback { margin-top: 15px; padding: 15px; border-radius: 12px; display: none; font-size: 0.9rem; }
+        .explanation { font-size: 0.8rem; margin-top: 8px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div id="game-card">
+    <div class="stats">
+        <span id="progress">Quest: 1/30</span>
+        <span id="score">Score: 0</span>
+    </div>
+    
+    <div id="tag" class="type-tag">Question</div>
+    <div class="direct-speech" id="direct-text"></div>
+    <div class="reported-speech" id="reported-text"></div>
+
+    <input type="text" id="answer-input" placeholder="Type the missing word(s)..." autocomplete="off">
+    
+    <button class="btn-check" id="check-btn">Check Answer</button>
+    <button class="btn-next" id="next-btn">Next Question →</button>
+
+    <div id="feedback">
+        <div id="result-text" style="font-weight: bold;"></div>
+        <div class="explanation" id="explanation-text"></div>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        { t: "Question", d: '"Do you live here?" he asked.', r: 'He asked [if] I lived there.', a: 'if', e: 'For Yes/No questions, use "if" or "whether".' },
+        { t: "Command", d: '"Stand up!" the teacher said.', r: 'The teacher told us [to stand] up.', a: 'to stand', e: 'Use "to + verb" for positive commands.' },
+        { t: "Question", d: '"Where is the bank?" she asked.', r: 'She asked where the bank [was].', a: 'was', e: 'Change to statement order: Subject (the bank) + Verb (was).' },
+        { t: "Command", d: '"Don\'t touch the oven," Mom said.', r: 'Mom told me [not to touch] the oven.', a: 'not to touch', e: 'For negative commands, use "not to + verb".' },
+        { t: "Question", d: '"Can you swim?" he asked.', r: 'He asked if I [could] swim.', a: 'could', e: '"Can" changes to "could" in reported speech.' },
+        { t: "Command", d: '"Close the door," he said.', r: 'He told me [to close] the door.', a: 'to close', e: 'Reporting a command uses the infinitive form.' },
+        { t: "Question", d: '"What time is it?" he asked.', r: 'He asked what time it [was].', a: 'was', e: 'Move the verb to the end in reported questions.' },
+        { t: "Command", d: '"Don\'t be late!" she said.', r: 'She told us [not to be] late.', a: 'not to be', e: '"Don\'t" becomes "not to".' },
+        { t: "Question", d: '"Are you tired?" she asked me.', r: 'She asked me if [I was] tired.', a: 'I was', e: 'Change "Are you" to "I was" (Subject + Verb).' },
+        { t: "Command", d: '"Stop talking," the librarian said.', r: 'The librarian told them [to stop] talking.', a: 'to stop', e: 'Simple command: told + to + verb.' },
+        { t: "Question", d: '"Why did you go?" he asked.', r: 'He asked why I [had gone].', a: 'had gone', e: 'Past simple "did go" changes to past perfect "had gone".' },
+        { t: "Command", d: '"Please help me," she said.', r: 'She asked me [to help] her.', a: 'to help', e: 'Even polite requests use the "to + verb" structure.' },
+        { t: "Question", d: '"Will it rain?" they asked.', r: 'They asked if it [would] rain.', a: 'would', e: '"Will" changes to "would".' },
+        { t: "Command", d: '"Don\'t shout," he said.', r: 'He told me [not to shout].', a: 'not to shout', e: 'Negative command: not + to + verb.' },
+        { t: "Question", d: '"How are you?" he asked.', r: 'He asked how I [was].', a: 'was', e: 'Statement order: the verb "was" comes after the subject "I".' },
+        { t: "Command", d: '"Open your books," she said.', r: 'She told us to open [our] books.', a: 'our', e: 'Remember to change pronouns: "your" becomes "our".' },
+        { t: "Question", d: '"Have you finished?" he asked.', r: 'He asked [if] I had finished.', a: 'if', e: 'Present perfect question uses "if" and changes to past perfect.' },
+        { t: "Command", d: '"Wait for me," he said.', r: 'He told me [to wait] for him.', a: 'to wait', e: 'Reporting a command: to + verb.' },
+        { t: "Question", d: '"What are you doing?" she asked.', r: 'She asked what I [was doing].', a: 'was doing', e: 'Continuous question: "are you doing" becomes "I was doing".' },
+        { t: "Command", d: '"Don\'t park here," the man said.', r: 'The man told us not to park [there].', a: 'there', e: 'Change place words: "here" becomes "there".' },
+        { t: "Question", d: '"Who is that girl?" he asked.', r: 'He asked who that girl [was].', a: 'was', e: 'Statement word order: Subject + Verb.' },
+        { t: "Command", d: '"Eat your vegetables," she said.', r: 'She told the child [to eat] his vegetables.', a: 'to eat', e: 'Basic command structure.' },
+        { t: "Question", d: '"Did you see the movie?" they asked.', r: 'They asked if I [had seen] the movie.', a: 'had seen', e: 'Past simple changes to Past Perfect.' },
+        { t: "Command", d: '"Don\'t forget your keys," he said.', r: 'He told me [not to forget] my keys.', a: 'not to forget', e: 'Negative command rule.' },
+        { t: "Question", d: '"Is it cold outside?" she asked.', r: 'She asked [if] it was cold outside.', a: 'if', e: 'Yes/No question needs "if".' },
+        { t: "Command", d: '"Call me tomorrow," he said.', r: 'He told me to call him [the next day].', a: 'the next day', e: 'Change time words: "tomorrow" to "the next day".' },
+        { t: "Question", d: '"Where are my keys?" he asked.', r: 'He asked where [his keys were].', a: 'his keys were', e: 'Subject "his keys" comes before the verb "were".' },
+        { t: "Command", d: '"Don\'t cry," she said to the baby.', r: 'She told the baby [not to cry].', a: 'not to cry', e: 'Standard negative command.' },
+        { t: "Question", d: '"Do you speak English?" she asked.', r: 'She asked if I [spoke] English.', a: 'spoke', e: 'Present simple "speak" changes to past simple "spoke".' },
+        { t: "Command", d: '"Go home," the police said.', r: 'The police ordered us [to go] home.', a: 'to go', e: 'Reporting an order: to + verb.' }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    const tagEl = document.getElementById('tag');
+    const directEl = document.getElementById('direct-text');
+    const reportedEl = document.getElementById('reported-text');
+    const inputEl = document.getElementById('answer-input');
+    const feedbackEl = document.getElementById('feedback');
+    const scoreEl = document.getElementById('score');
+    const progressEl = document.getElementById('progress');
+    const checkBtn = document.getElementById('check-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    function loadQuestion() {
+        const item = quizData[currentIdx];
+        tagEl.innerText = item.t;
+        tagEl.className = `type-tag ${item.t === 'Question' ? 'tag-q' : 'tag-c'}`;
+        directEl.innerText = item.d;
+        reportedEl.innerHTML = item.r.replace(/\[.*?\]/, '<span class="blank">_______</span>');
+        inputEl.value = '';
+        feedbackEl.style.display = 'none';
+        checkBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+        progressEl.innerText = `Quest: ${currentIdx + 1}/30`;
+        inputEl.focus();
+    }
+
+    function checkAnswer() {
+        const userAns = inputEl.value.trim().toLowerCase();
+        const correctAns = quizData[currentIdx].a.toLowerCase();
+        
+        feedbackEl.style.display = 'block';
+        checkBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+
+        if (userAns === correctAns) {
+            score++;
+            scoreEl.innerText = `Score: ${score}`;
+            feedbackEl.style.background = '#C6F6D5';
+            feedbackEl.style.color = '#22543D';
+            document.getElementById('result-text').innerText = "Correct! Well done.";
+        } else {
+            feedbackEl.style.background = '#FED7D7';
+            feedbackEl.style.color = '#822727';
+            document.getElementById('result-text').innerText = `Incorrect. Answer: ${quizData[currentIdx].a}`;
+        }
+        document.getElementById('explanation-text').innerText = quizData[currentIdx].e;
+    }
+
+    checkBtn.onclick = checkAnswer;
+    nextBtn.onclick = () => {
+        currentIdx = (currentIdx + 1) % quizData.length;
+        loadQuestion();
+    };
+
+    inputEl.onkeypress = (e) => { if(e.key === 'Enter') checkBtn.style.display === 'block' ? checkAnswer() : nextBtn.click(); };
+
+    loadQuestion();
+</script>
+</body>
+</html>
