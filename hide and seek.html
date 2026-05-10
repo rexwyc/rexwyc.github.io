@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nature's Hunt: 10 Levels</title>
+    <style>
+        body { background: #1a1a1a; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; overflow: hidden; height: 100vh; justify-content: center; }
+        .main-container { display: flex; align-items: flex-start; gap: 30px; }
+        #wrapper { position: relative; border: 4px solid #444; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        canvas { background: #ffffff; display: block; } 
+        #minimap { position: absolute; bottom: 15px; right: 15px; border: 2px solid #000; background: #fff; opacity: 0.9; }
+        
+        /* Side List Styling */
+        .hunt-list { background: #252525; padding: 20px; border-left: 4px solid #ff3366; border-radius: 8px; width: 280px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); }
+        .hunt-list h3 { color: #ff3366; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; font-size: 18px; text-transform: uppercase; }
+        .hunt-list ul { list-style: none; padding: 0; margin: 0; font-size: 13px; color: #666; line-height: 1.8; }
+        .hunt-list li { margin-bottom: 5px; padding: 4px 10px; border-radius: 4px; transition: 0.3s; border: 1px solid transparent; }
+        
+        /* Highlight the active level */
+        .active-level { background: #111; color: #fff !important; border: 1px solid #00ffcc !important; box-shadow: 0 0 10px rgba(0,255,204,0.3); }
+        .active-level b { color: #ff3366 !important; }
+
+        .ui { margin-bottom: 15px; font-size: 22px; font-weight: bold; color: #00ffcc; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        #currentPair { color: #ff3366; }
+    </style>
+</head>
+<body>
+
+    <div class="ui">LEVEL <span id="lvlNum">1</span>: <span id="currentPair">LION & ZEBRA</span></div>
+    
+    <div class="main-container">
+        <!-- Game Area -->
+        <div id="wrapper">
+            <canvas id="mazeCanvas"></canvas>
+            <canvas id="minimap" width="150" height="150"></canvas>
+        </div>
+
+        <!-- Dynamic Sidebar -->
+        <div class="hunt-list">
+            <h3>Evolution of Hunt</h3>
+            <ul id="levelList">
+                <li id="li-0"><b>1.</b> Lion vs Zebra</li>
+                <li id="li-1"><b>2.</b> Great White Shark vs Seal</li>
+                <li id="li-2"><b>3.</b> Cheetah vs Gazelle</li>
+                <li id="li-3"><b>4.</b> Gray Wolf vs Elk</li>
+                <li id="li-4"><b>5.</b> Orca vs Penguin</li>
+                <li id="li-5"><b>6.</b> Polar Bear vs Seal</li>
+                <li id="li-6"><b>7.</b> Peregrine Falcon vs Pigeon</li>
+                <li id="li-7"><b>8.</b> Komodo Dragon vs Deer</li>
+                <li id="li-8"><b>9.</b> Snowy Owl vs Lemming</li>
+                <li id="li-9"><b>10.</b> Praying Mantis vs Fly</li>
+            </ul>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById("mazeCanvas");
+    const ctx = canvas.getContext("2d");
+    const mCanvas = document.getElementById("minimap");
+    const mCtx = mCanvas.getContext("2d");
+
+    const TILE = 25; 
+    let currentLevel = 0;
+
+    const pairs = [
+        "LION & ZEBRA", "SHARK & SEAL", "CHEETAH & GAZELLE", 
+        "WOLF & ELK", "ORCA & PENGUIN", "POLAR BEAR & SEAL",
+        "FALCON & PIGEON", "DRAGON & DEER", "OWL & LEMMING", "MANTIS & FLY"
+    ];
+
+    // Matrices for the levels (Using your provided map logic)
+    const allMaps = [
+        [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],[1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1],[1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1],[1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1],[1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,1],[1,0,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1],[1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1,0,1,1],[1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1,1],[1,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,1,0,1,1],[1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,1],[1,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,1,1],[1,0,1,0,1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,1],[1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,1],[1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1],[1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1,1],[1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1],[1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,2,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]],
+        // [Add other levels following the same logic here...]
+    ];
+
+    let player = { x: 1, y: 1 };
+    let seeker = { x: 10, y: 10 };
+
+    function initLevel() {
+        const mapIndex = currentLevel % allMaps.length;
+        const map = allMaps[mapIndex];
+        canvas.width = map.length * TILE;
+        canvas.height = map.length * TILE;
+        
+        player = { x: 1, y: 1 };
+        seeker = { x: 10, y: 10 };
+        
+        // UI Updates
+        document.getElementById("lvlNum").innerText = currentLevel + 1;
+        document.getElementById("currentPair").innerText = pairs[currentLevel % pairs.length];
+        
+        // Highlight Sidebar
+        for(let i=0; i<10; i++) {
+            let el = document.getElementById(`li-${i}`);
+            if(el) el.classList.remove("active-level");
+        }
+        let activeEl = document.getElementById(`li-${currentLevel % 10}`);
+        if(activeEl) activeEl.classList.add("active-level");
+
+        draw();
+    }
+
+    function draw() {
+        const map = allMaps[currentLevel % allMaps.length];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+        const mTile = mCanvas.width / map.length;
+
+        for (let r = 0; r < map.length; r++) {
+            for (let c = 0; c < map[r].length; c++) {
+                if (map[r][c] === 1) {
+                    ctx.fillStyle = "#333";
+                    ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
+                    mCtx.fillStyle = "#333";
+                    mCtx.fillRect(c * mTile, r * mTile, mTile, mTile);
+                } else if (map[r][c] === 2) {
+                    ctx.fillStyle = "#f1c40f";
+                    ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
+                    mCtx.fillStyle = "#f1c40f";
+                    mCtx.fillRect(c * mTile, r * mTile, mTile, mTile);
+                }
+            }
+        }
+
+        // Draw Prey (Blue)
+        ctx.fillStyle = "#00ccff";
+        ctx.fillRect(player.x * TILE + 6, player.y * TILE + 6, TILE - 12, TILE - 12);
+        
+        // Draw Predator (Red)
+        ctx.fillStyle = "#ff3366";
+        ctx.fillRect(seeker.x * TILE + 6, seeker.y * TILE + 6, TILE - 12, TILE - 12);
+
+        // Update Minimap
+        mCtx.fillStyle = "#00ccff"; mCtx.fillRect(player.x * mTile, player.y * mTile, mTile, mTile);
+        mCtx.fillStyle = "#ff3366"; mCtx.fillRect(seeker.x * mTile, seeker.y * mTile, mTile, mTile);
+    }
+
+    function moveSeeker() {
+        const map = allMaps[currentLevel % allMaps.length];
+        let dx = Math.sign(player.x - seeker.x);
+        let dy = Math.sign(player.y - seeker.y);
+
+        if (dx !== 0 && map[seeker.y][seeker.x + dx] !== 1) seeker.x += dx;
+        else if (dy !== 0 && map[seeker.y + dy][seeker.x] !== 1) seeker.y += dy;
+
+        if (seeker.x === player.x && seeker.y === player.y) {
+            alert("CAUGHT! The predator found its prey.");
+            initLevel();
+        }
+        draw();
+    }
+
+    window.addEventListener("keydown", (e) => {
+        const map = allMaps[currentLevel % allMaps.length];
+        let nx = player.x, ny = player.y;
+        if (e.key === "ArrowUp") ny--;
+        if (e.key === "ArrowDown") ny++;
+        if (e.key === "ArrowLeft") nx--;
+        if (e.key === "ArrowRight") nx++;
+
+        if (map[ny] && map[ny][nx] !== 1) {
+            player.x = nx; player.y = ny;
+            if (map[ny][nx] === 2) {
+                alert("ESCAPE SUCCESSFUL!");
+                currentLevel++;
+                initLevel();
+            }
+        }
+        draw();
+    });
+
+    setInterval(moveSeeker, 500); 
+    initLevel();
+</script>
+</body>
+</html>
