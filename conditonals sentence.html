@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Conditionals Quiz</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --success: #2ec4b6;
+            --danger: #e71d36;
+            --bg: #f8f9fa;
+            --text: #2b2d42;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 15px; display: flex; justify-content: center; }
+        .quiz-container { width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 10px; }
+        .progress { font-size: 14px; color: #888; margin-bottom: 10px; font-weight: bold; }
+        .type-badge { display: inline-block; background: #e0e6ed; color: var(--primary); padding: 3px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
+        .question { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .btn { background: white; border: 2px solid #e0e6ed; padding: 14px; border-radius: 10px; font-size: 16px; text-align: left; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .btn:active { transform: scale(0.98); }
+        .correct { background: #e6f9f7 !important; border-color: var(--success) !important; color: #0f5132; font-weight: bold; }
+        .wrong { background: #ffebee !important; border-color: var(--danger) !important; color: #842029; font-weight: bold; }
+        .explanation-box { margin-top: 20px; padding: 15px; background: #f0f4f8; border-left: 5px solid var(--primary); border-radius: 4px; display: none; line-height: 1.5; font-size: 14px; }
+        .next-btn { width: 100%; margin-top: 20px; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="progress">Correct Answers: <span id="score">0</span></div>
+    <div class="type-badge" id="type-badge">Loading...</div>
+    <div class="question" id="question">Loading...</div>
+    <div class="options" id="options"></div>
+    <div class="explanation-box" id="explanation"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+const quizData = [
+    // Zero Conditional (1-10)
+    { q: "If you heat ice, it ______.", o: ["melts", "will melt", "melted", "would melt"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) because it states an absolute scientific fact that is always true." },
+    { q: "Water boils if it ______ 100 degrees Celsius.", o: ["reaches", "will reach", "reached", "would reach"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) for a scientific truth. The condition always triggers the same automatic result." },
+    { q: "If I ______ late for work, my boss gets angry.", o: ["am", "will be", "was", "would be"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) to describe a personal routine or a factual, predictable habit." },
+    { q: "When the sun goes down, it ______ dark.", o: ["gets", "will get", "got", "would get"], a: 0, t: "Zero Conditional", e: "This uses (When/If + Present, Present). 'When' replaces 'if' to describe an absolute natural certainty." },
+    { q: "If you mix red and blue, you ______ purple.", o: ["get", "will get", "got", "would get"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present). Mixing these colors always results in purple; it is an unchangeable fact." },
+    { q: "Plants die if they ______ enough water.", o: ["don't get", "won't get", "didn't get", "wouldn't get"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) to state a biological fact and a general rule of nature." },
+    { q: "If you cross the international date line, the time ______.", o: ["changes", "will change", "changed", "would change"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) because geographical facts are always true." },
+    { q: "My dog barks if someone ______ close to the house.", o: ["comes", "will come", "came", "would come"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) to represent a predictable habit or constant reaction." },
+    { q: "If you multiply zero by any number, the answer ______ zero.", o: ["is", "will be", "was", "would be"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present). Mathematical laws are absolute facts." },
+    { q: "When you freeze water, it ______ into ice.", o: ["turns", "will turn", "turned", "would turn"], a: 0, t: "Zero Conditional", e: "This uses (If + Present, Present) for a basic physical process." },
+
+    // First Conditional (11-20)
+    { q: "If it rains tomorrow, we ______ the picnic.", o: ["will cancel", "cancel", "would cancel", "canceled"], a: 0, t: "First Conditional", e: "This uses (If + Present, Will + Verb) to talk about a real future possibility and its outcome." },
+    { q: "I will pass the exam if I ______ hard tonight.", o: ["study", "will study", "studied", "would study"], a: 0, t: "First Conditional", e: "This uses. The if-clause uses the present tense ('study') to express a real future condition." },
+    { q: "If you don't hurry, we ______ the train.", o: ["will miss", "miss", "would miss", "missed"], a: 0, t: "First Conditional", e: "This uses (If + Present, Will + Verb) to issue a warning about a highly possible future event." },
+    { q: "If she ______ free this weekend, she will come to the party.", o: ["is", "will be", "was", "would be"], a: 0, t: "First Conditional", e: "This uses. The future condition in the if-clause takes the simple present ('is')." },
+    { q: "They will buy the house if the price ______ down.", o: ["goes", "will go", "went", "would go"], a: 0, t: "First Conditional", e: "This uses. It shows a realistic financial outcome in the future based on a present condition." },
+    { q: "If I ______ money, I will buy a new phone next month.", o: ["save", "will save", "saved", "would save"], a: 0, t: "First Conditional", e: "This uses (If + Present, Will + Verb) to declare a realistic future plan." },
+    { q: "As soon as he arrives, he ______ us.", o: ["will call", "calls", "called", "would call"], a: 0, t: "First Conditional", e: "This uses. Time expressions like 'As soon as' follow the same rule: Present tense in the condition, Will in the main clause." },
+    { q: "If you eat too much candy, your teeth ______.", o: ["will hurt", "hurt", "would hurt", "hurted"], a: 0, t: "First Conditional", e: "This uses to predict a highly probable future consequence." },
+    { q: "Unless it ______ hot, we won't turn on the air conditioner.", o: ["is", "will be", "was", "would be"], a: 0, t: "First Conditional", e: "This uses. 'Unless' means 'If not' and requires a present tense verb here." },
+    { q: "If they don't practice, they ______ the match.", o: ["will lose", "lose", "would lose", "lost"], a: 0, t: "First Conditional", e: "This uses to express a direct, realistic consequence of a future action." },
+
+    // Second Conditional (21-30)
+    { q: "If I ______ a millionaire, I would travel the world.", o: ["were", "am", "will be", "had been"], a: 0, t: "Second Conditional", e: "This uses (If + Past, Would + Verb) for an unreal present/future scenario. Use 'were' for all subjects." },
+    { q: "What ______ you do if you won the lottery?", o: ["would", "will", "do", "did"], a: 0, t: "Second Conditional", e: "This uses because winning the lottery is a highly unlikely, imaginary present/future situation." },
+    { q: "If she ______ English perfectly, she would get the job.", o: ["spoke", "speaks", "will speak", "had spoken"], a: 0, t: "Second Conditional", e: "This uses. She doesn't speak perfectly right now, so it is an unreal present situation." },
+    { q: "I would help you if I ______ more time, but I am very busy.", o: ["had", "have", "will have", "had had"], a: 0, t: "Second Conditional", e: "This uses. 'But I am busy' confirms that having time is an unreal present condition." },
+    { q: "If cats ______ wings, they would fly.", o: ["had", "have", "will have", "would have"], a: 0, t: "Second Conditional", e: "This uses because cats having wings is an impossible, purely imaginary state." },
+    { q: "If I ______ you, I wouldn't marry him.", o: ["were", "am", "was", "would be"], a: 0, t: "Second Conditional", e: "This uses to give advice. 'If I were you' is the standard imaginary presentation." },
+    { q: "We ______ more money if we didn't go out for dinner so often.", o: ["would save", "will save", "saved", "had saved"], a: 0, t: "Second Conditional", e: "This uses. The reality is they go out often now, making the saving imaginary." },
+    { q: "If it ______ winter now, I would go skiing.", o: ["were", "is", "was", "had been"], a: 0, t: "Second Conditional", e: "This uses. The word 'now' proves we are imagining an alternate present reality." },
+    { q: "If he worked harder, he ______ his sales goals.", o: ["might achieve", "will achieve", "achieves", "achieved"], a: 0, t: "Second Conditional", e: "This uses. 'Might' replaces 'would' to show a hypothetical capability or possibility." },
+    { q: "I ______ that laptop if I didn't need it for my new job.", o: ["wouldn't buy", "won't buy", "didn't buy", "don't buy"], a: 0, t: "Second Conditional", e: "This uses. In reality, I do need it, so I am buying it." },
+
+    // Third Conditional (31-40)
+    { q: "If you ______ harder, you would have passed the exam last week.", o: ["had studied", "studied", "study", "would study"], a: 0, t: "Third Conditional", e: "This uses (If + Past Perfect, Would have + p.p.) to express an unreal past event ('last week')." },
+    { q: "We ______ the game if our star player hadn't been injured.", o: ["would have won", "will win", "would win", "had won"], a: 0, t: "Third Conditional", e: "This uses. The player was injured in the past, so we are imagining an altered past outcome." },
+    { q: "If I had known you were coming, I ______ a cake.", o: ["would have baked", "will bake", "would bake", "baked"], a: 0, t: "Third Conditional", e: "This uses to express a past regret about something that did not happen." },
+    { q: "She ______ late if she had caught the early bus.", o: ["wouldn't have been", "won't be", "wouldn't be", "wasn't"], a: 0, t: "Third Conditional", e: "This uses. She missed the bus in the past, causing her past lateness." },
+    { q: "If they ______ earlier, they wouldn't have missed the flight.", o: ["had left", "left", "leave", "would leave"], a: 0, t: "Third Conditional", e: "This uses because it looks back at a completed past action and its unchangeable result." },
+    { q: "If the weather ______ better yesterday, we would have gone to the beach.", o: ["had been", "was", "were", "would be"], a: 0, t: "Third Conditional", e: "This uses. 'Yesterday' explicitly highlights an unreal past condition." },
+    { q: "I ______ to university if I hadn't received a scholarship.", o: ["couldn't have gone", "can't go", "couldn't go", "hadn't gone"], a: 0, t: "Third Conditional", e: "This uses. 'Could couldn't have gone' shows an alternative past ability." },
+    { q: "If you ______ me, I wouldn't have known what to do.", o: ["hadn't helped", "didn't help", "don't help", "wouldn't help"], a: 0, t: "Third Conditional", e: "This uses to express past gratitude for an action that actually took place." },
+    { q: "What ______ you have done if I hadn't been there to save you?", o: ["would", "will", "did", "had"], a: 0, t: "Third Conditional", e: "This uses to ask a question about an alternate history/past result." },
+    { q: "If he had worn his helmet, he ______ his head in the accident.", o: ["wouldn't have hurt", "didn't hurt", "wouldn't hurt", "won't hurt"], a: 0, t: "Third Conditional", e: "This uses. The accident already happened, so we are imagining an alternate past safety outcome." },
+
+    // Mixed Conditionals (41-50)
+    { q: "If I had won the lottery last year, I ______ rich now.", o: ["would be", "would have been", "will be", "am"], a: 0, t: "Mixed Conditional", e: "This mixes and. It combines a past condition (If + had p.p.) with an ongoing present result (would + verb)." },
+    { q: "If she ______ afraid of spiders, she would have picked it up yesterday.", o: ["weren't", "hadn't been", "isn't", "won't be"], a: 0, t: "Mixed Conditional", e: "This mixes and. It combines a constant present state/character trait (If + past tense) with a past result (would have + p.p.)." },
+    { q: "I ______ in a nice house now if I had accepted that job last year.", o: ["would live", "would have lived", "will live", "live"], a: 0, t: "Mixed Conditional", e: "This mixes and. A past choice (had accepted) directly changes a present state of living (would live)." },
+    { q: "If he ______ more organized, he wouldn't have lost his keys yesterday.", o: ["were", "had been", "is", "will be"], a: 0, t: "Mixed Conditional", e: "This mixes and. His permanent personality trait (If + were) altered yesterday's outcome (wouldn't have lost)." },
+    { q: "If you hadn't spent all your money yesterday, you ______ some now.", o: ["would have", "would have had", "will have", "have"], a: 0, t: "Mixed Conditional", e: "This mixes and. A past action (hadn't spent) yields a measurable condition right now (would have)." },
+    { q: "If I ______ English well, I would have translated that letter for you yesterday.", o: ["spoke", "had spoken", "speak", "will speak"], a: 0, t: "Mixed Conditional", e: "This mixes and. My general present lack of language skills (spoke) ruined yesterday's opportunity (would have translated)." },
+    { q: "They would be on holiday now if they ______ their flight yesterday.", o: ["hadn't missed", "didn't miss", "don't miss", "wouldn't miss"], a: 0, t: "Mixed Conditional", e: "This mixes and. Missing a past flight (hadn't missed) blocks a present holiday state (would be)." },
+    { q: "If you ______ candy, you wouldn't have gone to the dentist last week.", o: ["liked", "had liked", "like", "will like"], a: 0, t: "Mixed Conditional", e: "This mixes and. A continuous present dislike of candy (liked) would prevent a past dental trip." },
+    { q: "I ______ exhausted today if I hadn't stayed up all night.", o: ["wouldn't be", "wouldn't have been", "won't be", "am not"], a: 0, t: "Mixed Conditional", e: "This mixes and. Last night's past action (hadn't stayed up) dictates today's current physical state (wouldn't be)." },
+    { q: "If he had taken my advice, he ______ in trouble now.", o: ["wouldn't be", "wouldn't have been", "won't be", "isn't"], a: 0, t: "Mixed Conditional", e: "This mixes and. Ignoring past advice (had taken) left him in a messy situation right now (wouldn't be)." }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let answered = false;
+let currentShuffledOptions = [];
+let correctIndexInShuffled = -1;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Initial shuffle for questions
+shuffleArray(quizData);
+
+function loadQuestion() {
+    answered = false;
+    document.getElementById("explanation").style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+    
+    const currentQuiz = quizData[currentQuestionIndex];
+    
+    document.getElementById("type-badge").innerText = currentQuiz.t;
+    document.getElementById("question").innerText = currentQuiz.q;
+    
+    // Store original string text of the correct answer
+    const correctAnswerText = currentQuiz.o[currentQuiz.a];
+    
+    // Create a copy of choices and shuffle them dynamically
+    currentShuffledOptions = [...currentQuiz.o];
+    shuffleArray(currentShuffledOptions);
+    
+    // Locate where the correct text ended up inside the shuffled choices
+    correctIndexInShuffled = currentShuffledOptions.indexOf(correctAnswerText);
+    
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+    
+    currentShuffledOptions.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.innerText = option;
+        button.classList.add("btn");
+        button.onclick = () => selectOption(index, button);
+        optionsContainer.appendChild(button);
+    });
+}
+
+function selectOption(selectedIndex, clickedButton) {
+    if (answered) return;
+    answered = true;
+    
+    const allButtons = document.querySelectorAll(".btn");
+    
+    if (selectedIndex === correctIndexInShuffled) {
+        clickedButton.classList.add("correct");
+        score++;
+        document.getElementById("score").innerText = score;
+    } else {
+        clickedButton.classList.add("wrong");
+        allButtons[correctIndexInShuffled].classList.add("correct");
+    }
+    
+    const currentQuiz = quizData[currentQuestionIndex];
+    document.getElementById("explanation").innerText = "Explanation: " + currentQuiz.e;
+    document.getElementById("explanation").style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+    
+    setTimeout(() => {
+        document.getElementById("next-btn").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    
+    if (currentQuestionIndex >= quizData.length) {
+        currentQuestionIndex = 0;
+        shuffleArray(quizData); 
+        alert("Great job! You completed all 50 questions. The deck will now be reshuffled for an infinite loop of practice! 🔥");
+    }
+    
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
