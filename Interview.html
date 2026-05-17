@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High School Interview Preparation Quiz (20 Questions)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #16a34a;
+            --error: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+
+        .quiz-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .question-block {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #f1f5f9;
+        }
+
+        .option-label input {
+            margin-top: 0.25rem;
+        }
+
+        .score-box {
+            display: none;
+            background-color: #eef2ff;
+            border: 2px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        button.submit-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button.submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .correct-answer {
+            border-color: var(--success);
+            background-color: #f0fdf4;
+            color: #14532d;
+        }
+
+        .wrong-answer {
+            border-color: var(--error);
+            background-color: #fef2f2;
+            color: #7f1d1d;
+        }
+
+        .show-explanation {
+            display: block !important;
+            background-color: #f8fafc;
+            border-left: 4px solid var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>High School Interview Mastery</h1>
+    <p class="subtitle">Complete 20-Question Prep Simulator</p>
+    
+    <div id="scoreDisplay" class="score-box"></div>
+
+    <form id="quizForm">
+        
+        <!-- Q1 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">1. "Tell me about yourself." What is the best way to open?</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q1" value="A"> A) Recite your full legal name, age, birth city, and entire family tree details.</label>
+                <label class="option-label"><input type="radio" name="q1" value="B"> B) Share your name, current school, two core academic interests, and a key hobby.</label>
+                <label class="option-label"><input type="radio" name="q1" value="C"> C) Say "There isn't much to say, my life is mostly just studying and sleeping."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> This question is an icebreaker. Keep it structured by highlighting your identity, main academic interests, and one memorable extracurricular hook.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-block" data-correct="C">
+            <p class="question-text">2. "Why do you want to attend our school?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q2" value="A"> A) "Because it is ranked highly on web searches and my parents demand I get in."</label>
+                <label class="option-label"><input type="radio" name="q2" value="B"> B) "Because your sports uniform colors look better than my current school's."</label>
+                <label class="option-label"><input type="radio" name="q2" value="C"> C) Connect a specific school offering (like an elective course or club) to your goals.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Specificity proves research. Referencing a particular club, lab, or core value shows genuine personal motivation.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-block" data-correct="A">
+            <p class="question-text">3. "What is your favorite subject and why?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q3" value="A"> A) Name the subject and describe a project or concept that genuinely sparked your curiosity.</label>
+                <label class="option-label"><input type="radio" name="q3" value="B"> B) "Lunch or Recess, because I don't really enjoy sitting through classroom lessons."</label>
+                <label class="option-label"><input type="radio" name="q3" value="C"> C) "I love all subjects completely equally and perfectly; I have zero preferences."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Interviewers seek intellectual curiosity. Sharing a specific topic or project shows that you are actively engaged in your own learning.
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">4. "Tell me about a subject you find difficult and how you manage it."</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q4" value="A"> A) "I never struggle with any subjects; I get perfect grades effortlessly."</label>
+                <label class="option-label"><input type="radio" name="q4" value="B"> B) Name the subject, identify your specific hurdle, and explain how you seek help or adjust study habits.</label>
+                <label class="option-label"><input type="radio" name="q4" value="C"> C) Blame your teacher for being bad at explaining things clearly to the class.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Self-awareness and resilience matter. Acknowledging a challenge and detailing your strategy to overcome it proves academic maturity.
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-block" data-correct="A">
+            <p class="question-text">5. "What do you like to do outside of the classroom?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q5" value="A"> A) Talk passionately about 1 or 2 core hobbies, focusing on what you enjoy or learn from them.</label>
+                <label class="option-label"><input type="radio" name="q5" value="B"> B) List 15 different activities you tried once to sound like you do everything.</label>
+                <label class="option-label"><input type="radio" name="q5" value="C"> C) "I mostly just scroll on social media or watch video loops all weekend."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Depth beats breadth. Focusing on a couple of real interests reveals personality, dedication, and time management.
+            </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-block" data-correct="C">
+            <p class="question-text">6. "How do you handle a situation where you have too much schoolwork due at once?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q6" value="A"> A) Panic, stay up until 4 AM, and turn in rushed work.</label>
+                <label class="option-label"><input type="radio" name="q6" value="B"> B) Complain to the teachers and ask them all to change their deadlines for you.</label>
+                <label class="option-label"><input type="radio" name="q6" value="C"> C) Prioritize tasks by urgency, break assignments down, and use a calendar system.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> High school requires strong organizational skills. Demonstrating proactive planning proves you can handle an increased workload.
+            </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">7. "Tell me about a time you worked in a group and had a disagreement."</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q7" value="A"> A) "I just did all the work myself so I wouldn't have to listen to anyone else."</label>
+                <label class="option-label"><input type="radio" name="q7" value="B"> B) Explain how you listened to their view and found a compromise to finish the project.</label>
+                <label class="option-label"><input type="radio" name="q7" value="C"> C) Report them to the teacher immediately to get them kicked out of the group.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Collaboration is a key part of school life. Showing that you can listen, compromise, and focus on the shared goal demonstrates strong teamwork.
+            </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="question-block" data-correct="A">
+            <p class="question-text">8. "What book have you read recently outside of school that you enjoyed?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q8" value="A"> A) State the title, a quick plot overview, and the main lesson or theme it taught you.</label>
+                <label class="option-label"><input type="radio" name="q8" value="B"> B) "I don't read books unless a teacher forces me to pass a test."</label>
+                <label class="option-label"><input type="radio" name="q8" value="C"> C) Name a book but admit you only read the summary online to save time.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> This question looks at your independent reading habits. Reflecting on a book's themes shows critical thinking and a love for learning.
+            </div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">9. "What is your biggest weakness?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q9" value="A"> A) "I am a perfectionist who cares too much and works way too hard."</label>
+                <label class="option-label"><input type="radio" name="q9" value="B"> B) State a genuine minor weakness (like public speaking) and what you are doing to improve it.</label>
+                <label class="option-label"><input type="radio" name="q9" value="C"> C) "I have no weaknesses; I am great at everything I try."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Avoid cliché answers like "I'm a perfectionist." Sharing a real area for growth and your steps to improve shows true maturity.
+            </div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="question-block" data-correct="C">
+            <p class="question-text">10. "How do you think your current teachers would describe you?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q10" value="A"> A) "They would say I am completely silent and never talk at all."</label>
+                <label class="option-label"><input type="radio" name="q10" value="B"> B) "They think I am the smartest student to ever walk into their building."</label>
+                <label class="option-label"><input type="radio" name="q10" value="C"> C) Highlight 2 positive traits (like being helpful or participating often) with a quick example.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Use balanced, realistic praise. Mentioning traits like consistency, curiosity, or helpfulness reflects how you actually behave in class.
+            </div>
+        </div>
+
+        <!-- Q11 -->
+        <div class="question-block" data-correct="A">
+            <p class="question-text">11. "Tell me about a time you failed or faced a setback."</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q11" value="A"> A) Describe a real setback, your constructive response, and what the experience taught you.</label>
+                <label class="option-label"><input type="radio" name="q11" value="B"> B) Pretend you have never failed anything in your entire life.</label>
+                <label class="option-label"><input type="radio" name="q11" value="C"> C) Talk about a setback but focus entirely on how unfair the situation was.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Failure is a natural part of growth. Showcasing how you bounce back highlights resilience and a growth mindset.
+            </div>
+        </div>
+
+        <!-- Q12 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">12. "How do you plan to contribute to our school community?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q12" value="A"> A) "I will just study quietly in the library and stay out of everyone's way."</label>
+                <label class="option-label"><input type="radio" name="q12" value="B"> B) Mention specific ways you want to get involved, like joining clubs, volunteering, or helping peers.</label>
+                <label class="option-label"><input type="radio" name="q12" value="C"> C) "I will make the school famous by winning every single competition."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Schools want active community members. Mentioning specific clubs, service projects, or teams shows you plan to add value to campus life.
+            </div>
+        </div>
+
+        <!-- Q13 -->
+        <div class="question-block" data-correct="C">
+            <p class="question-text">13. "If you could meet any historical figure, who would it be and why?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q13" value="A"> A) "A random king, because being rich and powerful sounds cool."</label>
+                <label class="option-label"><input type="radio" name="q13" value="B"> B) "Nobody, history is boring and I prefer to focus on the future."</label>
+                <label class="option-label"><input type="radio" name="q13" value="C"> C) Pick a figure whose specific achievements or values align with your own interests.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> This question tests critical thinking. Connecting your choice to a value you share (like creativity, leadership, or courage) shows depth.
+            </div>
+        </div>
+
+        <!-- Q14 -->
+        <div class="question-block" data-correct="A">
+            <p class="question-text">14. "What are your long-term goals or aspirations?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q14" value="A"> A) Share a general field of interest and discuss how this high school fits into that path.</label>
+                <label class="option-label"><input type="radio" name="q14" value="B"> B) "I want to be a billionaire, but I don't really care how I get there."</label>
+                <label class="option-label"><input type="radio" name="q14" value="C"> C) Say you have no plans because high school is too early to think about the future.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> You don't need a final career mapped out, but showing a general direction and explaining how the school helps you get there proves purpose.
+            </div>
+        </div>
+
+        <!-- Q15 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">15. "How do you handle constructive criticism from a coach or teacher?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q15" value="A"> A) Feel insulted, stop talking, and assume they simply do not like you.</label>
+                <label class="option-label"><input type="radio" name="q15" value="B"> B) Listen carefully, thank them for the feedback, and apply it to your work.</label>
+                <label class="option-label"><input type="radio" name="q15" value="C"> C) Argue back instantly to explain why your approach was already right.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Coachability is highly valued. Showing that you can take feedback and use it to improve demonstrates maturity.
+            </div>
+        </div>
+
+        <!-- Q16 -->
+        <div class="question-block" data-correct="C">
+            <p class="question-text">16. "Describe a leadership experience you have had."</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q16" value="A"> A) "I have never been elected class president, so I have never been a leader."</label>
+                <label class="option-label"><input type="radio" name="q16" value="B"> B) Tell a story about a time you told everyone else exactly what to do.</label>
+                <label class="option-label"><input type="radio" name="q16" value="C"> C) Share an example of a time you guided a team, helped a peer, or organized an activity.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Leadership isn't just about titles. Helping a classmate, leading a small project, or taking initiative all count as great examples.
+            </div>
+        </div>
+
+        <!-- Q17 -->
+        <div class="question-block" data-correct="A">
+            <p class="question-text">17. "What makes you unique compared to other applicants?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q17" value="A"> A) Connect a specific combination of experiences, values, or perspectives unique to you.</label>
+                <label class="option-label"><input type="radio" name="q17" value="B"> B) "I have higher test scores and grades than anyone else applying."</label>
+                <label class="option-label"><input type="radio" name="q17" value="C"> C) "Nothing really, I am a pretty average person."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Focus on personality and perspective over raw scores. Sharing a unique combination of interests makes you stand out and stay memorable.
+            </div>
+        </div>
+
+        <!-- Q18 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">18. "If your best friend was here, what would they say about you?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q18" value="A"> A) "They would say I am cool and we play video games together for hours."</label>
+                <label class="option-label"><input type="radio" name="q18" value="B"> B) Mention character traits like loyalty, a sense of humor, or being a good listener.</label>
+                <label class="option-label"><input type="radio" name="q18" value="C"> C) "They would say I am always perfect and never make any mistakes."</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> This question looks at your self-awareness through a social lens. Focus on interpersonal strengths like reliability, empathy, or humor.
+            </div>
+        </div>
+
+        <!-- Q19 -->
+        <div class="question-block" data-correct="C">
+            <p class="question-text">19. "What are you looking forward to most in high school?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q19" value="A"> A) "Having more freedom and fewer rules compared to middle school."</label>
+                <label class="option-label"><input type="radio" name="q19" value="B"> B) "Honestly, I am just looking forward to finishing it so I can go to college."</label>
+                <label class="option-label"><input type="radio" name="q19" value="C"> C) Mention advanced learning opportunities, specialized facilities, or new extracurriculars.</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Highlight positive anticipation. Looking forward to more complex academic challenges or unique school clubs shows you are ready to grow.
+            </div>
+        </div>
+
+        <!-- Q20 -->
+        <div class="question-block" data-correct="B">
+            <p class="question-text">20. "Do you have any questions for us?"</p>
+            <div class="options-group">
+                <label class="option-label"><input type="radio" name="q20" value="A"> A) "No, I think you covered everything during the talk."</label>
+                <label class="option-label"><input type="radio" name="q20" value="B"> B) Ask a thoughtful question about school tradition, culture, or student life.</label>
+                <label class="option-label"><input type="radio" name="q20" value="C"> C) "How long do I have to wait until you tell me if I am accepted or rejected?"</label>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Always have a question ready. Asking about school culture or advice for incoming freshmen shows real enthusiasm and engagement.
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Quiz & Calculate Score</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const questions = document.querySelectorAll('.question-block');
+        let score = 0;
+        let totalQuestions = questions.length;
+        
+        questions.forEach((block) => {
+            const correctAnswer = block.getAttribute('data-correct');
+            const selectedOption = block.querySelector('input[type="radio"]:checked');
+            const explanationBox = block.querySelector('.explanation');
+            const allLabels = block.querySelectorAll('.option-label');
+            
+            if (selectedOption && selectedOption.value === correctAnswer) {
+                score++;
+            }
+            
+            allLabels.forEach(label => {
+                const radioInput = label.querySelector('input');
+                label.classList.remove('correct-answer', 'wrong-answer');
+                
+                if (radioInput.value === correctAnswer) {
+                    label.classList.add('correct-answer');
+                } else if (selectedOption && radioInput === selectedOption && selectedOption.value !== correctAnswer) {
+                    label.classList.add('wrong-answer');
+                }
+            });
+            
+            explanationBox.classList.add('show-explanation');
+        });
+
+        // Calculate and show the score box
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        scoreDisplay.innerHTML = `Your Score: ${score} / ${totalQuestions} (${Math.round((score/totalQuestions)*100)}%)<br><small>Scroll down to review correct answers and interview strategies.</small>`;
+        scoreDisplay.style.display = 'block';
+        window.scrollTo({top: 0, behavior: 'smooth'});
+
+        // Lock form inputs
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.textContent = "Evaluation Complete";
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.6";
+        submitBtn.style.cursor = "default";
+    });
+</script>
+
+</body>
+</html>
