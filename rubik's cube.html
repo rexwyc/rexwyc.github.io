@@ -72,18 +72,6 @@
             transform: translateY(-1px);
         }
 
-        /* --- Prime Toggle Active Styling --- */
-        #prime-toggle-btn {
-            background: #341f97;
-            border: 1px solid #5f27cd;
-        }
-        #prime-toggle-btn.active {
-            background: #ff9f43;
-            color: #141414;
-            border-color: #ffb142;
-            box-shadow: 0 0 15px rgba(255, 159, 67, 0.6);
-        }
-
         #scramble-btn {
             background: linear-gradient(135deg, #ff4757, #ff6b81);
             border: none;
@@ -122,6 +110,26 @@
             pointer-events: auto;
         }
 
+        /* --- Dedicated Prime Toggle Button Style --- */
+        #mode-toggle-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #2ed573, #1e90ff);
+            color: white;
+            border: none;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #mode-toggle-btn.prime-active {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+        }
+
         .pad-row {
             display: flex;
             gap: 8px;
@@ -157,7 +165,7 @@
 
         #status {
             position: absolute;
-            bottom: 170px;
+            bottom: 210px;
             width: 100%;
             text-align: center;
             font-size: 24px;
@@ -175,9 +183,10 @@
             .action-btn { padding: 8px 14px; font-size: 12px; }
             
             #pad-container { padding: 8px; bottom: 15px; gap: 6px; }
+            #mode-toggle-btn { font-size: 11px; padding: 6px; }
             .move-btn { width: 42px; height: 42px; font-size: 15px; border-radius: 6px; }
             .hint { font-size: 8px; }
-            #status { bottom: 145px; font-size: 20px; }
+            #status { bottom: 185px; font-size: 20px; }
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -188,21 +197,22 @@
     <div id="ui-container">
         <h1>Easy-Turn Rubik's Cube</h1>
         <div class="instructions">
-            <strong>Left-Click</strong> or tap button for Normal turn.<br>
-            Toggle the <strong>Prime (') Mode</strong> button to reverse turn direction!
+            Tap the <strong>Mode Button</strong> to toggle Normal/Prime turns.<br>
+            Keyboard users can also hold <strong>Spacebar</strong> for Prime turns.
         </div>
         <div class="control-panel">
             <button id="scramble-btn" class="action-btn">Scramble</button>
-            <button id="prime-toggle-btn" class="action-btn">Prime (') Mode: OFF</button>
             <button id="reset-view-btn" class="action-btn">Reset View</button>
             <button id="explode-btn" class="action-btn">???</button>
         </div>
     </div>
 
     <div id="pad-container">
+        <button id="mode-toggle-btn">Turn Mode: Normal</button>
+        
         <div class="pad-row">
-            <button class="move-btn" data-move="U">U<span class="hint">Left</span></button>
-            <button class="move-btn" data-move="D">D<span class="hint">Right</span></button>
+            <button class="move-btn" data-move="U">U<span class="hint">Up</span></button>
+            <button class="move-btn" data-move="D">D<span class="hint">Down</span></button>
             <button class="move-btn" data-move="M">M<span class="hint">Middle</span></button>
         </div>
         <div class="pad-row">
@@ -250,7 +260,7 @@
         // --- Cube Design ---
         const cubies = [];
         let isSpacePressed = false;
-        let isPrimeToggled = false; // New global state tracker for the button
+        let isPrimeModeUI = false; 
         let isAnimating = false;
         let explodeClicks = 0;
         
@@ -341,10 +351,11 @@
             let directionInverter = 1;
 
             switch (notationKey) {
-                case 'F': dynamicFace = screenBack;  directionInverter = 1; break;  
-                case 'B': dynamicFace = screenFront; directionInverter = 1; break;  
-                case 'L': dynamicFace = screenLeft;  directionInverter = 1; break; 
-                case 'R': dynamicFace = screenRight; directionInverter = 1; break; 
+                case 'F': dynamicFace = screenBack;  directionInverter = -1; break;  
+                case 'B': dynamicFace = screenFront; directionInverter = -1; break;  
+                case 'L': dynamicFace = screenLeft;  directionInverter = -1; break; 
+                case 'R': dynamicFace = screenRight; directionInverter = -1; break; 
+                // SWAPPED: Direction signs flipped from 1 to -1 to invert Normal vs Prime behavior
                 case 'U': dynamicFace = screenUp;    directionInverter = -1; break; 
                 case 'D': dynamicFace = screenDown;  directionInverter = -1; break; 
                 case 'M': 
@@ -521,8 +532,7 @@
             }
             const key = e.key.toUpperCase();
             if (['U', 'D', 'L', 'R', 'F', 'B', 'M'].includes(key)) {
-                // If either Spacebar IS held OR the UI Toggle IS active, it evaluates to true
-                executeMove(key, isSpacePressed || isPrimeToggled);
+                executeMove(key, isSpacePressed || isPrimeModeUI);
             }
         });
 
@@ -530,28 +540,26 @@
             if (e.code === 'Space') isSpacePressed = false;
         });
 
-        // Setup UI Action for Prime Toggle Button
-        const toggleBtn = document.getElementById('prime-toggle-btn');
-        toggleBtn.addEventListener('click', () => {
-            isPrimeToggled = !isPrimeToggled;
-            if (isPrimeToggled) {
-                toggleBtn.innerText = "Prime (') Mode: ON";
-                toggleBtn.classList.add('active');
+        // --- Interactive Mode Switcher Logic ---
+        const modeToggleBtn = document.getElementById('mode-toggle-btn');
+        modeToggleBtn.addEventListener('click', () => {
+            isPrimeModeUI = !isPrimeModeUI;
+            if (isPrimeModeUI) {
+                modeToggleBtn.innerText = "Turn Mode: Prime (') ";
+                modeToggleBtn.classList.add('prime-active');
             } else {
-                toggleBtn.innerText = "Prime (') Mode: OFF";
-                toggleBtn.classList.remove('active');
+                modeToggleBtn.innerText = "Turn Mode: Normal";
+                modeToggleBtn.classList.remove('prime-active');
             }
         });
 
         document.querySelectorAll('.move-btn').forEach(btn => {
             const moveLetter = btn.getAttribute('data-move');
             btn.addEventListener('click', () => {
-                // Clicking a button combines the state of Space and the UI Toggle
-                executeMove(moveLetter, isSpacePressed || isPrimeToggled);
+                executeMove(moveLetter, isPrimeModeUI || isSpacePressed);
             });
             btn.addEventListener('contextmenu', (e) => {
                 e.preventDefault(); 
-                // Right click always acts as absolute Prime turn regardless of toggles
                 executeMove(moveLetter, true);
             });
         });
