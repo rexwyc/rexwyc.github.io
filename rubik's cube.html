@@ -193,10 +193,10 @@
             <button class="move-btn" data-move="M">M<span class="hint">Middle</span></button>
         </div>
         <div class="pad-row">
-            <button class="move-btn" data-move="L">L<span class="hint">Right</span></button>
-            <button class="move-btn" data-move="F">F<span class="hint">Back</span></button>
-            <button class="move-btn" data-move="R">R<span class="hint">Left</span></button>
-            <button class="move-btn" data-move="B">B<span class="hint">Front</span></button>
+            <button class="move-btn" data-move="L">L<span class="hint">Left</span></button>
+            <button class="move-btn" data-move="F">F<span class="hint">Front</span></button>
+            <button class="move-btn" data-move="R">R<span class="hint">Right</span></button>
+            <button class="move-btn" data-move="B">B<span class="hint">Back</span></button>
         </div>
     </div>
 
@@ -329,8 +329,8 @@
             switch (notationKey) {
                 case 'F': dynamicFace = screenBack;  directionInverter = 1; break;  
                 case 'B': dynamicFace = screenFront; directionInverter = 1; break;  
-                case 'L': dynamicFace = screenRight; directionInverter = -1; break; 
-                case 'R': dynamicFace = screenLeft;  directionInverter = -1; break; 
+                case 'L': dynamicFace = screenLeft;  directionInverter = 1; break; 
+                case 'R': dynamicFace = screenRight; directionInverter = 1; break; 
                 case 'U': dynamicFace = screenUp;    directionInverter = -1; break; 
                 case 'D': dynamicFace = screenDown;  directionInverter = -1; break; 
                 case 'M': 
@@ -421,21 +421,16 @@
             explodeClicks++;
 
             if (explodeClicks < 7) {
-                // Keep the cube perfectly normal for clicks 1-6
                 return;
             } else {
-                // On the 7th click: Trigger explosion animation and force-solve
                 explodeClicks = 0;
                 isAnimating = true;
 
-                // Step A: Blow everything away quickly
                 const startTime = performance.now();
                 const blastDuration = 180;
-                const intermediatePositions = [];
                 const currentPositions = cubies.map(c => c.position.clone());
                 const currentQuaternions = cubies.map(c => c.quaternion.clone());
 
-                // Flash visual impact indicator
                 renderer.setClearColor(0xffffff, 1);
                 setTimeout(() => renderer.setClearColor(0x141414, 1), 60);
 
@@ -445,14 +440,12 @@
 
                     cubies.forEach((cubie, i) => {
                         const direction = currentPositions[i].clone().normalize();
-                        // Explode far outwards exponentially
                         cubie.position.copy(currentPositions[i]).addScaledVector(direction, progress * 3.5);
                     });
 
                     if (progress < 1) {
                         requestAnimationFrame(animateBlast);
                     } else {
-                        // Step B: Implode immediately back into a completely solved grid state
                         const savedBlastPositions = cubies.map(c => c.position.clone());
                         const implodeStartTime = performance.now();
                         const implodeDuration = 450;
@@ -460,7 +453,7 @@
                         function animateImplosion(time) {
                             const implodeElapsed = time - implodeStartTime;
                             const implodeProgress = Math.min(implodeElapsed / implodeDuration, 1);
-                            const eased = 1 - Math.pow(1 - implodeProgress, 3); // Smooth pull-back
+                            const eased = 1 - Math.pow(1 - implodeProgress, 3);
 
                             cubies.forEach((cubie, i) => {
                                 cubie.position.lerpVectors(savedBlastPositions[i], nativePositions[i], eased);
