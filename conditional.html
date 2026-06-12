@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditional Quiz Challenge</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .score-board {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) {
+            .btn:hover:not([disabled]) {
+                background-color: #edf2f7;
+                border-color: #cbd5e1;
+            }
+        }
+
+        .btn.correct {
+            background-color: #ecfdf5;
+            border-color: var(--success-color);
+            color: #065f46;
+            font-weight: bold;
+        }
+
+        .btn.wrong {
+            background-color: #fef2f2;
+            border-color: var(--error-color);
+            color: #991b1b;
+        }
+
+        .explanation-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 5px;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+        }
+
+        .next-btn:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <span id="type-badge" style="font-size: 0.85rem; font-weight: bold; background: #e2e8f0; padding: 4px 8px; border-radius: 20px;">Conditional</span>
+        <div class="score-board">Score: <span id="score">0</span></div>
+    </div>
+
+    <div class="question-text" id="question">Loading question...</div>
+
+    <div class="options-container" id="options">
+        </div>
+
+    <div class="explanation-container" id="explanation-box">
+        <div class="explanation-title" id="feedback-title">Correct!</div>
+        <div id="explanation-text">Explanation goes here.</div>
+    </div>
+
+    <button class="next-btn" id="next-button" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+    const questions = [
+        // ZERO CONDITIONAL
+        { q: "If you ________ water to 100°C, it boils.", a: ["heat", "will heat", "heated"], c: 0, type: "Zero Conditional", exp: "Zero conditional is used for general truths/scientific facts. Structure: If + Present Simple, Present Simple." },
+        { q: "Plants die if it ________ change to rain for a long time.", a: ["doesn't rain", "won't rain", "didn't rain"], c: 0, type: "Zero Conditional", exp: "General truth. Present simple is required in both clauses." },
+        { q: "If I eat peanuts, I ________ a severe allergic reaction.", a: ["get", "would get", "had gotten"], c: 0, type: "Zero Conditional", exp: "A personal habit or biological fact uses the Zero Conditional (Present / Present)." },
+        { q: "When the sun goes down, it ________ dark.", a: ["gets", "got", "will get"], c: 0, type: "Zero Conditional", exp: "'When' can replace 'if' in zero conditionals for absolute certainties." },
+        { q: "If you mix red and blue, you ________ purple.", a: ["get", "would get", "will get"], c: 0, type: "Zero Conditional", exp: "A physical fact: Present simple in both parts." },
+        { q: "Ice melts if you ________ it in the sun.", a: ["leave", "left", "will leave"], c: 0, type: "Zero Conditional", exp: "Scientific fact. If + present simple, present simple." },
+
+        // FIRST CONDITIONAL
+        { q: "If it ________ tomorrow, we will cancel the picnic.", a: ["rains", "will rain", "rained"], c: 0, type: "First Conditional", exp: "First conditional predicts a real future possibility. Structure: If + Present Simple, Will + Verb." },
+        { q: "I will pass the exam if I ________ hard tonight.", a: ["study", "will study", "studied"], c: 0, type: "First Conditional", exp: "Do not use 'will' in the 'if' clause of a first conditional." },
+        { q: "If you don't hurry, we ________ the train.", a: ["will miss", "miss", "would miss"], c: 0, type: "First Conditional", exp: "Future consequence of a possible real action: 'will miss'." },
+        { q: "If she ________ free time this weekend, she will call you.", a: ["has", "have", "will have"], c: 0, type: "First Conditional", exp: "She is third person singular, so 'has' fits the Present Simple 'if' clause." },
+        { q: "What will you do if you ________ your keys?", a: ["lose", "will lose", "lost"], c: 0, type: "First Conditional", exp: "Real future possibility. Present simple follows 'if'." },
+        { q: "If they invite me, I ________ definitely go.", a: ["will", "would", "am"], c: 0, type: "First Conditional", exp: "Standard future outcome phrase uses 'will'." },
+
+        // SECOND CONDITIONAL
+        { q: "If I ________ a millionaire, I would buy an island.", a: ["were", "am", "would be"], c: 0, type: "Second Conditional", exp: "Unreal/imaginary present or future state. Structure: If + Past Simple, Would + Verb. 'Were' is preferred for all subjects." },
+        { q: "What would you do if you ________ a bear in the woods?", a: ["saw", "see", "will see"], c: 0, type: "Second Conditional", exp: "Hypothetical scenario. Uses Past Simple in the 'if' clause." },
+        { q: "If she studied more, she ________ better grades.", a: ["would get", "will get", "got"], c: 0, type: "Second Conditional", exp: "Imaginary present consequence: 'would + verb'." },
+        { q: "I ________ that jacket if I were you.", a: ["wouldn't buy", "won't buy", "didn't buy"], c: 0, type: "Second Conditional", exp: "'If I were you' is a classic advice structure using the second conditional." },
+        { q: "If we lived closer to the beach, we ________ swimming every day.", a: ["could go", "can go", "went"], c: 0, type: "Second Conditional", exp: "'Could' acts as the past form of 'can' representing hypothetical ability." },
+        { q: "If he ________ the answer, he would tell us.", a: ["knew", "knows", "would know"], c: 0, type: "Second Conditional", exp: "He doesn't know it now (hypothetical), so use Past Simple." },
+
+        // THIRD CONDITIONAL
+        { q: "If you ________ me, I would have helped you.", a: ["had asked", "asked", "have asked"], c: 0, type: "Third Conditional", exp: "Unreal past situation (it didn't happen). Structure: If + Past Perfect, Would Have + Past Participle." },
+        { q: "We would have won the match if our striker ________ that penalty.", a: ["had scored", "scored", "would score"], c: 0, type: "Third Conditional", exp: "Past regret. The condition requires Past Perfect ('had scored')." },
+        { q: "If I hadn't lost my map, I ________ lost.", a: ["wouldn't have gotten", "won't get", "didn't get"], c: 0, type: "Third Conditional", exp: "Past outcome of an altered past event: 'woulden't have + participle'." },
+        { q: "She ________ the flight if she had left on time.", a: ["wouldn't have missed", "didn't miss", "wouldn't miss"], c: 0, type: "Third Conditional", exp: "Speculating about a different past outcome." },
+        { q: "If it ________ so heavily yesterday, we would have gone out.", a: ["hadn't rained", "didn't rain", "wouldn't rain"], c: 0, type: "Third Conditional", exp: "'Yesterday' signals a pure past context, demanding Past Perfect." },
+        { q: "What would you have done if you ________ the lottery last year?", a: ["had won", "won", "would win"], c: 0, type: "Third Conditional", exp: "Hypothetical past event ('last year'): If + Past Perfect." },
+
+        // MIXED CONDITIONAL
+        { q: "If I had won the lottery last year, I ________ rich today.", a: ["would be", "would have been", "will be"], c: 0, type: "Mixed Conditional", exp: "Past condition (had won) changing a present state (today) -> Mixed 3 + 2: Would + Verb." },
+        { q: "If he were a faster runner, he ________ the race yesterday.", a: ["would have won", "would win", "won"], c: 0, type: "Mixed Conditional", exp: "Permanent present characteristic (if he were faster) impacting a past event (yesterday) -> Mixed 2 + 3." },
+        { q: "I ________ so tired now if I hadn't stayed up late last night.", a: ["wouldn't be", "won't be", "wouldn't have been"], c: 0, type: "Mixed Conditional", exp: "Past action impacting current present feelings (now) -> 'wouldn't be'." },
+        { q: "If she ________ French, she would have translated the text for us yesterday.", a: ["spoke", "had spoken", "speaks"], c: 0, type: "Mixed Conditional", exp: "She doesn't speak French generally (present condition) affecting a past task -> 'spoke'." },
+        { q: "If you had checked the map, we wouldn't ________ lost right now.", a: ["be", "have been", "had been"], c: 0, type: "Mixed Conditional", exp: "Past action (or lack thereof) affecting our current situation ('right now')." },
+        { q: "If I ________ born in Italy, I wouldn't need a visa to live here now.", a: ["had been", "were", "was"], c: 0, type: "Mixed Conditional", exp: "Being born is a fixed past event (Past Perfect), affecting present status (now)." }
+    ];
+
+    let currentQuestionsPool = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function initGame() {
+        // Infinite Loop Mechanism: Deep copy and reshuffle array whenever pool is exhausted
+        currentQuestionsPool = shuffleArray([...questions]);
+        currentQuestionIndex = 0;
+    }
+
+    function loadQuestion() {
+        // Reset view states
+        document.getElementById("explanation-box").style.display = "none";
+        document.getElementById("next-button").style.display = "none";
+
+        if (currentQuestionIndex >= currentQuestionsPool.length) {
+            initGame(); // Seamless restart when all 30 items are completed
+        }
+
+        const currentData = currentQuestionsPool[currentQuestionIndex];
+        
+        document.getElementById("type-badge").innerText = currentData.type;
+        document.getElementById("question").innerText = `${currentQuestionIndex + 1}. ${currentData.q}`;
+        
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+
+        currentData.a.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.className = "btn";
+            button.innerText = option;
+            button.onclick = () => checkAnswer(index, currentData.c, button);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedIndex, correctIndex, selectedButton) {
+        const options = document.getElementById("options").children;
+        const currentData = currentQuestionsPool[currentQuestionIndex];
+
+        // Disable all buttons immediately
+        for (let btn of options) {
+            btn.disabled = true;
+        }
+
+        if (selectedIndex === correctIndex) {
+            selectedButton.classList.add("correct");
+            document.getElementById("feedback-title").innerText = "✨ Correct!";
+            document.getElementById("feedback-title").style.color = "#10b981";
+            score++;
+            document.getElementById("score").innerText = score;
+        } else {
+            selectedButton.classList.add("wrong");
+            options[correctIndex].classList.add("correct");
+            document.getElementById("feedback-title").innerText = "❌ Incorrect";
+            document.getElementById("feedback-title").style.color = "#ef4444";
+        }
+
+        // Display explanation
+        document.getElementById("explanation-text").innerText = currentData.exp;
+        document.getElementById("explanation-box").style.display = "block";
+        document.getElementById("next-button").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+
+    // Start game on load
+    initGame();
+    loadQuestion();
+</script>
+
+</body>
+</html>

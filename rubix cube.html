@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Easy-Turn 3D Rubik's Cube</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #141414;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            user-select: none;
+        }
+
+        #ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+
+        .instructions {
+            background: rgba(20, 20, 20, 0.85);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid #333;
+            pointer-events: auto;
+            margin-bottom: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .scramble-box {
+            pointer-events: auto;
+        }
+
+        .scramble-btn {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .scramble-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.5);
+        }
+
+        /* --- Move Buttons Interface --- */
+        #pad-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: rgba(20, 20, 20, 0.9);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid #444;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            pointer-events: auto;
+        }
+
+        .pad-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .move-btn {
+            background: #2f3542;
+            color: white;
+            border: 1px solid #57606f;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .move-btn:hover {
+            background: #57606f;
+            border-color: #747d8c;
+            transform: scale(1.05);
+        }
+
+        .move-btn:active {
+            background: #007bff;
+            border-color: #0056b3;
+            transform: scale(0.95);
+        }
+
+        .hint {
+            font-size: 9px;
+            color: #a4b0be;
+            margin-top: -2px;
+        }
+
+        #status {
+            position: absolute;
+            bottom: 160px;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4cd137;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+            pointer-events: none;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="ui-container">
+        <h1>Easy-Turn Rubik's Cube</h1>
+        <div class="instructions">
+            <strong>Left-Click</strong> on a button or press keys to turn Normal.<br>
+            <strong>Right-Click</strong> or hold <strong>Spacebar + Key</strong> to turn Prime (').<br>
+            Press <strong>M</strong> for Middle Layer. <em>Drag background to spin! Controls match your view!</em>
+        </div>
+        <div class="scramble-box">
+            <button id="scramble-btn" class="scramble-btn">Scramble Cube</button>
+        </div>
+    </div>
+
+    <div id="pad-container">
+        <div class="pad-row">
+            <button class="move-btn" data-move="U">U<span class="hint">Up</span></button>
+            <button class="move-btn" data-move="D">D<span class="hint">Down</span></button>
+            <button class="move-btn" data-move="M">M<span class="hint">Middle</span></button>
+        </div>
+        <div class="pad-row">
+            <button class="move-btn" data-move="L">L<span class="hint">Right</span></button>
+            <button class="move-btn" data-move="F">F<span class="hint">Back</span></button>
+            <button class="move-btn" data-move="R">R<span class="hint">Left</span></button>
+            <button class="move-btn" data-move="B">B<span class="hint">Front</span></button>
+        </div>
+    </div>
+
+    <div id="status"></div>
+
+    <script>
+        // --- Setup Scene ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        
+        camera.position.set(6, 6, 8); 
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enablePan = false;
+        controls.rotateSpeed = 1.8; 
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        dirLight.position.set(10, 20, 15);
+        scene.add(dirLight);
+
+        // --- Cube Design ---
+        const cubies = [];
+        let isSpacePressed = false;
+        let isAnimating = false;
+        
+        const colors = {
+            Right:  0xb71234, 
+            Left:   0xff5800, 
+            Up:     0xffd500, 
+            Down:   0xffffff, 
+            Front:  0x009b48, 
+            Back:   0x0046ad  
+        };
+
+        function createCube() {
+            const gap = 0.06; 
+            const size = 1;
+
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
+                    for (let z = -1; z <= 1; z++) {
+                        if (x === 0 && y === 0 && z === 0) continue;
+
+                        const mats = [
+                            new THREE.MeshBasicMaterial({ color: x === 1 ? colors.Right : 0x000000 }), 
+                            new THREE.MeshBasicMaterial({ color: x === -1 ? colors.Left : 0x000000 }), 
+                            new THREE.MeshBasicMaterial({ color: y === 1 ? colors.Up : 0x000000 }), 
+                            new THREE.MeshBasicMaterial({ color: y === -1 ? colors.Down : 0x000000 }), 
+                            new THREE.MeshBasicMaterial({ color: z === 1 ? colors.Front : 0x000000 }), 
+                            new THREE.MeshBasicMaterial({ color: z === -1 ? colors.Back : 0x000000 })  
+                        ];
+
+                        const geometry = new THREE.BoxGeometry(size - gap, size - gap, size - gap);
+                        const cubie = new THREE.Mesh(geometry, mats);
+                        cubie.position.set(x, y, z);
+                        
+                        const edges = new THREE.EdgesGeometry(geometry);
+                        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x111111 }));
+                        cubie.add(line);
+
+                        scene.add(cubie);
+                        cubies.push(cubie);
+                    }
+                }
+            }
+        }
+
+        // --- Explicit View Alignment Engine ---
+        function getDynamicMoveConfig(notationKey) {
+            const lookVector = new THREE.Vector3();
+            camera.getWorldDirection(lookVector);
+
+            const baseDirections = [
+                { dirName: 'posX', vec: new THREE.Vector3(1, 0, 0),  axis: 'x', value: 1,  rot: new THREE.Vector3(1, 0, 0) },
+                { dirName: 'negX', vec: new THREE.Vector3(-1, 0, 0), axis: 'x', value: -1, rot: new THREE.Vector3(1, 0, 0) },
+                { dirName: 'posY', vec: new THREE.Vector3(0, 1, 0),  axis: 'y', value: 1,  rot: new THREE.Vector3(0, 1, 0) },
+                { dirName: 'negY', vec: new THREE.Vector3(0, -1, 0), axis: 'y', value: -1, rot: new THREE.Vector3(0, 1, 0) },
+                { dirName: 'posZ', vec: new THREE.Vector3(0, 0, 1),  axis: 'z', value: 1,  rot: new THREE.Vector3(0, 0, 1) },
+                { dirName: 'negZ', vec: new THREE.Vector3(0, 0, -1), axis: 'z', value: -1, rot: new THREE.Vector3(0, 0, 1) }
+            ];
+
+            let forwardProj = lookVector.clone();
+            forwardProj.y = 0; 
+            forwardProj.normalize();
+
+            let rightProj = new THREE.Vector3();
+            rightProj.crossVectors(forwardProj, new THREE.Vector3(0, 1, 0)).normalize().negate();
+
+            const findClosest = (targetVec) => {
+                let closest = baseDirections[0];
+                let maxDot = -Infinity;
+                baseDirections.forEach(b => {
+                    let dot = b.vec.dot(targetVec);
+                    if (dot > maxDot) {
+                        maxDot = dot;
+                        closest = b;
+                    }
+                });
+                return closest;
+            };
+
+            const screenFront = findClosest(forwardProj);
+            const screenBack  = findClosest(forwardProj.clone().negate());
+            const screenRight = findClosest(rightProj);
+            const screenLeft  = findClosest(rightProj.clone().negate());
+            const screenUp    = baseDirections[2]; 
+            const screenDown  = baseDirections[3]; 
+
+            let dynamicFace = null;
+            let directionInverter = 1;
+
+            switch (notationKey) {
+                case 'F': dynamicFace = screenBack;  directionInverter = 1; break;  
+                case 'B': dynamicFace = screenFront; directionInverter = 1; break;  
+                case 'L': dynamicFace = screenRight; directionInverter = -1; break; // Swapped: L now maps to screenRight
+                case 'R': dynamicFace = screenLeft;  directionInverter = -1; break; // Swapped: R now maps to screenLeft
+                case 'U': dynamicFace = screenUp;    directionInverter = -1; break;
+                case 'D': dynamicFace = screenDown;  directionInverter = -1; break;
+                case 'M': 
+                    // Keeping M matched with the Left perspective configuration layer
+                    dynamicFace = { axis: screenLeft.axis, value: 0, rot: screenLeft.rot };
+                    directionInverter = -1; 
+                    break;
+            }
+
+            let baseDirSign = (dynamicFace.value === 1) ? 1 : -1;
+
+            return {
+                axis: dynamicFace.axis,
+                value: dynamicFace.value,
+                rotAxis: dynamicFace.rot,
+                dir: baseDirSign * directionInverter
+            };
+        }
+
+        // --- Smooth Dynamic Turn Engine ---
+        function executeMove(inputKey, isPrime, instantly = false) {
+            if (isAnimating && !instantly) return;
+            isAnimating = true;
+
+            const config = getDynamicMoveConfig(inputKey);
+            if (!config) return;
+
+            const targetCubies = cubies.filter(c => Math.round(c.position[config.axis]) === config.value);
+
+            const pivot = new THREE.Group();
+            scene.add(pivot);
+            targetCubies.forEach(cubie => pivot.attach(cubie));
+
+            let direction = config.dir;
+            if (isPrime) direction *= -1;
+
+            const targetAngle = (Math.PI / 2) * direction;
+            
+            if (instantly) {
+                pivot.rotateOnAxis(config.rotAxis, targetAngle);
+                pivot.updateMatrixWorld();
+                targetCubies.forEach(cubie => {
+                    scene.attach(cubie);
+                    cubie.position.x = Math.round(cubie.position.x);
+                    cubie.position.y = Math.round(cubie.position.y);
+                    cubie.position.z = Math.round(cubie.position.z);
+                });
+                scene.remove(pivot);
+                isAnimating = false;
+                checkSolved();
+            } else {
+                let progress = 0;
+                const duration = 200; 
+                const startTime = performance.now();
+                let lastAngle = 0;
+
+                function animateRotation(currentTime) {
+                    const elapsedTime = currentTime - startTime;
+                    progress = Math.min(elapsedTime / duration, 1);
+
+                    const easeProgress = 0.5 - (Math.cos(progress * Math.PI) / 2);
+                    const currentAngle = easeProgress * targetAngle;
+                    
+                    pivot.rotateOnAxis(config.rotAxis, currentAngle - lastAngle);
+                    lastAngle = currentAngle;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateRotation);
+                    } else {
+                        pivot.updateMatrixWorld();
+                        targetCubies.forEach(cubie => {
+                            scene.attach(cubie);
+                            cubie.position.x = Math.round(cubie.position.x);
+                            cubie.position.y = Math.round(cubie.position.y);
+                            cubie.position.z = Math.round(cubie.position.z);
+                        });
+                        scene.remove(pivot);
+                        isAnimating = false;
+                        checkSolved();
+                    }
+                }
+                requestAnimationFrame(animateRotation);
+            }
+        }
+
+        // --- Scrambler ---
+        function scrambleCube() {
+            if (isAnimating) return;
+            document.getElementById('status').innerText = "";
+            const movesList = ['U', 'D', 'L', 'R', 'F', 'B', 'M'];
+            for (let i = 0; i < 25; i++) {
+                const randomMove = movesList[Math.floor(Math.random() * movesList.length)];
+                const randomPrime = Math.random() > 0.5;
+                executeMove(randomMove, randomPrime, true);
+            }
+        }
+
+        // --- Verification Algorithm ---
+        function checkSolved() {
+            const firstCubieRotation = cubies[0].quaternion.clone();
+            for(let i = 1; i < cubies.length; i++) {
+                if (Math.abs(cubies[i].quaternion.dot(firstCubieRotation)) < 0.99) {
+                    return; 
+                }
+            }
+            if(document.getElementById('status').innerText === "") {
+                 document.getElementById('status').innerText = "🎉 Solved! Great Job! 🎉";
+            }
+        }
+
+        // --- Event Handlers (Keyboard + Click pad setup) ---
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                isSpacePressed = true;
+                e.preventDefault();
+            }
+            const key = e.key.toUpperCase();
+            if (['U', 'D', 'L', 'R', 'F', 'B', 'M'].includes(key)) {
+                executeMove(key, isSpacePressed);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') isSpacePressed = false;
+        });
+
+        // Click Pad Interface Listeners
+        document.querySelectorAll('.move-btn').forEach(btn => {
+            const moveLetter = btn.getAttribute('data-move');
+            
+            btn.addEventListener('click', (e) => {
+                executeMove(moveLetter, false);
+            });
+
+            btn.addEventListener('contextmenu', (e) => {
+                e.preventDefault(); 
+                executeMove(moveLetter, true);
+            });
+        });
+
+        document.getElementById('scramble-btn').addEventListener('click', scrambleCube);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        createCube();
+        animate();
+    </script>
+</body>
+</html>
