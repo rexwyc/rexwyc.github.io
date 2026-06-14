@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>13x13 Territorial Go Engine</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --board-color: #cd9a62;
+            --grid-color: #3b220c;
+            --text-light: #f8fafc;
+            --primary-red: #ef4444;
+            --accent-blue: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .status-panel {
+            background: var(--panel-bg);
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            border: 1px solid #334155;
+        }
+
+        .turn-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: url('images/german flag copy.png') no-repeat center;
+            background-size: cover;
+            border: 1px solid #fff;
+        }
+
+        .dot.white-turn {
+            background: url('images/soviet usa.png') no-repeat center;
+            background-size: cover;
+            border: 1px solid #fff;
+        }
+
+        .board-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background: var(--board-color);
+            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            border: 3px solid #6f4e27;
+            overflow: hidden;
+        }
+
+        .board-grid {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            padding: 3.84%;
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            grid-template-rows: repeat(13, 1fr);
+        }
+
+        .intersection {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .intersection::before, .intersection::after {
+            content: '';
+            position: absolute;
+            background: var(--grid-color);
+            opacity: 0.45;
+        }
+        .intersection::before { top: 0; bottom: 0; width: 1px; }
+        .intersection::after { left: 0; right: 0; height: 1px; }
+
+        .intersection.top::before { top: 50%; }
+        .intersection.bottom::before { bottom: 50%; }
+        .intersection.left::after { left: 50%; }
+        .intersection.right::after { right: 50%; }
+
+        .star-point {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--grid-color);
+            border-radius: 50%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .stone {
+            position: absolute;
+            width: 92%;
+            height: 92%;
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            animation: spawn 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stone.black {
+            background-image: url('images/german flag copy.png');
+        }
+
+        .stone.white {
+            background-image: url('images/soviet usa.png');
+        }
+
+        .recent-marker {
+            width: 45%;
+            height: 45%;
+            z-index: 3;
+            pointer-events: none;
+            filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.6));
+        }
+
+        @keyframes spawn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .npc-mind {
+            background: var(--panel-bg);
+            border-left: 4px solid var(--primary-red);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            min-height: 74px;
+            border: 1px solid #334155;
+            border-left-width: 4px;
+        }
+
+        .npc-mind strong {
+            color: var(--primary-red);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .row-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn {
+            flex: 1;
+            background: #334155;
+            color: var(--text-light);
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn:active { background: #475569; }
+        .btn.pass { background: #1e293b; border: 1px solid #334155; }
+        .btn.audio-btn { background: #0284c7; }
+        .btn.audio-btn:active { background: #0369a1; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="status-panel">
+        <div class="turn-indicator">
+            <div class="dot" id="turn-dot"></div>
+            <span id="turn-text">Your Turn (Germany)</span>
+        </div>
+        <div id="score-box">G: 0 | SU: 0</div>
+    </div>
+
+    <div class="board-wrapper">
+        <div class="board-grid" id="board"></div>
+    </div>
+
+    <div class="npc-mind">
+        <strong>⚔️ NPC Expansion Strategy:</strong>
+        <span id="mind-text">Awaiting your deployment. Preparing to map and claim optimal territory frameworks...</span>
+    </div>
+
+    <audio id="bg-music" src="music/erika remix.mp3" loop></audio>
+
+    <div class="controls">
+        <button class="btn audio-btn" id="audio-toggle-btn">🎵 Play Theme</button>
+        <div class="row-controls">
+            <button class="btn pass" id="pass-btn">Pass Turn</button>
+            <button class="btn" id="reset-btn">Reset Board</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const SIZE = 13;
+let board = Array(SIZE).fill(null).map(() => Array(SIZE).fill(0));
+let captures = { 1: 0, 2: 0 };
+let playerTurn = true;
+let consecutivePasses = 0;
+let lastNpcMove = null;
+
+const boardEl = document.getElementById('board');
+const turnDot = document.getElementById('turn-dot');
+const turnText = document.getElementById('turn-text');
+const scoreBox = document.getElementById('score-box');
+const mindText = document.getElementById('mind-text');
+const bgMusic = document.getElementById('bg-music');
+const audioToggleBtn = document.getElementById('audio-toggle-btn');
+
+function initializeGrid() {
+    boardEl.innerHTML = '';
+    for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'intersection';
+            cell.id = `cell-${r}-${c}`;
+            
+            if (r === 0) cell.classList.add('top');
+            if (r === SIZE - 1) cell.classList.add('bottom');
+            if (c === 0) cell.classList.add('left');
+            if (c === SIZE - 1) cell.classList.add('right');
+
+            if ((r === 3 || r === 6 || r === 9) && (c === 3 || c === 6 || c === 9)) {
+                const star = document.createElement('div');
+                star.className = 'star-point';
+                cell.appendChild(star);
+            }
+
+            cell.addEventListener('click', () => executePlayerMove(r, c));
+            boardEl.appendChild(cell);
+        }
+    }
+}
+
+function updateVisuals() {
+    for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+            const cell = document.getElementById(`cell-${r}-${c}`);
+            const existingStone = cell.querySelector('.stone');
+            const state = board[r][c];
+
+            if (state !== 0) {
+                if (!existingStone) {
+                    const stone = document.createElement('div');
+                    stone.className = `stone ${state === 1 ? 'black' : 'white'}`;
+                    cell.appendChild(stone);
+                    
+                    if (state === 2 && lastNpcMove && lastNpcMove.r === r && lastNpcMove.c === c) {
+                        appendTriangleMarker(stone);
+                    }
+                } else {
+                    const marker = existingStone.querySelector('.recent-marker');
+                    if (state === 2 && lastNpcMove && lastNpcMove.r === r && lastNpcMove.c === c) {
+                        if (!marker) appendTriangleMarker(existingStone);
+                    } else if (marker) {
+                        marker.remove();
+                    }
+                }
+            } else if (existingStone) {
+                existingStone.remove();
+            }
+        }
+    }
+    
+    scoreBox.textContent = `G: ${captures[1]} | SU: ${captures[2]}`;
+    
+    if (playerTurn) {
+        turnDot.className = 'dot';
+        turnText.textContent = "Your Turn (Germany)";
+    } else {
+        turnDot.className = 'dot white-turn';
+        turnText.textContent = "NPC Turn (Soviet USA)";
+    }
+}
+
+function appendTriangleMarker(stoneElement) {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("class", "recent-marker");
+    
+    const polygon = document.createElementNS(svgNS, "polygon");
+    polygon.setAttribute("points", "50,15 90,85 10,85");
+    polygon.setAttribute("fill", "var(--primary-red)");
+    
+    svg.appendChild(polygon);
+    stoneElement.appendChild(svg);
+}
+
+function getNeighbors(r, c) {
+    const neighbors = [];
+    if (r > 0) neighbors.push({r: r - 1, c: c});
+    if (r < SIZE - 1) neighbors.push({r: r + 1, c: c});
+    if (c > 0) neighbors.push({r: r, c: c - 1});
+    if (c < SIZE - 1) neighbors.push({r: r, c: c + 1});
+    return neighbors;
+}
+
+function getGroupStructure(startR, startC, color, virtualBoard = board) {
+    const group = [];
+    const queue = [{r: startR, c: startC}];
+    const visited = Array(SIZE).fill(null).map(() => Array(SIZE).fill(false));
+    visited[startR][startC] = true;
+
+    while (queue.length > 0) {
+        const curr = queue.shift();
+        group.push(curr);
+
+        getNeighbors(curr.r, curr.c).forEach(n => {
+            if (!visited[n.r][n.c] && virtualBoard[n.r][n.c] === color) {
+                visited[n.r][n.c] = true;
+                queue.push(n);
+            }
+        });
+    }
+    return group;
+}
+
+function checkLiberties(group, virtualBoard = board) {
+    const liberties = new Set();
+    group.forEach(stone => {
+        getNeighbors(stone.r, stone.c).forEach(n => {
+            if (virtualBoard[n.r][n.c] === 0) {
+                liberties.add(`${n.r},${n.c}`);
+            }
+        });
+    });
+    return liberties.size;
+}
+
+function evaluateGlobalCaptures(targetColor) {
+    let capturedStones = 0;
+    const evaluated = Array(SIZE).fill(null).map(() => Array(SIZE).fill(false));
+
+    for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+            if (board[r][c] === targetColor && !evaluated[r][c]) {
+                const group = getGroupStructure(r, c, targetColor);
+                group.forEach(s => evaluated[s.r][s.c] = true);
+
+                if (checkLiberties(group) === 0) {
+                    group.forEach(s => {
+                        board[s.r][s.c] = 0;
+                        capturedStones++;
+                    });
+                }
+            }
+        }
+    }
+    return capturedStones;
+}
+
+function executePlayerMove(r, c) {
+    if (!playerTurn || board[r][c] !== 0) return;
+
+    board[r][c] = 1;
+    const piecesCaptured = evaluateGlobalCaptures(2);
+    const playerGroup = getGroupStructure(r, c, 1);
+
+    if (checkLiberties(playerGroup) === 0 && piecesCaptured === 0) {
+        board[r][c] = 0;
+        mindText.textContent = "Self-capture protected by engine guidelines.";
+        return;
+    }
+
+    captures[1] += piecesCaptured;
+    playerTurn = false;
+    consecutivePasses = 0;
+    updateVisuals();
+    setTimeout(executeNPCMove, 400);
+}
+
+function executeNPCMove() {
+    let bestR = -1, bestC = -1;
+    let maximumWeight = -20000;
+    let strategyLog = "NPC finds no viable angles to secure or invade. Passing.";
+
+    let totalStones = 0;
+    for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+            if (board[r][c] !== 0) totalStones++;
+        }
+    }
+    const isEndgame = totalStones > 50;
+
+    for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+            if (board[r][c] !== 0) continue;
+
+            let weight = 0;
+            let currentLocalReason = "";
+
+            const inCornerZone = (r <= 3 || r >= 9) && (c <= 3 || c >= 9);
+            const inCenterZone = (r >= 5 && r <= 7) && (c >= 5 && c <= 7);
+            
+            if (!isEndgame) {
+                if (inCornerZone) {
+                    weight += 30;
+                    if ((r === 3 || r === 9) && (c === 3 || c === 9)) weight += 15; 
+                    currentLocalReason = "Securing corner base to anchor structural thickness.";
+                } else if (!inCenterZone) {
+                    weight += 20; 
+                    currentLocalReason = "Extending outward boundaries across third/fourth lines to establish side dominance.";
+                } else {
+                    weight += 5;
+                    currentLocalReason = "Projecting framework presence toward central areas.";
+                }
+            }
+
+            let simBoard = board.map(row => [...row]);
+            simBoard[r][c] = 2; 
+            
+            let simulatedCaptures = 0;
+            const simEvaluated = Array(SIZE).fill(null).map(() => Array(SIZE).fill(false));
+            for (let sr = 0; sr < SIZE; sr++) {
+                for (let sc = 0; sc < SIZE; sc++) {
+                    if (simBoard[sr][sc] === 1 && !simEvaluated[sr][sc]) {
+                        const eg = getGroupStructure(sr, sc, 1, simBoard);
+                        eg.forEach(s => simEvaluated[s.r][s.c] = true);
+                        if (checkLiberties(eg, simBoard) === 0) {
+                            eg.forEach(s => { simBoard[s.r][s.c] = 0; simulatedCaptures++; });
+                        }
+                    }
+                }
+            }
+
+            const npcGroup = getGroupStructure(r, c, 2, simBoard);
+            const libertiesRemaining = checkLiberties(npcGroup, simBoard);
+
+            if (libertiesRemaining === 0 && simulatedCaptures === 0) continue; 
+
+            const neighbors = getNeighbors(r, c);
+            let adjacentEnemies = 0;
+            let adjacentFriendlies = 0;
+
+            neighbors.forEach(n => {
+                if (board[n.r][n.c] === 1) adjacentEnemies++;
+                if (board[n.r][n.c] === 2) adjacentFriendlies++;
+            });
+
+            if (adjacentEnemies > 0 && !isEndgame) {
+                weight += 25; 
+                currentLocalReason = "Invading your sphere of influence to clamp space and undermine your boundary setup.";
+            }
+
+            neighbors.forEach(n => {
+                if (board[n.r][n.c] === 1) {
+                    const enemyGroup = getGroupStructure(n.r, n.c, 1);
+                    const enemyLiberties = checkLiberties(enemyGroup);
+                    
+                    if (enemyLiberties === 1) {
+                        weight += 500; 
+                        currentLocalReason = "Isolating and capturing your block structure to claim total local control.";
+                    } else if (enemyLiberties === 2) {
+                        weight += 180; 
+                        currentLocalReason = "Squeezing your perimeter. Forcing your stones into severe Atari restrictions.";
+                    } else if (enemyLiberties === 3) {
+                        weight += 95; 
+                        currentLocalReason = "Driving a wedge between your units to trigger structural separation and isolate your groups.";
+                    }
+                }
+
+                if (board[n.r][n.c] === 2) {
+                    const friendlyGroup = getGroupStructure(n.r, n.c, 2);
+                    const friendlyLiberties = checkLiberties(friendlyGroup);
+                    if (friendlyLiberties <= 2) {
+                        weight += 220; 
+                        currentLocalReason = "Solidifying adjacent friendly formations to generate thick walls that push back your perimeter.";
+                    }
+                }
+            });
+
+            if (adjacentFriendlies >= 2) weight -= 15; 
+            if (libertiesRemaining === 1 && simulatedCaptures === 0) weight -= 200; 
+
+            if (weight > maximumWeight) {
+                maximumWeight = weight;
+                bestR = r;
+                bestC = c;
+                strategyLog = currentLocalReason;
+            }
+        }
+    }
+
+    if (bestR !== -1 && maximumWeight > -10000) {
+        board[bestR][bestC] = 2;
+        lastNpcMove = { r: bestR, c: bestC };
+        const npcCapturesCount = evaluateGlobalCaptures(1);
+        captures[2] += npcCapturesCount;
+        consecutivePasses = 0;
+    } else {
+        consecutivePasses++;
+    }
+
+    playerTurn = true;
+    updateVisuals();
+    mindText.textContent = strategyLog;
+    if (consecutivePasses >= 2) {
+        mindText.textContent = "Game conclusion reached via dual pass. Boundaries finalized.";
+        playerTurn = false;
+    }
+}
+
+audioToggleBtn.addEventListener('click', () => {
+    if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+            audioToggleBtn.textContent = "⏸️ Pause Theme";
+        }).catch(err => {
+            console.log("Audio contextual restrictions applied.", err);
+        });
+    } else {
+        bgMusic.pause();
+        audioToggleBtn.textContent = "🎵 Play Theme";
+    }
+});
+
+document.getElementById('pass-btn').addEventListener('click', () => {
+    if (!playerTurn) return;
+    playerTurn = false;
+    consecutivePasses++;
+    updateVisuals();
+    if (consecutivePasses >= 2) {
+        mindText.textContent = "Both players pass. Finalizing borders.";
+    } else {
+        setTimeout(executeNPCMove, 400);
+    }
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    board = Array(SIZE).fill(null).map(() => Array(SIZE).fill(0));
+    captures = { 1: 0, 2: 0 };
+    playerTurn = true;
+    consecutivePasses = 0;
+    lastNpcMove = null;
+    mindText.textContent = "New map grid formed. Preparing border annexation sequences...";
+    updateVisuals();
+});
+
+initializeGrid();
+updateVisuals();
+</script>
+
+</body>
+</html>
