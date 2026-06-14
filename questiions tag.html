@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Question Tags Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .question {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #ebdcf2;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1.05rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        @media (hover: hover) {
+            .option-btn:hover {
+                background: #eef2f7;
+                border-color: var(--primary-color);
+            }
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success-color) !important;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--error-color) !important;
+            color: #721c24;
+        }
+
+        .option-btn:disabled {
+            pointer-events: none;
+        }
+
+        .explanation-container {
+            background: #eaf2f8;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 5px;
+        }
+
+        .next-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+        }
+
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <span id="score-board">Score: 0</span>
+        <span id="streak-board">Streak: 0 🔥</span>
+    </div>
+    
+    <div class="question" id="question-text">Loading tag...</div>
+    
+    <div class="options-container" id="options-box"></div>
+    
+    <div class="explanation-container" id="explanation-box">
+        <div class="explanation-title">💡 Grammar Rule</div>
+        <div id="explanation-text"></div>
+    </div>
+    
+    <button class="next-btn" id="next-button">Next Sentence →</button>
+</div>
+
+<script>
+const questionPool = [
+    { q: "She is coming to the party, _______?", a: ["is she", "isn't she", "doesn't she", "won't she"], c: 1, e: "A positive statement takes a negative tag. Use 'is' → 'isn't'." },
+    { q: "You like coffee, _______?", a: ["don't you", "do you", "aren't you", "you like"], c: 0, e: "For present simple verbs, use 'do/does'. Positive statement → negative tag: 'don't you'." },
+    { q: "He went to school yesterday, _______?", a: ["didn't he", "doesn't he", "did he", "wasn't he"], c: 0, e: "For past simple verbs, use 'did'. Positive statement → negative tag: 'didn't he'." },
+    { q: "They aren't ready yet, _______?", a: ["are they", "aren't they", "do they", "is it"], c: 0, e: "A negative statement takes a positive tag. 'aren't' → 'are they'." },
+    { q: "I am late, _______?", a: ["am not I", "am I", "aren't I", "don't I"], c: 2, e: "Exception rule: The negative question tag for 'I am' is always 'aren't I'." },
+    { q: "Let's go for a walk, _______?", a: ["shall we", "will we", "don't we", "let we"], c: 0, e: "Suggestions starting with 'Let's' always use the question tag 'shall we'." },
+    { q: "Don't open the window, _______?", a: ["will you", "do you", "won't you", "don't you"], c: 0, e: "For negative commands/imperatives, use 'will you'." },
+    { q: "Open the door, _______?", a: ["will you", "do you", "shall you", "don't you"], c: 0, e: "For positive commands/requests, 'will you' (or 'would you/could you') is standard." },
+    { q: "There is a mistake here, _______?", a: ["isn't it", "isn't there", "is there", "there isn't"], c: 1, e: "When 'there' is used as a dummy subject, it is repeated in the tag: 'isn't there'." },
+    { q: "This is your book, _______?", a: ["isn't this", "is it", "isn't it", "is this"], c: 2, e: "Pronouns like 'this' or 'that' change to 'it' in the question tag." },
+    { q: "These are your keys, _______?", a: ["aren't these", "aren't they", "are they", "isn't it"], c: 1, e: "Plural pronouns like 'these' or 'those' change to 'they' in the question tag." },
+    { q: "Nobody called for me, _______?", a: ["did they", "didn't they", "did he", "does he"], c: 0, e: "Negative indefinite pronouns ('nobody', 'no one', 'someone') use a plural verb and 'they' in the tag." },
+    { q: "You can play the guitar, _______?", a: ["can you", "can't you", "don't you", "could you"], c: 1, e: "Modal verbs are repeated in the tag. Positive 'can' → negative 'can't you'." },
+    { q: "We have never been here, _______?", a: ["haven't we", "have we", "did we", "do we"], c: 1, e: "'Never' makes the statement negative, so it requires a positive tag: 'have we'." },
+    { q: "She has completed her work, _______?", a: ["has she", "hasn't she", "doesn't she", "didn't she"], c: 1, e: "'Has' here is an auxiliary verb in the present perfect tense. Positive → negative: 'hasn't she'." },
+    { q: "He has a brand new car, _______?", a: ["hasn't he", "doesn't he", "don't he", "has he"], c: 1, e: "When 'has' is the main action verb (possession), use 'doesn't he' (American/Modern English standard)." },
+    { q: "You will help me, _______?", a: ["will you", "won't you", "don't you", "shall you"], c: 1, e: "Future tense with 'will'. Positive → negative tag: 'won't you'." },
+    { q: "She hardly ever watches TV, _______?", a: ["does she", "doesn't she", "is she", "has she"], c: 0, e: "'Hardly ever' implies a negative meaning, so the tag must be positive: 'does she'." },
+    { q: "Nothing went wrong, _______?", a: ["did it", "didn't it", "was it", "does it"], c: 0, e: "'Nothing' makes the sentence negative and is replaced by 'it' in the tag: 'did it'." },
+    { q: "You'd rather stay home, _______?", a: ["hadn't you", "wouldn't you", "didn't you", "shouldn't you"], c: 1, e: "The contraction 'You'd rather' stands for 'You would rather', hence 'wouldn't you'." },
+    { q: "He'd better study hard, _______?", a: ["wouldn't he", "hadn't he", "didn't he", "shouldn't he"], c: 1, e: "The contraction 'He'd better' stands for 'He had better', hence 'hadn't he'." },
+    { q: "Someone has left their bag, _______?", a: ["hasn't he", "haven't they", "hasn't they", "have they"], c: 1, e: "'Someone' shifts to 'they' in tags, which requires a matching plural verb: 'haven't they'." },
+    { q: "You used to live in London, _______?", a: ["didn't you", "usedn't you", "don't you", "weren't you"], c: 0, e: "The phrase 'used to' refers to the past tense, so use the auxiliary 'didn't you'." },
+    { q: "We ought to leave now, _______?", a: ["oughtn't we", "shouldn't we", "don't we", "won't we"], c: 0, e: "'Ought to' changes to 'oughtn't we' (or alternatively 'shouldn't we', but 'oughtn't' matches perfectly)." },
+    { q: "Everything is fine, _______?", a: ["is it", "isn't it", "aren't they", "everything isn't"], c: 1, e: "'Everything' is treated as singular and affirmative. Tag becomes negative: 'isn't it'." },
+    { q: "You shouldn't drive fast, _______?", a: ["should you", "shouldn't you", "do you", "must you"], c: 0, e: "Negative modal 'shouldn't' requires a positive modal tag: 'should you'." },
+    { q: "They had already finished dinner, _______?", a: ["didn't they", "hadn't they", "had they", "haven't they"], c: 1, e: "Past perfect tense auxiliary 'had'. Positive statement → negative tag: 'hadn't they'." },
+    { q: "It rarely snows in July, _______?", a: ["does it", "doesn't it", "is it", "isn't it"], c: 0, e: "'Rarely' acts as a negative word, creating a positive tag requirement: 'does it'." },
+    { q: "I'm not bothering you, _______?", a: ["am I", "aren't I", "don't I", "is it"], c: 0, e: "A normal negative sentence with 'I am not' takes a straightforward positive tag: 'am I'." },
+    { q: "You think you're clever, _______?", a: ["don't you", "aren't you", "do you", "you don't"], c: 0, e: "The main clause is 'You think' (present simple). Thus, the tag links to it: 'don't you'." }
+];
+
+let activeQuestions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let streak = 0;
+
+const questionText = document.getElementById("question-text");
+const optionsBox = document.getElementById("options-box");
+const explanationBox = document.getElementById("explanation-box");
+const explanationText = document.getElementById("explanation-text");
+const nextButton = document.getElementById("next-button");
+const scoreBoard = document.getElementById("score-board");
+const streakBoard = document.getElementById("streak-board");
+
+// Fisher-Yates Shuffle Algorithm
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function initializeQuiz() {
+    // Deep copy and shuffle the 30-question pool
+    activeQuestions = shuffle([...questionPool]);
+    currentQuestionIndex = 0;
+}
+
+function loadQuestion() {
+    // INFINITE LOOP MECHANIC: If pool runs out, re-shuffle immediately and continue
+    if (currentQuestionIndex >= activeQuestions.length) {
+        initializeQuiz();
+    }
+
+    explanationBox.style.display = "none";
+    nextButton.style.display = "none";
+    optionsBox.innerHTML = "";
+
+    const currentQuestion = activeQuestions[currentQuestionIndex];
+    questionText.textContent = currentQuestion.q;
+
+    currentQuestion.a.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option-btn";
+        button.textContent = option;
+        button.addEventListener("click", () => selectAnswer(index));
+        optionsBox.appendChild(button);
+    });
+}
+
+function selectAnswer(selectedIndex) {
+    const currentQuestion = activeQuestions[currentQuestionIndex];
+    const buttons = optionsBox.getElementsByClassName("option-btn");
+
+    for (let button of buttons) {
+        button.disabled = true;
+    }
+
+    if (selectedIndex === currentQuestion.c) {
+        buttons[selectedIndex].classList.add("correct");
+        score += 10;
+        streak++;
+    } else {
+        buttons[selectedIndex].classList.add("wrong");
+        buttons[currentQuestion.c].classList.add("correct"); // Highlight the correct rule asset
+        streak = 0;
+    }
+
+    scoreBoard.textContent = `Score: ${score}`;
+    streakBoard.textContent = `Streak: ${streak} 🔥`;
+
+    // Show Explanation & Next Action
+    explanationText.textContent = currentQuestion.e;
+    explanationBox.style.display = "block";
+    nextButton.style.display = "block";
+}
+
+nextButton.addEventListener("click", () => {
+    currentQuestionIndex++;
+    loadQuestion();
+});
+
+// Run application
+initializeQuiz();
+loadQuestion();
+</script>
+
+</body>
+</html>
