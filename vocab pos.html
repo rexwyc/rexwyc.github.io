@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>✨ English Fill · Synonyms Tip + Chinese Meaning</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(145deg, #f7f3ee 0%, #e8e0d8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            padding: 16px 12px 30px;
+            margin: 0;
+        }
+        .game-card {
+            max-width: 620px;
+            width: 100%;
+            background: rgba(255, 250, 245, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 48px 48px 36px 36px;
+            padding: 28px 20px 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 8px 18px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 242, 232, 0.6);
+            transition: all 0.2s;
+        }
+        h1 {
+            font-weight: 400;
+            font-size: 1.7rem;
+            letter-spacing: 2px;
+            color: #3d2e26;
+            text-align: center;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #7a6458;
+            letter-spacing: 0.5px;
+            background: #ede5dd;
+            padding: 2px 18px;
+            border-radius: 40px;
+        }
+        .sentence-box {
+            background: #fffbf8;
+            padding: 24px 18px 20px;
+            border-radius: 36px;
+            margin: 16px 0 12px;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.02), 0 6px 12px rgba(0,0,0,0.03);
+            border: 1px solid #efe7df;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .sentence-text {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #2f241d;
+            font-weight: 350;
+            word-break: break-word;
+            width: 100%;
+            text-align: left;
+        }
+        .sentence-text .blank-highlight {
+            display: inline-block;
+            min-width: 90px;
+            border-bottom: 3px dashed #b2907c;
+            margin: 0 4px;
+            padding: 0 4px;
+            color: #4f3a2e;
+            font-weight: 550;
+            background: #f2eae2;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+        .synonym-tip {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            color: #4a6a7a;
+            background: #e8edf0;
+            padding: 4px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 450;
+            letter-spacing: 0.3px;
+            border: 1px solid #cbd8e0;
+        }
+        .synonym-tip span {
+            font-weight: 600;
+            color: #2d4a5a;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 18px 0 14px;
+        }
+        .option-btn {
+            background: #f7efe8;
+            border: 1px solid #dccfc4;
+            border-radius: 60px;
+            padding: 16px 6px;
+            font-size: 1.2rem;
+            font-weight: 450;
+            color: #2f241d;
+            box-shadow: 0 4px 0 #cbb8ab;
+            transition: all 0.08s ease;
+            text-align: center;
+            letter-spacing: 0.3px;
+            word-break: break-word;
+            line-height: 1.3;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .option-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #cbb8ab;
+        }
+        .option-btn.correct-glow {
+            background: #b7d7b0;
+            border-color: #5f8b4b;
+            box-shadow: 0 4px 0 #3d6b2a;
+            color: #1d3d12;
+        }
+        .option-btn.wrong-glow {
+            background: #f4c9c9;
+            border-color: #b15a5a;
+            box-shadow: 0 4px 0 #8f3e3e;
+            color: #571f1f;
+        }
+        .option-btn.disabled-true {
+            opacity: 0.6;
+            pointer-events: none;
+            filter: grayscale(0.3);
+        }
+        .feedback-area {
+            min-height: 55px;
+            padding: 10px 12px;
+            margin: 8px 0 14px;
+            background: #f2e9e1;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #3d2e26;
+            border: 1px solid #e0d2c6;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+        }
+        .feedback-area .meaning-tag {
+            background: #dacfc5;
+            padding: 2px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            color: #2d1f18;
+            font-size: 1rem;
+        }
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 14px 20px;
+            margin-top: 8px;
+        }
+        .next-btn, .restart-btn {
+            background: #dacfc5;
+            border: none;
+            border-radius: 80px;
+            padding: 14px 28px;
+            font-size: 1.2rem;
+            font-weight: 450;
+            color: #2d1f18;
+            box-shadow: 0 5px 0 #b3a397;
+            transition: all 0.08s ease;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1 1 auto;
+            min-width: 130px;
+            border: 1px solid #cdbcaf;
+            letter-spacing: 0.8px;
+        }
+        .next-btn:active, .restart-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0 #b3a397;
+        }
+        .next-btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #b3a397;
+        }
+        .progress-badge {
+            font-size: 1rem;
+            background: #e6dbd1;
+            padding: 8px 22px;
+            border-radius: 60px;
+            color: #3f2e24;
+            font-weight: 350;
+            letter-spacing: 0.4px;
+        }
+        .footnote {
+            margin-top: 18px;
+            color: #6f5d50;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            text-align: center;
+        }
+        @media (max-width: 480px) {
+            .game-card { padding: 18px 12px 22px; }
+            .sentence-text { font-size: 1.3rem; }
+            .option-btn { font-size: 1rem; padding: 14px 4px; }
+            .feedback-area { font-size: 1rem; min-height: 44px; }
+            .next-btn, .restart-btn { font-size: 1rem; padding: 12px 16px; min-width: 100px; }
+            .synonym-tip { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-card" role="main">
+    <h1>
+        <span>📖 Fill · English</span>
+        <small>∞ infinite</small>
+    </h1>
+    <!-- sentence display with synonym tip -->
+    <div class="sentence-box">
+        <div class="sentence-text" id="sentenceDisplay">
+            <span id="sentencePrefix"></span><span class="blank-highlight" id="blankWord">______</span><span id="sentenceSuffix"></span>
+        </div>
+        <div class="synonym-tip" id="synonymTip">💡 <span>Synonyms:</span> —</div>
+    </div>
+
+    <!-- options 2x2 (English words) -->
+    <div class="options-grid" id="optionsContainer">
+        <button class="option-btn" data-index="0">—</button>
+        <button class="option-btn" data-index="1">—</button>
+        <button class="option-btn" data-index="2">—</button>
+        <button class="option-btn" data-index="3">—</button>
+    </div>
+
+    <!-- feedback area -->
+    <div class="feedback-area" id="feedbackMessage">✨ Choose the correct English word</div>
+
+    <!-- controls -->
+    <div class="action-bar">
+        <button class="next-btn" id="nextBtn">➡️ Next</button>
+        <button class="restart-btn" id="restartBtn">🔄 Restart</button>
+        <span class="progress-badge" id="progressBadge">#1</span>
+    </div>
+    <div class="footnote">• all vocab included • phone friendly •</div>
+</div>
+
+<script>
+    (function(){
+        // ---------- Complete vocabulary from your list with synonyms ----------
+        const vocab = [
+            // Part 1
+            { word: "熟悉", translation: "familiar", synonyms: "well-known, common, accustomed" },
+            { word: "熟知", translation: "well-acquainted", synonyms: "familiar, knowledgeable, informed" },
+            { word: "精通", translation: "proficient", synonyms: "skilled, expert, competent" },
+            { word: "親近", translation: "intimate", synonyms: "close, personal, dear" },
+            { word: "習慣", translation: "accustomed", synonyms: "habituated, used to, adjusted" },
+            { word: "知曉", translation: "knowledgeable", synonyms: "informed, aware, educated" },
+            { word: "故作", translation: "pretend", synonyms: "feign, simulate, act" },
+            { word: "眼眶", translation: "eye socket", synonyms: "orbit, cavity" },
+            { word: "微微泛紅", translation: "flush faintly", synonyms: "blush, redden, glow" },
+            { word: "捨不得", translation: "loath to part", synonyms: "reluctant, unwilling, averse" },
+            { word: "依戀", translation: "attached", synonyms: "bonded, devoted, fond" },
+            { word: "留戀", translation: "reluctant to leave", synonyms: "unwilling to depart, clinging" },
+            { word: "不捨", translation: "grudging", synonyms: "reluctant, unwilling, loath" },
+            { word: "珍惜", translation: "treasuring", synonyms: "cherishing, valuing, appreciating" },
+            { word: "眷戀", translation: "yearning", synonyms: "longing, craving, pining" },
+            { word: "陌生", translation: "strange", synonyms: "unfamiliar, foreign, odd" },
+            { word: "不熟", translation: "unfamiliar", synonyms: "unacquainted, unknown, new" },
+            { word: "未知", translation: "unknown", synonyms: "unidentified, mysterious, obscure" },
+            { word: "生疏", translation: "unacquainted", synonyms: "unfamiliar, inexperienced, new" },
+            { word: "新穎", translation: "novel", synonyms: "original, fresh, innovative" },
+            { word: "外來", translation: "alien", synonyms: "foreign, strange, unfamiliar" },
+            { word: "熟悉", translation: "familiar", synonyms: "well-known, common, accustomed" },
+            { word: "熟知", translation: "well-acquainted", synonyms: "familiar, knowledgeable, informed" },
+            { word: "精通", translation: "proficient", synonyms: "skilled, expert, competent" },
+            { word: "親近", translation: "intimate", synonyms: "close, personal, dear" },
+            { word: "習慣", translation: "accustomed", synonyms: "habituated, used to, adjusted" },
+            { word: "知曉", translation: "knowledgeable", synonyms: "informed, aware, educated" },
+            { word: "歡笑", translation: "laugh happily", synonyms: "giggle, chuckle, guffaw" },
+            { word: "大笑", translation: "chuckle", synonyms: "giggle, snicker, laugh" },
+            { word: "微笑", translation: "grin", synonyms: "smile, beam, smirk" },
+            { word: "歡慶", translation: "rejoice", synonyms: "celebrate, cheer, exult" },
+            { word: "喜悅", translation: "beam", synonyms: "smile, glow, radiate" },
+            { word: "高歌", translation: "exult", synonyms: "rejoice, triumph, gloat" },
+            { word: "失落", translation: "feel lost", synonyms: "disoriented, confused, bewildered" },
+            { word: "沮喪", translation: "despair", synonyms: "hopelessness, dejection, gloom" },
+            { word: "悲傷", translation: "grieve", synonyms: "mourn, sorrow, lament" },
+            { word: "落空", translation: "fail", synonyms: "fall through, flop, misfire" },
+            { word: "遺失", translation: "misplace", synonyms: "lose, mislay, forget" },
+            { word: "低落", translation: "languish", synonyms: "decline, weaken, wither" },
+            { word: "誤會", translation: "misunderstand", synonyms: "misconstrue, misinterpret, confuse" },
+            { word: "喜悅", translation: "rejoice", synonyms: "celebrate, cheer, exult" },
+            { word: "高興", translation: "exult", synonyms: "rejoice, triumph, gloat" },
+            { word: "慶祝", translation: "celebrate", synonyms: "commemorate, honor, rejoice" },
+            { word: "欣喜", translation: "delight", synonyms: "pleasure, joy, happiness" },
+            { word: "滿意", translation: "please", synonyms: "satisfy, gratify, content" },
+            { word: "雀躍", translation: "triumph", synonyms: "victory, success, conquest" },
+            // Part 2
+            { word: "背影", translation: "view of someone's back", synonyms: "rear view, silhouette, outline" },
+            { word: "漸漸", translation: "gradually", synonyms: "step by step, slowly, progressively" },
+            { word: "緩慢", translation: "slowly", synonyms: "gradually, steadily, unhurriedly" },
+            { word: "一步步", translation: "progressively", synonyms: "step by step, gradually, steadily" },
+            { word: "順序", translation: "sequentially", synonyms: "in order, successively, consecutively" },
+            { word: "接續", translation: "continuously", synonyms: "unceasingly, without stop, steadily" },
+            { word: "穩定", translation: "steadily", synonyms: "consistently, uniformly, evenly" },
+            { word: "遠去", translation: "recede", synonyms: "retreat, withdraw, fade" },
+            { word: "充滿", translation: "full of", synonyms: "filled with, packed with, abundant in" },
+            { word: "洋溢", translation: "brimming", synonyms: "overflowing, bursting, teeming" },
+            { word: "充斥", translation: "packed", synonyms: "crowded, stuffed, jammed" },
+            { word: "豐富", translation: "abundant", synonyms: "plentiful, ample, copious" },
+            { word: "密集", translation: "crowded", synonyms: "packed, congested, dense" },
+            { word: "飽滿", translation: "overflowing", synonyms: "brimming, bursting, inundated" },
+            { word: "矛盾", translation: "contradiction", synonyms: "conflict, inconsistency, paradox" },
+            { word: "遺憾", translation: "regretful", synonyms: "sorry, disappointed, remorseful" },
+            { word: "抱歉", translation: "sorry", synonyms: "apologetic, regretful, remorseful" },
+            { word: "悲傷", translation: "sorrowful", synonyms: "sad, grieving, mournful" },
+            { word: "失望", translation: "disappointed", synonyms: "let down, frustrated, dissatisfied" },
+            { word: "懊悔", translation: "remorseful", synonyms: "regretful, repentant, sorry" },
+            { word: "憐惜", translation: "pitiful", synonyms: "pathetic, miserable, unfortunate" },
+            { word: "道別", translation: "farewell", synonyms: "goodbye, parting, adieu" },
+            { word: "靠在", translation: "lean against", synonyms: "rest on, recline, prop" },
+            { word: "緩緩", translation: "slowly", synonyms: "gradually, gently, leisurely" },
+            { word: "溫和", translation: "gently", synonyms: "mildly, softly, tenderly" },
+            { word: "悠閒", translation: "leisurely", synonyms: "relaxed, unhurried, easygoing" },
+            { word: "逐漸", translation: "gradually", synonyms: "progressively, steadily, slowly" },
+            { word: "遲緩", translation: "sluggishly", synonyms: "slowly, lethargically, lazily" },
+            { word: "安靜", translation: "quietly", synonyms: "silently, softly, calmly" },
+            { word: "厚厚的", translation: "thick", synonyms: "dense, solid, substantial" },
+            // Part 3
+            { word: "遙遠的", translation: "distant", synonyms: "faraway, remote, far-off" },
+            { word: "相隔", translation: "separated by", synonyms: "divided by, apart from, split by" },
+            { word: "離別", translation: "parting", synonyms: "separation, farewell, leaving" },
+            { word: "難過", translation: "sad", synonyms: "unhappy, sorrowful, depressed" },
+            { word: "心碎", translation: "heartbroken", synonyms: "devastated, crushed, grief-stricken" },
+            { word: "沮喪", translation: "sorrowful", synonyms: "sad, grieving, mournful" },
+            { word: "痛苦", translation: "distressed", synonyms: "anguished, upset, troubled" },
+            { word: "憂鬱", translation: "gloomy", synonyms: "dark, dismal, depressing" },
+            { word: "沉重", translation: "heavy-hearted", synonyms: "sad, depressed, downcast" },
+            { word: "令人", translation: "make one feel", synonyms: "cause, induce, provoke" },
+            { word: "曾經", translation: "formerly", synonyms: "once, previously, earlier" },
+            { word: "真心相待", translation: "treat with sincerity", synonyms: "be genuine, be honest, be truthful" },
+            { word: "不捨", translation: "reluctant to part", synonyms: "unwilling to leave, clinging, attached" },
+            { word: "依依", translation: "attached", synonyms: "bonded, devoted, fond" },
+            { word: "留戀", translation: "lingering", synonyms: "persisting, remaining, enduring" },
+            { word: "眷戀", translation: "yearning", synonyms: "longing, craving, pining" },
+            { word: "難分", translation: "inseparable", synonyms: "indivisible, attached, close" },
+            { word: "痛惜", translation: "begrudging", synonyms: "reluctant, unwilling, resentful" },
+            { word: "陪伴", translation: "accompany", synonyms: "escort, attend, go with" },
+            { word: "隨行", translation: "escort", synonyms: "accompany, guide, conduct" },
+            { word: "照顧", translation: "attend", synonyms: "care for, look after, tend" },
+            { word: "支持", translation: "support", synonyms: "uphold, back, advocate" },
+            { word: "引導", translation: "guide", synonyms: "lead, direct, steer" },
+            { word: "合作", translation: "partner", synonyms: "associate, collaborator, ally" },
+            { word: "回憶", translation: "memory", synonyms: "recollection, reminiscence, remembrance" },
+            { word: "回想", translation: "recollection", synonyms: "memory, recall, reminiscence" },
+            { word: "回顧", translation: "remembrance", synonyms: "memory, recollection, reminiscence" },
+            { word: "過去", translation: "past", synonyms: "former, previous, prior" },
+            { word: "印象", translation: "impression", synonyms: "perception, image, feeling" },
+            { word: "留念", translation: "souvenir", synonyms: "memento, keepsake, reminder" },
+            { word: "留在", translation: "remain in", synonyms: "stay in, continue in, persist in" },
+            { word: "居住", translation: "dwell", synonyms: "reside, live, inhabit" },
+            { word: "維持", translation: "persist", synonyms: "continue, endure, last" },
+            { word: "保存", translation: "endure", synonyms: "last, persist, survive" },
+            { word: "等待", translation: "linger", synonyms: "stay, remain, wait" },
+            { word: "定居", translation: "reside", synonyms: "dwell, live, inhabit" },
+            // Part 4
+            { word: "珍貴", translation: "precious", synonyms: "valuable, priceless, cherished" },
+            { word: "貴重", translation: "valuable", synonyms: "precious, costly, expensive" },
+            { word: "稀有", translation: "rare", synonyms: "uncommon, scarce, unique" },
+            { word: "無價", translation: "priceless", synonyms: "invaluable, precious, irreplaceable" },
+            { word: "核心", translation: "cherished", synonyms: "beloved, dear, treasured" },
+            { word: "敬愛", translation: "beloved", synonyms: "dear, cherished, adored" },
+            { word: "寶藏", translation: "treasure", synonyms: "fortune, gem, prize" },
+            { word: "密佈", translation: "overcast", synonyms: "cloudy, dark, gloomy" },
+            { word: "壓在", translation: "weigh on", synonyms: "burden, trouble, oppress" },
+            { word: "閃電", translation: "lightning", synonyms: "thunderbolt, bolt, flash" },
+            { word: "愉快", translation: "pleasant", synonyms: "enjoyable, agreeable, nice" },
+            { word: "快樂", translation: "joyful", synonyms: "happy, delighted, elated" },
+            { word: "高興", translation: "cheerful", synonyms: "happy, bright, upbeat" },
+            { word: "舒適", translation: "delightful", synonyms: "charming, pleasant, enjoyable" },
+            { word: "滿意", translation: "content", synonyms: "satisfied, pleased, fulfilled" },
+            { word: "放鬆", translation: "relaxed", synonyms: "calm, serene, easygoing" },
+            { word: "平靜", translation: "calm down", synonyms: "settle, compose, soothe" },
+            { word: "安撫", translation: "soothe", synonyms: "calm, comfort, reassure" },
+            { word: "休息", translation: "rest", synonyms: "relax, unwind, pause" },
+            { word: "定居", translation: "settle", synonyms: "reside, establish, inhabit" },
+            { word: "放鬆", translation: "relax", synonyms: "unwind, rest, calm" },
+            { word: "沉默", translation: "quieten", synonyms: "calm, hush, silence" },
+            { word: "浮現", translation: "emerge", synonyms: "appear, surface, arise" },
+            { word: "昔日", translation: "former days", synonyms: "past, bygone, earlier" },
+            { word: "相處", translation: "get along", synonyms: "connect, relate, interact" },
+            { word: "混和", translation: "mingle", synonyms: "mix, blend, combine" },
+            { word: "合作", translation: "cooperate", synonyms: "collaborate, work together, unite" },
+            { word: "生活", translation: "coexist", synonyms: "live together, harmonize, concur" },
+            { word: "交流", translation: "interact", synonyms: "communicate, engage, connect" },
+            { word: "聚集", translation: "socialize", synonyms: "mingle, interact, engage" },
+            // Part 5
+            { word: "迴盪", translation: "echo", synonyms: "resound, reverberate, ring" },
+            { word: "默默地", translation: "silently", synonyms: "quietly, noiselessly, mutely" },
+            { word: "敲擊", translation: "tap", synonyms: "knock, rap, strike" },
+            { word: "內心", translation: "inner self", synonyms: "soul, heart, core" },
+            { word: "模糊的", translation: "vague", synonyms: "unclear, obscure, hazy" },
+            { word: "湧起", translation: "surge", synonyms: "rush, flow, rise" },
+            { word: "一陣又一陣", translation: "wave after wave", synonyms: "repeatedly, in succession, continuously" },
+            { word: "酸楚", translation: "grief", synonyms: "sorrow, anguish, heartache" },
+            { word: "痛苦", translation: "misery", synonyms: "suffering, anguish, distress" },
+            { word: "悲傷", translation: "sadness", synonyms: "sorrow, grief, unhappiness" },
+            { word: "心痛", translation: "heartache", synonyms: "anguish, grief, sorrow" },
+            { word: "苦難", translation: "distress", synonyms: "anguish, suffering, hardship" },
+            { word: "遺憾", translation: "bitterness", synonyms: "resentment, acrimony, grudge" },
+            { word: "興高采烈", translation: "in high spirits", synonyms: "cheerful, elated, exuberant" },
+            { word: "熱鬧的", translation: "bustling", synonyms: "vibrant, lively, busy" },
+            { word: "擁擠", translation: "crowded", synonyms: "packed, congested, full" },
+            { word: "活潑", translation: "lively", synonyms: "energetic, vibrant, animated" },
+            { word: "喧鬧", translation: "rowdy", synonyms: "noisy, boisterous, rambunctious" },
+            { word: "興旺", translation: "vibrant", synonyms: "lively, energetic, thriving" },
+            { word: "歡樂", translation: "festive", synonyms: "joyful, celebratory, cheerful" },
+            { word: "影像", translation: "image", synonyms: "picture, likeness, representation" },
+            { word: "跌進", translation: "fall into", synonyms: "tumble into, plunge into, drop into" },
+            { word: "冰冷的", translation: "freezing", synonyms: "icy, cold, frosty" },
+            { word: "深海", translation: "deep sea", synonyms: "abyss, ocean depths, deep water" },
+            { word: "沉重", translation: "heavy", synonyms: "weighty, massive, burdensome" },
+            { word: "巨大的", translation: "massive", synonyms: "huge, enormous, colossal" },
+            { word: "嚴肅", translation: "serious", synonyms: "grave, solemn, earnest" },
+            { word: "痛苦", translation: "burdensome", synonyms: "heavy, onerous, weighty" },
+            { word: "深刻", translation: "profound", synonyms: "deep, intense, heartfelt" },
+            { word: "抑鬱", translation: "gloomy", synonyms: "dark, dismal, depressed" }
+        ];
+
+        // ---------- Game state ----------
+        let currentQuestion = null;
+        let answered = false;
+        let questionIndex = 0;
+        const totalVocab = vocab.length;
+
+        // DOM elements
+        const sentencePrefix = document.getElementById('sentencePrefix');
+        const blankWord = document.getElementById('blankWord');
+        const sentenceSuffix = document.getElementById('sentenceSuffix');
+        const synonymTip = document.getElementById('synonymTip');
+        const optionsBtns = document.querySelectorAll('.option-btn');
+        const feedbackEl = document.getElementById('feedbackMessage');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const progressBadge = document.getElementById('progressBadge');
+
+        // ---------- Helpers ----------
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Generate a grammatically correct English sentence with a blank
+        function generateSentence() {
+            const templates = [
+                { prefix: "I am quite", suffix: "with this city after living here for ten years." },
+                { prefix: "She is", suffix: "with the local customs and traditions." },
+                { prefix: "He is highly", suffix: "in three different languages." },
+                { prefix: "They have become", suffix: "with each other over many years." },
+                { prefix: "I am", suffix: "to waking up early in the morning." },
+                { prefix: "She is very", suffix: "about the latest technological developments." },
+                { prefix: "Don't", suffix: "to be someone you're not." },
+                { prefix: "His", suffix: "was red and swollen from crying so much." },
+                { prefix: "Her cheeks", suffix: "when she felt embarrassed." },
+                { prefix: "I am", suffix: "to say goodbye to my childhood home." },
+                { prefix: "She is deeply", suffix: "to her hometown." },
+                { prefix: "He feels", suffix: "to leave this beautiful place." },
+                { prefix: "She felt", suffix: "about leaving her friends behind." },
+                { prefix: "I", suffix: "every moment we spend together." },
+                { prefix: "He has a", suffix: "for the good old days." },
+                { prefix: "The place felt", suffix: "and unwelcoming to visitors." },
+                { prefix: "I am", suffix: "with this neighborhood." },
+                { prefix: "The future is", suffix: "and full of exciting possibilities." },
+                { prefix: "I am", suffix: "with this type of cuisine." },
+                { prefix: "The idea is", suffix: "and completely original." },
+                { prefix: "The concept is", suffix: "to our traditional way of thinking." },
+                { prefix: "Their laughter", suffix: "filled the entire room." },
+                { prefix: "He", suffix: "at the funny joke." },
+                { prefix: "She", suffix: "when she received the surprise gift." },
+                { prefix: "Let's", suffix: "and enjoy this special occasion." },
+                { prefix: "Her face", suffix: "with pure joy." },
+                { prefix: "They", suffix: "in their team's victory." },
+                { prefix: "I feel", suffix: "after failing the exam." },
+                { prefix: "He", suffix: "when he heard the tragic news." },
+                { prefix: "We", suffix: "for our beloved grandfather." },
+                { prefix: "My plans for the future", suffix: "completely." },
+                { prefix: "I", suffix: "my keys somewhere in the house." },
+                { prefix: "My spirits", suffix: "after the repeated failures." },
+                { prefix: "Please don't", suffix: "my intentions." },
+                { prefix: "We", suffix: "at the wonderful news." },
+                { prefix: "They", suffix: "with overwhelming joy." },
+                { prefix: "Let's", suffix: "the New Year together." },
+                { prefix: "I", suffix: "in your remarkable achievement." },
+                { prefix: "I am", suffix: "with the final outcome." },
+                { prefix: "She", suffix: "with excitement and energy." },
+                { prefix: "His", suffix: "was all I could see as he walked away." },
+                { prefix: "The days passed", suffix: "and peacefully." },
+                { prefix: "He walked", suffix: "down the long corridor." },
+                { prefix: "Things improved", suffix: "over the following months." },
+                { prefix: "The events unfolded", suffix: "in a logical order." },
+                { prefix: "The story continued", suffix: "without any interruption." },
+                { prefix: "Progress was", suffix: "and consistent." },
+                { prefix: "The sound of the train", suffix: "into the distance." },
+                { prefix: "The room was", suffix: "of excited children." },
+                { prefix: "Her heart was", suffix: "with love and gratitude." },
+                { prefix: "The market was", suffix: "with fresh produce." },
+                { prefix: "The land is", suffix: "in natural resources." },
+                { prefix: "The area is", suffix: "with tall buildings." },
+                { prefix: "The cup is", suffix: "to the brim with tea." },
+                { prefix: "There is a", suffix: "in their testimonies." },
+                { prefix: "I feel", suffix: "about not being able to help." },
+                { prefix: "I am", suffix: "for the trouble I caused." },
+                { prefix: "She feels", suffix: "about the loss of her friend." },
+                { prefix: "I am", suffix: "with the service provided." },
+                { prefix: "He feels", suffix: "for the hurtful words he said." },
+                { prefix: "She looks", suffix: "and needs our support." },
+                { prefix: "We said our", suffix: "and hugged for the last time." },
+                { prefix: "She", suffix: "the wall to steady herself." },
+                { prefix: "Time passed", suffix: "and without any rush." },
+                { prefix: "She spoke", suffix: "to calm the frightened child." },
+                { prefix: "We walked", suffix: "along the peaceful beach." },
+                { prefix: "The fog lifted", suffix: "as the morning sun rose." },
+                { prefix: "He responded", suffix: "to the difficult question." },
+                { prefix: "She sat", suffix: "in the corner of the room." },
+                { prefix: "The book was", suffix: "and hard to carry around." },
+                { prefix: "The village is", suffix: "from the nearest city." },
+                { prefix: "We are", suffix: "by thousands of miles." },
+                { prefix: "Their", suffix: "was filled with tears." },
+                { prefix: "I feel", suffix: "about moving to a new country." },
+                { prefix: "She was", suffix: "by the terrible news." },
+                { prefix: "He feels", suffix: "about his financial situation." },
+                { prefix: "She is", suffix: "and needs professional help." },
+                { prefix: "He looks", suffix: "and exhausted from work." },
+                { prefix: "The mood is", suffix: "and very serious." },
+                { prefix: "Her kind words", suffix: "me feel much better." },
+                { prefix: "I", suffix: "knew him when we were young." },
+                { prefix: "We", suffix: "and never lied to each other." },
+                { prefix: "He is", suffix: "to say farewell to his friends." },
+                { prefix: "She feels", suffix: "to her childhood memories." },
+                { prefix: "He has a", suffix: "for his lost youth." },
+                { prefix: "She is", suffix: "to her ancestral home." },
+                { prefix: "They are", suffix: "and always together." },
+                { prefix: "He feels", suffix: "about losing the precious ring." },
+                { prefix: "She will", suffix: "you on your journey." },
+                { prefix: "He will", suffix: "you safely to the airport." },
+                { prefix: "She will", suffix: "to your every need." },
+                { prefix: "I will", suffix: "you in your difficult decision." },
+                { prefix: "He will", suffix: "you through the complex process." },
+                { prefix: "We will", suffix: "on this important project." },
+                { prefix: "I have a", suffix: "of that unforgettable summer." },
+                { prefix: "His", suffix: "of the event is very detailed." },
+                { prefix: "My", suffix: "of that day is still vivid." },
+                { prefix: "The", suffix: "is behind us now." },
+                { prefix: "My first", suffix: "of her was very positive." },
+                { prefix: "I kept a", suffix: "of our trip to Paris." },
+                { prefix: "I will", suffix: "in this beautiful country forever." },
+                { prefix: "They", suffix: "in a small coastal village." },
+                { prefix: "Hope", suffix: "in the hearts of the people." },
+                { prefix: "These memories", suffix: "in my mind forever." },
+                { prefix: "We", suffix: "for the rain to stop." },
+                { prefix: "They", suffix: "in a quiet suburban neighborhood." },
+                { prefix: "This ring is", suffix: "to me beyond measure." },
+                { prefix: "The necklace is", suffix: "and worth a fortune." },
+                { prefix: "This stamp is", suffix: "and highly collectible." },
+                { prefix: "Her love is", suffix: "and unconditional." },
+                { prefix: "She is", suffix: "to our entire family." },
+                { prefix: "He is", suffix: "by everyone who knows him." },
+                { prefix: "We discovered a", suffix: "hidden in the old chest." },
+                { prefix: "The sky was", suffix: "with dark storm clouds." },
+                { prefix: "The responsibility", suffix: "my shoulders heavily." },
+                { prefix: "A bolt of", suffix: "illuminated the dark sky." },
+                { prefix: "The weather is", suffix: "and perfect for a picnic." },
+                { prefix: "I feel", suffix: "and carefree today." },
+                { prefix: "She looks", suffix: "and full of energy." },
+                { prefix: "The room is", suffix: "and beautifully decorated." },
+                { prefix: "I am", suffix: "with the quality of service." },
+                { prefix: "I feel", suffix: "after a long, hot bath." },
+                { prefix: "She", suffix: "down after the heated argument." },
+                { prefix: "He", suffix: "her with a gentle hug." },
+                { prefix: "I need to", suffix: "for a few days." },
+                { prefix: "They decided to", suffix: "in the countryside." },
+                { prefix: "I need to", suffix: "and clear my mind." },
+                { prefix: "The room", suffix: "into complete silence." },
+                { prefix: "Memories", suffix: "in my mind unexpectedly." },
+                { prefix: "In", suffix: ", we were much happier." },
+                { prefix: "We", suffix: "well despite our differences." },
+                { prefix: "The colors", suffix: "together beautifully." },
+                { prefix: "We will", suffix: "on this challenging task." },
+                { prefix: "We", suffix: "together in perfect harmony." },
+                { prefix: "We", suffix: "with people from all cultures." },
+                { prefix: "We", suffix: "at the community center every Sunday." },
+                { prefix: "The music", suffix: "through the concert hall." },
+                { prefix: "She", suffix: "accepted the apology." },
+                { prefix: "He", suffix: "the table to get everyone's attention." },
+                { prefix: "My", suffix: "told me to be careful." },
+                { prefix: "The memory was", suffix: "and hard to recall clearly." },
+                { prefix: "Tears", suffix: "in her eyes as she spoke." },
+                { prefix: "The pain came in", suffix: "of intense emotion." },
+                { prefix: "I felt a deep", suffix: "in my chest." },
+                { prefix: "He was in", suffix: "after the accident." },
+                { prefix: "Her", suffix: "was overwhelming." },
+                { prefix: "I felt a", suffix: "in my heart." },
+                { prefix: "They faced", suffix: "with incredible courage." },
+                { prefix: "I have no", suffix: "about my decision." },
+                { prefix: "He was", suffix: "about the party invitation." },
+                { prefix: "The street was", suffix: "with tourists." },
+                { prefix: "The child is", suffix: "and always smiling." },
+                { prefix: "The crowd was", suffix: "and excited." },
+                { prefix: "The city is", suffix: "and constantly growing." },
+                { prefix: "The atmosphere is", suffix: "and full of joy." },
+                { prefix: "The", suffix: "slowly faded from view." },
+                { prefix: "He", suffix: "the trap set by his enemies." },
+                { prefix: "The water was", suffix: "and took my breath away." },
+                { prefix: "We explored the", suffix: "and discovered new species." },
+                { prefix: "The box is", suffix: "and impossible to lift." },
+                { prefix: "The building is", suffix: "and dominates the skyline." },
+                { prefix: "He is very", suffix: "about the upcoming meeting." },
+                { prefix: "The loss is", suffix: "for the whole community." },
+                { prefix: "The impact was", suffix: "and long-lasting." },
+                { prefix: "He is", suffix: "and rarely speaks to anyone." }
+            ];
+
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        // Generate question
+        function generateQuestion() {
+            const randomIndex = Math.floor(Math.random() * totalVocab);
+            const entry = vocab[randomIndex];
+            const correctWord = entry.word;
+            const correctTranslation = entry.translation;
+            const synonyms = entry.synonyms || "similar words";
+
+            // Build options: 1 correct English + 3 distractors
+            let candidates = [correctTranslation];
+            const allTranslations = vocab.map(item => item.translation);
+            const filterTrans = allTranslations.filter(t => t !== correctTranslation);
+            const shuffledFilter = shuffleArray([...filterTrans]);
+            for (let i = 0; i < Math.min(3, shuffledFilter.length); i++) {
+                if (!candidates.includes(shuffledFilter[i])) {
+                    candidates.push(shuffledFilter[i]);
+                }
+            }
+            while (candidates.length < 4) {
+                const fallback = ["familiar", "joyful", "sad", "treasure", "memory", "quiet", "heavy", "strange", "happy", "calm", "gentle", "bright"];
+                for (let f of fallback) {
+                    if (!candidates.includes(f) && f !== correctTranslation) {
+                        candidates.push(f);
+                        if (candidates.length === 4) break;
+                    }
+                }
+                if (candidates.length < 4) candidates.push("unknown");
+            }
+            const shuffledOptions = shuffleArray([...candidates]);
+
+            // Generate a meaningful sentence
+            const template = generateSentence();
+
+            return {
+                correctWord: correctWord,
+                correctTranslation: correctTranslation,
+                synonyms: synonyms,
+                options: shuffledOptions,
+                prefix: template.prefix + ' ',
+                suffix: ' ' + template.suffix
+            };
+        }
+
+        // Render question
+        function renderQuestion() {
+            const q = generateQuestion();
+            currentQuestion = q;
+            answered = false;
+
+            sentencePrefix.textContent = q.prefix;
+            blankWord.textContent = '______';
+            sentenceSuffix.textContent = q.suffix;
+
+            // Show synonyms as a tip next to the sentence
+            synonymTip.innerHTML = `💡 <span>Synonyms:</span> ${q.synonyms}`;
+
+            optionsBtns.forEach((btn, idx) => {
+                btn.textContent = q.options[idx] || '—';
+                btn.className = 'option-btn';
+                btn.dataset.translation = q.options[idx] || '';
+                btn.disabled = false;
+            });
+
+            feedbackEl.innerHTML = '✨ Choose the correct English word';
+            feedbackEl.style.color = '#3d2e26';
+            questionIndex++;
+            progressBadge.textContent = `#${questionIndex}`;
+            nextBtn.disabled = true;
+        }
+
+        // Handle option click
+        function handleOptionClick(e) {
+            const btn = e.currentTarget;
+            if (answered || btn.disabled) return;
+            const selectedTranslation = btn.dataset.translation;
+            if (!currentQuestion) return;
+
+            const isCorrect = (selectedTranslation === currentQuestion.correctTranslation);
+            optionsBtns.forEach(b => { b.disabled = true; });
+            optionsBtns.forEach(b => {
+                if (b.dataset.translation === currentQuestion.correctTranslation) {
+                    b.classList.add('correct-glow');
+                } else if (b === btn && !isCorrect) {
+                    b.classList.add('wrong-glow');
+                }
+            });
+
+            const chineseWord = currentQuestion.correctWord;
+            const englishMeaning = currentQuestion.correctTranslation;
+            
+            if (isCorrect) {
+                feedbackEl.innerHTML = `✅ Correct! <span class="meaning-tag">${chineseWord} = ${englishMeaning}</span>`;
+                feedbackEl.style.color = '#1f5a1a';
+                blankWord.textContent = englishMeaning;
+                blankWord.style.color = '#1f5a1a';
+                blankWord.style.borderBottom = '3px solid #4b7a3b';
+            } else {
+                feedbackEl.innerHTML = `❌ Not quite. Correct: <span class="meaning-tag">${chineseWord} = ${englishMeaning}</span>`;
+                feedbackEl.style.color = '#8f3a3a';
+                blankWord.textContent = englishMeaning;
+                blankWord.style.color = '#8f3a3a';
+                blankWord.style.borderBottom = '3px solid #b15a5a';
+            }
+            answered = true;
+            nextBtn.disabled = false;
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (nextBtn.disabled) return;
+            blankWord.style.color = '#4f3a2e';
+            blankWord.style.borderBottom = '3px dashed #b2907c';
+            renderQuestion();
+        }
+
+        // Restart
+        function restartGame() {
+            questionIndex = 0;
+            renderQuestion();
+            blankWord.style.color = '#4f3a2e';
+            blankWord.style.borderBottom = '3px dashed #b2907c';
+            feedbackEl.innerHTML = '✨ Restarted!';
+            feedbackEl.style.color = '#3d2e26';
+            nextBtn.disabled = true;
+        }
+
+        // ---------- Event binding ----------
+        optionsBtns.forEach(btn => {
+            btn.addEventListener('click', handleOptionClick);
+        });
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartGame);
+
+        // Initialize
+        renderQuestion();
+
+        // Mobile double-tap prevention
+        document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
+    })();
+</script>
+</body>
+</html>
