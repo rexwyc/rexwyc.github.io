@@ -181,7 +181,7 @@
             gap: 14px 20px;
             margin-top: 8px;
         }
-        .next-btn, .restart-btn {
+        .next-btn, .restart-btn, .music-btn {
             background: #dacfc5;
             border: none;
             border-radius: 80px;
@@ -199,7 +199,16 @@
             border: 1px solid #cdbcaf;
             letter-spacing: 0.8px;
         }
-        .next-btn:active, .restart-btn:active {
+        .music-btn {
+            background: #d4c5b8;
+            box-shadow: 0 5px 0 #b09a8a;
+        }
+        .music-btn.playing {
+            background: #b8c5b0;
+            box-shadow: 0 5px 0 #8aa37a;
+            border-color: #7a966a;
+        }
+        .next-btn:active, .restart-btn:active, .music-btn:active {
             transform: translateY(5px);
             box-shadow: 0 0px 0 #b3a397;
         }
@@ -225,12 +234,16 @@
             opacity: 0.9;
             text-align: center;
         }
+        /* Hidden audio element */
+        #audioPlayer {
+            display: none;
+        }
         @media (max-width: 480px) {
             .game-card { padding: 18px 12px 22px; }
             .sentence-text { font-size: 1.3rem; }
             .option-btn { font-size: 1rem; padding: 14px 4px; }
             .feedback-area { font-size: 1rem; min-height: 44px; }
-            .next-btn, .restart-btn { font-size: 1rem; padding: 12px 16px; min-width: 100px; }
+            .next-btn, .restart-btn, .music-btn { font-size: 1rem; padding: 12px 16px; min-width: 100px; }
             .synonym-tip { font-size: 0.8rem; }
         }
     </style>
@@ -262,12 +275,19 @@
 
     <!-- controls -->
     <div class="action-bar">
+        <button class="music-btn" id="musicBtn">🎵 Play Music</button>
         <button class="next-btn" id="nextBtn">➡️ Next</button>
         <button class="restart-btn" id="restartBtn">🔄 Restart</button>
         <span class="progress-badge" id="progressBadge">#1</span>
     </div>
     <div class="footnote">• all vocab included • phone friendly •</div>
 </div>
+
+<!-- Hidden audio element -->
+<audio id="audioPlayer" loop preload="auto">
+    <source src="music/erika remix.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
 
 <script>
     (function(){
@@ -468,6 +488,49 @@
         const nextBtn = document.getElementById('nextBtn');
         const restartBtn = document.getElementById('restartBtn');
         const progressBadge = document.getElementById('progressBadge');
+        const musicBtn = document.getElementById('musicBtn');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        // ---------- Music controls ----------
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                musicBtn.textContent = '🎵 Play Music';
+                musicBtn.classList.remove('playing');
+            } else {
+                // Try to play
+                audioPlayer.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.textContent = '⏸️ Pause Music';
+                    musicBtn.classList.add('playing');
+                }).catch((err) => {
+                    // Auto-play blocked by browser - show message
+                    feedbackEl.innerHTML = '⚠️ Please click again to play (browser requires user interaction)';
+                    feedbackEl.style.color = '#8f6a3a';
+                    // Still try to play on next click
+                });
+            }
+        }
+
+        // Handle audio ended (loop is set, but just in case)
+        audioPlayer.addEventListener('ended', function() {
+            // Loop is on, but if not, restart
+            if (isPlaying) {
+                this.play();
+            }
+        });
+
+        // Click on music button
+        musicBtn.addEventListener('click', toggleMusic);
+
+        // Also allow tap on body to enable audio on mobile
+        document.addEventListener('touchstart', function() {
+            // If audio is not playing and user taps, we can try to play if they clicked music
+            // But we only play on music button click to avoid unwanted autoplay
+        }, { passive: true });
 
         // ---------- Helpers ----------
         function shuffleArray(arr) {
