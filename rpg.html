@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Dash Rhythm Prototype (Custom Skins)</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 400px;
+            background: url('images/german flag copy.png') no-repeat center center;
+            background-size: cover;
+            border: 4px solid #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        #player {
+            position: absolute;
+            width: 78px;
+            height: 78px;
+            background: url('images/hitler raise hand.png') no-repeat center center;
+            background-size: contain;
+            bottom: 0;
+            left: 100px;
+            transform-origin: center bottom;
+        }
+
+        .obstacle {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: lightgrey;
+            bottom: 0;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            box-shadow: 0 0 10px #ffffff; /* 配合白色/淺灰光暈 */
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #start-screen {
+            text-align: center;
+            cursor: pointer;
+            padding: 30px;
+            border: 2px dashed #fff;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        h1 { margin-bottom: 10px; font-size: 32px; letter-spacing: 2px; }
+        p { color: #aaa; margin: 8px 0; }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen" onclick="startGame()">
+        <h1>GEOMETRY RHYTHM</h1>
+        <p style="color: #ff0055; font-weight: bold;">[ 116 BPM - MUSIC ONLY ]</p>
+        <p>Click anywhere to start / Restart</p>
+        <p><strong>Controls:</strong> Spacebar or Click to Jump</p>
+        <p style="font-size: 14px; color: #00ffcc; font-weight: bold; text-transform: uppercase;">Custom Theme Loaded: Image & Background Replaced</p>
+    </div>
+
+    <div id="game-container">
+        <div id="ui">Score: <span id="score">0</span></div>
+        <div id="player"></div>
+    </div>
+
+<script>
+    const container = document.getElementById('game-container');
+    const startScreen = document.getElementById('start-screen');
+    const player = document.getElementById('player');
+    const scoreElement = document.getElementById('score');
+
+    let isJumping = false;
+    let playerY = 0;
+    let velocity = 0;
+    const gravity = -1.15;     
+    const jumpForce = 19.5;   
+    let score = 0;
+    let gameActive = false;
+    let obstacles = [];
+
+    const bpm = 116; 
+    const beatStep = (60 / bpm) * 1000; 
+    const gameSpeed = 700 / (4 * (beatStep / 16.666)); 
+
+    let bgMusic = null;
+    let beatInterval = null;
+    let firstObstacleTimeout = null;
+    let bpmStartTimeout = null;
+    let beatCount = 0;
+
+    function initAudio() {
+        if (!bgMusic) {
+            bgMusic = new Audio('music/erika remix.mp3');
+            bgMusic.loop = true;
+        }
+        bgMusic.currentTime = 0;
+        bgMusic.play().catch(err => console.log("Audio play blocked", err));
+
+        if (beatInterval) clearInterval(beatInterval);
+        if (firstObstacleTimeout) clearTimeout(firstObstacleTimeout);
+        if (bpmStartTimeout) clearTimeout(bpmStartTimeout);
+
+        beatCount = 0;
+
+        const travelTimeMs = (700 / gameSpeed) * 16.666; 
+
+        const distanceIn1500ms = gameSpeed * (1500 / 16.666);
+        const initialRight = 660 - distanceIn1500ms;
+        
+        if (initialRight < 0) {
+            const spawnDelay = Math.max(0, 1500 - travelTimeMs);
+            firstObstacleTimeout = setTimeout(() => {
+                if (!gameActive) return;
+                spawnObstacleAt(0);
+            }, spawnDelay);
+        } else {
+            spawnObstacleAt(initialRight);
+        }
+
+        bpmStartTimeout = setTimeout(() => {
+            if (!gameActive) return;
+            
+            beatCount = 1; 
+
+            beatInterval = setInterval(() => {
+                if (!gameActive) return;
+
+                if (beatCount % 2 === 0) {
+                    spawnObstacleAt(0);
+                }
+
+                beatCount++;
+            }, beatStep);
+
+        }, 1500); 
+    }
+
+    function startGame() {
+        startScreen.style.display = 'none';
+        container.style.display = 'block';
+        gameActive = true;
+        score = 0;
+        scoreElement.innerText = score;
+        
+        obstacles.forEach(obs => obs.remove());
+        obstacles = [];
+        
+        playerY = 0;
+        velocity = 0;
+        
+        initAudio();
+        
+        window.requestAnimationFrame(update);
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') jump();
+    });
+    container.addEventListener('touchstart', jump);
+    container.addEventListener('mousedown', jump);
+
+    function jump() {
+        if (!isJumping && gameActive) {
+            isJumping = true;
+            velocity = jumpForce;
+        }
+    }
+
+    function spawnObstacleAt(rightX) {
+        const obstacle = document.createElement('div');
+        obstacle.classList.add('obstacle');
+        obstacle.style.right = rightX + 'px'; 
+        container.appendChild(obstacle);
+        obstacles.push(obstacle);
+    }
+
+    function update() {
+        if (!gameActive) return;
+
+        velocity += gravity;
+        playerY += velocity;
+
+        if (playerY <= 0) {
+            playerY = 0;
+            isJumping = false;
+            velocity = 0;
+        }
+
+        player.style.bottom = playerY + 'px';
+        
+        if (isJumping) {
+            player.style.transform = `rotate(${Math.min(playerY * 0.35, 22)}deg)`;
+        } else {
+            player.style.transform = 'rotate(0deg)';
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            let obs = obstacles[i];
+            let currentRight = parseFloat(obs.style.right);
+            currentRight += gameSpeed;
+            obs.style.right = currentRight + 'px';
+
+            let obsLeft = 800 - currentRight - 30;
+            
+            // 【核心修正】嚴格縮減自訂圖片的碰撞箱
+            // 由於 78px 圖片兩側與底部通常有透明預留空隙，因此大幅提高安全邊距
+            let playerLeftWithPadding = 100 + 28;  // 左側向內縮 28px
+            let playerRightWithPadding = 178 - 28; // 右側向內縮 28px
+
+            // 同步降低高度判定（從 35 降到 26），只有當跳躍高度低於 26px 時才會被判定撞到
+            if (obsLeft < playerRightWithPadding && obsLeft + 30 > playerLeftWithPadding && playerY < 26) {
+                gameOver();
+                return;
+            }
+
+            if (currentRight > 830) {
+                obs.remove();
+                obstacles.splice(i, 1);
+                score++;
+                scoreElement.innerText = score;
+            }
+        }
+
+        window.requestAnimationFrame(update);
+    }
+
+    function gameOver() {
+        gameActive = false;
+        
+        if (beatInterval) clearInterval(beatInterval);
+        if (firstObstacleTimeout) clearTimeout(firstObstacleTimeout);
+        if (bpmStartTimeout) clearTimeout(bpmStartTimeout);
+        
+        beatInterval = null;
+        firstObstacleTimeout = null;
+        bpmStartTimeout = null;
+        
+        if (bgMusic) bgMusic.pause();
+
+        setTimeout(() => {
+            alert(`Game Over! Score: ${score}`);
+            startScreen.style.display = 'flex';
+            container.style.display = 'none';
+        }, 10);
+    }
+</script>
+</body>
+</html>

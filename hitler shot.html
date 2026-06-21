@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingshot 2D: Tactical Defense</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1e272e;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #ui-container {
+            width: 500px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: #2c3e50;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #d35400;
+            box-sizing: border-box;
+        }
+        canvas {
+            background: #27ae60; /* Medieval Grass Field */
+            border: 4px solid #34495e;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        #control-panel {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            width: 500px;
+            justify-content: space-between;
+        }
+        button {
+            background-color: #d35400;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #e67e22;
+            transform: translateY(-1px);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+        button:disabled {
+            background-color: #7f8c8d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .active-placement {
+            background-color: #2ecc71 !important;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div>❤️ Castle HP: <span id="hp-display">100</span></div>
+        <div>🪙 Gold: <span id="gold-display">50</span></div>
+        <div>⚔️ Wave: <span id="wave-display">1</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="500" height="550"></canvas>
+
+    <div id="control-panel">
+        <button id="btn-tower" onclick="toggleTowerPlacement()">🏹 Buy Tower (Cost: 40 Gold)</button>
+        <button id="btn-soldier" onclick="trainSoldier()">⚔️ Train Soldier (Cost: 20 Gold)</button>
+        <button id="btn-wall" onclick="repairWall()">🧱 Repair Wall (Cost: 15 Gold)</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game State
+        let player = {
+            hp: 100,
+            maxHp: 100,
+            gold: 50,
+            x: canvas.width / 2,
+            y: canvas.height - 40
+        };
+
+        let wave = 1;
+        let enemies = [];
+        let arrows = [];
+        let towers = [];
+        let soldiers = [];
+        let gameOver = false;
+        let isPlacingTower = false;
+
+        // Balance Configs
+        let enemySpawnRate = 1800; 
+        let lastSpawnTime = 0;
+        let towerCost = 40;
+        let soldierCost = 20;
+        let repairCost = 15;
+
+        // Canvas Interaction
+        canvas.addEventListener('click', (e) => {
+            if (gameOver) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            // Placement Mode vs Shooting Mode
+            if (isPlacingTower) {
+                // Prevent placing on the castle wall base
+                if (clickY < canvas.height - 70) {
+                    towers.push({
+                        x: clickX,
+                        y: clickY,
+                        range: 120,
+                        lastShot: 0,
+                        cooldown: 1000 // Fires every 1 second
+                    });
+                    player.gold -= towerCost;
+                    isPlacingTower = false;
+                    document.getElementById('btn-tower').classList.remove('active-placement');
+                    updateUI();
+                }
+            } else {
+                // Shoot regular manual arrow from main castle
+                const angle = Math.atan2(clickY - player.y, clickX - player.x);
+                arrows.push({
+                    x: player.x,
+                    y: player.y - 15,
+                    dx: Math.cos(angle) * 8,
+                    dy: Math.sin(angle) * 8,
+                    damage: 2,
+                    color: '#f1c40f'
+                });
+            }
+        });
+
+        function toggleTowerPlacement() {
+            if (player.gold >= towerCost) {
+                isPlacingTower = !isPlacingTower;
+                const btn = document.getElementById('btn-tower');
+                if (isPlacingTower) {
+                    btn.classList.add('active-placement');
+                } else {
+                    btn.classList.remove('active-placement');
+                }
+            }
+        }
+
+        function trainSoldier() {
+            if (player.gold >= soldierCost) {
+                player.gold -= soldierCost;
+                soldiers.push({
+                    x: Math.random() * (canvas.width - 60) + 30,
+                    y: canvas.height - 65,
+                    speed: 0.6,
+                    hp: 5,
+                    maxHp: 5,
+                    damage: 1,
+                    radius: 8,
+                    targetEnemy: null
+                });
+                updateUI();
+            }
+        }
+
+        function repairWall() {
+            if (player.gold >= repairCost && player.hp < player.maxHp) {
+                player.gold -= repairCost;
+                player.hp = Math.min(player.maxHp, player.hp + 25);
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('hp-display').innerText = player.hp;
+            document.getElementById('gold-display').innerText = player.gold;
+            document.getElementById('wave-display').innerText = wave;
+            
+            document.getElementById('btn-tower').disabled = player.gold < towerCost;
+            document.getElementById('btn-soldier').disabled = player.gold < soldierCost;
+            document.getElementById('btn-wall').disabled = player.gold < repairCost || player.hp >= player.maxHp;
+        }
+
+        function spawnEnemy(timestamp) {
+            if (timestamp - lastSpawnTime > enemySpawnRate) {
+                let hp = 2 + Math.floor(wave * 0.6);
+                enemies.push({
+                    x: Math.random() * (canvas.width - 40) + 20,
+                    y: 0,
+                    radius: 10,
+                    hp: hp,
+                    maxHp: hp,
+                    speed: 0.5 + (wave * 0.05),
+                    isEngaged: false
+                });
+                lastSpawnTime = timestamp;
+            }
+        }
+
+        // Core Game Loop
+        function gameLoop(timestamp) {
+            if (gameOver) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Draw Environment Grid Lines (Subtle Medieval Pathway Feel)
+            ctx.strokeStyle = '#219653';
+            ctx.lineWidth = 2;
+            for(let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+
+            // 2. Draw Castle Fortifications (Bottom)
+            ctx.fillStyle = '#7f8c8d'; // Main stone color
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+            ctx.fillStyle = '#34495e'; // Dark brick highlights
+            for(let i = 0; i < canvas.width; i += 50) {
+                ctx.fillRect(i, canvas.height - 65, 25, 15);
+            }
+            // Main Castle Archer Keep
+            ctx.fillStyle = '#2c3e50';
+            ctx.beginPath(); ctx.arc(player.x, player.y, 20, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(player.x - 5, player.y - 5, 10, 10); // Banner flag
+
+            // 3. Automated Towers Management
+            towers.forEach(t => {
+                // Draw Tower Sprite Design
+                ctx.fillStyle = '#95a5a6';
+                ctx.fillRect(t.x - 12, t.y - 20, 24, 30); // Body
+                ctx.fillStyle = '#d35400';
+                ctx.beginPath(); // Cone Roof
+                ctx.moveTo(t.x - 16, t.y - 20); ctx.lineTo(t.x + 16, t.y - 20); ctx.lineTo(t.x, t.y - 35); ctx.fill();
+
+                // Tower AI: Find closest enemy
+                let nearestEnemy = null;
+                let minDist = t.range;
+                enemies.forEach(e => {
+                    let dist = Math.hypot(e.x - t.x, e.y - t.y);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        nearestEnemy = e;
+                    }
+                });
+
+                // Shoot at nearest target
+                if (nearestEnemy && timestamp - t.lastShot > t.cooldown) {
+                    let angle = Math.atan2(nearestEnemy.y - t.y, nearestEnemy.x - t.x);
+                    arrows.push({
+                        x: t.x,
+                        y: t.y - 20,
+                        dx: Math.cos(angle) * 6,
+                        dy: Math.sin(angle) * 6,
+                        damage: 1,
+                        color: '#ffffff'
+                    });
+                    t.lastShot = timestamp;
+                }
+            });
+
+            // 4. Soldiers Processing (March forward and hold line)
+            for (let i = soldiers.length - 1; i >= 0; i--) {
+                let s = soldiers[i];
+                
+                // Behavior AI: Look for an unengaged enemy nearby, or march north
+                let target = null;
+                let closestDist = 80; 
+                enemies.forEach(e => {
+                    let dist = Math.hypot(e.x - s.x, e.y - s.y);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        target = e;
+                    }
+                });
+
+                if (target) {
+                    // Move to engage target melee-style
+                    let angle = Math.atan2(target.y - s.y, target.x - s.x);
+                    s.x += Math.cos(angle) * s.speed;
+                    s.y += Math.sin(angle) * s.speed;
+
+                    // Melee Combat Attack Routine
+                    if (closestDist < (s.radius + target.radius + 4)) {
+                        target.hp -= 0.02; // Steady melee damage over frames
+                        s.hp -= 0.015;
+                    }
+                } else if (s.y > 150) {
+                    // March forward up to mid-field to hold defensive line
+                    s.y -= s.speed;
+                }
+
+                // Draw Soldier (Blue shields)
+                ctx.fillStyle = '#2980b9';
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2); ctx.fill();
+                // Weapon line
+                ctx.strokeStyle = '#f1c40f';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(s.x + 4, s.y); ctx.lineTo(s.x + 10, s.y - 6); ctx.stroke();
+
+                // Clean up dead soldiers
+                if (s.hp <= 0) {
+                    soldiers.splice(i, 1);
+                }
+            }
+
+            // 5. Enemies Processing
+            spawnEnemy(timestamp);
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                
+                // March downwards unless blocked by a soldier
+                let blocked = false;
+                soldiers.forEach(s => {
+                    if (Math.hypot(s.x - e.x, s.y - e.y) < (s.radius + e.radius + 5)) {
+                        blocked = true;
+                    }
+                });
+
+                if (!blocked) {
+                    e.y += e.speed;
+                }
+
+                // Draw Enemy Rebel (Red Marauders)
+                ctx.fillStyle = '#c0392b';
+                ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2); ctx.fill();
+                // Enemy Helmet Spike
+                ctx.fillStyle = '#d35400';
+                ctx.fillRect(e.x - 2, e.y - 15, 4, 6);
+
+                // HP Bar
+                ctx.fillStyle = '#7f8c8d';
+                ctx.fillRect(e.x - 10, e.y - 20, 20, 3);
+                ctx.fillStyle = '#2ecc71';
+                ctx.fillRect(e.x - 10, e.y - 20, (e.hp / e.maxHp) * 20, 3);
+
+                // Breach Base Wall Detection
+                if (e.y >= canvas.height - 65) {
+                    player.hp -= 10;
+                    enemies.splice(i, 1);
+                    updateUI();
+
+                    if (player.hp <= 0) {
+                        gameOver = true;
+                        alert(`The Realm has fallen! You commanded successfully up to Wave ${wave}.`);
+                        location.reload();
+                    }
+                }
+            }
+
+            // 6. Projectiles/Arrows Management
+            for (let i = arrows.length - 1; i >= 0; i--) {
+                let a = arrows[i];
+                a.x += a.dx;
+                a.y += a.dy;
+
+                ctx.fillStyle = a.color;
+                ctx.fillRect(a.x, a.y, 4, 4);
+
+                // Boundary cleanup
+                if (a.y < 0 || a.x < 0 || a.x > canvas.width || a.y > canvas.height) {
+                    arrows.splice(i, 1);
+                    continue;
+                }
+
+                // Arrow Hit Registrations
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                    let e = enemies[j];
+                    if (Math.hypot(a.x - e.x, a.y - e.y) < e.radius) {
+                        e.hp -= a.damage;
+                        arrows.splice(i, 1);
+
+                        if (e.hp <= 0) {
+                            enemies.splice(j, 1);
+                            player.gold += 8 + Math.floor(wave * 1.5);
+                            updateUI();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // 7. Dynamic Difficulty Scaling
+            if (timestamp > wave * 22000) { 
+                wave++;
+                enemySpawnRate = Math.max(450, enemySpawnRate - 180);
+                updateUI();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Boot system configuration
+        updateUI();
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
