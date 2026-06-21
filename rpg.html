@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Geometry Dash Rhythm Prototype (Custom Skins)</title>
     <style>
+        * {
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             margin: 0;
             background: #111;
@@ -15,14 +23,26 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            height: -webkit-fill-available; 
             overflow: hidden;
-            user-select: none;
+            touch-action: none;
+        }
+
+        #game-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 2 / 1; 
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #game-container {
             position: relative;
-            width: 800px;
-            height: 400px;
+            width: 100%;
+            height: 100%;
             background: url('images/german flag copy.png') no-repeat center center;
             background-size: cover;
             border: 4px solid #fff;
@@ -34,60 +54,69 @@
 
         #player {
             position: absolute;
-            width: 78px;
-            height: 78px;
+            /* 使用 % 確保在不同手機解析度下，大小與遊戲畫面等比例縮放 */
+            width: 9.75%;  /* 相當於 800px 裡的 78px */
+            aspect-ratio: 1 / 1;
             background: url('images/hitler raise hand.png') no-repeat center center;
             background-size: contain;
             bottom: 0;
-            left: 100px;
+            left: 12.5%;  /* 相當於 800px 裡的 100px */
             transform-origin: center bottom;
+            will-change: transform, bottom;
         }
 
         .obstacle {
             position: absolute;
-            width: 30px;
-            height: 40px;
+            width: 3.75%; /* 相當於 800px 裡的 30px */
+            height: 10%;  /* 相當於 400px 裡的 40px */
             background: lightgrey;
             bottom: 0;
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            box-shadow: 0 0 10px #ffffff; /* 配合白色/淺灰光暈 */
+            box-shadow: 0 0 10px #ffffff;
+            will-change: right;
         }
 
         #ui {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             font-size: 24px;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
         }
 
         #start-screen {
             text-align: center;
             cursor: pointer;
-            padding: 30px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
             border: 2px dashed #fff;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        h1 { margin-bottom: 10px; font-size: 32px; letter-spacing: 2px; }
-        p { color: #aaa; margin: 8px 0; }
+        h1 { margin: 0 0 10px 0; font-size: 28px; letter-spacing: 2px; }
+        p { color: #aaa; margin: 6px 0; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div id="start-screen" onclick="startGame()">
+    <div id="start-screen">
         <h1>GEOMETRY RHYTHM</h1>
-        <p style="color: #ff0055; font-weight: bold;">[ 116 BPM - MUSIC ONLY ]</p>
-        <p>Click anywhere to start / Restart</p>
-        <p><strong>Controls:</strong> Spacebar or Click to Jump</p>
-        <p style="font-size: 14px; color: #00ffcc; font-weight: bold; text-transform: uppercase;">Custom Theme Loaded: Image & Background Replaced</p>
+        <p style="color: #ff0055; font-weight: bold; font-size: 16px;">[ 116 BPM - MUSIC ONLY ]</p>
+        <p style="color: #fff; font-size: 16px; margin: 15px 0;">👇 Tap anywhere to Start 👇</p>
+        <p><strong>Controls:</strong> Tap screen or Spacebar to Jump</p>
+        <p style="font-size: 12px; color: #00ffcc; font-weight: bold; text-transform: uppercase;">Responsive Dynamic Hitbox Loaded</p>
     </div>
 
-    <div id="game-container">
-        <div id="ui">Score: <span id="score">0</span></div>
-        <div id="player"></div>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <div id="ui">Score: <span id="score">0</span></div>
+            <div id="player"></div>
+        </div>
     </div>
 
 <script>
@@ -99,6 +128,8 @@
     let isJumping = false;
     let playerY = 0;
     let velocity = 0;
+    
+    // 內部物理計算使用的相對單位
     const gravity = -1.15;     
     const jumpForce = 19.5;   
     let score = 0;
@@ -107,7 +138,9 @@
 
     const bpm = 116; 
     const beatStep = (60 / bpm) * 1000; 
-    const gameSpeed = 700 / (4 * (beatStep / 16.666)); 
+    
+    // 速度也改為基於容器寬度的百分比計算，確保在大小螢幕上的前進速度體感一致
+    const gameSpeedPercent = 0.65; 
 
     let bgMusic = null;
     let beatInterval = null;
@@ -129,36 +162,22 @@
 
         beatCount = 0;
 
-        const travelTimeMs = (700 / gameSpeed) * 16.666; 
-
-        const distanceIn1500ms = gameSpeed * (1500 / 16.666);
-        const initialRight = 660 - distanceIn1500ms;
-        
-        if (initialRight < 0) {
-            const spawnDelay = Math.max(0, 1500 - travelTimeMs);
-            firstObstacleTimeout = setTimeout(() => {
-                if (!gameActive) return;
-                spawnObstacleAt(0);
-            }, spawnDelay);
-        } else {
-            spawnObstacleAt(initialRight);
-        }
+        // 手機版動態校準初始障礙物
+        firstObstacleTimeout = setTimeout(() => {
+            if (!gameActive) return;
+            spawnObstacleAt(0);
+        }, 1000);
 
         bpmStartTimeout = setTimeout(() => {
             if (!gameActive) return;
-            
             beatCount = 1; 
-
             beatInterval = setInterval(() => {
                 if (!gameActive) return;
-
                 if (beatCount % 2 === 0) {
                     spawnObstacleAt(0);
                 }
-
                 beatCount++;
             }, beatStep);
-
         }, 1500); 
     }
 
@@ -176,15 +195,35 @@
         velocity = 0;
         
         initAudio();
-        
         window.requestAnimationFrame(update);
     }
+
+    startScreen.addEventListener('click', (e) => {
+        e.stopPropagation();
+        startGame();
+    });
+    startScreen.addEventListener('touchstart', (e) => {
+        e.preventDefault(); 
+        e.stopPropagation();
+        startGame();
+    }, { passive: false });
 
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') jump();
     });
-    container.addEventListener('touchstart', jump);
-    container.addEventListener('mousedown', jump);
+
+    window.addEventListener('touchstart', (e) => {
+        if (gameActive) {
+            e.preventDefault(); 
+            jump();
+        }
+    }, { passive: false });
+
+    window.addEventListener('mousedown', (e) => {
+        if (gameActive && e.target !== startScreen) {
+            jump();
+        }
+    });
 
     function jump() {
         if (!isJumping && gameActive) {
@@ -193,10 +232,10 @@
         }
     }
 
-    function spawnObstacleAt(rightX) {
+    function spawnObstacleAt(rightPercent) {
         const obstacle = document.createElement('div');
         obstacle.classList.add('obstacle');
-        obstacle.style.right = rightX + 'px'; 
+        obstacle.style.right = rightPercent + '%'; 
         container.appendChild(obstacle);
         obstacles.push(obstacle);
     }
@@ -213,7 +252,8 @@
             velocity = 0;
         }
 
-        player.style.bottom = playerY + 'px';
+        // 將內部的物理高度轉換為動態的百分比或像素應用到元件上
+        player.style.bottom = (playerY / 400 * 100) + '%';
         
         if (isJumping) {
             player.style.transform = `rotate(${Math.min(playerY * 0.35, 22)}deg)`;
@@ -221,26 +261,40 @@
             player.style.transform = 'rotate(0deg)';
         }
 
+        // 獲取當前實際在螢幕上的位置進行碰撞判定
+        const playerRect = player.getBoundingClientRect();
+
+        // 【關鍵修正】實時動態調整自訂圖片在不同螢幕上的 Hitbox 內縮量
+        const paddingX = playerRect.width * 0.32; // 左右各向內縮減 32% 的圖片寬度（剔除透明死角）
+        const paddingBottom = playerRect.height * 0.15; // 底部剔除 15% 的透明死角
+
+        const pLeft = playerRect.left + paddingX;
+        const pRight = playerRect.right - paddingX;
+        const pBottom = playerRect.bottom - paddingBottom;
+        const pTop = playerRect.top;
+
         for (let i = obstacles.length - 1; i >= 0; i--) {
             let obs = obstacles[i];
             let currentRight = parseFloat(obs.style.right);
-            currentRight += gameSpeed;
-            obs.style.right = currentRight + 'px';
+            currentRight += gameSpeedPercent;
+            obs.style.right = currentRight + '%';
 
-            let obsLeft = 800 - currentRight - 30;
-            
-            // 【核心修正】嚴格縮減自訂圖片的碰撞箱
-            // 由於 78px 圖片兩側與底部通常有透明預留空隙，因此大幅提高安全邊距
-            let playerLeftWithPadding = 100 + 28;  // 左側向內縮 28px
-            let playerRightWithPadding = 178 - 28; // 右側向內縮 28px
+            // 獲取障礙物在螢幕上的精準絕對位置
+            const obsRect = obs.getBoundingClientRect();
 
-            // 同步降低高度判定（從 35 降到 26），只有當跳躍高度低於 26px 時才會被判定撞到
-            if (obsLeft < playerRightWithPadding && obsLeft + 30 > playerLeftWithPadding && playerY < 26) {
+            // 執行跨螢幕響應式的動態 AABB 碰撞檢測
+            if (
+                obsRect.left < pRight &&
+                obsRect.right > pLeft &&
+                obsRect.top < pBottom &&
+                obsRect.bottom > pTop
+            ) {
                 gameOver();
                 return;
             }
 
-            if (currentRight > 830) {
+            // 當障礙物移出畫面左側（右側百分比大於 105%）時移除並加分
+            if (currentRight > 105) {
                 obs.remove();
                 obstacles.splice(i, 1);
                 score++;
