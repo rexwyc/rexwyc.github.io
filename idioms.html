@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idioms & Fixed Expressions Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --primary-color: #3b82f6;
+            --success-color: #22c55e;
+            --error-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .score-box {
+            background: #e2e8f0;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #dcfce7;
+            border-color: var(--success-color);
+            color: #15803d;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2;
+            border-color: var(--error-color);
+            color: #b91c1c;
+        }
+
+        .option-btn:disabled {
+            pointer-events: none;
+        }
+
+        .explanation-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .action-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <span id="question-number">Question</span>
+        <span class="score-box">Score: <span id="score">0</span></span>
+    </div>
+    
+    <div class="question-text" id="question">Loading question...</div>
+    
+    <div class="options-container" id="options">
+        </div>
+    
+    <div class="explanation-box" id="explanation">
+        </div>
+    
+    <button class="action-btn" id="action-button" onclick="handleAction()">Next Question</button>
+</div>
+
+<script>
+    const questions = [
+        { q: "To bite the bullet means to...", a: ["Face a difficult situation with courage", "Accidentally hurt yourself", "Start a fight", "Eat something tough"], c: 0, e: "'Bite the bullet' comes from historical military contexts where wounded soldiers bit on a lead bullet to cope with pain. It means facing an inevitable, tough situation." },
+        { q: "If something happens 'once in a blue moon', it happens...", a: ["Every month", "Very rarely", "Only at night", "Predictably"], c: 1, e: "A blue moon is a rare second full moon in a single calendar month. Thus, the phrase implies a very rare event." },
+        { q: "To 'spill the beans' means to...", a: ["Cook a meal", "Make a mess", "Reveal a secret", "Waste money"], c: 2, e: "'Spill the beans' means to prematurely reveal confidential information or a secret." },
+        { q: "Complete the expression: 'Actions speak louder than ______.'", a: ["Words", "Thoughts", "Intentions", "Speeches"], c: 0, e: "This means that what people actually do is more significant than what they merely say they will do." },
+        { q: "If someone is 'feeling under the weather', they are...", a: ["Enjoying the sunny day", "Slightly unwell or sick", "Angry about something", "Stressed from work"], c: 1, e: "This popular idiom originally referred to sailors going below deck to shield themselves during bad weather when feeling seasick." },
+        { q: "To 'break a leg' in theater means...", a: ["To wish someone bad luck", "To cancel a show", "To wish someone good luck", "To perform badly"], c: 2, e: "It is an old theatrical superstition that directly wishing someone good luck will bring bad luck, so performers say 'break a leg' instead." },
+        { q: "What does 'cost an arm and a leg' mean?", a: ["To be very expensive", "To require physical labor", "To be easily affordable", "To get injured"], c: 0, e: "If an item costs an arm and a leg, it is extremely pricey." },
+        { q: "If you 'piece together' a story, you are...", a: ["Writing a book", "Creating a lie", "Reconstructing facts from separate parts", "Dividing profits"], c: 2, e: "'Piece together' is a fixed phrasal verb meaning to assemble or figure out something by combining clues or parts." },
+        { q: "To 'let the cat out of the bag' means...", a: ["To set a pet free", "To accidentally reveal a secret", "To perform a magic trick", "To cause trouble"], c: 1, e: "Similar to spilling the beans, letting the cat out of the bag means disclosing a secret, often accidentally." },
+        { q: "When you are 'on the fence', you are...", a: ["Undecided or neutral", "In immediate danger", "Trespassing", "Highly enthusiastic"], c: 0, e: "Sitting or being 'on the fence' means you haven't made a choice between two options yet." },
+        { q: "What is the meaning of 'a blessing in disguise'?", a: ["A disguised villain", "A lucky event that looked bad at first", "A fake miracle", "A sudden surprise party"], c: 1, e: "Something that seems unfortunate at first but results in a good outcome later is a blessing in disguise." },
+        { q: "To 'hit the nail on the head' means...", a: ["To make a clumsy mistake", "To build something quickly", "To state or do something exactly right", "To hurt your hand"], c: 2, e: "This means to pinpoint the precise truth or cause of a situation." },
+        { q: "If you 'call it a day', you...", a: ["Name a brand-new day", "Stop working on something for the rest of the day", "Wake up early", "Schedule an appointment"], c: 1, e: "People say 'let's call it a day' when they decide to stop working or wrapping up an activity." },
+        { q: "What does 'the elephant in the room' refer to?", a: ["A big zoo attraction", "An obvious problem that everyone avoids discussing", "A massive piece of furniture", "An uninvited party guest"], c: 1, e: "It refers to a glaringly obvious issue or difficult topic that people purposefully ignore because it is uncomfortable." },
+        { q: "To 'burn the midnight oil' means...", a: ["To waste valuable electricity", "To stay up very late working or studying", "To cook late at night", "To damage property"], c: 1, e: "This expression dates back to before electricity, when people used oil lamps to read or work late into the night." },
+        { q: "If someone tells you to 'take it with a grain of salt', they mean...", a: ["Add more seasoning to your food", "Don't completely believe it; be skeptical", "Take it very seriously", "Keep it as a secret"], c: 1, e: "To take something with a grain of salt (or grain of mustard seed) means to view the information with doubt or healthy skepticism." },
+        { q: "What does 'barking up the wrong tree' mean?", a: ["Training a guard dog poorly", "Following the wrong line of thought or action", "Shouting at nature", "Getting lost in a forest"], c: 1, e: "Originating from hunting dogs barking at a tree where they think a prey is, it means pursuing a mistaken approach or blaming the wrong person." },
+        { q: "Complete the phrase: 'At the drop of a ______.'", a: ["Hat", "Coin", "Pin", "Shoe"], c: 0, e: "'At the drop of a hat' means instantly, immediately, or without any hesitation." },
+        { q: "If you are 'back to the drawing board', you must...", a: ["Hang up a painting", "Start over because a previous attempt failed", "Hire an architect", "Quit your job"], c: 1, e: "When a plan or design doesn't work out, you go back to the drawing board to start planning all over again." },
+        { q: "What does 'burn bridges' mean?", a: ["To destroy relationships or pathways back", "To build new infrastructure", "To travel by boat", "To create a spectacular bonfire"], c: 0, e: "Burning your bridges means acting in a way that eliminates any possibility of returning to a previous state or relationship." },
+        { q: "To 'cry over spilled milk' means to...", a: ["Clean up a kitchen mess", "Complain about a minor loss that can't be undone", "Be overly dramatic about groceries", "Wish for better food"], c: 1, e: "It means wasting time worrying or being sad about past mistakes or events that cannot be changed." },
+        { q: "If an event is 'up in the air', it is...", a: ["Very successful", "Flying high", "Uncertain or undecided", "Scheduled for tomorrow"], c: 2, e: "When plans are up in the air, no definitive choices or final arrangements have been made yet." },
+        { q: "What does 'pulling someone's leg' mean?", a: ["Tripping them on purpose", "Joking or teasing them with a lie", "Helping them stand up", "Stretching before exercise"], c: 1, e: "If you pull someone's leg, you are playfully kidding or telling them a false story as a joke." },
+        { q: "To 'cut corners' means to...", a: ["Use a sharper pair of scissors", "Do something poorly or cheaply to save time/money", "Drive safely around bends", "Take a shortcut through an alley"], c: 1, e: "Cutting corners implies skipping steps or compromising quality to economize on effort, time, or funds." },
+        { q: "When things 'get out of hand', they...", a: ["Are dropped on the floor", "Become out of control", "Are passed to someone else", "Get resolved quickly"], c: 1, e: "If a situation gets out of hand, it escalates past the point of easy management or control." },
+        { q: "The expression 'through thick and thin' means...", a: ["Losing and gaining weight", "Under both good and bad circumstances", "Walking through a dense forest", "Only during lucky times"], c: 1, e: "Supporting someone through thick and thin means sticking by them through all of life's hardships and successes." },
+        { q: "To 'miss the boat' means to...", a: ["Arrive late at the harbor", "Lose a regular transport pass", "Miss out on an opportunity", "Forget a swimming lesson"], c: 2, e: "Missing the boat means you were too slow to act and consequently lost out on an advantageous chance." },
+        { q: "If you 'see eye to eye' with someone, you...", a: ["Are exactly the same height", "Stare at them intensely", "Agree completely", "Have a misunderstanding"], c: 2, e: "To see eye to eye with another person means you share the same viewpoint or completely agree on an issue." },
+        { q: "What does 'the last straw' signify?", a: ["The final drinking tube in a box", "A minor problem that finally breaks your patience", "The best part of an event", "A harvest tool"], c: 1, e: "From the proverb 'it's the last straw that breaks the camel's back,' it means the final ultimate nuisance in a sequence that makes a situation unbearable." },
+        { q: "To 'play devil's advocate' means to...", a: ["Argue an opposing view just for the sake of debate", "Support bad behavior", "Act in a scary play", "Give up on an argument"], c: 0, e: "A devil's advocate presents alternative, often unpopular viewpoints to test the strength of the main argument." }
+    ];
+
+    let currentIndex = 0;
+    let overallScore = 0;
+    let questionsAnswered = 0;
+
+    const questionNumEl = document.getElementById("question-number");
+    const scoreEl = document.getElementById("score");
+    const questionEl = document.getElementById("question");
+    const optionsContainer = document.getElementById("options");
+    const explanationBox = document.getElementById("explanation");
+    const actionBtn = document.getElementById("action-button");
+
+    function loadQuestion() {
+        // Reset states
+        explanationBox.style.display = "none";
+        actionBtn.style.display = "none";
+        optionsContainer.innerHTML = "";
+
+        const currentQ = questions[currentIndex];
+        
+        // Update labels (Question count keeps rising for infinite loop)
+        questionsAnswered++;
+        questionNumEl.textContent = `Question ${questionsAnswered}`;
+        questionEl.textContent = currentQ.q;
+
+        // Render options
+        currentQ.a.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.className = "option-btn";
+            button.textContent = option;
+            button.onclick = () => selectOption(index, button);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function selectOption(selectedIndex, clickedBtn) {
+        const currentQ = questions[currentIndex];
+        const buttons = optionsContainer.getElementsByClassName("option-btn");
+
+        // Disable all options after selection
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+
+        if (selectedIndex === currentQ.c) {
+            clickedBtn.classList.add("correct");
+            overallScore++;
+            scoreEl.textContent = overallScore;
+        } else {
+            clickedBtn.classList.add("wrong");
+            // Highlight correct answer
+            buttons[currentQ.c].classList.add("correct");
+        }
+
+        // Show explanation and next button
+        explanationBox.textContent = currentQ.e;
+        explanationBox.style.display = "block";
+        actionBtn.style.display = "block";
+    }
+
+    function handleAction() {
+        // Infinite Loop feature: Advance index, reset back to 0 if it hits 30
+        currentIndex = (currentIndex + 1) % questions.length;
+        loadQuestion();
+    }
+
+    // Start the game loop initially
+    loadQuestion();
+</script>
+
+</body>
+</html>
