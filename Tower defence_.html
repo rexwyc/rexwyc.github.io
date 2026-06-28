@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🏰 TOWER DEFENSE · Shadow Creeps · 500 HP</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a1a1f 0%, #0c2a2f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Courier New', system-ui, monospace;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: #1f3e3b;
+            border-radius: 56px;
+            padding: 20px 25px 25px 25px;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px black;
+            cursor: crosshair;
+            background-color: #192e2a;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: #0e2825e0;
+            backdrop-filter: blur(6px);
+            padding: 12px 20px;
+            border-radius: 60px;
+            color: #f5efdc;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: flex;
+            gap: 25px;
+            background: #00000066;
+            padding: 6px 20px;
+            border-radius: 40px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            background: #2b5a53;
+            padding: 3px 10px;
+            border-radius: 32px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: monospace;
+            color: #ffd966;
+        }
+
+        .level-badge {
+            background: #4a2a1e;
+            padding: 5px 15px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .tower-selector {
+            display: flex;
+            gap: 8px;
+            background: #00000055;
+            padding: 5px 12px;
+            border-radius: 50px;
+        }
+
+        .tower-btn {
+            background: #2c4f48;
+            border: none;
+            color: #ffefbf;
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 3px 0 #0f2a24;
+        }
+
+        .tower-btn.active {
+            background: #e9b35f;
+            color: #1e2a25;
+            box-shadow: 0 1px 0 #8b5a2b;
+            transform: translateY(2px);
+        }
+
+        .tower-btn:active {
+            transform: translateY(3px);
+        }
+
+        .reset-btn, .next-btn {
+            background: #aa6f3c;
+            box-shadow: 0 3px 0 #593e1e;
+        }
+
+        .next-btn {
+            background: #3f8a6e;
+            box-shadow: 0 3px 0 #235b46;
+        }
+
+        .message-area {
+            background: #071d1ad9;
+            font-size: 0.8rem;
+            border-radius: 28px;
+            padding: 4px 14px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .stats { gap: 12px; padding: 4px 12px;}
+            .stat-value { font-size: 1.2rem;}
+            .tower-btn { padding: 3px 8px; font-size: 0.7rem;}
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="900" height="600"></canvas>
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat"><span class="stat-label">🛡️ BASE HP</span><span id="livesCount" class="stat-value">100</span></div>
+                <div class="stat"><span class="stat-label">💰 GOLD</span><span id="goldCount" class="stat-value">500</span></div>
+                <div class="stat"><span class="stat-label">🗡️ KILLS</span><span id="killCount" class="stat-value">0</span></div>
+                <div class="stat"><span class="stat-label">🌊 WAVE</span><span id="waveCount" class="stat-value">1</span></div>
+            </div>
+            <div class="level-badge" id="levelDisplay">MAP 1/8</div>
+            <div class="tower-selector">
+                <button id="towerBasicBtn" class="tower-btn active">🏹 BASIC (60)</button>
+                <button id="towerCannonBtn" class="tower-btn">💥 CANNON (100)</button>
+                <button id="towerMagicBtn" class="tower-btn">✨ MAGIC (140)</button>
+            </div>
+            <div>
+                <button id="resetGameBtn" class="tower-btn reset-btn">🔄 RESTART</button>
+                <button id="nextLevelBtn" class="tower-btn next-btn">⭐ NEXT</button>
+            </div>
+        </div>
+        <div class="message-area" id="gameMsg">⚔️ Each Shadow Creep has 500 HP! Build powerful towers to defeat them!</div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const COLS = 18, ROWS = 12, CELL_SIZE = 50;
+
+        // ========== 8 UNIQUE MAPS with different paths ==========
+        const MAPS = [
+            { name: "🌲 FOREST PATH", waypoints: [{x:0,y:2},{x:6,y:2},{x:6,y:8},{x:12,y:8},{x:12,y:3},{x:17,y:3}], startGold:500, startLives:100 },
+            { name: "🏜️ DESERT CANYON", waypoints: [{x:0,y:5},{x:4,y:5},{x:4,y:2},{x:9,y:2},{x:9,y:9},{x:14,y:9},{x:14,y:4},{x:17,y:4}], startGold:530, startLives:100 },
+            { name: "❄️ FROZEN PEAK", waypoints: [{x:0,y:3},{x:5,y:3},{x:5,y:7},{x:10,y:7},{x:10,y:1},{x:15,y:1},{x:15,y:10},{x:17,y:10}], startGold:560, startLives:100 },
+            { name: "🏯 ANCIENT RUINS", waypoints: [{x:0,y:8},{x:3,y:8},{x:3,y:3},{x:8,y:3},{x:8,y:10},{x:13,y:10},{x:13,y:5},{x:17,y:5}], startGold:590, startLives:100 },
+            { name: "🌋 VOLCANO CORE", waypoints: [{x:0,y:1},{x:4,y:1},{x:4,y:6},{x:9,y:6},{x:9,y:11},{x:12,y:11},{x:12,y:4},{x:16,y:4},{x:16,y:9},{x:17,y:9}], startGold:620, startLives:100 },
+            { name: "💎 CRYSTAL CAVES", waypoints: [{x:0,y:9},{x:2,y:9},{x:2,y:3},{x:7,y:3},{x:7,y:8},{x:11,y:8},{x:11,y:2},{x:15,y:2},{x:15,y:10},{x:17,y:10}], startGold:650, startLives:100 },
+            { name: "⚙️ MECHANICAL FORTRESS", waypoints: [{x:0,y:4},{x:3,y:4},{x:3,y:10},{x:8,y:10},{x:8,y:5},{x:13,y:5},{x:13,y:11},{x:16,y:11},{x:16,y:3},{x:17,y:3}], startGold:680, startLives:100 },
+            { name: "🐉 DRAGON'S LAIR", waypoints: [{x:0,y:6},{x:5,y:6},{x:5,y:2},{x:10,y:2},{x:10,y:9},{x:14,y:9},{x:14,y:4},{x:16,y:4},{x:16,y:8},{x:17,y:8}], startGold:720, startLives:100 }
+        ];
+
+        let currentMap = 0;
+        let pathCells = [];
+        let pathSet = new Set();
+        let endPoint = null;
+        
+        // Game state - Base HP is 100, enemies have 500 HP each
+        let baseHP = 100;
+        let gold = 500;
+        let wave = 1;
+        let totalKills = 0;
+        let gameOver = false;
+        let levelCompleted = false;
+        let enemies = [];
+        let towers = [];
+        let waveInProgress = false;
+        let enemiesToSpawn = 0;
+        let spawnTimer = 0;
+        
+        let selectedTowerType = "basic";
+        
+        // Tower stats - boosted damage to handle 500 HP enemies
+        const TOWER_STATS = {
+            basic: { price: 60, damage: 45, range: 120, cooldownMax: 20, color: "#CD853F", name: "Archer" },
+            cannon: { price: 100, damage: 85, range: 115, cooldownMax: 35, color: "#8B4513", name: "Cannon", splash: true },
+            magic: { price: 140, damage: 55, range: 135, cooldownMax: 25, color: "#9370DB", name: "Mage", slow: true }
+        };
+        
+        // Helper: build path from waypoints
+        function buildPathFromWaypoints(waypoints) {
+            let cells = [];
+            for (let i = 0; i < waypoints.length - 1; i++) {
+                let from = waypoints[i];
+                let to = waypoints[i + 1];
+                let stepX = Math.sign(to.x - from.x);
+                let stepY = Math.sign(to.y - from.y);
+                let curX = from.x, curY = from.y;
+                if (i === 0) cells.push({ x: curX, y: curY });
+                while (curX !== to.x || curY !== to.y) {
+                    if (curX !== to.x) curX += stepX;
+                    if (curY !== to.y) curY += stepY;
+                    cells.push({ x: curX, y: curY });
+                }
+            }
+            // Remove duplicates
+            let unique = [];
+            for (let cell of cells) {
+                if (unique.length === 0 || unique[unique.length-1].x !== cell.x || unique[unique.length-1].y !== cell.y) {
+                    unique.push(cell);
+                }
+            }
+            return unique;
+        }
+        
+        function initMap() {
+            let waypoints = MAPS[currentMap].waypoints;
+            pathCells = buildPathFromWaypoints(waypoints);
+            pathSet.clear();
+            pathCells.forEach(p => pathSet.add(`${p.x},${p.y}`));
+            endPoint = waypoints[waypoints.length-1];
+        }
+        
+        // Enemy stats - EACH ENEMY HAS 500 HP BASE
+        const ENEMY_BASE_HP = 500;
+        
+        function getEnemyHealth() {
+            let additional = Math.floor(wave * 8) + (currentMap * 5);
+            return ENEMY_BASE_HP + additional;
+        }
+        
+        function getEnemyReward() {
+            return 80 + Math.floor(wave * 3) + currentMap * 5;
+        }
+        
+        function getEnemySpeed() {
+            return 1.15 + Math.min(0.7, wave * 0.025);
+        }
+        
+        function getWaveCount() {
+            return Math.min(12, 3 + Math.floor(wave * 0.8));
+        }
+        
+        function spawnEnemy() {
+            if (gameOver || levelCompleted) return;
+            let start = pathCells[0];
+            let enemyHP = getEnemyHealth();
+            enemies.push({
+                x: start.x * CELL_SIZE + CELL_SIZE/2,
+                y: start.y * CELL_SIZE + CELL_SIZE/2,
+                waypointIdx: 1,
+                hp: enemyHP,
+                maxHp: enemyHP,
+                reward: getEnemyReward(),
+                speed: getEnemySpeed(),
+                slowed: 0
+            });
+        }
+        
+        function startWave() {
+            if (gameOver || levelCompleted || waveInProgress) return;
+            let count = getWaveCount();
+            enemiesToSpawn = count;
+            waveInProgress = true;
+            spawnTimer = 0;
+            document.getElementById('gameMsg').innerText = `🌊 WAVE ${wave} - ${count} Shadow Creeps (500+ HP each)! Build strong towers!`;
+        }
+        
+        function updateWaveSpawning() {
+            if (!waveInProgress) return;
+            
+            if (enemiesToSpawn <= 0 && enemies.length === 0) {
+                waveInProgress = false;
+                wave++;
+                let bonus = 150 + wave * 8 + currentMap * 15;
+                gold += bonus;
+                updateUI();
+                document.getElementById('gameMsg').innerText = `✅ Wave ${wave-1} cleared! +${bonus} gold | Base HP: ${baseHP}`;
+                document.getElementById('waveCount').innerText = wave;
+                
+                if (wave > 8) {
+                    levelCompleted = true;
+                    document.getElementById('gameMsg').innerText = `🎉 MAP ${currentMap+1} COMPLETE! Click NEXT MAP 🎉`;
+                    if (currentMap === MAPS.length-1) {
+                        document.getElementById('gameMsg').innerText = `🏆 VICTORY! You beat all 8 maps with 500 HP enemies! 🏆`;
+                        gameOver = true;
+                    }
+                    return;
+                }
+                
+                setTimeout(() => {
+                    if (!gameOver && !levelCompleted && !waveInProgress && enemies.length === 0) {
+                        startWave();
+                    }
+                }, 1500);
+                return;
+            }
+            
+            if (enemiesToSpawn > 0) {
+                if (spawnTimer <= 0) {
+                    spawnEnemy();
+                    enemiesToSpawn--;
+                    spawnTimer = Math.max(35, 50 - Math.floor(wave / 1.5));
+                } else {
+                    spawnTimer--;
+                }
+            }
+        }
+        
+        function updateEnemies() {
+            for (let i = 0; i < enemies.length; i++) {
+                let e = enemies[i];
+                
+                if (e.slowed > 0) {
+                    e.slowed--;
+                }
+                let speedMul = (e.slowed > 0) ? 0.55 : 1.0;
+                
+                if (e.waypointIdx >= pathCells.length) {
+                    let damageAmount = Math.max(5, Math.floor(e.hp / 20) + 3);
+                    baseHP -= damageAmount;
+                    updateUI();
+                    enemies.splice(i, 1);
+                    i--;
+                    if (baseHP <= 0) {
+                        gameOver = true;
+                        baseHP = 0;
+                        document.getElementById('gameMsg').innerText = "💀 GAME OVER! Your base has fallen! Press RESTART 💀";
+                        updateUI();
+                    }
+                    continue;
+                }
+                
+                let target = pathCells[e.waypointIdx];
+                let tx = target.x * CELL_SIZE + CELL_SIZE/2;
+                let ty = target.y * CELL_SIZE + CELL_SIZE/2;
+                let dx = tx - e.x;
+                let dy = ty - e.y;
+                let dist = Math.hypot(dx, dy);
+                
+                if (dist < 3.5) {
+                    e.waypointIdx++;
+                } else {
+                    let step = Math.min(e.speed * speedMul, dist);
+                    let angle = Math.atan2(dy, dx);
+                    e.x += Math.cos(angle) * step;
+                    e.y += Math.sin(angle) * step;
+                }
+            }
+        }
+        
+        function updateTowers() {
+            for (let t of towers) {
+                if (t.cooldown > 0) {
+                    t.cooldown--;
+                    continue;
+                }
+                
+                let closest = null;
+                let minDist = Infinity;
+                let cx = t.x * CELL_SIZE + CELL_SIZE/2;
+                let cy = t.y * CELL_SIZE + CELL_SIZE/2;
+                
+                for (let enemy of enemies) {
+                    let dx = cx - enemy.x;
+                    let dy = cy - enemy.y;
+                    let dist = Math.hypot(dx, dy);
+                    if (dist < t.range && enemy.hp > 0 && dist < minDist) {
+                        minDist = dist;
+                        closest = enemy;
+                    }
+                }
+                
+                if (closest) {
+                    t.cooldown = t.cooldownMax;
+                    t.shotEffect = 5;
+                    
+                    if (t.type === 'cannon') {
+                        for (let enemy of enemies) {
+                            let dx = cx - enemy.x;
+                            let dy = cy - enemy.y;
+                            if (Math.hypot(dx, dy) < 70 && enemy.hp > 0) {
+                                enemy.hp -= t.damage;
+                                if (enemy.hp <= 0) {
+                                    let idx = enemies.indexOf(enemy);
+                                    if (idx !== -1) {
+                                        enemies.splice(idx, 1);
+                                        totalKills++;
+                                        gold += enemy.reward;
+                                        updateUI();
+                                        document.getElementById('killCount').innerText = totalKills;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        closest.hp -= t.damage;
+                        if (t.type === 'magic') {
+                            closest.slowed = 50;
+                        }
+                        if (closest.hp <= 0) {
+                            let idx = enemies.indexOf(closest);
+                            if (idx !== -1) {
+                                enemies.splice(idx, 1);
+                                totalKills++;
+                                gold += closest.reward;
+                                updateUI();
+                                document.getElementById('killCount').innerText = totalKills;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            for (let t of towers) {
+                if (t.shotEffect > 0) t.shotEffect--;
+            }
+        }
+        
+        function tryBuildTower(gridX, gridY) {
+            if (gameOver || levelCompleted) {
+                document.getElementById('gameMsg').innerText = levelCompleted ? "Complete this map first!" : "Game over! Press RESTART";
+                return false;
+            }
+            if (gridX < 0 || gridX >= COLS || gridY < 0 || gridY >= ROWS) return false;
+            if (pathSet.has(`${gridX},${gridY}`)) {
+                document.getElementById('gameMsg').innerText = "❌ Cannot build on the path!";
+                return false;
+            }
+            if (towers.some(t => t.x === gridX && t.y === gridY)) {
+                document.getElementById('gameMsg').innerText = "⚠️ Tower already exists!";
+                return false;
+            }
+            
+            let stats = TOWER_STATS[selectedTowerType];
+            if (gold < stats.price) {
+                document.getElementById('gameMsg').innerText = `💰 Need ${stats.price} gold!`;
+                return false;
+            }
+            
+            towers.push({
+                x: gridX, y: gridY,
+                type: selectedTowerType,
+                damage: stats.damage,
+                range: stats.range,
+                cooldownMax: stats.cooldownMax,
+                cooldown: 0,
+                shotEffect: 0,
+                color: stats.color
+            });
+            
+            gold -= stats.price;
+            updateUI();
+            document.getElementById('gameMsg').innerText = `🏗️ ${stats.name} tower built! (${stats.price}💰) | Each enemy has 500+ HP!`;
+            return true;
+        }
+        
+        function loadMap(index) {
+            currentMap = index;
+            let mapData = MAPS[currentMap];
+            baseHP = mapData.startLives;
+            gold = mapData.startGold;
+            wave = 1;
+            totalKills = 0;
+            enemies = [];
+            towers = [];
+            waveInProgress = false;
+            enemiesToSpawn = 0;
+            levelCompleted = false;
+            gameOver = false;
+            
+            initMap();
+            updateUI();
+            document.getElementById('killCount').innerText = "0";
+            document.getElementById('waveCount').innerText = "1";
+            document.getElementById('levelDisplay').innerHTML = `MAP ${currentMap+1}/8 · ${mapData.name}`;
+            document.getElementById('gameMsg').innerHTML = `✨ ${mapData.name} | 💀 Each Shadow Creep has 500+ HP! Use strong towers!`;
+            
+            setTimeout(() => {
+                if (!gameOver && !levelCompleted) {
+                    startWave();
+                }
+            }, 500);
+        }
+        
+        function nextMap() {
+            if (levelCompleted && currentMap < MAPS.length - 1) {
+                loadMap(currentMap + 1);
+            } else if (levelCompleted && currentMap === MAPS.length - 1) {
+                document.getElementById('gameMsg').innerText = "🏆 You beat the game! Press RESTART to play again!";
+            } else {
+                document.getElementById('gameMsg').innerText = "⚠️ Complete all 8 waves on this map first!";
+            }
+        }
+        
+        function resetGame() {
+            loadMap(0);
+        }
+        
+        function updateUI() {
+            document.getElementById('livesCount').innerText = Math.max(0, baseHP);
+            document.getElementById('goldCount').innerText = Math.floor(gold);
+            document.getElementById('killCount').innerText = totalKills;
+            
+            if (baseHP < 30 && baseHP > 0 && !gameOver) {
+                document.getElementById('livesCount').style.color = "#ff6666";
+            } else {
+                document.getElementById('livesCount').style.color = "#ffd966";
+            }
+        }
+        
+        // ========== DRAWING ==========
+        function drawGrid() {
+            ctx.strokeStyle = "#3f786e";
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= ROWS; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * CELL_SIZE);
+                ctx.lineTo(COLS * CELL_SIZE, i * CELL_SIZE);
+                ctx.stroke();
+            }
+            for (let i = 0; i <= COLS; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * CELL_SIZE, 0);
+                ctx.lineTo(i * CELL_SIZE, ROWS * CELL_SIZE);
+                ctx.stroke();
+            }
+        }
+        
+        function drawPath() {
+            for (let cell of pathCells) {
+                ctx.fillStyle = "#5a3a1a";
+                ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE - 1, CELL_SIZE - 1);
+                ctx.fillStyle = "#c9985f";
+                ctx.fillRect(cell.x * CELL_SIZE + 4, cell.y * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8);
+                ctx.fillStyle = "#e1b07e";
+                ctx.beginPath();
+                ctx.arc(cell.x * CELL_SIZE + CELL_SIZE/2, cell.y * CELL_SIZE + CELL_SIZE/2, 4, 0, Math.PI*2);
+                ctx.fill();
+            }
+            
+            let start = pathCells[0];
+            ctx.fillStyle = "#4abf8a";
+            ctx.beginPath();
+            ctx.arc(start.x * CELL_SIZE + CELL_SIZE/2, start.y * CELL_SIZE + CELL_SIZE/2, 16, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "white";
+            ctx.font = "bold 16px monospace";
+            ctx.fillText("S", start.x * CELL_SIZE + 18, start.y * CELL_SIZE + 33);
+            
+            ctx.fillStyle = "#d64531";
+            ctx.beginPath();
+            ctx.arc(endPoint.x * CELL_SIZE + CELL_SIZE/2, endPoint.y * CELL_SIZE + CELL_SIZE/2, 16, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "white";
+            ctx.font = "18px monospace";
+            ctx.fillText("🏠", endPoint.x * CELL_SIZE + 13, endPoint.y * CELL_SIZE + 33);
+        }
+        
+        function drawTowers() {
+            for (let t of towers) {
+                let cx = t.x * CELL_SIZE + CELL_SIZE/2;
+                let cy = t.y * CELL_SIZE + CELL_SIZE/2;
+                
+                ctx.fillStyle = t.color;
+                ctx.fillRect(cx - 14, cy - 14, 28, 28);
+                
+                ctx.fillStyle = "#D4AF37";
+                ctx.fillRect(cx - 8, cy - 20, 16, 12);
+                
+                if (t.type === 'basic') {
+                    ctx.fillStyle = "#8B5A2B";
+                    ctx.fillRect(cx + 2, cy - 12, 10, 5);
+                    ctx.fillStyle = "#D4AF37";
+                    ctx.beginPath();
+                    ctx.arc(cx - 2, cy - 10, 3, 0, Math.PI*2);
+                    ctx.fill();
+                } else if (t.type === 'cannon') {
+                    ctx.fillStyle = "#5D4037";
+                    ctx.fillRect(cx + 3, cy - 14, 12, 6);
+                    ctx.fillStyle = "#FF8C00";
+                    ctx.beginPath();
+                    ctx.arc(cx + 9, cy - 11, 4, 0, Math.PI*2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = "#9B59B6";
+                    ctx.beginPath();
+                    ctx.arc(cx, cy - 8, 6, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.fillStyle = "#F1C40F";
+                    ctx.beginPath();
+                    ctx.arc(cx, cy - 8, 3, 0, Math.PI*2);
+                    ctx.fill();
+                }
+                
+                if (t.shotEffect > 0) {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, t.range, 0, Math.PI*2);
+                    ctx.strokeStyle = "#ffcc66";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        function drawEnemies() {
+            for (let e of enemies) {
+                let percent = e.hp / e.maxHp;
+                
+                // Shadow Creep appearance (dark, smoky, with glowing eyes)
+                // Main body
+                ctx.shadowColor = "#2a0f2a";
+                ctx.shadowBlur = 18;
+                ctx.fillStyle = "#1a0a1f";
+                ctx.beginPath();
+                ctx.ellipse(e.x, e.y-2, 16, 12, 0, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Glowing eyes
+                ctx.shadowBlur = 12;
+                ctx.fillStyle = "#ff3366";
+                ctx.beginPath();
+                ctx.arc(e.x-7, e.y-6, 4, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = "#ffcc44";
+                ctx.beginPath();
+                ctx.arc(e.x+7, e.y-6, 4, 0, Math.PI*2);
+                ctx.fill();
+                // Pupils
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = "#111";
+                ctx.beginPath();
+                ctx.arc(e.x-8, e.y-7, 2, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(e.x+6, e.y-7, 2, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Shadow wisps
+                ctx.shadowBlur = 25;
+                ctx.fillStyle = "#2f1a3f66";
+                ctx.beginPath();
+                ctx.arc(e.x-14, e.y-2, 8, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(e.x+14, e.y-2, 8, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Slow effect visual (icy blue)
+                if (e.slowed > 0) {
+                    ctx.shadowBlur = 15;
+                    ctx.fillStyle = "#88ccff55";
+                    ctx.beginPath();
+                    ctx.arc(e.x, e.y-4, 20, 0, Math.PI*2);
+                    ctx.fill();
+                }
+                
+                ctx.shadowBlur = 0;
+                // Health bar
+                ctx.fillStyle = "#dd4444";
+                ctx.fillRect(e.x - 22, e.y + 14, 44, 6);
+                ctx.fillStyle = "#5bd66f";
+                ctx.fillRect(e.x - 22, e.y + 14, 44 * percent, 6);
+                
+                // HP text
+                ctx.fillStyle = "white";
+                ctx.font = "bold 11px monospace";
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = "#000";
+                ctx.fillText(`💀 ${Math.floor(e.hp)} HP`, e.x - 20, e.y - 18);
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        let hoverCell = null;
+        
+        function handleMouseMove(e) {
+            let rect = canvas.getBoundingClientRect();
+            let scaleX = canvas.width / rect.width;
+            let scaleY = canvas.height / rect.height;
+            let mouseX = (e.clientX - rect.left) * scaleX;
+            let mouseY = (e.clientY - rect.top) * scaleY;
+            let gx = Math.floor(mouseX / CELL_SIZE);
+            let gy = Math.floor(mouseY / CELL_SIZE);
+            if (gx >= 0 && gx < COLS && gy >= 0 && gy < ROWS) {
+                hoverCell = { x: gx, y: gy };
+            } else {
+                hoverCell = null;
+            }
+        }
+        
+        function drawPreview() {
+            if (gameOver || levelCompleted || !hoverCell) return;
+            let gx = hoverCell.x, gy = hoverCell.y;
+            
+            if (pathSet.has(`${gx},${gy}`)) {
+                ctx.fillStyle = "#ff3333aa";
+                ctx.fillRect(gx * CELL_SIZE, gy * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                ctx.fillStyle = "white";
+                ctx.font = "bold 16px monospace";
+                ctx.fillText("🚫", gx * CELL_SIZE + 18, gy * CELL_SIZE + 33);
+                return;
+            }
+            
+            if (towers.some(t => t.x === gx && t.y === gy)) {
+                ctx.fillStyle = "#ffaa55aa";
+                ctx.fillRect(gx * CELL_SIZE, gy * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            } else {
+                let price = TOWER_STATS[selectedTowerType].price;
+                if (gold >= price) {
+                    ctx.fillStyle = "#aaffccaa";
+                    ctx.fillRect(gx * CELL_SIZE, gy * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    ctx.fillStyle = "#1c4b3c";
+                    ctx.font = "bold 22px monospace";
+                    let icon = selectedTowerType === 'basic' ? "🏹" : (selectedTowerType === 'cannon' ? "💥" : "✨");
+                    ctx.fillText(icon, gx * CELL_SIZE + 15, gy * CELL_SIZE + 35);
+                } else {
+                    ctx.fillStyle = "#dd8877aa";
+                    ctx.fillRect(gx * CELL_SIZE, gy * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                }
+            }
+        }
+        
+        function drawUI() {
+            if (gameOver) {
+                ctx.font = "bold 38px monospace";
+                ctx.fillStyle = "#f8c291";
+                ctx.shadowBlur = 0;
+                ctx.fillText("GAME OVER", canvas.width/2 - 110, 80);
+            }
+            if (levelCompleted && !gameOver && wave > 8) {
+                ctx.font = "bold 26px monospace";
+                ctx.fillStyle = "#d4ffaa";
+                ctx.fillText("MAP COMPLETE!", canvas.width/2 - 110, 70);
+            }
+            if (!waveInProgress && enemies.length === 0 && !gameOver && !levelCompleted && wave <= 8) {
+                ctx.font = "18px monospace";
+                ctx.fillStyle = "#bcf0da";
+                ctx.fillText("⚔️ Next wave incoming...", canvas.width/2 - 110, 45);
+            }
+            
+            if (baseHP < 30 && baseHP > 0 && !gameOver) {
+                ctx.font = "bold 20px monospace";
+                ctx.fillStyle = "#ff6666";
+                ctx.fillText("⚠️ BASE UNDER ATTACK! ⚠️", canvas.width/2 - 120, 100);
+            }
+        }
+        
+        function handleClick(e) {
+            if (gameOver || levelCompleted) return;
+            let rect = canvas.getBoundingClientRect();
+            let scaleX = canvas.width / rect.width;
+            let scaleY = canvas.height / rect.height;
+            let mouseX = (e.clientX - rect.left) * scaleX;
+            let mouseY = (e.clientY - rect.top) * scaleY;
+            let gx = Math.floor(mouseX / CELL_SIZE);
+            let gy = Math.floor(mouseY / CELL_SIZE);
+            tryBuildTower(gx, gy);
+        }
+        
+        function gameLoop() {
+            if (!gameOver && !levelCompleted) {
+                updateEnemies();
+                updateTowers();
+                updateWaveSpawning();
+                if (baseHP <= 0) {
+                    gameOver = true;
+                    updateUI();
+                }
+            }
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawPath();
+            drawTowers();
+            drawEnemies();
+            drawPreview();
+            drawUI();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Event listeners
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('click', handleClick);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            let rect = canvas.getBoundingClientRect();
+            let touch = e.touches[0];
+            let scaleX = canvas.width / rect.width;
+            let scaleY = canvas.height / rect.height;
+            let x = (touch.clientX - rect.left) * scaleX;
+            let y = (touch.clientY - rect.top) * scaleY;
+            tryBuildTower(Math.floor(x / CELL_SIZE), Math.floor(y / CELL_SIZE));
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            let rect = canvas.getBoundingClientRect();
+            let touch = e.touches[0];
+            let scaleX = canvas.width / rect.width;
+            let scaleY = canvas.height / rect.height;
+            let x = (touch.clientX - rect.left) * scaleX;
+            let y = (touch.clientY - rect.top) * scaleY;
+            let gx = Math.floor(x / CELL_SIZE);
+            let gy = Math.floor(y / CELL_SIZE);
+            if (gx >= 0 && gx < COLS && gy >= 0 && gy < ROWS) {
+                hoverCell = { x: gx, y: gy };
+            } else {
+                hoverCell = null;
+            }
+        });
+        
+        document.getElementById('resetGameBtn').addEventListener('click', () => resetGame());
+        document.getElementById('nextLevelBtn').addEventListener('click', () => nextMap());
+        document.getElementById('towerBasicBtn').addEventListener('click', () => {
+            selectedTowerType = "basic";
+            document.querySelectorAll('.tower-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('towerBasicBtn').classList.add('active');
+            document.getElementById('gameMsg').innerText = "🏹 Basic Tower: 45 damage, fast attack (60💰)";
+        });
+        document.getElementById('towerCannonBtn').addEventListener('click', () => {
+            selectedTowerType = "cannon";
+            document.querySelectorAll('.tower-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('towerCannonBtn').classList.add('active');
+            document.getElementById('gameMsg').innerText = "💥 Cannon Tower: 85 splash damage (100💰)";
+        });
+        document.getElementById('towerMagicBtn').addEventListener('click', () => {
+            selectedTowerType = "magic";
+            document.querySelectorAll('.tower-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('towerMagicBtn').classList.add('active');
+            document.getElementById('gameMsg').innerText = "✨ Magic Tower: 55 damage + slow effect (140💰)";
+        });
+        
+        // Start game
+        loadMap(0);
+        gameLoop();
+    })();
+</script>
+</body>
+</html>

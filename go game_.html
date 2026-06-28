@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>13x13 Go · Classic</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+        }
+        body {
+            background: #1a2a32;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            margin: 0;
+        }
+        .game-container {
+            max-width: 500px;
+            width: 100%;
+            background: #233b4a;
+            border-radius: 28px;
+            padding: 18px 18px 24px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .status-panel {
+            background: #2d4454;
+            border-radius: 40px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #f0f6fa;
+            font-weight: 600;
+            border: 1px solid #3f5a6b;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.2);
+        }
+        .turn-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .stone-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #222;
+            border: 2px solid #b8c7d0;
+            transition: 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .stone-dot.white-turn {
+            background: #f5f9ff;
+            border-color: #b0c4d0;
+        }
+        .score-box {
+            background: #1c313e;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+            border: 1px solid #3f5a6b;
+        }
+        .board-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background: #d6b17e;
+            border-radius: 20px;
+            box-shadow: inset 0 -4px 0 #7a5d3a, 0 8px 20px rgba(0,0,0,0.5);
+            border: 4px solid #946b3e;
+        }
+        .board-grid {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            padding: 4.2%;
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            grid-template-rows: repeat(13, 1fr);
+        }
+        .intersection {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .intersection::before, .intersection::after {
+            content: '';
+            position: absolute;
+            background: #3b2a1a;
+            opacity: 0.5;
+        }
+        .intersection::before {
+            top: 0; bottom: 0; width: 1.2px;
+        }
+        .intersection::after {
+            left: 0; right: 0; height: 1.2px;
+        }
+        .intersection.top::before { top: 50%; }
+        .intersection.bottom::before { bottom: 50%; }
+        .intersection.left::after { left: 50%; }
+        .intersection.right::after { right: 50%; }
+
+        .star-point {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #3b2a1a;
+            border-radius: 50%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .stone {
+            position: absolute;
+            width: 92%;
+            height: 92%;
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+            transition: 0.05s linear;
+            border: 1px solid rgba(0,0,0,0.15);
+        }
+        .stone.black {
+            background: radial-gradient(circle at 35% 35%, #444, #111);
+        }
+        .stone.white {
+            background: radial-gradient(circle at 35% 35%, #fcfcfc, #c8d0d8);
+        }
+        .recent-marker {
+            position: absolute;
+            width: 28%;
+            height: 28%;
+            background: rgba(255, 70, 70, 0.85);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(10deg);
+            z-index: 3;
+            pointer-events: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .npc-mind {
+            background: #1f3645;
+            border-left: 5px solid #f5b042;
+            padding: 14px 16px;
+            border-radius: 16px;
+            color: #eaf0f5;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border: 1px solid #38505f;
+            border-left-width: 6px;
+            min-height: 70px;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .npc-mind strong {
+            color: #f5b042;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .row-controls {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            flex: 1;
+            background: #2f4a5a;
+            border: none;
+            padding: 14px 8px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f0f6fa;
+            box-shadow: 0 4px 0 #14212b, 0 2px 8px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: 0.05s linear;
+            letter-spacing: 0.4px;
+            border: 1px solid #4d6a7c;
+        }
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #14212b;
+        }
+        .btn.pass {
+            background: #364f5e;
+        }
+        .btn.reset {
+            background: #4d3f3f;
+            border-color: #6b5353;
+        }
+        .btn.reset:active { background: #5f4a4a; }
+        .btn:disabled {
+            opacity: 0.5;
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #14212b;
+            pointer-events: none;
+        }
+        .audio-btn {
+            background: #3e5b6b;
+            border-color: #588197;
+            display: none; /* music removed – hidden */
+        }
+        @media (max-width: 460px) {
+            .status-panel { font-size: 0.8rem; padding: 10px 14px; }
+            .score-box { padding: 4px 12px; }
+            .btn { padding: 12px 4px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="status-panel">
+        <div class="turn-indicator">
+            <div class="stone-dot" id="turn-dot"></div>
+            <span id="turn-text">Your turn (Black)</span>
+        </div>
+        <div class="score-box" id="score-box">⚫ 0 · ⚪ 0</div>
+    </div>
+
+    <div class="board-wrapper">
+        <div class="board-grid" id="board"></div>
+    </div>
+
+    <div class="npc-mind">
+        <strong>🧠 AI deliberation</strong>
+        <span id="mind-text">Waiting for your first move. AI analyses territory and influence.</span>
+    </div>
+
+    <div class="controls">
+        <div class="row-controls">
+            <button class="btn pass" id="pass-btn">⏭ Pass</button>
+            <button class="btn reset" id="reset-btn">⟳ New game</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SIZE = 13;
+    let board = Array(SIZE).fill().map(() => Array(SIZE).fill(0));
+    let captures = { 1: 0, 2: 0 };
+    let playerTurn = true;          // true = black (player), false = white (AI)
+    let consecutivePasses = 0;
+    let lastNpcMove = null;
+    let gameEnded = false;
+
+    const boardEl = document.getElementById('board');
+    const turnDot = document.getElementById('turn-dot');
+    const turnText = document.getElementById('turn-text');
+    const scoreBox = document.getElementById('score-box');
+    const mindText = document.getElementById('mind-text');
+    const passBtn = document.getElementById('pass-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    // ---- helpers ----
+    function getNeighbors(r, c) {
+        const n = [];
+        if (r > 0) n.push({r: r-1, c});
+        if (r < SIZE-1) n.push({r: r+1, c});
+        if (c > 0) n.push({r, c: c-1});
+        if (c < SIZE-1) n.push({r, c: c+1});
+        return n;
+    }
+
+    function getGroup(r, c, color, boardRef = board) {
+        const group = [];
+        const visited = Array(SIZE).fill().map(() => Array(SIZE).fill(false));
+        const queue = [{r, c}];
+        visited[r][c] = true;
+        while (queue.length) {
+            const cur = queue.shift();
+            group.push(cur);
+            for (const n of getNeighbors(cur.r, cur.c)) {
+                if (!visited[n.r][n.c] && boardRef[n.r][n.c] === color) {
+                    visited[n.r][n.c] = true;
+                    queue.push(n);
+                }
+            }
+        }
+        return group;
+    }
+
+    function countLiberties(group, boardRef = board) {
+        const libSet = new Set();
+        for (const s of group) {
+            for (const n of getNeighbors(s.r, s.c)) {
+                if (boardRef[n.r][n.c] === 0) libSet.add(n.r + ',' + n.c);
+            }
+        }
+        return libSet.size;
+    }
+
+    // capture stones of given color, return count
+    function captureStones(color, boardRef = board) {
+        let captured = 0;
+        const evaluated = Array(SIZE).fill().map(() => Array(SIZE).fill(false));
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                if (boardRef[r][c] === color && !evaluated[r][c]) {
+                    const group = getGroup(r, c, color, boardRef);
+                    for (const s of group) evaluated[s.r][s.c] = true;
+                    if (countLiberties(group, boardRef) === 0) {
+                        for (const s of group) boardRef[s.r][s.c] = 0;
+                        captured += group.length;
+                    }
+                }
+            }
+        }
+        return captured;
+    }
+
+    // ---- board rendering ----
+    function renderBoard() {
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                const cell = document.getElementById(`cell-${r}-${c}`);
+                if (!cell) continue;
+                const existingStone = cell.querySelector('.stone');
+                const state = board[r][c];
+                if (state !== 0) {
+                    if (!existingStone) {
+                        const stone = document.createElement('div');
+                        stone.className = `stone ${state === 1 ? 'black' : 'white'}`;
+                        cell.appendChild(stone);
+                        // recent marker for AI move
+                        if (state === 2 && lastNpcMove && lastNpcMove.r === r && lastNpcMove.c === c) {
+                            const marker = document.createElement('div');
+                            marker.className = 'recent-marker';
+                            stone.appendChild(marker);
+                        }
+                    } else {
+                        // update class if changed
+                        existingStone.className = `stone ${state === 1 ? 'black' : 'white'}`;
+                        // marker
+                        const marker = existingStone.querySelector('.recent-marker');
+                        const shouldHaveMarker = (state === 2 && lastNpcMove && lastNpcMove.r === r && lastNpcMove.c === c);
+                        if (shouldHaveMarker && !marker) {
+                            const m = document.createElement('div');
+                            m.className = 'recent-marker';
+                            existingStone.appendChild(m);
+                        } else if (!shouldHaveMarker && marker) {
+                            marker.remove();
+                        }
+                    }
+                } else {
+                    if (existingStone) existingStone.remove();
+                }
+            }
+        }
+        // score
+        scoreBox.textContent = `⚫ ${captures[1]} · ⚪ ${captures[2]}`;
+        // turn
+        if (!gameEnded) {
+            if (playerTurn) {
+                turnDot.className = 'stone-dot';
+                turnText.textContent = 'Your turn (Black)';
+            } else {
+                turnDot.className = 'stone-dot white-turn';
+                turnText.textContent = 'AI turn (White)';
+            }
+        } else {
+            turnText.textContent = 'Game ended';
+        }
+    }
+
+    function initializeGrid() {
+        boardEl.innerHTML = '';
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'intersection';
+                cell.id = `cell-${r}-${c}`;
+                if (r === 0) cell.classList.add('top');
+                if (r === SIZE-1) cell.classList.add('bottom');
+                if (c === 0) cell.classList.add('left');
+                if (c === SIZE-1) cell.classList.add('right');
+                // star points (3-6-9)
+                if ((r === 3 || r === 6 || r === 9) && (c === 3 || c === 6 || c === 9)) {
+                    const star = document.createElement('div');
+                    star.className = 'star-point';
+                    cell.appendChild(star);
+                }
+                cell.addEventListener('click', () => handlePlayerClick(r, c));
+                boardEl.appendChild(cell);
+            }
+        }
+    }
+
+    // ---- game logic ----
+    function handlePlayerClick(r, c) {
+        if (gameEnded || !playerTurn || board[r][c] !== 0) return;
+
+        // place black
+        board[r][c] = 1;
+        const whiteCaptured = captureStones(2);
+        const blackGroup = getGroup(r, c, 1);
+        if (countLiberties(blackGroup) === 0 && whiteCaptured === 0) {
+            board[r][c] = 0;
+            mindText.textContent = 'Self-capture is not allowed.';
+            return;
+        }
+        captures[1] += whiteCaptured;
+        consecutivePasses = 0;
+        lastNpcMove = null;
+        playerTurn = false;
+        renderBoard();
+        if (checkGameEnd()) return;
+        setTimeout(() => aiMove(), 320);
+    }
+
+    function aiMove() {
+        if (gameEnded) return;
+        if (consecutivePasses >= 2) {
+            endGame('Both players passed. Game over.');
+            return;
+        }
+
+        let bestR = -1, bestC = -1;
+        let bestWeight = -Infinity;
+        let reason = 'AI chooses a strategic point.';
+
+        const totalStones = board.flat().filter(v => v !== 0).length;
+        const isEndgame = totalStones > 55;
+
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                if (board[r][c] !== 0) continue;
+                let weight = 0;
+                let localReason = '';
+
+                // corner / side / center preference
+                const corner = (r <= 2 || r >= 10) && (c <= 2 || c >= 10);
+                const side = (r <= 2 || r >= 10 || c <= 2 || c >= 10);
+                const center = (r >= 5 && r <= 7 && c >= 5 && c <= 7);
+
+                if (!isEndgame) {
+                    if (corner) { weight += 35; localReason = 'Securing a corner.'; }
+                    else if (side) { weight += 22; localReason = 'Expanding along the side.'; }
+                    else if (center) { weight += 8; localReason = 'Influencing the centre.'; }
+                    else { weight += 12; localReason = 'Developing framework.'; }
+                } else {
+                    if (corner) weight += 12;
+                    else if (side) weight += 10;
+                    else weight += 6;
+                }
+
+                // attack / defend
+                let simBoard = board.map(row => [...row]);
+                simBoard[r][c] = 2;
+                const whiteCapturedSim = captureStones(1, simBoard);
+                const whiteGroup = getGroup(r, c, 2, simBoard);
+                const libs = countLiberties(whiteGroup, simBoard);
+                if (libs === 0 && whiteCapturedSim === 0) continue; // suicide
+
+                const neighbors = getNeighbors(r, c);
+                let enemyAdj = 0, friendAdj = 0;
+                for (const n of neighbors) {
+                    if (board[n.r][n.c] === 1) enemyAdj++;
+                    if (board[n.r][n.c] === 2) friendAdj++;
+                }
+
+                if (enemyAdj > 0) {
+                    weight += 20;
+                    localReason = 'Engaging enemy stones.';
+                }
+                // atari
+                for (const n of neighbors) {
+                    if (board[n.r][n.c] === 1) {
+                        const enemyGroup = getGroup(n.r, n.c, 1);
+                        const enemyLibs = countLiberties(enemyGroup);
+                        if (enemyLibs === 1) { weight += 420; localReason = 'Capturing an enemy group!'; }
+                        else if (enemyLibs === 2) { weight += 140; localReason = 'Putting enemy in atari.'; }
+                    }
+                    if (board[n.r][n.c] === 2) {
+                        const friendGroup = getGroup(n.r, n.c, 2);
+                        const friendLibs = countLiberties(friendGroup);
+                        if (friendLibs === 1) { weight += 250; localReason = 'Saving a friendly group.'; }
+                        else if (friendLibs === 2) { weight += 80; localReason = 'Reinforcing friendly stones.'; }
+                    }
+                }
+
+                // avoid dangerous self-atari
+                if (libs === 1 && whiteCapturedSim === 0) weight -= 180;
+
+                if (weight > bestWeight) {
+                    bestWeight = weight;
+                    bestR = r; bestC = c;
+                    reason = localReason || 'Strategic placement.';
+                }
+            }
+        }
+
+        if (bestR === -1 || bestWeight < -9999) {
+            consecutivePasses++;
+            playerTurn = true;
+            renderBoard();
+            if (consecutivePasses >= 2) {
+                endGame('Both players passed. Game over.');
+                return;
+            }
+            mindText.textContent = 'AI passes (no beneficial move).';
+            return;
+        }
+
+        // execute AI move
+        board[bestR][bestC] = 2;
+        lastNpcMove = { r: bestR, c: bestC };
+        const blackCaptured = captureStones(1);
+        captures[2] += blackCaptured;
+        consecutivePasses = 0;
+        playerTurn = true;
+        renderBoard();
+        mindText.textContent = reason;
+        if (checkGameEnd()) return;
+    }
+
+    function checkGameEnd() {
+        if (consecutivePasses >= 2) {
+            endGame('Both players passed. Final score.');
+            return true;
+        }
+        return false;
+    }
+
+    function endGame(msg) {
+        gameEnded = true;
+        playerTurn = false;
+        mindText.textContent = msg + '  ⚫ ' + captures[1] + ' · ⚪ ' + captures[2];
+        renderBoard();
+    }
+
+    // ---- pass & reset ----
+    passBtn.addEventListener('click', () => {
+        if (gameEnded || !playerTurn) return;
+        playerTurn = false;
+        consecutivePasses++;
+        renderBoard();
+        if (consecutivePasses >= 2) {
+            endGame('Both players passed.');
+            return;
+        }
+        setTimeout(() => aiMove(), 300);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        board = Array(SIZE).fill().map(() => Array(SIZE).fill(0));
+        captures = { 1: 0, 2: 0 };
+        playerTurn = true;
+        consecutivePasses = 0;
+        lastNpcMove = null;
+        gameEnded = false;
+        mindText.textContent = 'New game. You are Black, AI is White.';
+        renderBoard();
+    });
+
+    // ---- start ----
+    initializeGrid();
+    renderBoard();
+    mindText.textContent = 'Your move. Click an empty intersection.';
+</script>
+</body>
+</html>
