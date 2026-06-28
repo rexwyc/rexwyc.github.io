@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meccha Chameleon 3D Prototype</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        body { background: #0a0a0f; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; height: 100vh; }
+        
+        #canvas-container { width: 100vw; height: 100vh; position: absolute; top:0; left:0; z-index: 1; cursor: grab; }
+        #canvas-container:active { cursor: grabbing; }
+        
+        /* UI Layer */
+        #ui-hud { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; z-index: 10; pointer-events: none; }
+        .hud-card { background: rgba(10,10,15,0.85); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-weight: bold; font-size: 14px; backdrop-filter: blur(5px); }
+        
+        /* Crosshair for Seeker Shooting */
+        #crosshair { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; border: 2px solid #ff3366; border-radius: 50%; transform: translate(-50%, -50%); z-index: 5; display: none; pointer-events: none; }
+        #crosshair::after { content: ''; position: absolute; top: 3px; left: 3px; width: 2px; height: 2px; background: #ff3366; }
+
+        /* Mobile Controls */
+        #controls-layer { position: absolute; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; z-index: 10; pointer-events: none; }
+        .joystick-zone { width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; pointer-events: auto; }
+        .joystick-knob { width: 40px; height: 40px; background: #00ffaa; border-radius: 50%; transform: translate(0px, 0px); }
+        .action-btn { width: 75px; height: 75px; background: linear-gradient(135deg, #ff3366, #ff0055); border-radius: 50%; border: none; color: #fff; font-weight: bold; font-size: 14px; pointer-events: auto; box-shadow: 0 5px 15px rgba(255,51,102,0.4); }
+        .action-btn:active { transform: scale(0.95); }
+
+        /* Overlays & Menus */
+        .screen-overlay { position: absolute; top:0; left:0; width:100vw; height:100vh; background: rgba(5,5,10,0.95); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+        h1 { color: #00ffaa; font-size: 28px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        p { color: #8a8a9e; max-width: 320px; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
+        button.menu-btn { background: linear-gradient(135deg, #00ffaa, #00bcff); border: none; color: #000; padding: 14px 35px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; width: 80%; max-width: 260px; margin: 8px 0; }
+        .map-selector { display: flex; gap: 10px; margin-bottom: 20px; width: 80%; max-width: 300px; }
+        .map-opt { flex: 1; padding: 10px; background: #151520; border: 1px solid #2d2d3d; border-radius: 10px; color: #aaa; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .map-opt.selected { background: rgba(0,255,170,0.15); border-color: #00ffaa; color: #00ffaa; }
+        .hidden { display: none !important; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-hud">
+        <div id="hud-role" class="hud-card">Role: Setup</div>
+        <div id="hud-status" class="hud-card">Time Left: --</div>
+    </div>
+
+    <div id="crosshair"></div>
+
+    <div id="controls-layer" class="hidden">
+        <div id="joystick" class="joystick-zone">
+            <div id="knob" class="joystick-knob"></div>
+        </div>
+        <button id="action-trigger" class="action-btn">PAINT</button>
+    </div>
+
+    <div id="menu-screen" class="screen-overlay">
+        <h1>Meccha Chameleon 3D</h1>
+        <p>Hiders match colors dynamically on their body texture. Seekers hunt down and shoot moving targets!</p>
+        
+        <span style="font-size: 11px; color:#555; text-transform:uppercase; font-weight:bold; margin-bottom:8px;">Choose Map Arena</span>
+        <div class="map-selector">
+            <div class="map-opt selected" onclick="changeMap(0)">Mansion</div>
+            <div class="map-opt" onclick="changeMap(1)">Sewer</div>
+            <div class="map-opt" onclick="changeMap(2)">Neon Land</div>
+        </div>
+
+        <button class="menu-btn" onclick="initMatch()">START 2P MATCH</button>
+    </div>
+
+    <div id="pass-screen" class="screen-overlay hidden">
+        <h1 style="color:#00bcff;">PASS THE PHONE</h1>
+        <p id="pass-instruction">Chameleon has finished camouflage settings. Hand the screen to the Seeker to begin navigation hunt!</p>
+        <button class="menu-btn" onclick="startHunterTurn()">I AM THE SEEKER</button>
+    </div>
+
+    <div id="end-screen" class="screen-overlay hidden">
+        <h1 id="end-title">MATCH COMPLETED</h1>
+        <p id="end-desc"></p>
+        <button class="menu-btn" onclick="returnToMenu()">MAIN MENU</button>
+    </div>
+
+<script>
+// --- GAME CONFIGURATIONS & STATE ENGINE ---
+let state = 'MENU'; 
+let mapSelection = 0;
+let matchTimer = 0;
+let tickerInterval;
+let activeJoystick = { x: 0, y: 0, active: false };
+
+// Player tracking systems
+let hiderPos = { x: 0, z: -4 };
+let seekerPos = { x: 0, z: 13 };
+let viewRotationY = 0; // Universal control yaw angle tracking
+
+// Drag rotation metrics
+let isMouseDown = false;
+
+// Three.js Core Global Elements
+let scene, camera, renderer;
+let environmentMeshGroup;
+let wallsArray = []; 
+let chameleonMesh, chameleonTexture, textureContext;
+
+const container = document.getElementById('canvas-container');
+
+function initEngine3D() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x05050a);
+
+    camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    sunLight.position.set(10, 20, 10);
+    scene.add(sunLight);
+
+    environmentMeshGroup = new THREE.Group();
+    scene.add(environmentMeshGroup);
+
+    buildDynamicChameleonTexture();
+    setupInteractionHandlers();
+}
+
+function buildDynamicChameleonTexture() {
+    const canvasObj = document.createElement('canvas');
+    canvasObj.width = 256;
+    canvasObj.height = 256;
+    textureContext = canvasObj.getContext('2d');
+    
+    textureContext.fillStyle = '#ffffff';
+    textureContext.fillRect(0, 0, 256, 256);
+
+    chameleonTexture = new THREE.CanvasTexture(canvasObj);
+    
+    chameleonMesh = new THREE.Group();
+    const bodyMat = new THREE.MeshStandardMaterial({ map: chameleonTexture, roughness: 0.4 });
+
+    // Torso
+    const torsoGeom = new THREE.BoxGeometry(0.7, 1.0, 0.4);
+    const torso = new THREE.Mesh(torsoGeom, bodyMat);
+    torso.position.y = 0.9;
+    chameleonMesh.add(torso);
+
+    // Head
+    const headGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+    const head = new THREE.Mesh(headGeom, bodyMat);
+    head.position.y = 1.6;
+    chameleonMesh.add(head);
+
+    // Arms
+    const armGeom = new THREE.BoxGeometry(0.2, 0.8, 0.2);
+    const leftArm = new THREE.Mesh(armGeom, bodyMat);
+    leftArm.position.set(-0.48, 0.9, 0);
+    chameleonMesh.add(leftArm);
+
+    const rightArm = leftArm.clone();
+    rightArm.position.x = 0.48;
+    chameleonMesh.add(rightArm);
+
+    // Legs
+    const legGeom = new THREE.BoxGeometry(0.24, 0.8, 0.24);
+    const leftLeg = new THREE.Mesh(legGeom, bodyMat);
+    leftLeg.position.set(-0.2, 0.4, 0);
+    chameleonMesh.add(leftLeg);
+
+    const rightLeg = leftLeg.clone();
+    rightLeg.position.x = 0.2;
+    chameleonMesh.add(rightLeg);
+
+    chameleonMesh.position.set(hiderPos.x, 0, hiderPos.z);
+    scene.add(chameleonMesh);
+}
+
+// --- DYNAMIC GEOMETRIC 3D MAP GENERATORS ---
+function changeMap(index) {
+    mapSelection = index;
+    const options = document.querySelectorAll('.map-opt');
+    options.forEach((opt, idx) => opt.classList.toggle('selected', idx === index));
+}
+
+function buildSelectedMap() {
+    while(environmentMeshGroup.children.length > 0){
+        environmentMeshGroup.remove(environmentMeshGroup.children[0]);
+    }
+    wallsArray = [];
+
+    const floorGeo = new THREE.PlaneGeometry(32, 32);
+    let floorMat;
+
+    if (mapSelection === 0) { 
+        floorMat = new THREE.MeshStandardMaterial({ color: 0x4a2e1b, roughness: 0.3 }); 
+        
+        generateWallBlock(-16, 0, 2, 32, 4, 0x5c1d1d);
+        generateWallBlock(16, 0, 2, 32, 4, 0x5c1d1d);
+        generateWallBlock(0, -16, 32, 2, 4, 0x5c1d1d);
+        generateWallBlock(0, 16, 32, 2, 4, 0x5c1d1d);
+
+        generateWallBlock(-8, -6, 6, 2, 5, 0x1c2e36);  
+        generateWallBlock(-5, -2, 2, 8, 5, 0x1c2e36);  
+        generateWallBlock(8, -8, 2, 10, 5, 0x7a6321);  
+        generateWallBlock(4, -4, 6, 2, 5, 0x7a6321);   
+        
+        generateWallBlock(-4, 4, 2, 2, 6, 0xd4af37);   
+        generateWallBlock(4, 4, 2, 2, 6, 0xd4af37);    
+        generateWallBlock(0, 8, 8, 2, 5, 0x1c2e36);    
+        generateWallBlock(-10, 8, 4, 2, 5, 0x5c1d1d);
+        generateWallBlock(10, 8, 4, 2, 5, 0x5c1d1d);
+
+    } else if (mapSelection === 1) { 
+        floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1c1e, roughness: 0.85 }); 
+        
+        generateWallBlock(-16, 0, 2, 32, 4, 0x3a3d40);
+        generateWallBlock(16, 0, 2, 32, 4, 0x3a3d40);
+        generateWallBlock(0, -16, 32, 2, 4, 0x3a3d40);
+        generateWallBlock(0, 16, 32, 2, 4, 0x3a3d40);
+
+        generateWallBlock(0, 0, 4, 24, 1.2, 0x00ff44); 
+        generateWallBlock(-6, -6, 12, 3, 1.2, 0x00ff44); 
+        generateWallBlock(6, 6, 12, 3, 1.2, 0x00ff44);
+
+        generateWallBlock(-10, -10, 4, 4, 5, 0x555555);
+        generateWallBlock(-10, 2, 3, 8, 5, 0x444444);
+        generateWallBlock(10, -2, 3, 8, 5, 0x444444);
+        generateWallBlock(10, 10, 4, 4, 5, 0x555555);
+        generateWallBlock(-4, 12, 2, 6, 5, 0x222222);
+        generateWallBlock(4, -12, 2, 6, 5, 0x222222);
+
+    } else { 
+        floorMat = new THREE.MeshStandardMaterial({ color: 0x030008, roughness: 0.4 });
+        
+        generateWallBlock(-16, 0, 1, 32, 4, 0x00ffff);
+        generateWallBlock(16, 0, 1, 32, 4, 0x00ffff);
+        generateWallBlock(0, -16, 32, 1, 4, 0xff00ff);
+        generateWallBlock(0, 16, 32, 1, 4, 0xff00ff);
+
+        for(let i = -10; i <= 10; i += 10) {
+            for(let j = -10; j <= 10; j += 10) {
+                if(i === 0 && j === 0) continue; 
+                generateWallBlock(i, j, 3, 3, 6, 0xffff00);
+            }
+        }
+        
+        generateWallBlock(-8, 0, 6, 1.5, 4, 0xff00ff);
+        generateWallBlock(8, 0, 6, 1.5, 4, 0x00ffff);
+        generateWallBlock(0, -8, 1.5, 6, 4, 0x11ff22);
+        generateWallBlock(0, 8, 1.5, 6, 4, 0x11ff22);
+    }
+
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = 0;
+    environmentMeshGroup.add(floor);
+}
+
+function generateWallBlock(x, z, w, d, h, hexColor) {
+    const geo = new THREE.BoxGeometry(w, h, d);
+    const mat = new THREE.MeshStandardMaterial({ color: hexColor, roughness: 0.5 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, h/2, z);
+    environmentMeshGroup.add(mesh);
+    
+    wallsArray.push({
+        minX: x - w/2, maxX: x + w/2,
+        minZ: z - d/2, maxZ: z + d/2
+    });
+}
+
+function checkWallCollision(targetX, targetZ, radius = 0.45) {
+    for (let i = 0; i < wallsArray.length; i++) {
+        const wall = wallsArray[i];
+        if (targetX + radius > wall.minX && targetX - radius < wall.maxX &&
+            targetZ + radius > wall.minZ && targetZ - radius < wall.maxZ) {
+            return true; 
+        }
+    }
+    return false;
+}
+
+// --- ROTATION CONTROL AND DRAG MOUSE HANDLERS ---
+function setupInteractionHandlers() {
+    window.addEventListener('mousedown', () => { isMouseDown = true; });
+    window.addEventListener('mouseup', () => { isMouseDown = false; });
+    
+    window.addEventListener('mousemove', (e) => {
+        // Rotate while clicking and dragging across screen spaces
+        if (isMouseDown && (state === 'HIDER_TURN' || state === 'SEEKER_TURN')) {
+            const dragSensitivity = 0.007;
+            viewRotationY -= e.movementX * dragSensitivity;
+        }
+    });
+
+    // Touch Support for mobile drag rotation
+    let lastTouchX = 0;
+    window.addEventListener('touchstart', (e) => { if(e.touches.length > 0) lastTouchX = e.touches[0].clientX; });
+    window.addEventListener('touchmove', (e) => {
+        if((state === 'HIDER_TURN' || state === 'SEEKER_TURN') && e.touches.length > 0 && !activeJoystick.active) {
+            let currentX = e.touches[0].clientX;
+            let deltaX = currentX - lastTouchX;
+            viewRotationY -= deltaX * 0.009;
+            lastTouchX = currentX;
+        }
+    });
+}
+
+// --- MATCH MANAGEMENT CONTROLLERS ---
+function initMatch() {
+    document.getElementById('menu-screen').classList.add('hidden');
+    document.getElementById('controls-layer').classList.remove('hidden');
+    buildSelectedMap();
+
+    state = 'HIDER_TURN';
+    hiderPos = { x: 0, z: -4 };
+    viewRotationY = 0; // Reset look orientation
+    chameleonMesh.position.set(hiderPos.x, 0, hiderPos.z);
+    chameleonMesh.rotation.y = 0;
+    chameleonMesh.visible = true;
+
+    textureContext.fillStyle = '#ffffff';
+    textureContext.fillRect(0,0,256,256);
+    chameleonTexture.needsUpdate = true;
+
+    document.getElementById('hud-role').textContent = "ROLE: CHAMELEON";
+    document.getElementById('action-trigger').textContent = "PAINT";
+    document.getElementById('action-trigger').style.background = "linear-gradient(135deg, #00ffaa, #00bcff)";
+
+    matchTimer = 25; 
+    startTickerTimer(() => {
+        document.getElementById('controls-layer').classList.add('hidden');
+        state = 'INTERMISSION';
+        document.getElementById('pass-screen').classList.remove('hidden');
+    });
+}
+
+function startHunterTurn() {
+    document.getElementById('pass-screen').classList.add('hidden');
+    document.getElementById('controls-layer').classList.remove('hidden');
+    document.getElementById('crosshair').style.display = "block";
+
+    state = 'SEEKER_TURN';
+    seekerPos = { x: 0, z: 13 };
+    viewRotationY = 0; // Reset look orientation
+
+    document.getElementById('hud-role').textContent = "ROLE: SEEKER";
+    document.getElementById('action-trigger').textContent = "SHOOT";
+    document.getElementById('action-trigger').style.background = "linear-gradient(135deg, #ff3366, #ff0055)";
+
+    matchTimer = 35; 
+    startTickerTimer(() => {
+        triggerEndGame(false, "Time run out! The Chameleon safely escaped your sight!");
+    });
+}
+
+function startTickerTimer(expirationCallback) {
+    clearInterval(tickerInterval);
+    document.getElementById('hud-status').textContent = `Time: ${matchTimer}s`;
+    tickerInterval = setInterval(() => {
+        matchTimer--;
+        document.getElementById('hud-status').textContent = `Time: ${matchTimer}s`;
+        if (matchTimer <= 0) {
+            clearInterval(tickerInterval);
+            expirationCallback();
+        }
+    }, 1000);
+}
+
+function triggerEndGame(seekerWon, phrase) {
+    clearInterval(tickerInterval);
+    state = 'GAMEOVER';
+    document.getElementById('controls-layer').classList.add('hidden');
+    document.getElementById('crosshair').style.display = "none";
+    
+    const screen = document.getElementById('end-screen');
+    const title = document.getElementById('end-title');
+    const desc = document.getElementById('end-desc');
+
+    title.textContent = seekerWon ? "SEEKER VICTORIOUS!" : "CHAMELEON ESCAPED!";
+    title.style.color = seekerWon ? "#ff3366" : "#00ffaa";
+    desc.textContent = phrase;
+    screen.classList.remove('hidden');
+}
+
+function returnToMenu() {
+    document.getElementById('end-screen').classList.add('hidden');
+    document.getElementById('menu-screen').classList.remove('hidden');
+    state = 'MENU';
+}
+
+// --- DYNAMIC TARGET CHROMATIC INJECTION (Raycast and Paint) ---
+function runMultiColorPaintInjection() {
+    const raycaster = new THREE.Raycaster();
+    const centerVector = new THREE.Vector2(0, 0); 
+    raycaster.setFromCamera(centerVector, camera);
+
+    const hits = raycaster.intersectObjects(environmentMeshGroup.children);
+    if(hits.length > 0) {
+        const hexColorStr = "#" + hits[0].object.material.color.getHexString();
+        
+        // Dynamic texture drawing over individual segment layout lines
+        const blockSelection = Math.floor(Math.random() * 3);
+        textureContext.fillStyle = hexColorStr;
+        if(blockSelection === 0) {
+            textureContext.fillRect(0, 0, 256, 85); 
+        } else if(blockSelection === 1) {
+            textureContext.fillRect(0, 85, 256, 85); 
+        } else {
+            textureContext.fillRect(0, 170, 256, 86); 
+        }
+        chameleonTexture.needsUpdate = true;
+    }
+}
+
+function fireSeekerLaserWeapon() {
+    const raycaster = new THREE.Raycaster();
+    const centerVector = new THREE.Vector2(0, 0);
+    raycaster.setFromCamera(centerVector, camera);
+
+    const hit = raycaster.intersectObjects(chameleonMesh.children);
+    if(hit.length > 0) {
+        triggerEndGame(true, "Boom! Splat! The Seeker targeted and liquidated your active camouflage position!");
+    } else {
+        matchTimer = Math.max(0, matchTimer - 5);
+        document.getElementById('hud-status').textContent = `MISFIRE! Penalty! Time: ${matchTimer}s`;
+    }
+}
+
+// --- CONTROLS JOYSTICK DRIVERS ---
+const joyZone = document.getElementById('joystick');
+const joyKnob = document.getElementById('knob');
+
+joyZone.addEventListener('touchstart', (e) => { activeJoystick.active = true; }, {passive:true});
+window.addEventListener('touchmove', (e) => {
+    if(!activeJoystick.active) return;
+    const rect = joyZone.getBoundingClientRect();
+    const touch = e.touches[0];
+    
+    let rawX = touch.clientX - (rect.left + rect.width/2);
+    let rawY = touch.clientY - (rect.top + rect.height/2);
+    
+    const distance = Math.min(40, Math.hypot(rawX, rawY));
+    const angle = Math.atan2(rawY, rawX);
+    
+    activeJoystick.x = (Math.cos(angle) * distance) / 40;
+    activeJoystick.y = (Math.sin(angle) * distance) / 40;
+    
+    joyKnob.style.transform = `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px)`;
+}, {passive:true});
+
+window.addEventListener('touchend', () => {
+    activeJoystick.active = false;
+    activeJoystick.x = 0; activeJoystick.y = 0;
+    joyKnob.style.transform = `translate(0px, 0px)`;
+});
+
+document.getElementById('action-trigger').addEventListener('click', () => {
+    if(state === 'HIDER_TURN') runMultiColorPaintInjection();
+    if(state === 'SEEKER_TURN') fireSeekerLaserWeapon();
+});
+
+const desktopKeys = {};
+window.addEventListener('keydown', (e) => { desktopKeys[e.key.toLowerCase()] = true; if(e.key === ' ') document.getElementById('action-trigger').click(); });
+window.addEventListener('keyup', (e) => desktopKeys[e.key.toLowerCase()] = false);
+
+// --- MAIN GRAPHICS GAME LOOP RUNNER ---
+function gameFrameLoop() {
+    requestAnimationFrame(gameFrameLoop);
+
+    let inputX = activeJoystick.x;
+    let inputZ = activeJoystick.y;
+
+    if(desktopKeys['w'] || desktopKeys['arrowup']) inputZ = -1;
+    if(desktopKeys['s'] || desktopKeys['arrowdown']) inputZ = 1;
+    if(desktopKeys['a'] || desktopKeys['arrowleft']) inputX = -1;
+    if(desktopKeys['d'] || desktopKeys['arrowright']) inputX = 1;
+
+    const speedMod = 0.09;
+
+    // Convert flat input coordinates relative to current camera looking perspective orientation
+    let forwardX = Math.sin(viewRotationY);
+    let forwardZ = Math.cos(viewRotationY);
+    let rightX = Math.sin(viewRotationY - Math.PI / 2);
+    let rightZ = Math.cos(viewRotationY - Math.PI / 2);
+
+    let directionX = (forwardX * inputZ) + (rightX * inputX);
+    let directionZ = (forwardZ * inputZ) + (rightZ * inputX);
+
+    // Normalize diagonal movement vectors
+    const inputMag = Math.hypot(directionX, directionZ);
+    if(inputMag > 1) {
+        directionX /= inputMag;
+        directionZ /= inputMag;
+    }
+
+    if (state === 'HIDER_TURN') {
+        let nextHiderX = hiderPos.x + directionX * speedMod;
+        let nextHiderZ = hiderPos.z + directionZ * speedMod;
+        
+        if(!checkWallCollision(nextHiderX, hiderPos.z)) hiderPos.x = nextHiderX;
+        if(!checkWallCollision(hiderPos.x, nextHiderZ)) hiderPos.z = nextHiderZ;
+
+        hiderPos.x = Math.max(-15, Math.min(15, hiderPos.x));
+        hiderPos.z = Math.max(-15, Math.min(15, hiderPos.z));
+        
+        chameleonMesh.position.set(hiderPos.x, 0, hiderPos.z);
+        
+        // Humanoid rotates to match target vector heading if moving
+        if(Math.hypot(inputX, inputZ) > 0.1) {
+            chameleonMesh.rotation.y = Math.atan2(-directionX, -directionZ);
+        }
+
+        // Third-Person Orbiter Orbit Loop Configuration
+        camera.position.set(
+            hiderPos.x + Math.sin(viewRotationY) * 5,
+            4.5,
+            hiderPos.z + Math.cos(viewRotationY) * 5
+        );
+        camera.lookAt(new THREE.Vector3(hiderPos.x, 1.0, hiderPos.z));
+
+    } else if (state === 'SEEKER_TURN') {
+        // AI Flee System updates relative to environment bounds
+        const separationDist = Math.hypot(hiderPos.x - seekerPos.x, hiderPos.z - seekerPos.z);
+        if (separationDist < 6.0) {
+            let escX = hiderPos.x - seekerPos.x;
+            let escZ = hiderPos.z - seekerPos.z;
+            let len = Math.hypot(escX, escZ) || 1;
+            
+            let nextEscX = hiderPos.x + (escX / len) * 0.05;
+            let nextEscZ = hiderPos.z + (escZ / len) * 0.05;
+            
+            if(!checkWallCollision(nextEscX, hiderPos.z)) hiderPos.x = nextEscX;
+            if(!checkWallCollision(hiderPos.x, nextEscZ)) hiderPos.z = nextEscZ;
+            
+            hiderPos.x = Math.max(-15, Math.min(15, hiderPos.x));
+            hiderPos.z = Math.max(-15, Math.min(15, hiderPos.z));
+            chameleonMesh.position.set(hiderPos.x, 0, hiderPos.z);
+        }
+
+        let nextSeekerX = seekerPos.x + directionX * speedMod;
+        let nextSeekerZ = seekerPos.z + directionZ * speedMod;
+
+        if(!checkWallCollision(nextSeekerX, seekerPos.z)) seekerPos.x = nextSeekerX;
+        if(!checkWallCollision(seekerPos.x, nextSeekerZ)) seekerPos.z = nextSeekerZ;
+
+        seekerPos.x = Math.max(-15, Math.min(15, seekerPos.x));
+        seekerPos.z = Math.max(-15, Math.min(15, seekerPos.z));
+
+        // First Person Rig Alignment
+        camera.position.set(seekerPos.x, 1.3, seekerPos.z);
+        const targetLookAt = new THREE.Vector3(
+            seekerPos.x - Math.sin(viewRotationY) * 10,
+            1.3,
+            seekerPos.z - Math.cos(viewRotationY) * 10
+        );
+        camera.lookAt(targetLookAt);
+    }
+
+    if(renderer) renderer.render(scene, camera);
+}
+
+window.onload = () => {
+    initEngine3D();
+    gameFrameLoop();
+};
+
+window.addEventListener('resize', () => {
+    if(!camera) return;
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
