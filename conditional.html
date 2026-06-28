@@ -1,14 +1,9 @@
-Here is your conditional project transformed into the beautiful, modern dashboard layout of the **Noun Grammar Guide**.
-
-The structure has been completely redesigned using a card-grid layout, Font Awesome icons, clean gradients, and a dedicated reference format for each conditional type (Zero, First, Second, Third, and Mixed).
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conditional Grammar Guide | Complete Reference</title>
+    <title>Conditional Sentences Grammar Guide | Complete Reference</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +13,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #eef2f7 0%, #d6e4f0 100%);
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
@@ -43,7 +38,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
             color: #2c3e50;
             font-size: 2.8rem;
             margin-bottom: 10px;
-            background: linear-gradient(to right, #3b82f6, #1e40af);
+            background: linear-gradient(to right, #3498db, #2c3e50);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -54,6 +49,31 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
             color: #7f8c8d;
             max-width: 800px;
             margin: 0 auto 20px;
+        }
+        
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .project-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #ecf0f1;
+            color: #3498db;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .project-link:hover {
+            background-color: #3498db;
+            color: white;
+            transform: translateY(-3px);
         }
         
         .topic-grid {
@@ -93,7 +113,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         }
         
         .card-header h2 i {
-            color: #3b82f6;
+            color: #3498db;
             font-size: 1.3rem;
         }
         
@@ -107,23 +127,12 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
             margin-bottom: 20px;
         }
         
-        .structure-box {
-            background-color: #eff6ff;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            border-left: 4px solid #3b82f6;
-            color: #1e40af;
-            font-weight: 600;
-        }
-        
         .examples {
-            background-color: #f8f9fa;
+            background-color: #f4f9fd;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            border-left: 4px solid #10b981;
+            border-left: 4px solid #3498db;
         }
         
         .examples h3 {
@@ -135,7 +144,6 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         .example-item {
             margin-bottom: 5px;
             padding-left: 10px;
-            font-size: 0.95rem;
         }
         
         .example-item strong {
@@ -145,7 +153,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         
         .card-footer {
             padding: 15px 25px;
-            background-color: #f8f9fa;
+            background-color: #f4f9fd;
             border-top: 1px solid #eee;
             text-align: center;
         }
@@ -153,7 +161,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         .page-link {
             display: inline-block;
             padding: 10px 25px;
-            background-color: #3b82f6;
+            background-color: #3498db;
             color: white;
             text-decoration: none;
             border-radius: 8px;
@@ -162,7 +170,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         }
         
         .page-link:hover {
-            background-color: #2563eb;
+            background-color: #2c3e50;
             transform: scale(1.05);
         }
         
@@ -203,7 +211,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
         }
         
         .link-item:hover {
-            background-color: #3b82f6;
+            background-color: #3498db;
             color: white;
         }
         
@@ -223,6 +231,16 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
             h1 {
                 font-size: 2.2rem;
             }
+            
+            .project-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .project-link {
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -230,154 +248,123 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-code-branch"></i> Conditional Grammar Guide</h1>
-            <p class="subtitle">A complete reference for understanding the five main types of conditional sentences in English grammar. Master your structures, rules, and variations.</p>
+            <h1><i class="fas fa-code-branch"></i> Conditional Sentences Guide</h1>
+            <p class="subtitle">A complete reference for understanding the four main types of conditional clauses in English grammar. Each type is covered in detail on its own page.</p>
+            
+            <div class="project-links">
+                <a href="https://rexwyc.github.io/conditional%20type0.html" class="project-link"><i class="fas fa-redo"></i> Type 0 Conditional</a>
+                <a href="https://rexwyc.github.io/conditional%20type%201.html" class="project-link"><i class="fas fa-bolt"></i> Type 1 Conditional</a>
+                <a href="https://rexwyc.github.io/conditional%20type2.html" class="project-link"><i class="fas fa-cloud"></i> Type 2 Conditional</a>
+                <a href="https://rexwyc.github.io/conditional%20type3.html" class="project-link"><i class="fas fa-history"></i> Type 3 Conditional</a>
+            </div>
         </header>
         
         <main>
             <div class="topic-grid">
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-infinity"></i> Zero Conditional</h2>
+                        <h2><i class="fas fa-square-root-variable"></i> Zero Conditional (Type 0)</h2>
                     </div>
                     <div class="card-content">
-                        <p>Used to describe general truths, scientific facts, habits, or rules. It refers to situations where one event always and automatically triggers another.</p>
+                        <p>The zero conditional is used to talk about general truths, scientific facts, or habits. It describes situations where one action *always* causes another result under certain conditions.</p>
                         
-                        <div class="structure-box">
-                            Structure: If + Present Simple, ... Present Simple
-                        </div>
-
                         <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Fact:</strong> If you heat water to 100°C, it boils.</div>
-                            <div class="example-item"><strong>Nature:</strong> When the sun goes down, it gets dark.</div>
+                            <h3>Structure & Examples:</h3>
+                            <div class="example-item"><strong>Structure:</strong> If + Present Simple, ... Present Simple</div>
+                            <div class="example-item"><strong>Fact:</strong> If you heat ice, it melts.</div>
+                            <div class="example-item"><strong>Habit:</strong> If I wake up late, I miss the bus.</div>
                         </div>
                         
-                        <p>In this conditional type, the word "if" can almost always be swapped with "when" without changing the core meaning of the sentence.</p>
+                        <p>In zero conditional sentences, the word "if" can usually be replaced by "when" without changing the core meaning of the statement.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="quiz.html?type=zero" class="page-link">Practice Quiz <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/conditional%20type0.html" class="page-link">View Full Page <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-hourglass-start"></i> First Conditional</h2>
+                        <h2><i class="fas fa-hourglass-half"></i> First Conditional (Type 1)</h2>
                     </div>
                     <div class="card-content">
-                        <p>Used to predict a real, highly possible, or likely future event and its logical consequence. It deals with specific future plans and outcomes.</p>
+                        <p>The first conditional is used to express realistic, possible situations in the present or future, along with their highly probable or predictable outcomes.</p>
                         
-                        <div class="structure-box">
-                            Structure: If + Present Simple, ... Will + Verb
-                        </div>
-
                         <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Weather:</strong> If it rains tomorrow, we will cancel the picnic.</div>
-                            <div class="example-item"><strong>Action:</strong> If you don't hurry, we will miss the train.</div>
+                            <h3>Structure & Examples:</h3>
+                            <div class="example-item"><strong>Structure:</strong> If + Present Simple, ... Will + Verb</div>
+                            <div class="example-item"><strong>Weather:</strong> If it rains tomorrow, we will stay home.</div>
+                            <div class="example-item"><strong>Action:</strong> If you study hard, you will pass the exam.</div>
                         </div>
                         
-                        <p>Be careful: avoid using future tense markers like "will" inside the conditional 'if' clause itself (e.g., say "if it rains," not "if it will rain").</p>
+                        <p>This structure focuses on real and possible future constraints. Modal verbs like "can," "may," or "might" can sometimes replace "will."</p>
                     </div>
                     <div class="card-footer">
-                        <a href="quiz.html?type=first" class="page-link">Practice Quiz <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/conditional%20type%201.html" class="page-link">View Full Page <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-cloud"></i> Second Conditional</h2>
+                        <h2><i class="fas fa-wand-magic-sparkles"></i> Second Conditional (Type 2)</h2>
                     </div>
                     <div class="card-content">
-                        <p>Used to talk about imaginary, hypothetical, or completely unrealistic scenarios in the present or future, along with their expected results.</p>
+                        <p>The second conditional deals with imaginary, hypothetical, or highly improbable situations in the present or future, indicating outcomes that are unlikely to happen.</p>
                         
-                        <div class="structure-box">
-                            Structure: If + Past Simple, ... Would + Verb
-                        </div>
-
                         <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Dream:</strong> If I were a millionaire, I would buy an island.</div>
-                            <div class="example-item"><strong>Advice:</strong> I wouldn't buy that jacket if I were you.</div>
+                            <h3>Structure & Examples:</h3>
+                            <div class="example-item"><strong>Structure:</strong> If + Past Simple, ... Would + Verb</div>
+                            <div class="example-item"><strong>Dream:</strong> If I won the lottery, I would buy a mansion.</div>
+                            <div class="example-item"><strong>Advice:</strong> If I were you, I would take that job offer.</div>
                         </div>
                         
-                        <p>Grammar Tip: The subjunctive form "were" is preferred over "was" for all subjects (I, he, she, it) in formal Second Conditional phrases.</p>
+                        <p>Note that "were" is traditionally used instead of "was" for all subjects (I, he, she, it) in formal grammar to indicate a subjective mood.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="quiz.html?type=second" class="page-link">Practice Quiz <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/conditional%20type2.html" class="page-link">View Full Page <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
                 
                 <div class="topic-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-history"></i> Third Conditional</h2>
+                        <h2><i class="fas fa-backward"></i> Third Conditional (Type 3)</h2>
                     </div>
                     <div class="card-content">
-                        <p>Used to speculate about completely unchangeable past events, creating a hypothetical past outcome. It often expresses regrets or relief.</p>
+                        <p>The third conditional describes an unfulfilled situation in the past. It looks back at a past event that didn't happen and imagines an alternative past outcome.</p>
                         
-                        <div class="structure-box">
-                            Structure: If + Past Perfect, ... Would Have + Past Participle
-                        </div>
-
                         <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Regret:</strong> If you had asked me, I would have helped you.</div>
-                            <div class="example-item"><strong>Missed:</strong> She wouldn't have missed the flight if she had left on time.</div>
+                            <h3>Structure & Examples:</h3>
+                            <div class="example-item"><strong>Structure:</strong> If + Past Perfect, ... Would Have + V3</div>
+                            <div class="example-item"><strong>Regret:</strong> If I had studied, I would have passed.</div>
+                            <div class="example-item"><strong>Missed:</strong> If they had arrived early, they wouldn't have missed it.</div>
                         </div>
                         
-                        <p>This conditional is purely imaginary because the time window has passed, meaning the condition is completely impossible to fulfill now.</p>
+                        <p>This structure is frequently used to express regrets, relief, or historical criticisms about actions that cannot be altered anymore.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="quiz.html?type=third" class="page-link">Practice Quiz <i class="fas fa-external-link-alt"></i></a>
-                    </div>
-                </div>
-                
-                <div class="topic-card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-shuffle"></i> Mixed Conditional</h2>
-                    </div>
-                    <div class="card-content">
-                        <p>Used when the timeframe of the condition and the timeframe of the consequence do not match (e.g., how a past action alters the present status).</p>
-                        
-                        <div class="structure-box">
-                            Structure: If + Past Perfect, ... Would + Verb (and vice versa)
-                        </div>
-
-                        <div class="examples">
-                            <h3>Examples:</h3>
-                            <div class="example-item"><strong>Past to Pres:</strong> If I had won the lottery last year, I would be rich today.</div>
-                            <div class="example-item"><strong>Pres to Past:</strong> If he were a faster runner, he would have won yesterday.</div>
-                        </div>
-                        
-                        <p>Mixed conditionals bridge time barriers, commonly mapping a past occurrence directly onto a current present reality.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="quiz.html?type=mixed" class="page-link">Practice Quiz <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://rexwyc.github.io/conditional%20type3.html" class="page-link">View Full Page <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             </div>
             
             <div class="quick-links">
-                <h2><i class="fas fa-link"></i> Quick Navigation to All Practices</h2>
+                <h2><i class="fas fa-link"></i> Quick Navigation to All Conditional Pages</h2>
                 <div class="link-list">
-                    <a href="quiz.html" class="link-item">All Conditionals Mixed Quiz</a>
-                    <a href="quiz.html?type=zero" class="link-item">Zero Conditional Quiz</a>
-                    <a href="quiz.html?type=first" class="link-item">First Conditional Quiz</a>
-                    <a href="quiz.html?type=second" class="link-item">Second Conditional Quiz</a>
-                    <a href="quiz.html?type=third" class="link-item">Third Conditional Quiz</a>
-                    <a href="quiz.html?type=mixed" class="link-item">Mixed Conditional Quiz</a>
+                    <a href="https://rexwyc.github.io/conditional%20type0.html" class="link-item"><i class="fas fa-redo"></i> Type 0 Conditional</a>
+                    <a href="https://rexwyc.github.io/conditional%20type%201.html" class="link-item"><i class="fas fa-bolt"></i> Type 1 Conditional</a>
+                    <a href="https://rexwyc.github.io/conditional%20type2.html" class="link-item"><i class="fas fa-cloud"></i> Type 2 Conditional</a>
+                    <a href="https://rexwyc.github.io/conditional%20type3.html" class="link-item"><i class="fas fa-history"></i> Type 3 Conditional</a>
                 </div>
             </div>
         </main>
         
         <footer>
-            <p>Conditional Grammar Guide &copy; 2026 | Created for grammar-challenge.io</p>
-            <p>Mastering structural grammar step by step</p>
+            <p>Conditional Sentences Grammar Guide &copy; 2026 | Created for rexwyc.github.io</p>
+            <p>Master clauses, tenses, and logical reasoning structures — elevate your analytical composition power.</p>
         </footer>
     </div>
     
     <script>
-        // Smooth scrolling for links
+        // Add smooth scrolling to anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -394,7 +381,7 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
             });
         });
         
-        // Card entrance visibility animations
+        // Add animation to cards when they come into view
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -409,14 +396,15 @@ The structure has been completely redesigned using a card-grid layout, Font Awes
             });
         }, observerOptions);
         
+        // Set initial state for cards and apply observer
         document.querySelectorAll('.topic-card').forEach(card => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
             card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             observer.observe(card);
         });
+        
+        console.log("Conditional grammar guide ready — all external links point to rexwyc.github.io conditional resources in perfect chronological sequence.");
     </script>
 </body>
 </html>
-
-```
