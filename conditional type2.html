@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type 2 Conditional Quest</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary-color: #4a90e2;
+            --success-color: #2ec4b6;
+            --error-color: #e71d36;
+            --text-color: #2b2d42;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .score-board {
+            background: #e2e8f0;
+            padding: 5px 15px;
+            border-radius: 15px;
+        }
+
+        .question-box {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success-color);
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: var(--error-color);
+            color: #721c24;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f2fe;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+        }
+
+        .formula-banner {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: center;
+            margin-top: 15px;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="header">
+        <span id="question-number">Question: 1/30</span>
+        <span class="score-board">Score: <span id="score">0</span></span>
+    </div>
+
+    <div class="question-box" id="question-text">
+        Loading question...
+    </div>
+
+    <div class="options-container" id="options-box">
+        </div>
+
+    <div class="explanation-box" id="explanation-box">
+        </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+
+    <div class="formula-banner">
+        Structure: If + Past Simple, ...would + verb
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "If I ______ more money, I would buy a sports car.", options: ["have", "had", "would have", "has"], correct: 1, exp: "Use Past Simple ('had') in the if-clause for hypothetical present/future situations." },
+        { q: "What would you do if you ______ a lottery ticket?", options: ["win", "won", "would win", "wins"], correct: 1, exp: "The if-clause takes the Past Simple ('won') in Type 2 conditionals." },
+        { q: "If she ______ taller, she could be a professional model.", options: ["is", "was", "were", "would be"], correct: 2, exp: "In formal conditional structures, 'were' is preferred for all subjects (I/he/she/it)." },
+        { q: "If it ______ tomorrow, we wouldn't go to the beach.", options: ["snowed", "snows", "will snow", "would snow"], correct: 0, exp: "Though highly unlikely in summer, 'snowed' (Past Simple) builds the imaginary framework." },
+        { q: "I ______ to the party if I didn't have to work.", options: ["will go", "went", "would go", "go"], correct: 2, exp: "The main clause uses 'would + base verb' ('would go') to indicate an imaginary result." },
+        { q: "If they lived closer, we ______ them more often.", options: ["visit", "will visit", "would visit", "visited"], correct: 2, exp: "'Would visit' fits the main clause pattern following the past tense 'lived'." },
+        { q: "If I ______ you, I would take that job offer.", options: ["am", "was", "were", "be"], correct: 2, exp: "'If I were you' is a classic Type 2 phrase used to give advice." },
+        { q: "They would be angry if they ______ what you did.", options: ["know", "knew", "would know", "known"], correct: 1, exp: "Past Simple 'knew' is needed in the conditional clause." },
+        { q: "If he ______ so much junk food, he would feel healthier.", options: ["doesn't eat", "didn't eat", "won't eat", "hasn't eaten"], correct: 1, exp: "Negative past simple 'didn't eat' shows an imaginary change from his real eating habits." },
+        { q: "Where ______ if you could travel anywhere right now?", options: ["will you go", "would you go", "do you go", "did you go"], correct: 1, exp: "Questions use 'would + subject + verb' in the main clause." },
+        { q: "If we had a map, we ______ lost.", options: ["won't get", "didn't get", "wouldn't get", "don't get"], correct: 2, exp: "Use 'wouldn't + base verb' for a negative hypothetical consequence." },
+        { q: "If I ______ how to speak French, I'd move to Paris.", options: ["know", "knew", "will know", "known"], correct: 1, exp: "Past simple 'knew' handles the condition, while 'I'd' is short for 'I would'." },
+        { q: "She ______ happier if she didn't stress so much.", options: ["will be", "is", "would be", "was"], correct: 2, exp: "Main clause calls for 'would be' to pair with the condition 'didn't stress'." },
+        { q: "If you ______ a superhero, who would you be?", options: ["are", "can be", "were", "will be"], correct: 2, exp: "Imaginary states use 'were' in Type 2 conditional rules." },
+        { q: "If my phone ______ broken, I would call you.", options: ["isn't", "weren't", "won't be", "not was"], correct: 1, exp: "'Weren't' is the standard past subjunctive form for negative imaginary conditions." },
+        { q: "If animals ______ talk, they would have funny stories.", options: ["could", "can", "will", "would"], correct: 0, exp: "'Could' serves as the past tense of 'can' here, representing hypothetical ability." },
+        { q: "I wouldn't buy that jacket if I ______ you.", options: ["am", "were", "was", "be"], correct: 1, exp: "'If I were you' is standard for advice regarding hypothetical decisions." },
+        { q: "If we ______ to the moon, it would take three days.", options: ["fly", "flew", "will fly", "would fly"], correct: 1, exp: "Past simple 'flew' marks the action as an imaginary condition." },
+        { q: "If she tried harder, she ______ pass her driving test.", options: ["will", "can", "would", "passes"], correct: 2, exp: "'Would' expresses the conditional result of the hypothetical effort." },
+        { q: "I ______ help you pack if my back didn't hurt.", options: ["will", "would", "did", "am"], correct: 1, exp: "The main clause uses 'would' to explain an action blocked by current reality." },
+        { q: "If you ______ up earlier, you wouldn't miss the bus.", options: ["wake", "woke", "will wake", "waken"], correct: 1, exp: "Past simple 'woke' outlines the unrealistic alteration of the routine." },
+        { q: "If I ______ a million dollars, I'd build a school.", options: ["win", "won", "will win", "have won"], correct: 1, exp: "'Won' creates the past framework required for an improbable future dream." },
+        { q: "What ______ if a bear chased you in the woods?", options: ["do you do", "will you do", "would you do", "did you do"], correct: 2, exp: "The question format relies on 'would you do' to mirror the condition 'chased'." },
+        { q: "If he ______ time, he would learn to play guitar.", options: ["has", "had", "have", "would have"], correct: 1, exp: "Past simple 'had' reflects a missing resource in the present time." },
+        { q: "If it ______ so cold, we could eat outside.", options: ["isn't", "weren't", "wasn't", "won't be"], correct: 1, exp: "'Weren't' is traditionally preferred over 'wasn't' in conditional clauses." },
+        { q: "They ______ more friends if they were more polite.", options: ["would have", "will have", "have", "had"], correct: 0, exp: "'Would have' represents the fictional outcome of changing their attitude." },
+        { q: "If I ______ the answers, I would tell you.", options: ["know", "knew", "knows", "will know"], correct: 1, exp: "The premise uses past tense 'knew' because the speaker doesn't actually know." },
+        { q: "If we ______ a dog, we would walk it every evening.", options: ["own", "owned", "will own", "would own"], correct: 1, exp: "'Owned' models a present condition that does not match reality." },
+        { q: "You ______ healthier if you slept eight hours a night.", options: ["will feel", "would feel", "feel", "felt"], correct: 1, exp: "The main clause utilizes 'would feel' to follow the condition 'slept'." },
+        { q: "If I had wings, I ______ away from here.", options: ["will fly", "would fly", "flew", "fly"], correct: 1, exp: "'Would fly' states the impossible output of having imaginary wings." }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let questionsAnswered = 0;
+    let hasAnswered = false;
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    // Shuffle once at start, but loop infinitely
+    shuffle(questions);
+
+    function loadQuestion() {
+        hasAnswered = false;
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("explanation-box").style.display = "none";
+
+        // Infinite loop handler: track true counts but reset pointer safely
+        let displayNum = (questionsAnswered % questions.length) + 1;
+        document.getElementById("question-number").innerText = `Question: ${questionsAnswered + 1} (Loop Counter)`;
+
+        let qData = questions[currentIdx];
+        document.getElementById("question-text").innerText = qData.q;
+
+        const optionsBox = document.getElementById("options-box");
+        optionsBox.innerHTML = "";
+
+        qData.options.forEach((opt, index) => {
+            const button = document.createElement("button");
+            button.className = "option-btn";
+            button.innerText = opt;
+            button.onclick = () => checkAnswer(button, index);
+            optionsBox.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedBtn, chosenIdx) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+
+        let qData = questions[currentIdx];
+        const buttons = document.getElementsByClassName("option-btn");
+
+        if (chosenIdx === qData.correct) {
+            selectedBtn.classList.add("correct");
+            score++;
+            document.getElementById("score").innerText = score;
+        } else {
+            selectedBtn.classList.add("wrong");
+            buttons[qData.correct].classList.add("correct");
+        }
+
+        // Show Explanation
+        const expBox = document.getElementById("explanation-box");
+        expBox.innerText = qData.exp;
+        expBox.style.display = "block";
+
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        questionsAnswered++;
+        currentIdx++;
+        
+        // Infinite loop implementation: if reached end of array, reshuffle and reset pointer
+        if (currentIdx >= questions.length) {
+            currentIdx = 0;
+            shuffle(questions);
+        }
+        
+        loadQuestion();
+    }
+
+    // Run game initialization
+    loadQuestion();
+</script>
+
+</body>
+</html>

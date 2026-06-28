@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type 0 Conditional Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary-color: #4a90e2;
+            --success-color: #2ec4b6;
+            --error-color: #e71d36;
+            --text-color: #2b2d42;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .score-board {
+            background: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: none;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            color: var(--text-color);
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .option-btn.wrong {
+            background-color: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .feedback-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            border-left: 5px solid var(--primary-color);
+            display: none;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+
+        .next-btn:hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <span id="question-number">Question 1/30</span>
+        <span class="score-board" id="score">Score: 0</span>
+    </div>
+    
+    <div class="question-text" id="question">Loading question...</div>
+    
+    <div class="options-container" id="options">
+        </div>
+
+    <div class="feedback-container" id="feedback">
+        <div class="feedback-title" id="feedback-result"></div>
+        <p id="feedback-text"></p>
+    </div>
+
+    <button class="next-btn" id="next-button" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+    // 30 Type 0 Conditional Questions
+    // Rule: If/When + Present Simple, Present Simple (General truths/scientific facts)
+    const questions = [
+        { q: "If you heat ice, it ______.", a: ["melts", "melted", "will melt"], c: 0, e: "Type 0 conditional uses Present Simple in both clauses for general scientific truths. 'Ice' is singular, so we use 'melts'." },
+        { q: "When the sun goes down, it ______ dark.", a: ["got", "gets", "will get"], c: 1, e: "This is a natural certainty. Both clauses must use the Present Simple tense ('goes' and 'gets')." },
+        { q: "If you don't water plants, they ______.", a: ["die", "dies", "would die"], c: 0, e: "'Plants' is plural, so the verb in the Present Simple is 'die'." },
+        { q: "If you mix red and blue, you ______ purple.", a: ["got", "get", "will get"], c: 1, e: "Mixing colors always produces the same result. Present Simple ('get') is used for facts." },
+        { q: "An iron bar expands if you ______ it.", a: ["heat", "heats", "heated"], c: 0, e: "The subject 'you' takes the base form 'heat' in the Present Simple tense." },
+        { q: "If babies ______ hungry, they cry.", a: ["are", "feel", "both 'are' and 'feel'"], c: 2, e: "Both words fit perfectly in the Present Simple tense to describe a general truth about babies." },
+        { q: "When you touch a fire, you ______ burned.", a: ["get", "got", "will get"], c: 0, e: "This is a physical law. Present Simple 'get' is correct." },
+        { q: "If you freeze water, it ______ into ice.", a: ["turn", "turns", "will turn"], c: 1, e: "'It' requires the singular verb 'turns' in the Present Simple." },
+        { q: "Wood ______ if you put it in water.", a: ["float", "floats", "floated"], c: 1, e: "Wood floating is a physical fact. 'Wood' is uncountable, so we use 'floats'." },
+        { q: "If you drop an apple, it ______.", a: ["falls", "fall", "will fall"], c: 0, e: "Gravity is a fact. 'It' takes the Present Simple verb 'falls'." },
+        { q: "When it rains, the grass ______ wet.", a: ["become", "becomes", "will become"], c: 1, e: "A natural cause and effect. 'The grass' is singular, so it takes 'becomes'." },
+        { q: "If you leave butter in the sun, it ______.", a: ["melt", "melts", "is melting"], c: 1, e: "For general truths, use standard Present Simple ('melts'), not present continuous." },
+        { q: "If you multiply zero by any number, you ______ zero.", a: ["get", "gets", "got"], c: 0, e: "A mathematical fact requires the Present Simple form 'get' for 'you'." },
+        { q: "When water reaches 100°C, it ______.", a: ["boils", "boil", "is boiling"], c: 0, e: "Scientific fact: 'Water' is uncountable and takes the singular verb 'boils'." },
+        { q: "If you add two and two, it ______ four.", a: ["make", "makes", "will make"], c: 1, e: "Mathematical certainty: Present Simple 'makes'." },
+        { q: "People ______ weight if they eat too much junk food.", a: ["gain", "gains", "will gain"], c: 0, e: "'People' is plural, so it takes the Present Simple verb form 'gain'." },
+        { q: "If you cross an international date line, the time ______.", a: ["change", "changes", "changed"], c: 1, e: "A geographical rule. 'The time' takes the singular Present Simple verb 'changes'." },
+        { q: "When you disconnect the battery, the screen ______ off.", a: ["go", "goes", "will go"], c: 1, e: "A mechanical fact. 'The screen' takes the Present Simple verb 'goes'." },
+        { q: "If you step on a dog's tail, it ______.", a: ["barks", "bark", "would bark"], c: 0, e: "A typical habit/reaction. 'It' takes the Present Simple verb 'barks'." },
+        { q: "If you mix oil and water, the oil ______ to the top.", a: ["rise", "rises", "will rise"], c: 1, e: "Scientific fact: Oil is less dense than water, so it 'rises' (Present Simple)." },
+        { q: "When you press this power button, the machine ______.", a: ["start", "starts", "starting"], c: 1, e: "A direct functional cause and effect uses Present Simple ('starts')." },
+        { q: "If adults ______ exercise, they lose muscle mass over time.", a: ["don't get", "doesn't get", "won't get"], c: 0, e: "'Adults' is plural, so the negative Present Simple is 'don't get'." },
+        { q: "The alarm rings if someone ______ the window.", a: ["break", "breaks", "will break"], c: 1, e: "'Someone' is an indefinite singular pronoun, requiring the Present Simple verb 'breaks'." },
+        { q: "If you heat chocolate, it ______ soft.", a: ["become", "becomes", "became"], c: 1, e: "A physical reaction fact: 'it becomes' (Present Simple)." },
+        { q: "When you stir sugar into hot tea, it ______.", a: ["dissolves", "dissolve", "dissolving"], c: 0, e: "Scientific truth: Sugar 'dissolves' in hot liquids." },
+        { q: "If you expose film to light, it ______ the photo.", a: ["ruin", "ruins", "will ruin"], c: 1, e: "A factual cause/effect in photography. 'It' takes 'ruins'." },
+        { q: "If a dog ______ happy, it wags its tail.", a: ["is", "be", "will be"], c: 0, e: "Animal behavior fact: Present Simple form of 'to be' for a singular dog is 'is'." },
+        { q: "When you cut an onion, your eyes ______.", a: ["water", "waters", "will water"], c: 0, e: "Biological response: 'Your eyes' is plural, so it takes the base verb 'water'." },
+        { q: "If you put paper on fire, it ______.", a: ["burn", "burns", "burned"], c: 1, e: "Chemical reality: Paper is combustible, so it 'burns' (Present Simple)." },
+        { q: "Snake bites ______ dangerous if they are venomous.", a: ["are", "is", "will be"], c: 0, e: "Factual statement: 'Snake bites' is plural, so it uses the Present Simple 'are'." }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let totalAnswered = 0;
+    let hasAnswered = false;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const feedbackResultEl = document.getElementById('feedback-result');
+    const feedbackTextEl = document.getElementById('feedback-text');
+    const nextBtn = document.getElementById('next-button');
+    const qNumEl = document.getElementById('question-number');
+    const scoreEl = document.getElementById('score');
+
+    function loadQuestion() {
+        hasAnswered = false;
+        feedbackEl.style.display = 'none';
+        nextBtn.style.display = 'none';
+        
+        // Show actual question number count up to 30, then switch to "Infinite Mode" display while tracking loops
+        let displayIndex = (currentQuestionIndex % questions.length) + 1;
+        let loopCount = Math.floor(currentQuestionIndex / questions.length);
+        
+        if (loopCount === 0) {
+            qNumEl.innerText = `Question ${displayIndex}/30`;
+        } else {
+            qNumEl.innerText = `Question ${displayIndex}/30 (Loop ${loopCount + 1})`;
+        }
+
+        const currentQ = questions[currentQuestionIndex % questions.length];
+        questionEl.innerText = currentQ.q;
+        optionsEl.innerHTML = '';
+
+        currentQ.a.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.innerText = option;
+            button.onclick = () => selectOption(index);
+            optionsEl.appendChild(button);
+        });
+    }
+
+    function selectOption(selectedIndex) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+
+        const currentQ = questions[currentQuestionIndex % questions.length];
+        const buttons = optionsEl.getElementsByClassName('option-btn');
+        
+        totalAnswered++;
+
+        if (selectedIndex === currentQ.c) {
+            buttons[selectedIndex].classList.add('correct');
+            feedbackResultEl.innerText = "Correct! 🎉";
+            feedbackResultEl.style.color = "var(--success-color)";
+            score++;
+        } else {
+            buttons[selectedIndex].classList.add('wrong');
+            buttons[currentQ.c].classList.add('correct');
+            feedbackResultEl.innerText = "Incorrect ❌";
+            feedbackResultEl.style.color = "var(--error-color)";
+        }
+
+        scoreEl.innerText = `Score: ${score}`;
+        feedbackTextEl.innerText = currentQ.e;
+        feedbackEl.style.display = 'block';
+        nextBtn.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        // Infinite Loop implementation: sequence index increments forever
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+
+    // Initialize the game
+    loadQuestion();
+</script>
+
+</body>
+</html>
