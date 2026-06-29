@@ -92,6 +92,32 @@
         .grid-item a:hover {
             color: var(--hover-color);
         }
+
+        /* Floating Music Button - Top Right Corner */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .music-btn:hover {
+            background-color: var(--hover-color);
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -104,6 +130,30 @@
             <li class="grid-item"><a href="https://rexwyc.github.io/Game.html" target="_blank">Games & Hobbies</a></li>
         </ul>
     </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="music/伴我啟航.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Play Music">🎵</button>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const button = document.getElementById('musicBtn');
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                button.innerHTML = "⏸️"; // Switch to pause icon
+                button.title = "Pause Music";
+            } else {
+                music.pause();
+                button.innerHTML = "🎵"; // Switch back to music note icon
+                button.title = "Play Music";
+            }
+        }
+    </script>
 
 </body>
 </html>

@@ -94,7 +94,7 @@
         <span style="font-size: 11px; color:#666; text-transform:uppercase; font-weight:bold; margin-bottom:8px; letter-spacing:2px;">Arena</span>
         <div class="map-selector">
             <div class="map-opt selected" onclick="changeMap(0)">🏰 Mansion</div>
-            <div class="map-opt" onclick="changeMap(2)">🌈 Neon</div>
+            <div class="map-opt" onclick="changeMap(1)">🌊 Sewer</div>
         </div>
         <button class="menu-btn" onclick="initMatch()">▶ START MATCH</button>
         <div style="margin-top:14px; font-size:11px; color:#445;">2P · pass & play</div>
@@ -386,22 +386,21 @@ function buildSelectedMap() {
         generateWallBlock(-10, 8, 4, 2, 5, 0x5c1d1d);
         generateWallBlock(10, 8, 4, 2, 5, 0x5c1d1d);
     } else { 
-        // NEON MAP
-        floorMat = new THREE.MeshStandardMaterial({ color: 0x030008, roughness: 0.3, emissive: new THREE.Color(0x110022), emissiveIntensity: 0.1 });
-        generateWallBlock(-16, 0, 1, 32, 4, 0x00ffff);
-        generateWallBlock(16, 0, 1, 32, 4, 0x00ffff);
-        generateWallBlock(0, -16, 32, 1, 4, 0xff00ff);
-        generateWallBlock(0, 16, 32, 1, 4, 0xff00ff);
-        for(let i = -10; i <= 10; i += 10) {
-            for(let j = -10; j <= 10; j += 10) {
-                if(i === 0 && j === 0) continue; 
-                generateWallBlock(i, j, 3, 3, 6, 0xffff00);
-            }
-        }
-        generateWallBlock(-8, 0, 6, 1.5, 4, 0xff00ff);
-        generateWallBlock(8, 0, 6, 1.5, 4, 0x00ffff);
-        generateWallBlock(0, -8, 1.5, 6, 4, 0x11ff22);
-        generateWallBlock(0, 8, 1.5, 6, 4, 0x11ff22);
+        // SEWER MAP
+        floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1c1e, roughness: 0.9 }); 
+        generateWallBlock(-16, 0, 2, 32, 4, 0x3a3d40);
+        generateWallBlock(16, 0, 2, 32, 4, 0x3a3d40);
+        generateWallBlock(0, -16, 32, 2, 4, 0x3a3d40);
+        generateWallBlock(0, 16, 32, 2, 4, 0x3a3d40);
+        generateWallBlock(0, 0, 4, 24, 1.2, 0x00ff44); 
+        generateWallBlock(-6, -6, 12, 3, 1.2, 0x00ff44); 
+        generateWallBlock(6, 6, 12, 3, 1.2, 0x00ff44);
+        generateWallBlock(-10, -10, 4, 4, 5, 0x555555);
+        generateWallBlock(-10, 2, 3, 8, 5, 0x444444);
+        generateWallBlock(10, -2, 3, 8, 5, 0x444444);
+        generateWallBlock(10, 10, 4, 4, 5, 0x555555);
+        generateWallBlock(-4, 12, 2, 6, 5, 0x222222);
+        generateWallBlock(4, -12, 2, 6, 5, 0x222222);
     }
 
     const floor = new THREE.Mesh(floorGeo, floorMat);
