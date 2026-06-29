@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phrasal Verbs Quiz - Infinite Loop</title>
+    <title>Phrasal Verbs Quiz – Infinite Loop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -96,20 +96,17 @@
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
-            cursor: pointer;
+            cursor: default;
             font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 5px;
             transition: all 0.3s;
+            opacity: 0.8;
         }
         
-        .sound-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .sound-btn.active {
-            background-color: rgba(255, 255, 255, 0.4);
+        .sound-btn i {
+            margin-right: 6px;
         }
         
         .stats-bar {
@@ -319,7 +316,7 @@
             margin-right: 10px;
         }
         
-        #submit-btn:hover {
+        #submit-btn:hover:not(:disabled) {
             background: linear-gradient(to right, #7d3c98, #2980b9);
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
@@ -536,29 +533,17 @@
             }
         }
         
-        .sound-wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background: linear-gradient(to right, rgba(231, 76, 60, 0.3), rgba(52, 152, 219, 0.3));
-            transition: height 0.3s;
-        }
-        
-        .option.playing .sound-wave {
-            height: 5px;
-            animation: wave 0.5s ease infinite alternate;
-        }
-        
-        @keyframes wave {
-            0% { height: 5px; }
-            100% { height: 10px; }
-        }
-        
         .phrasal-verb {
             font-weight: bold;
             color: #e74c3c;
+        }
+
+        /* sound-wave / playing effects removed – no audio */
+        .option .sound-wave {
+            display: none;
+        }
+        .option.playing .sound-wave {
+            display: none;
         }
     </style>
 </head>
@@ -567,7 +552,7 @@
         <header>
             <h1><i class="fas fa-infinity"></i> Phrasal Verbs Quiz</h1>
             <p class="subtitle">Choose the correct meaning of the highlighted phrasal verb</p>
-            <p class="subtitle">20 questions infinite loop - Master phrasal verbs with sound effects!</p>
+            <p class="subtitle">20 questions infinite loop – Master phrasal verbs</p>
             
             <div class="phrasal-types">
                 <div class="phrasal-type verb-particle">
@@ -579,9 +564,7 @@
             </div>
             
             <div class="sound-controls">
-                <button id="sound-toggle" class="sound-btn active">
-                    <i class="fas fa-volume-up"></i> Sound: ON
-                </button>
+                <span class="sound-btn"><i class="fas fa-volume-mute"></i> Sound: OFF</span>
             </div>
             
             <div class="phrasal-list">
@@ -661,7 +644,7 @@
     </div>
     
     <footer>
-        <p>Phrasal Verbs Quiz &copy; 2023 | Infinite Loop Game | With Sound Effects</p>
+        <p>Phrasal Verbs Quiz &copy; 2023 | Infinite Loop Game</p>
         <p>Phrasal verbs = verb + particle with special meaning | Practice makes perfect!</p>
     </footer>
 
@@ -937,7 +920,6 @@
         let loopCount = 1;
         let selectedOption = null;
         let gameActive = true;
-        let soundEnabled = true;
         
         // DOM elements
         const questionTextElement = document.getElementById('question-text');
@@ -955,11 +937,6 @@
         const phrasalDefinitionElement = document.getElementById('phrasal-definition');
         const phrasalExamplesElement = document.getElementById('phrasal-examples');
         const progressBarElement = document.getElementById('progress-bar');
-        const soundToggleBtn = document.getElementById('sound-toggle');
-        
-        // Audio elements - Using your sound files
-        const correctSound = new Audio('music/f.wav');  // Correct answer sound
-        const wrongSound = new Audio('music/h.wav');    // Wrong answer sound
         
         // Initialize the game
         function initGame() {
@@ -970,68 +947,6 @@
             // Event listeners
             submitButton.addEventListener('click', submitAnswer);
             nextButton.addEventListener('click', nextQuestion);
-            soundToggleBtn.addEventListener('click', toggleSound);
-            
-            // Set initial audio volume
-            correctSound.volume = 0.7;
-            wrongSound.volume = 0.7;
-        }
-        
-        // Toggle sound effects
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            soundToggleBtn.classList.toggle('active', soundEnabled);
-            soundToggleBtn.innerHTML = `<i class="fas fa-volume-${soundEnabled ? 'up' : 'mute'}"></i> Sound: ${soundEnabled ? 'ON' : 'OFF'}`;
-            
-            // Play click sound if enabling
-            if (soundEnabled) {
-                playClickSound();
-            }
-        }
-        
-        // Play click sound using Web Audio API
-        function playClickSound() {
-            if (!soundEnabled) return;
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 800;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } catch (e) {
-                console.log("Web Audio API not supported");
-            }
-        }
-        
-        // Play sound with error handling
-        function playSound(audioElement) {
-            if (!soundEnabled) return;
-            
-            try {
-                // Reset audio to start
-                audioElement.currentTime = 0;
-                // Play audio
-                audioElement.play().catch(e => {
-                    console.log("Audio play failed:", e);
-                    // Fallback: try with user gesture
-                    document.body.addEventListener('click', function playOnce() {
-                        audioElement.play().catch(e2 => console.log("Fallback play failed:", e2));
-                        document.body.removeEventListener('click', playOnce);
-                    });
-                });
-            } catch (error) {
-                console.log("Audio error:", error);
-            }
         }
         
         // Load the current question
@@ -1057,18 +972,10 @@
                 optionElement.innerHTML = `
                     <div class="option-icon">${optionLetters[index]}</div>
                     <div class="option-text">${option}</div>
-                    <div class="sound-wave"></div>
                 `;
                 
                 optionElement.addEventListener('click', () => {
-                    playClickSound();
                     selectOption(optionElement, index);
-                    
-                    // Add visual feedback for sound playing
-                    optionElement.classList.add('playing');
-                    setTimeout(() => {
-                        optionElement.classList.remove('playing');
-                    }, 500);
                 });
                 optionsContainerElement.appendChild(optionElement);
             });
@@ -1118,13 +1025,6 @@
             // Check if answer is correct
             const isCorrect = selectedOption === currentQuestion.correctAnswer;
             
-            // Play appropriate sound - USING YOUR FILES
-            if (isCorrect) {
-                playSound(correctSound); // This will play music/f.wav for correct answers
-            } else {
-                playSound(wrongSound); // This will play music/h.wav for wrong answers
-            }
-            
             // Update score and correct count
             if (isCorrect) {
                 score += 10;
@@ -1170,9 +1070,6 @@
         
         // Move to next question
         function nextQuestion() {
-            // Play click sound
-            playClickSound();
-            
             // Reset game state
             gameActive = true;
             
@@ -1208,9 +1105,6 @@
         
         // Show loop notification
         function showLoopNotification() {
-            // Play click sound
-            playClickSound();
-            
             // Create a temporary notification
             const notification = document.createElement('div');
             notification.style.cssText = `
@@ -1228,7 +1122,6 @@
                 animation: fadeInOut 3s ease;
             `;
             
-            // Add keyframes for animation
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes fadeInOut {
@@ -1252,9 +1145,6 @@
         
         // Show bonus notification
         function showBonusNotification() {
-            // Play correct sound for bonus
-            playSound(correctSound);
-            
             // Create a temporary notification
             const notification = document.createElement('div');
             notification.style.cssText = `
@@ -1283,15 +1173,6 @@
         
         // Initialize the game when page loads
         window.addEventListener('DOMContentLoaded', initGame);
-        
-        // Handle page visibility change
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                // Pause any playing sounds when page is hidden
-                correctSound.pause();
-                wrongSound.pause();
-            }
-        });
     </script>
 </body>
 </html>
