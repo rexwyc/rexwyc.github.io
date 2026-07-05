@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadratic Equations Master Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --accent-color: #9b59b6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .score-board {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            background: #e1f5fe;
+            color: var(--primary-color);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .question-box {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .prompt-text {
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+
+        .equation {
+            display: block;
+            text-align: center;
+            font-size: 1.4rem;
+            margin: 10px 0 15px 0;
+            color: var(--accent-color);
+            font-style: italic;
+        }
+
+        .options-list {
+            list-style: none;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success-color) !important;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--error-color) !important;
+            color: #721c24;
+        }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 8px 8px 0;
+            display: none;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <span class="score-board">Score: <span id="score">0</span></span>
+        <span class="badge" id="category-badge">Loading...</span>
+    </div>
+
+    <div class="question-box">
+        <span class="prompt-text" id="prompt-text">Solve the equation:</span>
+        <span class="equation" id="equation-text"></span>
+    </div>
+
+    <div id="options-container" class="options-list"></div>
+
+    <div id="explanation" class="explanation-box"></div>
+
+    <button id="next-btn" class="action-btn" onclick="nextQuestion()">Next Question &rarr;</button>
+</div>
+
+<script>
+const questionPool = [
+    // --- FACTORING (1-10) ---
+    { equation: "x² - 5x + 6 = 0", prompt: "Solve the equation:", options: ["x = 2 or x = 3", "x = -2 or x = -3", "x = 1 or x = 6", "x = -1 or x = -6"], correct: 0, category: "Factoring", explanation: "Factor into (x - 2)(x - 3) = 0. Setting each factor to zero gives x = 2 or x = 3." },
+    { equation: "x² + 7x + 12 = 0", prompt: "Solve the equation:", options: ["x = 3 or x = 4", "x = -3 or x = -4", "x = 2 or x = 6", "x = -2 or x = -6"], correct: 1, category: "Factoring", explanation: "Factor into (x + 3)(x + 4) = 0. Solving for x yields x = -3 or x = -4." },
+    { equation: "x² - 4 = 0", prompt: "Solve the equation:", options: ["x = 4 or x = -4", "x = 2", "x = 2 or x = -2", "x = 0 or x = 4"], correct: 2, category: "Factoring", explanation: "This is a difference of squares: (x - 2)(x + 2) = 0, so x = 2 or x = -2." },
+    { equation: "x² - 3x = 0", prompt: "Solve the equation:", options: ["x = 0 or x = 3", "x = 3", "x = 0 or x = -3", "x = 1 or x = 3"], correct: 0, category: "Factoring", explanation: "Factor out the greatest common factor: x(x - 3) = 0. Thus, x = 0 or x = 3." },
+    { equation: "2x² + 5x - 3 = 0", prompt: "Solve the equation:", options: ["x = 1/2 or x = -3", "x = -1/2 or x = 3", "x = 1 or x = -3", "x = 1/2 or x = -1.5"], correct: 0, category: "Factoring", explanation: "Factors into (2x - 1)(x + 3) = 0. Setting components to 0 gives x = 1/2 and x = -3." },
+    { equation: "x² - 9x + 20 = 0", prompt: "Solve the equation:", options: ["x = -4 or x = -5", "x = 2 or x = 10", "x = 4 or x = 5", "x = -2 or x = -10"], correct: 2, category: "Factoring", explanation: "Factors into (x - 4)(x - 5) = 0. Therefore, x = 4 or x = 5." },
+    { equation: "3x² - 6x = 0", prompt: "Solve the equation:", options: ["x = 0 or x = 2", "x = 2", "x = 0 or x = -2", "x = 3 or x = 6"], correct: 0, category: "Factoring", explanation: "Factor out 3x to get 3x(x - 2) = 0. Solutions are x = 0 or x = 2." },
+    { equation: "x² + 2x - 8 = 0", prompt: "Solve the equation:", options: ["x = 2 or x = -4", "x = -2 or x = 4", "x = 1 or x = -8", "x = -1 or x = 8"], correct: 0, category: "Factoring", explanation: "Factors into (x + 4)(x - 2) = 0, which yields x = 2 or x = -4." },
+    { equation: "x² - 11x + 24 = 0", prompt: "Solve the equation:", options: ["x = 2 or x = 12", "x = 3 or x = 8", "x = -3 or x = -8", "x = 4 or x = 6"], correct: 1, category: "Factoring", explanation: "Factors into (x - 3)(x - 8) = 0. Thus, x = 3 or x = 8." },
+    { equation: "4x² - 12x + 9 = 0", prompt: "Solve the equation:", options: ["x = 3/2 (double root)", "x = -3/2 (double root)", "x = 3 or x = 4", "x = 0 or x = 3"], correct: 0, category: "Factoring", explanation: "This is a perfect square trinomial: (2x - 3)² = 0. Solving gives a single double root of x = 3/2." },
+
+    // --- COMPLETING THE SQUARE (11-20) ---
+    { equation: "x² + 6x - 7 = 0", prompt: "Complete the square form:", options: ["(x+3)² = 16", "(x+3)² = 7", "(x+6)² = 43", "(x-3)² = 16"], correct: 0, category: "Completing the Square", explanation: "Move 7 to the right: x² + 6x = 7. Add (6/2)² = 9 to both sides: x² + 6x + 9 = 16, which simplifies to (x + 3)² = 16." },
+    { equation: "x² - 8x + 12 = 0", prompt: "Complete the square form:", options: ["(x-4)² = 4", "(x-4)² = 16", "(x-2)² = 4", "(x-8)² = 46"], correct: 0, category: "Completing the Square", explanation: "Rearrange: x² - 8x = -12. Add (-8/2)² = 16 to both sides: x² - 8x + 16 = 4. This collapses into (x - 4)² = 4." },
+    { equation: "x² + 4x + 1 = 0", prompt: "Complete the square form:", options: ["(x+2)² = 5", "(x+2)² = 3", "(x+4)² = 15", "(x+2)² = -1"], correct: 1, category: "Completing the Square", explanation: "Isolate terms: x² + 4x = -1. Add (4/2)² = 4 to both sides: x² + 4x + 4 = 3, which equals (x + 2)² = 3." },
+    { equation: "x² - 10x - 3 = 0", prompt: "Complete the square form:", options: ["(x-5)² = 28", "(x-5)² = 22", "(x-5)² = 3", "(x-10)² = 103"], correct: 0, category: "Completing the Square", explanation: "Rearrange: x² - 10x = 3. Add (-10/2)² = 25 to both sides: x² - 10x + 25 = 28. Hence, (x - 5)² = 28." },
+    { equation: "x² + 2x - 5 = 0", prompt: "Complete the square form:", options: ["(x+1)² = 6", "(x+1)² = 4", "(x+2)² = 9", "(x-1)² = 6"], correct: 0, category: "Completing the Square", explanation: "Move 5 over: x² + 2x = 5. Add (2/2)² = 1 to both sides: x² + 2x + 1 = 6. This creates (x + 1)² = 6." },
+    { equation: "x² - 12x = -11", prompt: "Complete the square form:", options: ["(x-6)² = 25", "(x-6)² = 47", "(x-6)² = 11", "(x-12)² = 133"], correct: 0, category: "Completing the Square", explanation: "Add (-12/2)² = 36 to both sides: x² - 12x + 36 = -11 + 36 -> (x - 6)² = 25." },
+    { equation: "x² + 14x + 40 = 0", prompt: "Complete the square form:", options: ["(x+7)² = 9", "(x+7)² = 40", "(x+7)² = 49", "(x-7)² = 9"], correct: 0, category: "Completing the Square", explanation: "Isolate: x² + 14x = -40. Add (14/2)² = 49 to both sides to get x² + 14x + 49 = 9, or (x + 7)² = 9." },
+    { equation: "x² - 2x - 15 = 0", prompt: "Complete the square form:", options: ["(x-1)² = 16", "(x-1)² = 14", "(x-2)² = 19", "(x+1)² = 16"], correct: 0, category: "Completing the Square", explanation: "Move 15 over: x² - 2x = 15. Add (-2/2)² = 1 to both sides: x² - 2x + 1 = 16, simplifying to (x - 1)² = 16." },
+    { equation: "x² + 10x = 0", prompt: "Complete the square form:", options: ["(x+5)² = 25", "(x+5)² = 5", "(x+5)² = 0", "(x+10)² = 100"], correct: 0, category: "Completing the Square", explanation: "Add (10/2)² = 25 to both sides to complete the perfect trinomial square: (x + 5)² = 25." },
+    { equation: "2x² - 8x + 6 = 0", prompt: "Complete the square form:", options: ["(x-2)² = 1", "(x-2)² = 2", "(x-4)² = 10", "2(x-2)² = 2"], correct: 0, category: "Completing the Square", explanation: "Divide by 2 first: x² - 4x + 3 = 0 -> x² - 4x = -3. Add (-4/2)² = 4 to both sides: x² - 4x + 4 = 1. Thus, (x - 2)² = 1." },
+
+    // --- QUADRATIC FORMULA (21-30) ---
+    { equation: "x² - 5x + 5 = 0", prompt: "Solve via formula:", options: ["x = (5 &plusmn; &radic;5) / 2", "x = (-5 &plusmn; &radic;5) / 2", "x = (5 &plusmn; &radic;45) / 2", "x = 2.5 or 2"], correct: 0, category: "Quadratic Formula", explanation: "Using x = [-b &plusmn; &radic;(b² - 4ac)] / 2a, we get [5 &plusmn; &radic;(25 - 20)] / 2 = (5 &plusmn; &radic;5) / 2." },
+    { equation: "x² - 3x + 1 = 0", prompt: "Solve via formula:", options: ["x = (3 &plusmn; &radic;5) / 2", "x = (-3 &plusmn; &radic;5) / 2", "x = (3 &plusmn; &radic;13) / 2", "x = 1 or 2"], correct: 0, category: "Quadratic Formula", explanation: "Plug into formula: [3 &plusmn; &radic;((-3)² - 4(1)(1))] / 2 = (3 &plusmn; &radic;(9 - 4)) / 2 = (3 &plusmn; &radic;5) / 2." },
+    { equation: "2x² + 4x - 1 = 0", prompt: "Solve via formula:", options: ["x = (-2 &plusmn; &radic;6) / 2", "x = (-4 &plusmn; &radic;24) / 4", "x = (-2 &plusmn; &radic;3) / 2", "x = (-4 &plusmn; &radic;8) / 4"], correct: 0, category: "Quadratic Formula", explanation: "Formula gives [-4 &plusmn; &radic;(16 - 4(2)(-1))] / 4 = [-4 &plusmn; &radic;24] / 4 = [-4 &plusmn; 2&radic;6] / 4 = (-2 &plusmn; &radic;6) / 2." },
+    { equation: "x² + 6x + 2 = 0", prompt: "Solve via formula:", options: ["x = -3 &plusmn; &radic;7", "x = -6 &plusmn; &radic;28", "x = -3 &plusmn; &radic;14", "x = -3 &plusmn; 2&radic;7"], correct: 0, category: "Quadratic Formula", explanation: "x = [-6 &plusmn; &radic;(36 - 4(1)(2))] / 2 = [-6 &plusmn; &radic;28] / 2 = [-6 &plusmn; 2&radic;7] / 2 = -3 &plusmn; &radic;7." },
+    { equation: "3x² - 5x - 1 = 0", prompt: "Solve via formula:", options: ["x = (5 &plusmn; &radic;37) / 6", "x = (-5 &plusmn; &radic;37) / 6", "x = (5 &plusmn; &radic;13) / 6", "x = (5 &plusmn; &radic;37) / 2"], correct: 0, category: "Quadratic Formula", explanation: "x = [5 &plusmn; &radic;((-5)² - 4(3)(-1))] / 6 = [5 &plusmn; &radic;(25 + 12)] / 6 = (5 &plusmn; &radic;37) / 6." },
+    { equation: "x² + 2x - 7 = 0", prompt: "Solve via formula:", options: ["x = -1 &plusmn; 2&radic;2", "x = -1 &plusmn; &radic;8", "x = -2 &plusmn; &radic;32", "x = 1 &plusmn; 2&radic;2"], correct: 0, category: "Quadratic Formula", explanation: "x = [-2 &plusmn; &radic;(4 - 4(1)(-7))] / 2 = [-2 &plusmn; &radic;32] / 2 = [-2 &plusmn; 4&radic;2] / 2 = -1 &plusmn; 2&radic;2." },
+    { equation: "x² - 7x + 3 = 0", prompt: "Solve via formula:", options: ["x = (7 &plusmn; &radic;37) / 2", "x = (-7 &plusmn; &radic;37) / 2", "x = (7 &plusmn; &radic;61) / 2", "x = (7 &plusmn; &radic;43) / 2"], correct: 0, category: "Quadratic Formula", explanation: "x = [7 &plusmn; &radic;((-7)² - 4(1)(3))] / 2 = [7 &plusmn; &radic;(49 - 12)] / 2 = (7 &plusmn; &radic;37) / 2." },
+    { equation: "2x² + 3x - 4 = 0", prompt: "Solve via formula:", options: ["x = (-3 &plusmn; &radic;41) / 4", "x = (-3 &plusmn; &radic;23) / 4", "x = (3 &plusmn; &radic;41) / 4", "x = -3 &plusmn; &radic;41"], correct: 0, category: "Quadratic Formula", explanation: "x = [-3 &plusmn; &radic;(3² - 4(2)(-4))] / 4 = [-3 &plusmn; &radic;(9 + 32)] / 4 = (-3 &plusmn; &radic;41) / 4." },
+    { equation: "4x² - 8x + 1 = 0", prompt: "Solve via formula:", options: ["x = (2 &plusmn; &radic;3) / 2", "x = (8 &plusmn; &radic;48) / 8", "x = 1 &plusmn; &radic;3", "x = (2 &plusmn; &radic;12) / 2"], correct: 0, category: "Quadratic Formula", explanation: "x = [8 &plusmn; &radic;(64 - 4(4)(1))] / 8 = [8 &plusmn; &radic;48] / 8 = [8 &plusmn; 4&radic;3] / 8 = (2 &plusmn; &radic;3) / 2." },
+    { equation: "x² + 4x - 9 = 0", prompt: "Solve via formula:", options: ["x = -2 &plusmn; &radic;13", "x = -2 &plusmn; &radic;5", "x = -4 &plusmn; &radic;52", "x = 2 &plusmn; &radic;13"], correct: 0, category: "Quadratic Formula", explanation: "x = [-4 &plusmn; &radic;(16 - 4(1)(-9))] / 2 = [-4 &plusmn; &radic;52] / 2 = [-4 &plusmn; 2&radic;13] / 2 = -2 &plusmn; &radic;13." },
+
+    // --- DISCRIMINANT AND ROOT NATURE (31-40) ---
+    { equation: "x² - 4x + 4 = 0", prompt: "Find the discriminant (&Delta;):", options: ["&Delta; = 0 (1 Real Root)", "&Delta; = 32 (2 Real Roots)", "&Delta; = -16 (2 Complex Roots)", "&Delta; = 4"], correct: 0, category: "Discriminant (&Delta;)", explanation: "&Delta; = b² - 4ac = (-4)² - 4(1)(4) = 16 - 16 = 0. When &Delta; = 0, there is exactly one real, repeated root." },
+    { equation: "x² + 2x + 5 = 0", prompt: "Determine the nature of the roots:", options: ["Two distinct real roots", "One distinct real root", "Two complex (imaginary) roots", "No roots at all"], correct: 2, category: "Discriminant (&Delta;)", explanation: "&Delta; = 2² - 4(1)(5) = 4 - 20 = -16. Since the discriminant is negative (&Delta; < 0), the roots are complex/imaginary." },
+    { equation: "2x² - 5x - 3 = 0", prompt: "Find the discriminant (&Delta;):", options: ["&Delta; = 49 (2 Real Roots)", "&Delta; = 1 (2 Real Roots)", "&Delta; = -1 (Complex)", "&Delta; = 13"], correct: 0, category: "Discriminant (&Delta;)", explanation: "&Delta; = (-5)² - 4(2)(-3) = 25 + 24 = 49. Because &Delta; > 0, the equation yields two distinct real roots." },
+    { equation: "ax² + bx + c = 0, &Delta; = 12", prompt: "If the discriminant is 12, the roots are:", options: ["Real, rational, and distinct", "Real, irrational, and distinct", "Real and equal", "Complex and imaginary"], correct: 1, category: "Discriminant (&Delta;)", explanation: "&Delta; = 12 is greater than 0, so roots are real and distinct. Since 12 is not a perfect square, the roots are irrational." },
+    { equation: "3x² - 2x + 1 = 0", prompt: "Determine the nature of the roots:", options: ["Two real rational roots", "One real root", "Two complex conjugate roots", "Two real irrational roots"], correct: 2, category: "Discriminant (&Delta;)", explanation: "&Delta; = (-2)² - 4(3)(1) = 4 - 12 = -8. A negative discriminant always points to two complex conjugate roots." },
+    { equation: "x² + 7x + 10 = 0", prompt: "Find the value of &Delta;:", options: ["&Delta; = 9", "&Delta; = 1", "&Delta; = 89", "&Delta; = -9"], correct: 0, category: "Discriminant (&Delta;)", explanation: "&Delta; = 7² - 4(1)(10) = 49 - 40 = 9." },
+    { equation: "x² + kx + 9 = 0", prompt: "For what value of k is there exactly one real root?", options: ["k = &plusmn;3", "k = 9", "k = &plusmn;6", "k = 0"], correct: 2, category: "Discriminant (&Delta;)", explanation: "For one real root, &Delta; = 0. Therefore, k² - 4(1)(9) = 0 -> k² = 36 -> k = &plusmn;6." },
+    { equation: "ax² + bx + c = 0, &Delta; < 0", prompt: "What does this state about the parabola's graph?", options: ["It touches the x-axis at one point", "It crosses the x-axis at two points", "It never intersects the x-axis", "It passes through the origin"], correct: 2, category: "Discriminant (&Delta;)", explanation: "A negative discriminant means there are no real roots, meaning the graph of the parabola never crosses or touches the x-axis." },
+    { equation: "-x² + 3x - 5 = 0", prompt: "Calculate the discriminant (&Delta;):", options: ["&Delta; = -11", "&Delta; = 29", "&Delta; = -29", "&Delta; = 11"], correct: 0, category: "Discriminant (&Delta;)", explanation: "&Delta; = 3² - 4(-1)(-5) = 9 - 20 = -11." },
+    { equation: "ax² + bx + c = 0", prompt: "If roots are real, rational, and distinct, &Delta; could be:", options: ["-4", "0", "5", "16"], correct: 3, category: "Discriminant (&Delta;)", explanation: "For real, distinct, and rational roots, the discriminant must be a perfect square greater than 0. 16 is the only matching option." },
+
+    // --- COMPLEX / IMAGINARY ROOTS (41-50) ---
+    { equation: "x² + 1 = 0", prompt: "Solve for complex roots:", options: ["x = &plusmn;1", "x = i", "x = &plusmn;i", "No solution"], correct: 2, category: "Complex Roots", explanation: "x² = -1, so taking the square root gives x = &plusmn;&radic;(-1) = &plusmn;i." },
+    { equation: "x² + 9 = 0", prompt: "Solve for complex roots:", options: ["x = &plusmn;3", "x = &plusmn;3i", "x = 3i", "x = &plusmn;9i"], correct: 1, category: "Complex Roots", explanation: "x² = -9 -> x = &plusmn;&radic;(-9) = &plusmn;3i." },
+    { equation: "x² - 2x + 2 = 0", prompt: "Solve for complex roots:", options: ["x = 1 &plusmn; i", "x = -1 &plusmn; i", "x = 1 &plusmn; 2i", "x = 2 &plusmn; i"], correct: 0, category: "Complex Roots", explanation: "By quadratic formula: [2 &plusmn; &radic;(4 - 8)] / 2 = [2 &plusmn; &radic;(-4)] / 2 = (2 &plusmn; 2i) / 2 = 1 &plusmn; i." },
+    { equation: "x² + 4x + 5 = 0", prompt: "Solve for complex roots:", options: ["x = -2 &plusmn; i", "x = -2 &plusmn; 2i", "x = 2 &plusmn; i", "x = -4 &plusmn; i"], correct: 0, category: "Complex Roots", explanation: "Using the quadratic formula: [-4 &plusmn; &radic;(16 - 20)] / 2 = [-4 &plusmn; &radic;(-4)] / 2 = (-4 &plusmn; 2i) / 2 = -2 &plusmn; i." },
+    { equation: "x² - 6x + 13 = 0", prompt: "Solve for complex roots:", options: ["x = 3 &plusmn; 2i", "x = -3 &plusmn; 2i", "x = 3 &plusmn; 4i", "x = 6 &plusmn; 2i"], correct: 0, category: "Complex Roots", explanation: "Formula gives: [6 &plusmn; &radic;(36 - 52)] / 2 = [6 &plusmn; &radic;(-16)] / 2 = (6 &plusmn; 4i) / 2 = 3 &plusmn; 2i." },
+    { equation: "x² + 2x + 10 = 0", prompt: "Solve for complex roots:", options: ["x = -1 &plusmn; 3i", "x = -1 &plusmn; 9i", "x = 1 &plusmn; 3i", "x = -2 &plusmn; 6i"], correct: 0, category: "Complex Roots", explanation: "x = [-2 &plusmn; &radic;(4 - 40)] / 2 = [-2 &plusmn; &radic;(-36)] / 2 = (-2 &plusmn; 6i) / 2 = -1 &plusmn; 3i." },
+    { equation: "x² + 16 = 0", prompt: "Solve for complex roots:", options: ["x = &plusmn;4i", "x = &plusmn;4", "x = 4i", "x = &plusmn;16i"], correct: 0, category: "Complex Roots", explanation: "x² = -16 leads directly to x = &plusmn;&radic;(-16) = &plusmn;4i." },
+    { equation: "2x² + 2x + 1 = 0", prompt: "Solve for complex roots:", options: ["x = (-1 &plusmn; i) / 2", "x = -1 &plusmn; i", "x = (-1 &plusmn; i) / 4", "x = (1 &plusmn; i) / 2"], correct: 0, category: "Complex Roots", explanation: "x = [-2 &plusmn; &radic;(4 - 8)] / 4 = [-2 &plusmn; &radic;(-4)] / 4 = (-2 &plusmn; 2i) / 4 = (-1 &plusmn; i) / 2." },
+    { equation: "x² - 4x + 20 = 0", prompt: "Solve for complex roots:", options: ["x = 2 &plusmn; 4i", "x = 2 &plusmn; 16i", "x = -2 &plusmn; 4i", "x = 4 &plusmn; 4i"], correct: 0, category: "Complex Roots", explanation: "x = [4 &plusmn; &radic;(16 - 80)] / 2 = [4 &plusmn; &radic;(-64)] / 2 = (4 &plusmn; 8i) / 2 = 2 &plusmn; 4i." },
+    { equation: "x² + 3 = 0", prompt: "Solve for complex roots:", options: ["x = &plusmn;i&radic;3", "x = &plusmn;3i", "x = &plusmn;&radic;3", "x = 3i"], correct: 0, category: "Complex Roots", explanation: "x² = -3 yields x = &plusmn;&radic;(-3) = &plusmn;i&radic;3." }
+];
+
+let score = 0;
+let currentQuestionIndex = 0;
+let answered = false;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Initial mix
+shuffleArray(questionPool);
+
+function loadQuestion() {
+    answered = false;
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('explanation').style.display = 'none';
+    
+    let q = questionPool[currentQuestionIndex % questionPool.length];
+    
+    document.getElementById('category-badge').innerText = q.category;
+    document.getElementById('prompt-text').innerText = q.prompt;
+    document.getElementById('equation-text').innerHTML = q.equation;
+    
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = option;
+        btn.onclick = () => selectOption(index, btn);
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function selectOption(selectedIndex, selectedBtn) {
+    if (answered) return; 
+    answered = true;
+    
+    let q = questionPool[currentQuestionIndex % questionPool.length];
+    const buttons = document.querySelectorAll('.option-btn');
+    
+    if (selectedIndex === q.correct) {
+        selectedBtn.classList.add('correct');
+        score++;
+        document.getElementById('score').innerText = score;
+    } else {
+        selectedBtn.classList.add('wrong');
+        buttons[q.correct].classList.add('correct'); 
+    }
+    
+    const expBox = document.getElementById('explanation');
+    expBox.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+    expBox.style.display = 'block';
+    
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    
+    if (currentQuestionIndex % questionPool.length === 0) {
+        shuffleArray(questionPool);
+    }
+    
+    loadQuestion();
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>
