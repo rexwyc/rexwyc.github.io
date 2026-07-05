@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood · Indicative · Imperative · Subjunctive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f3f0 0%, #e8e3de 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .card {
+            max-width: 820px;
+            width: 100%;
+            background: rgba(255, 250, 245, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 3.5rem;
+            padding: 2.5rem 2.2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 245, 235, 0.6);
+            transition: all 0.2s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #2d2a27;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.45rem 0.75rem;
+            border-bottom: 2px dashed #cdbcb0;
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .mood-badge {
+            font-size: 0.95rem;
+            font-weight: 450;
+            background: #dacfc7;
+            color: #2a2521;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            margin-left: 0.2rem;
+            display: inline-flex;
+            gap: 0.6rem;
+        }
+
+        .mood-badge span {
+            opacity: 0.7;
+            font-weight: 300;
+        }
+
+        .question-counter {
+            font-size: 1rem;
+            background: #e5d9d0;
+            padding: 0.35rem 1.2rem;
+            border-radius: 60px;
+            color: #2c2621;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 1.2rem;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: 500;
+            line-height: 1.3;
+            color: #1f1b18;
+            margin: 1.2rem 0 1.8rem 0;
+            padding: 0.4rem 0.2rem;
+            min-height: 5rem;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1.8rem 0 2rem 0;
+        }
+
+        .option-btn {
+            background: #f2ece7;
+            border: 1.5px solid #d8cdc3;
+            padding: 1rem 1.8rem;
+            border-radius: 60px;
+            font-size: 1.25rem;
+            font-weight: 450;
+            color: #1f1b17;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            transition: all 0.15s;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #cfc2b6;
+            letter-spacing: 0.2px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #e5dbd2;
+            border-color: #b9a89a;
+            transform: scale(1.01);
+            box-shadow: 0 4px 0 #b9a89a;
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: scale(0.97);
+            box-shadow: 0 1px 0 #b9a89a;
+        }
+
+        .option-btn .letter {
+            background: #c6b7ab;
+            color: #1f1b17;
+            width: 2.2rem;
+            height: 2.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .option-btn.correct {
+            background: #b7d7b0;
+            border-color: #3f7840;
+            box-shadow: 0 3px 0 #2a5a2b;
+        }
+
+        .option-btn.wrong {
+            background: #f4cfce;
+            border-color: #b14f4a;
+            box-shadow: 0 3px 0 #7f3a36;
+        }
+
+        .option-btn:disabled {
+            opacity: 0.75;
+            cursor: default;
+            filter: grayscale(0.2);
+            box-shadow: 0 2px 0 #b9a89a;
+        }
+
+        .feedback-area {
+            background: #f0e9e2;
+            border-radius: 60px;
+            padding: 0.8rem 2rem;
+            margin: 1rem 0 1.6rem 0;
+            min-height: 4.2rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            border-left: 6px solid #b9a89a;
+        }
+
+        .feedback-text {
+            font-size: 1.2rem;
+            font-weight: 440;
+            color: #221e1a;
+            flex: 1;
+        }
+
+        .feedback-mood {
+            background: #2d2824;
+            color: #f0e8e0;
+            padding: 0.2rem 1.4rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.8rem;
+        }
+
+        .next-btn {
+            background: #2d2824;
+            border: none;
+            color: #f2ece5;
+            font-size: 1.4rem;
+            font-weight: 500;
+            padding: 0.7rem 2.8rem;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #0f0d0b;
+            transition: 0.08s linear;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .next-btn:hover:not(:disabled) {
+            background: #403a35;
+            transform: scale(1.02);
+        }
+
+        .next-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0f0d0b;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0f0d0b;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: transparent;
+            border: 2px solid #9b8b7d;
+            color: #332d27;
+            font-size: 1.1rem;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 3px 0 #9b8b7d;
+        }
+
+        .reset-btn:hover {
+            background: #d8cdc3;
+            border-color: #7b6b5d;
+            box-shadow: 0 3px 0 #7b6b5d;
+            transform: scale(0.98);
+        }
+
+        .progress-indicator {
+            font-size: 0.95rem;
+            background: #e3d7cd;
+            padding: 0.3rem 1.4rem;
+            border-radius: 60px;
+            color: #1f1b17;
+        }
+
+        .footer-hint {
+            margin-top: 1.2rem;
+            font-size: 0.95rem;
+            color: #5b5149;
+            text-align: center;
+            border-top: 1px solid #d6c9be;
+            padding-top: 1.2rem;
+            letter-spacing: 0.2px;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 1.8rem 1.2rem;
+                border-radius: 2.5rem;
+            }
+            .question-text {
+                font-size: 1.5rem;
+            }
+            .option-btn {
+                font-size: 1rem;
+                padding: 0.8rem 1.2rem;
+            }
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .next-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="app">
+        <h1>
+            <span>Mood</span>
+            <span class="mood-badge">
+                <span>⬩</span> indicative · imperative · subjunctive
+            </span>
+        </h1>
+
+        <div class="question-counter" id="counterDisplay">Q1 / 30</div>
+
+        <div class="question-text" id="questionDisplay">Loading question…</div>
+
+        <div class="options-grid" id="optionsContainer"></div>
+
+        <div class="feedback-area" id="feedbackArea">
+            <span class="feedback-text" id="feedbackText">⇢  select an option</span>
+            <span class="feedback-mood" id="feedbackMoodTag">—</span>
+        </div>
+
+        <div class="action-bar">
+            <button class="reset-btn" id="resetBtn">↺ reset</button>
+            <button class="next-btn" id="nextBtn">next →</button>
+            <span class="progress-indicator" id="progressIndicator">∞ infinite</span>
+        </div>
+        <div class="footer-hint">
+            ⚡ 30 questions · infinite loop · explanations included
+        </div>
+    </div>
+    <script>
+        (function() {
+            // ---------- 30 questions ----------
+            const QUESTIONS = [
+                { text: 'Water boils at 100°C.', mood: 'Indicative', explanation: 'States a fact.' },
+                { text: 'Close the window, please.', mood: 'Imperative', explanation: 'Gives a command.' },
+                { text: 'If I were a bird, I would fly.', mood: 'Subjunctive', explanation: 'Expresses a wish/hypothesis.' },
+                { text: 'The sun rises in the east.', mood: 'Indicative', explanation: 'States a general fact.' },
+                { text: 'Turn off the lights.', mood: 'Imperative', explanation: 'Direct command.' },
+                { text: 'I wish I had more time.', mood: 'Subjunctive', explanation: 'Expresses a wish (contrary to fact).' },
+                { text: 'She walks to school every day.', mood: 'Indicative', explanation: 'States a habitual fact.' },
+                { text: 'Please pass the salt.', mood: 'Imperative', explanation: 'Polite command/request.' },
+                { text: 'If he were taller, he could reach.', mood: 'Subjunctive', explanation: 'Hypothetical situation.' },
+                { text: 'The movie starts at 8 pm.', mood: 'Indicative', explanation: 'States a scheduled fact.' },
+                { text: 'Stop talking!', mood: 'Imperative', explanation: 'Strong command.' },
+                { text: 'I suggest that he be early.', mood: 'Subjunctive', explanation: 'Subjunctive after suggestion (mandative).' },
+                { text: 'My brother plays guitar.', mood: 'Indicative', explanation: 'States a fact about the brother.' },
+                { text: 'Read the instructions carefully.', mood: 'Imperative', explanation: 'Command/instruction.' },
+                { text: 'If I were you, I would apologize.', mood: 'Subjunctive', explanation: 'Classic hypothetical advice.' },
+                { text: 'The train arrived on time.', mood: 'Indicative', explanation: 'States a past fact.' },
+                { text: 'Don’t touch that wire.', mood: 'Imperative', explanation: 'Negative command.' },
+                { text: 'It’s essential that she attend.', mood: 'Subjunctive', explanation: 'Subjunctive after “essential”.' },
+                { text: 'Cats like milk.', mood: 'Indicative', explanation: 'General fact.' },
+                { text: 'Hand me the book.', mood: 'Imperative', explanation: 'Direct request.' },
+                { text: 'I wish it were summer.', mood: 'Subjunctive', explanation: 'Wish about the present.' },
+                { text: 'He works at a bank.', mood: 'Indicative', explanation: 'States current employment fact.' },
+                { text: 'Be careful.', mood: 'Imperative', explanation: 'Warning/command.' },
+                { text: 'If I had known, I would have come.', mood: 'Subjunctive', explanation: 'Past hypothetical (past subjunctive).' },
+                { text: 'The Earth revolves around the Sun.', mood: 'Indicative', explanation: 'Scientific fact.' },
+                { text: 'Open your books to page 10.', mood: 'Imperative', explanation: 'Instruction in class.' },
+                { text: 'It’s necessary that he be notified.', mood: 'Subjunctive', explanation: 'Subjunctive after “necessary”.' },
+                { text: 'I drink coffee every morning.', mood: 'Indicative', explanation: 'Habitual fact.' },
+                { text: 'Take a deep breath.', mood: 'Imperative', explanation: 'Command/soothing instruction.' },
+                { text: 'If she were here, she’d help.', mood: 'Subjunctive', explanation: 'Hypothetical about present.' }
+            ];
+
+            // ---------- state ----------
+            let currentIndex = 0;             // 0 .. 29 (always)
+            let selectedOption = null;        // index 0..2
+            let isAnswered = false;           // if true, options disabled
+            let totalQuestions = QUESTIONS.length;
+
+            // DOM refs
+            const questionDisplay = document.getElementById('questionDisplay');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const counterDisplay = document.getElementById('counterDisplay');
+            const feedbackText = document.getElementById('feedbackText');
+            const feedbackMoodTag = document.getElementById('feedbackMoodTag');
+            const nextBtn = document.getElementById('nextBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const progressIndicator = document.getElementById('progressIndicator');
+
+            // ---------- render question ----------
+            function renderQuestion(index) {
+                const q = QUESTIONS[index];
+                if (!q) return;
+
+                // update counter (1-based)
+                counterDisplay.textContent = `Q${index+1} / ${totalQuestions}`;
+                questionDisplay.textContent = q.text;
+
+                // clear options
+                optionsContainer.innerHTML = '';
+                // build 3 options (shuffled each time to avoid bias)
+                const moods = ['Indicative', 'Imperative', 'Subjunctive'];
+                // shuffle copy
+                const shuffled = [...moods].sort(() => Math.random() - 0.5);
+
+                // ensure we always show the three moods
+                const optionLabels = ['A', 'B', 'C'];
+                shuffled.forEach((mood, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.setAttribute('data-mood', mood);
+                    btn.innerHTML = `<span class="letter">${optionLabels[idx]}</span> ${mood}`;
+                    btn.addEventListener('click', () => handleOptionClick(idx, mood, q));
+                    optionsContainer.appendChild(btn);
+                });
+
+                // reset feedback & selected state
+                selectedOption = null;
+                isAnswered = false;
+                feedbackText.textContent = '⇢  select an option';
+                feedbackMoodTag.textContent = '—';
+                // remove any extra classes from options
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('correct', 'wrong');
+                    btn.disabled = false;
+                });
+
+                // enable next button? we keep it disabled until answered
+                nextBtn.disabled = true;
+                // show current progress (infinite loop hint)
+                progressIndicator.textContent = `∞ #${index+1}`;
+            }
+
+            // ---------- handle option click ----------
+            function handleOptionClick(optIndex, selectedMood, questionObj) {
+                if (isAnswered) return; // already answered
+
+                const allOptions = document.querySelectorAll('.option-btn');
+                // disable all options
+                allOptions.forEach(btn => btn.disabled = true);
+
+                // determine correct mood
+                const correctMood = questionObj.mood;
+                const isCorrect = (selectedMood === correctMood);
+
+                // highlight correct & wrong
+                allOptions.forEach((btn, idx) => {
+                    const mood = btn.getAttribute('data-mood');
+                    if (mood === correctMood) {
+                        btn.classList.add('correct');
+                    } else if (idx === optIndex && !isCorrect) {
+                        btn.classList.add('wrong');
+                    }
+                    // if user picked correct, the clicked one gets correct class already
+                    if (idx === optIndex && isCorrect) {
+                        btn.classList.add('correct');
+                    }
+                });
+
+                // feedback
+                const explanation = questionObj.explanation;
+                if (isCorrect) {
+                    feedbackText.textContent = `✅ correct!  ${explanation}`;
+                } else {
+                    feedbackText.textContent = `❌ not quite.  ${explanation}  (correct: ${correctMood})`;
+                }
+                feedbackMoodTag.textContent = correctMood;
+
+                // mark answered
+                isAnswered = true;
+                selectedOption = optIndex;
+                // enable next button
+                nextBtn.disabled = false;
+            }
+
+            // ---------- next question (infinite loop) ----------
+            function goToNext() {
+                if (!isAnswered) return; // must answer first
+                // infinite loop: move to next, wrap around
+                currentIndex = (currentIndex + 1) % totalQuestions;
+                renderQuestion(currentIndex);
+                // next btn disabled again
+                nextBtn.disabled = true;
+            }
+
+            // ---------- reset quiz (go to question 0) ----------
+            function resetQuiz() {
+                currentIndex = 0;
+                renderQuestion(currentIndex);
+                nextBtn.disabled = true;
+                // reset feedback
+                feedbackText.textContent = '⇢  fresh start';
+                feedbackMoodTag.textContent = '—';
+                // also clear any selected style
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('correct', 'wrong');
+                    btn.disabled = false;
+                });
+                // progress
+                progressIndicator.textContent = '∞ reset';
+                setTimeout(() => {
+                    progressIndicator.textContent = `∞ #${currentIndex+1}`;
+                }, 200);
+            }
+
+            // ---------- event binding ----------
+            nextBtn.addEventListener('click', goToNext);
+            resetBtn.addEventListener('click', resetQuiz);
+
+            // ---------- init ----------
+            renderQuestion(0);
+            nextBtn.disabled = true;
+
+            // additional: keyboard support (optional)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    if (!nextBtn.disabled) {
+                        e.preventDefault();
+                        goToNext();
+                    }
+                }
+                if (e.key === 'r' || e.key === 'R') {
+                    resetQuiz();
+                }
+            });
+
+            // infinite loop hint
+            console.log('MoodQuiz · 30 questions · infinite loop');
+        })();
+    </script>
+</body>
+</html>
