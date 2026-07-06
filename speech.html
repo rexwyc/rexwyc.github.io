@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile & Portfolio</title>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --secondary-color: #319795;
+            --background-color: #f7fafc;
+            --card-background: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .section-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+        }
+
+        ul {
+            margin: 0 0 15px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .tts-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .tts-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .tts-btn.playing {
+            background-color: #e53e3e;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Personal Profile & Portfolio</h1>
+        <p>A comprehensive overview of strengths, hobbies, and academic goals.</p>
+    </header>
+
+    <!-- SECTION 1: WEAKNESS -->
+    <div class="section-card" id="sec-weakness">
+        <div class="section-header">
+            <h2>📱 Weakness: Phone Distraction</h2>
+            <button class="tts-btn" onclick="speakSection('sec-weakness')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <p><strong>The Problem:</strong> Easily distracted by phone notifications while studying or doing homework.</p>
+            <p><strong>The Impact:</strong> Resulted in non-stop social media scrolling, forgetting work, and losing track of time.</p>
+            <h3>The Solution & Change</h3>
+            <ul>
+                <li>Placed the phone far away from the study desk.</li>
+                <li>Used a blocker app to restrict social media access.</li>
+            </ul>
+            <p><strong>The Outcome:</strong> Tough at first, but led to better concentration, higher efficiency, and finishing work in less time.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 2: STRENGTH -->
+    <div class="section-card" id="sec-strength">
+        <div class="section-header">
+            <h2>💡 Strength: Curiosity & Determination</h2>
+            <button class="tts-btn" onclick="speakSection('sec-strength')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <p><strong>Core Traits:</strong> Deep desire to understand how things work, and a refusal to give up until a problem is solved.</p>
+            <h3>Application in Mathematics</h3>
+            <ul>
+                <li>Highly useful for dealing with complicated math questions.</li>
+                <li>Instead of quitting when stuck, proactively seeks solutions from teachers or AI explanations.</li>
+            </ul>
+            <h3>Self-Improvement</h3>
+            <p>Downloaded the math app <em>Brilliant</em> to enrich knowledge and sharpen skills during free time.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 3: HOBBY 1 -->
+    <div class="section-card" id="sec-hobby1">
+        <div class="section-header">
+            <h2>🧩 Hobby 1: Rubik's Cube</h2>
+            <button class="tts-btn" onclick="speakSection('sec-hobby1')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <p><strong>Origin:</strong> Started 3 years ago after accidentally scrambling a cube and teaching myself to solve it via online tutorials.</p>
+            <p><strong>Progression:</strong> Moved on to learning advanced methods and algorithms to improve solving speed.</p>
+            <p><strong>When Played:</strong> During free time or as a tool to relax.</p>
+            <h3>Benefits & Takeaways</h3>
+            <ul>
+                <li>Helps maintain focus and clear mind of worries.</li>
+                <li>Trains patience and persistence by handling the frustration of failing while memorizing new algorithms.</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 4: HOBBY 2 -->
+    <div class="section-card" id="sec-hobby2">
+        <div class="section-header">
+            <h2>🏀 Hobby 2: Basketball</h2>
+            <button class="tts-btn" onclick="speakSection('sec-hobby2')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <p><strong>Involvement:</strong> Active member of the school basketball team. Practices during official training, games, and free time.</p>
+            <p><strong>Personal Benefits:</strong> Relieves stress, fatigue, and frustration by forcing total focus on the game.</p>
+            <h3>Skill Development</h3>
+            <ul>
+                <li><strong>Teamwork & Communication:</strong> Teaches players to communicate under pressure, such as when losing points or defending against strong opponents.</li>
+                <li><strong>Strategic Thinking:</strong> Teaches the team to collaborate and design new strategies to overcome challenges.</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 5: HOBBY 3 -->
+    <div class="section-card" id="sec-hobby3">
+        <div class="section-header">
+            <h2>💻 Hobby 3: Coding</h2>
+            <button class="tts-btn" onclick="speakSection('sec-hobby3')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <p><strong>Creativity:</strong> Allows games to be built from scratch using imagination, rather than just playing games made by others.</p>
+            <h3>Skill Development</h3>
+            <ul>
+                <li>Teaches precision and cautiousness.</li>
+                <li>Fosters a meticulous mindset, as a single tiny mistake can stop an entire program from running.</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 6: SCHOOL TRANSFER -->
+    <div class="section-card" id="sec-transfer">
+        <div class="section-header">
+            <h2>🏫 School Transfer Reasons</h2>
+            <button class="tts-btn" onclick="speakSection('sec-transfer')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <h3>Why Change Schools?</h3>
+            <p>Seeking a more challenging, stimulating, and rigorous learning environment. Performs best when pushed beyond the comfort zone to achieve a higher academic level.</p>
+            <h3>Why Choose Your School? (General Reasons)</h3>
+            <p>Drawn to the interactive learning style and hands-on project work over traditional lecturing. Attracted by the freedom students have to pursue their favorite subjects and the high university admission rates.</p>
+            <h3>Why Choose St. Stephen's School? (Specific Reasons)</h3>
+            <p>Proven track record of excellent academic performance, with graduates entering top local and overseas universities. Attracted to the beautiful campus environment, natural setting, and historic architecture.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 7: BOOK -->
+    <div class="section-card" id="sec-book">
+        <div class="section-header">
+            <h2>📚 Favourite Book: Who Was Albert Einstein?</h2>
+            <button class="tts-btn" onclick="speakSection('sec-book')">🔊 Listen</button>
+        </div>
+        <div class="tts-text">
+            <p><strong>Summary:</strong> Covers Albert Einstein’s life, achievements, and global impact.</p>
+            <p><strong>Favorite Part:</strong> Einstein writing a letter to the US President urging the creation of the atomic bomb before Germany could build it first, ultimately leading to the end of WWII.</p>
+            <h3>Personal Insight on Knowledge</h3>
+            <p>Although some people blame Einstein because he invented the atomic bomb, I think those who misuse knowledge should be blamed for destruction, not the scientists who discover or invent it.</p>
+            <h3>Defense of Einstein's Actions</h3>
+            <p>Einstein’s letter was driven by fear of German aggression, not a desire to destroy. He shared his knowledge strategically to bring a faster end to World War II.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentUtterance = null;
+    let currentButton = null;
+
+    function speakSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        const button = section.querySelector('.tts-btn');
+        const textContainer = section.querySelector('.tts-text');
+        
+        // If text is currently being read...
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+            
+            // If clicking the same button that is playing, just stop it
+            if (currentButton === button) {
+                resetButton(button);
+                return;
+            }
+            // If clicking a different button, reset the previous one
+            if (currentButton) {
+                resetButton(currentButton);
+            }
+        }
+
+        // Get all text content inside the section container
+        const textToSpeak = textContainer.innerText;
+        
+        currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+        currentButton = button;
+
+        // Change button state to "Stop"
+        button.textContent = "🛑 Stop";
+        button.classList.add('playing');
+
+        // Reset button when speech finishes naturally
+        currentUtterance.onend = function() {
+            resetButton(button);
+        };
+
+        // Reset button if speech errors out
+        currentUtterance.onerror = function() {
+            resetButton(button);
+        };
+
+        // Start speaking
+        window.speechSynthesis.speak(currentUtterance);
+    }
+
+    function resetButton(btn) {
+        btn.textContent = "🔊 Listen";
+        btn.classList.remove('playing');
+        currentUtterance = null;
+        currentButton = null;
+    }
+</script>
+
+</body>
+</html>
