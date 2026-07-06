@@ -59,6 +59,11 @@
             padding-bottom: 10px;
         }
 
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
         h2 {
             color: var(--primary-color);
             margin: 0;
@@ -89,22 +94,26 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 5px;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
         .tts-btn:hover {
-            background-color: #1d4ed8;
+            opacity: 0.9;
         }
 
         .tts-btn.playing {
             background-color: #e53e3e;
+        }
+
+        .tts-btn.looping {
+            background-color: #38a169;
         }
 
         hr {
@@ -124,11 +133,13 @@
         <p>A comprehensive overview of strengths, hobbies, and academic goals.</p>
     </header>
 
-    <!-- SECTION 1: WEAKNESS -->
     <div class="section-card" id="sec-weakness">
         <div class="section-header">
             <h2>📱 Weakness: Phone Distraction</h2>
-            <button class="tts-btn" onclick="speakSection('sec-weakness')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-weakness', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-weakness', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <p><strong>The Problem:</strong> Easily distracted by phone notifications while studying or doing homework.</p>
@@ -144,11 +155,13 @@
 
     <hr>
 
-    <!-- SECTION 2: STRENGTH -->
     <div class="section-card" id="sec-strength">
         <div class="section-header">
             <h2>💡 Strength: Curiosity & Determination</h2>
-            <button class="tts-btn" onclick="speakSection('sec-strength')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-strength', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-strength', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <p><strong>Core Traits:</strong> Deep desire to understand how things work, and a refusal to give up until a problem is solved.</p>
@@ -164,11 +177,13 @@
 
     <hr>
 
-    <!-- SECTION 3: HOBBY 1 -->
     <div class="section-card" id="sec-hobby1">
         <div class="section-header">
             <h2>🧩 Hobby 1: Rubik's Cube</h2>
-            <button class="tts-btn" onclick="speakSection('sec-hobby1')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-hobby1', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-hobby1', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <p><strong>Origin:</strong> Started 3 years ago after accidentally scrambling a cube and teaching myself to solve it via online tutorials.</p>
@@ -184,11 +199,13 @@
 
     <hr>
 
-    <!-- SECTION 4: HOBBY 2 -->
     <div class="section-card" id="sec-hobby2">
         <div class="section-header">
             <h2>🏀 Hobby 2: Basketball</h2>
-            <button class="tts-btn" onclick="speakSection('sec-hobby2')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-hobby2', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-hobby2', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <p><strong>Involvement:</strong> Active member of the school basketball team. Practices during official training, games, and free time.</p>
@@ -203,11 +220,13 @@
 
     <hr>
 
-    <!-- SECTION 5: HOBBY 3 -->
     <div class="section-card" id="sec-hobby3">
         <div class="section-header">
             <h2>💻 Hobby 3: Coding</h2>
-            <button class="tts-btn" onclick="speakSection('sec-hobby3')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-hobby3', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-hobby3', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <p><strong>Creativity:</strong> Allows games to be built from scratch using imagination, rather than just playing games made by others.</p>
@@ -221,11 +240,13 @@
 
     <hr>
 
-    <!-- SECTION 6: SCHOOL TRANSFER -->
     <div class="section-card" id="sec-transfer">
         <div class="section-header">
             <h2>🏫 School Transfer Reasons</h2>
-            <button class="tts-btn" onclick="speakSection('sec-transfer')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-transfer', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-transfer', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <h3>Why Change Schools?</h3>
@@ -239,11 +260,13 @@
 
     <hr>
 
-    <!-- SECTION 7: BOOK -->
     <div class="section-card" id="sec-book">
         <div class="section-header">
             <h2>📚 Favourite Book: Who Was Albert Einstein?</h2>
-            <button class="tts-btn" onclick="speakSection('sec-book')">🔊 Listen</button>
+            <div class="button-group">
+                <button class="tts-btn play-btn" onclick="speakSection('sec-book', false)">🔊 Listen</button>
+                <button class="tts-btn loop-btn" onclick="speakSection('sec-book', true)">🔄 Loop</button>
+            </div>
         </div>
         <div class="tts-text">
             <p><strong>Summary:</strong> Covers Albert Einstein’s life, achievements, and global impact.</p>
@@ -259,57 +282,85 @@
 
 <script>
     let currentUtterance = null;
-    let currentButton = null;
+    let activeCard = null;
+    let isLoopMode = false;
 
-    function speakSection(sectionId) {
+    function speakSection(sectionId, wantLoop) {
         const section = document.getElementById(sectionId);
-        const button = section.querySelector('.tts-btn');
+        const playBtn = section.querySelector('.play-btn');
+        const loopBtn = section.querySelector('.loop-btn');
         const textContainer = section.querySelector('.tts-text');
         
-        // If text is currently being read...
+        // Target buttons state logic
+        const logicBtn = wantLoop ? loopBtn : playBtn;
+
+        // 1. If speech is already playing...
         if (window.speechSynthesis.speaking) {
             window.speechSynthesis.cancel();
             
-            // If clicking the same button that is playing, just stop it
-            if (currentButton === button) {
-                resetButton(button);
+            // If clicking the EXACT same button that is currently active, stop everything and return
+            if (activeCard === section && isLoopMode === wantLoop) {
+                resetAllButtons();
                 return;
-            }
-            // If clicking a different button, reset the previous one
-            if (currentButton) {
-                resetButton(currentButton);
             }
         }
 
-        // Get all text content inside the section container
+        // Reset previous buttons visual states before starting a new one
+        resetAllButtons();
+
+        // 2. Setup the text and configuration
         const textToSpeak = textContainer.innerText;
-        
-        currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
-        currentButton = button;
+        activeCard = section;
+        isLoopMode = wantLoop;
 
-        // Change button state to "Stop"
-        button.textContent = "🛑 Stop";
-        button.classList.add('playing');
+        // Apply active styles to the pressed button
+        if (isLoopMode) {
+            loopBtn.textContent = "🛑 Stop Loop";
+            loopBtn.classList.add('looping');
+        } else {
+            playBtn.textContent = "🛑 Stop";
+            playBtn.classList.add('playing');
+        }
 
-        // Reset button when speech finishes naturally
-        currentUtterance.onend = function() {
-            resetButton(button);
-        };
+        // 3. Define speech execution
+        function play() {
+            currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+            
+            currentUtterance.onend = function() {
+                if (isLoopMode && activeCard === section) {
+                    // Loop mode is active for this section: play again
+                    play();
+                } else {
+                    // Normal finish
+                    resetAllButtons();
+                }
+            };
 
-        // Reset button if speech errors out
-        currentUtterance.onerror = function() {
-            resetButton(button);
-        };
+            currentUtterance.onerror = function() {
+                resetAllButtons();
+            };
 
-        // Start speaking
-        window.speechSynthesis.speak(currentUtterance);
+            window.speechSynthesis.speak(currentUtterance);
+        }
+
+        // Start playing
+        play();
     }
 
-    function resetButton(btn) {
-        btn.textContent = "🔊 Listen";
-        btn.classList.remove('playing');
+    function resetAllButtons() {
+        document.querySelectorAll('.section-card').forEach(card => {
+            const playBtn = card.querySelector('.play-btn');
+            const loopBtn = card.querySelector('.loop-btn');
+            
+            playBtn.textContent = "🔊 Listen";
+            playBtn.classList.remove('playing');
+            
+            loopBtn.textContent = "🔄 Loop";
+            loopBtn.classList.remove('looping');
+        });
         currentUtterance = null;
-        currentButton = null;
+        activeCard = null;
+        isLoopMode = false;
     }
 </script>
 
