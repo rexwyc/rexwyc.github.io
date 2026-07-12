@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Adjectives English Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .category-title {
+            background-color: #34495e;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .question-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media(min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .translation {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: normal;
+            display: none;
+            background: #f8fafc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        .score-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-weight: bold;
+            z-index: 1000;
+        }
+        @media(max-width: 1024px) {
+            .score-box {
+                position: sticky;
+                top: 0;
+                right: 0;
+                text-align: center;
+                margin-bottom: 20px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="score-box">
+    Score: <span id="current-score">0</span> / 100
+</div>
+
+<div class="container">
+    <h1>100 Adjectives English Quiz</h1>
+    <p style="text-align: center; color: #64748b;">Click on an option to answer. Traditional Chinese translations will appear instantly.</p>
+    
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+const quizData = [
+    // PERSONALITY & CHARACTER
+    { category: "Personality & Character", q: "1. Even when plans changed at the last minute, Sarah remained ________ and quickly found an alternative.", ans: "B", opts: { A: ["Rigid", "剛硬的/死板的"], B: ["Adaptable", "適應力強的"], C: ["Melancholy", "憂鬱的"], D: ["Obsolete", "淘汰的/過時的"] } },
+    { category: "Personality & Character", q: "2. Mark is highly ________; he has set a goal to become the CEO of the company within five years.", ans: "B", opts: { A: ["Humble", "謙遜的"], B: ["Ambitious", "有野心的/有抱負的"], C: ["Weary", "疲憊的"], D: ["Trivial", "微不足道的"] } },
+    { category: "Personality & Character", q: "3. The ________ nurse stayed past her shift to comfort the lonely patient.", ans: "A", opts: { A: ["Compassionate", "有同情心的/慈悲的"], B: ["Notorious", "臭名昭著的"], C: ["Rigid", "死板的"], D: ["Coarse", "粗糙的"] } },
+    { category: "Personality & Character", q: "4. It took a ________ firefighter to run into the burning building to save the trapped puppy.", ans: "C", opts: { A: ["Gullible", "易受騙的"], B: ["Apprehensive", "憂慮的/忐忑的"], C: ["Courageous", "勇敢的/有膽量的"], D: ["Sleek", "光滑的/時髦的"] } },
+    { category: "Personality & Character", q: "5. Thanks to her ________ research, the student uncovered a flaw in the original experiment.", ans: "A", opts: { A: ["Diligent", "勤奮的/用功的"], B: ["Haphazard", "隨意的/雜亂的"], C: ["Cheerful", "快樂的"], D: ["Brittle", "脆弱的/易碎的"] } },
+    { category: "Personality & Character", q: "6. As an ________ listener, he could easily understand and share the feelings of his grieving friend.", ans: "B", opts: { A: ["Angular", "有尖角的"], B: ["Empathetic", "感同身受的/有同理心的"], C: ["Distinctive", "獨特的"], D: ["Invaluable", "極寶貴的"] } },
+    { category: "Personality & Character", q: "7. The billionaire was incredibly ________, secretly donating millions to local food banks.", ans: "A", opts: { A: ["Generous", "慷慨的/大方的"], B: ["Greedy", "貪婪的"], C: ["Notorious", "臭名昭著的"], D: ["Microscopic", "微觀的"] } },
+    { category: "Personality & Character", q: "8. Despite winning the prestigious award, the scientist remained ________ and credited her entire team.", ans: "C", opts: { A: ["Formidable", "令人敬畏的/強大的"], B: ["Zealous", "熱心的/狂熱的"], C: ["Humble", "謙遜的/低調的"], D: ["Bold", "大膽的"] } },
+    { category: "Personality & Character", q: "9. She had an ________ understanding of people, often guessing what they were thinking before they spoke.", ans: "A", opts: { A: ["Intuitive", "具直覺力的"], B: ["Obsolete", "過時的"], C: ["Spherical", "球形的"], D: ["Rigid", "僵硬的"] } },
+    { category: "Personality & Character", q: "10. A ________ friend will stand by you through both good times and bad.", ans: "A", opts: { A: ["Loyal", "忠誠的/忠實的"], B: ["Redundant", "多餘的"], C: ["Flawless", "完美無瑕的"], D: ["Haphazard", "隨意的"] } },
+    { category: "Personality & Character", q: "11. The ________ detective noticed the tiny scratch on the doorknob that everyone else missed.", ans: "B", opts: { A: ["Gullible", "易受騙的"], B: ["Observant", "觀察敏銳的"], C: ["Brittle", "易碎的"], D: ["Chaotic", "混亂的"] } },
+    { category: "Personality & Character", q: "12. Despite facing numerous rejections, the ________ author kept submitting her manuscript until it was published.", ans: "A", opts: { A: ["Persistent", "堅持不懈的/固執的"], B: ["Weary", "疲憊的"], C: ["Sincere", "真誠的"], D: ["Minimalist", "極簡主義的"] } },
+    { category: "Personality & Character", q: "13. We need a ________ car for our cross-country road trip, not one that breaks down constantly.", ans: "A", opts: { A: ["Reliable", "可靠的/值得信賴的"], B: ["Erratic", "不穩定的"], C: ["Whimsical", "古怪異想天開的"], D: ["Dynamic", "動態的"] } },
+    { category: "Personality & Character", q: "14. His apology felt completely ________, as he looked her in the eye and spoke from the heart.", ans: "A", opts: { A: ["Sincere", "真誠的/由衷的"], B: ["Quirky", "古怪趣怪的"], C: ["Bizarre", "奇異的"], D: ["Trivial", "微不足道的"] } },
+    { category: "Personality & Character", q: "15. Sending a 'get well soon' card was a ________ gesture that brightened her day.", ans: "A", opts: { A: ["Thoughtful", "體貼的/深思熟慮的"], B: ["Formidable", "強大的"], C: ["Rigid", "死板的"], D: ["Obsolete", "過時的"] } },
+    { category: "Personality & Character", q: "16. Her ________ personality made her the life of every party she attended.", ans: "A", opts: { A: ["Vibrant", "充滿活力的/鮮明的"], B: ["Melancholy", "憂鬱的"], C: ["Minimalist", "極簡的"], D: ["Coarse", "粗糙的"] } },
+    { category: "Personality & Character", q: "17. The comedian's ________ replies kept the talk show host laughing throughout the interview.", ans: "A", opts: { A: ["Witty", "機智風趣的"], B: ["Weary", "疲憊的"], C: ["Rigid", "死板的"], D: ["Haphazard", "隨意的"] } },
+    { category: "Personality & Character", q: "18. As a ________ supporter of environmental conservation, he spends every weekend planting trees.", ans: "A", opts: { A: ["Zealous", "熱情的/狂熱的"], B: ["Apprehensive", "憂慮的"], C: ["Redundant", "多餘的"], D: ["Compact", "緊湊的"] } },
+    { category: "Personality & Character", q: "19. The ________ skydiver leaped from the airplane without a hint of hesitation.", ans: "A", opts: { A: ["Fearless", "無畏的/大膽的"], B: ["Gullible", "易受騙的"], C: ["Brittle", "脆弱的"], D: ["Obsolete", "過時的"] } },
+    { category: "Personality & Character", q: "20. The politician was so ________ that he easily won over the crowd within minutes of speaking.", ans: "A", opts: { A: ["Charismatic", "有領袖魅力的/超凡魅力的"], B: ["Melancholy", "憂鬱的"], C: ["Coarse", "粗糙的"], D: ["Trivial", "微不足道的"] } },
+
+    // APPEARANCE & STYLE
+    { category: "Appearance & Style", q: "21. The bride looked absolutely ________ in her vintage silk gown.", ans: "A", opts: { A: ["Elegant", "優雅的/高雅的"], B: ["Coarse", "粗糙的"], C: ["Haphazard", "隨意的"], D: ["Obsolete", "過時的"] } },
+    { category: "Appearance & Style", q: "22. Her skin looked ________ and healthy after a relaxing week at the spa.", ans: "A", opts: { A: ["Radiant", "容光煥發的/光芒四射的"], B: ["Melancholy", "憂鬱的"], C: ["Brittle", "易碎的"], D: ["Rigid", "僵硬的"] } },
+    { category: "Appearance & Style", q: "23. The new smartphone features a ________, metallic design that fits easily in a pocket.", ans: "A", opts: { A: ["Sleek", "線條流暢的/時尚的"], B: ["Bizarre", "奇異的"], C: ["Jagged", "鋸齒狀的"], D: ["Fluffy", "蓬鬆的"] } },
+    { category: "Appearance & Style", q: "24. The artist used ________ shades of red and yellow to make the sunset painting pop.", ans: "A", opts: { A: ["Vivid", "鮮艷的/生動的"], B: ["Subtle", "微妙的/含蓄的"], C: ["Obsolete", "過時的"], D: ["Rigid", "死板的"] } },
+    { category: "Appearance & Style", q: "25. The morning sun reflected beautifully off the ________ surface of the lake.", ans: "A", opts: { A: ["Gleaming", "閃閃發光的/微光的"], B: ["Coarse", "粗糙的"], C: ["Haphazard", "隨意的"], D: ["Brittle", "易碎的"] } },
+    { category: "Appearance & Style", q: "26. The cabin had a ________ charm, with its exposed wooden beams and stone fireplace.", ans: "A", opts: { A: ["Rustic", "鄉村風的/質樸的"], B: ["Sleek", "時尚的"], C: ["Minimalist", "極簡的"], D: ["Modern", "現代的"] } },
+    { category: "Appearance & Style", q: "27. The kitchen was renovated with ________ appliances and minimalist cabinetry.", ans: "A", opts: { A: ["Modern", "現代的/新式的"], B: ["Rustic", "質樸的"], C: ["Obsolete", "過時的"], D: ["Jagged", "鋸齒狀的"] } },
+    { category: "Appearance & Style", q: "28. The diamond was completely ________, lacking a single internal inclusion or scratch.", ans: "A", opts: { A: ["Flawless", "完美無瑕的"], B: ["Coarse", "粗糙的"], C: ["Brittle", "易碎的"], D: ["Haphazard", "隨意的"] } },
+    { category: "Appearance & Style", q: "29. The chef’s signature dish had a ________ flavor profile that set it apart from ordinary meals.", ans: "A", opts: { A: ["Distinctive", "與眾不同的/有特色的"], B: ["Obsolete", "過時的"], C: ["Redundant", "多餘的"], D: ["Rigid", "僵硬的"] } },
+    { category: "Appearance & Style", q: "30. Instead of using bright colors, she chose a ________ shade of lavender for the bedroom walls.", ans: "A", opts: { A: ["Subtle", "微妙的/淡雅的"], B: ["Vivid", "鮮艷的"], C: ["Gargantuan", "龐大的"], D: ["Bold", "大膽的"] } },
+    { category: "Appearance & Style", q: "31. The night sky was filled with ________ stars that lit up the entire valley.", ans: "A", opts: { A: ["Luminous", "發光的/夜光的"], B: ["Coarse", "粗糙的"], C: ["Melancholy", "憂鬱的"], D: ["Brittle", "易碎的"] } },
+    { category: "Appearance & Style", q: "32. He has a ________ sense of fashion, often wearing mismatched socks and vintage hats.", ans: "A", opts: { A: ["Quirky", "古怪有趣的/離奇的"], B: ["Sleek", "流線型的"], C: ["Reliable", "可靠的"], D: ["Elegant", "優雅的"] } },
+    { category: "Appearance & Style", q: "33. The lace on the wedding veil featured an ________ pattern that took months to stitch by hand.", ans: "A", opts: { A: ["Intricate", "錯綜複雜的/精細的"], B: ["Coarse", "粗糙的"], C: ["Obsolete", "過時的"], D: ["Spherical", "球形的"] } },
+    { category: "Appearance & Style", q: "34. The ancient cathedral was built in a ________ style, complete with pointed arches and gargoyles.", ans: "A", opts: { A: ["Gothic", "哥特式的/陰森的"], B: ["Modern", "現代的"], C: ["Sleek", "流線型的"], D: ["Fluffy", "蓬鬆的"] } },
+    { category: "Appearance & Style", q: "35. The apartment followed a ________ design, containing only a bed, a desk, and a single chair.", ans: "A", opts: { A: ["Minimalist", "極簡主義的"], B: ["Chaotic", "混亂的"], C: ["Abundant", "豐富的"], D: ["Bulky", "笨重的"] } },
+    { category: "Appearance & Style", q: "36. The silver silverware was ________ until it shined like a mirror.", ans: "A", opts: { A: ["Polished", "擦亮的/拋光的"], B: ["Coarse", "粗糙的"], C: ["Jagged", "鋸齒狀的"], D: ["Brittle", "易碎的"] } },
+    { category: "Appearance & Style", q: "37. The model made a ________ entrance in a bright neon dress that caught everyone's attention.", ans: "A", opts: { A: ["Striking", "引人注目的/顯著的"], B: ["Subtle", "微妙的"], C: ["Microscopic", "微小的"], D: ["Obsolete", "過時的"] } },
+    { category: "Appearance & Style", q: "38. The actress wore a ________ diamond necklace to the movie premiere.", ans: "A", opts: { A: ["Dazzling", "耀眼的/令人眼花繚亂的"], B: ["Coarse", "粗糙的"], C: ["Obsolete", "過時的"], D: ["Rigid", "僵硬的"] } },
+    { category: "Appearance & Style", q: "39. A ________ black tuxedo never goes out of style for formal events.", ans: "A", opts: { A: ["Classic", "經典的/傳統的"], B: ["Quirky", "古怪的"], C: ["Chaotic", "混亂的"], D: ["Haphazard", "隨意的"] } },
+    { category: "Appearance & Style", q: "40. The company made a ________ move by rebranding their entire logo overnight.", ans: "A", opts: { A: ["Bold", "大膽的/前衛的"], B: ["Subtle", "含蓄的"], C: ["Minuscule", "微小的"], D: ["Weary", "疲憊的"] } },
+
+    // FEELINGS & EMOTIONS
+    { category: "Feelings & Emotions", q: "41. The team was ________ after winning the championship game in the final seconds.", ans: "A", opts: { A: ["Ecstatic", "狂喜的/欣喜若狂的"], B: ["Melancholy", "憂鬱的"], C: ["Weary", "疲憊的"], D: ["Coarse", "粗糙的"] } },
+    { category: "Feelings & Emotions", q: "42. Listening to the rainy weather made her feel a bit ________ and reflective.", ans: "A", opts: { A: ["Melancholy", "憂鬱的/沮喪的"], B: ["Vibrant", "精力充沛的"], C: ["Luminous", "發光的"], D: ["Sleek", "時尚的"] } },
+    { category: "Feelings & Emotions", q: "43. The spa music created a ________ atmosphere that helped everyone relax.", ans: "A", opts: { A: ["Serene", "寧靜的/安詳的"], B: ["Chaotic", "混亂的"], C: ["Restless", "焦躁不安的"], D: ["Formidable", "可怕的"] } },
+    { category: "Feelings & Emotions", q: "44. He felt ________ about the upcoming exam because he hadn't studied at all.", ans: "A", opts: { A: ["Anxious", "焦慮的/擔心的"], B: ["Ecstatic", "狂喜的"], C: ["Serene", "寧靜的"], D: ["Radiant", "容光煥發的"] } },
+    { category: "Feelings & Emotions", q: "45. The ________ puppy bounded across the yard, barking happily at every butterfly.", ans: "A", opts: { A: ["Exuberant", "精力充沛的/熱情洋溢的"], B: ["Weary", "疲憊的"], C: ["Melancholy", "憂鬱的"], D: ["Rigid", "僵硬的"] } },
+    { category: "Feelings & Emotions", q: "46. Looking at old childhood photos made him feel incredibly ________.", ans: "A", opts: { A: ["Nostalgic", "懷舊的/思鄉的"], B: ["Microscopic", "微小的"], C: ["Obsolete", "過時的"], D: ["Coarse", "粗糙的"] } },
+    { category: "Feelings & Emotions", q: "47. After a long day of hard work, she felt completely ________ sitting by the fireplace.", ans: "A", opts: { A: ["Content", "滿足的/心滿意足的"], B: ["Anxious", "焦慮的"], C: ["Restless", "坐立不安的"], D: ["Chaotic", "混亂的"] } },
+    { category: "Feelings & Emotions", q: "48. She was ________ about walking through the dark alley alone at night.", ans: "A", opts: { A: ["Apprehensive", "憂慮的/恐懼的"], B: ["Ecstatic", "狂喜的"], C: ["Jovial", "快活的"], D: ["Radiant", "開朗的"] } },
+    { category: "Feelings & Emotions", q: "49. He was deeply ________ for all the help his neighbors provided after the storm.", ans: "A", opts: { A: ["Grateful", "感激的/感恩的"], B: ["Restless", "焦躁的"], C: ["Melancholy", "憂鬱的"], D: ["Obsolete", "過時的"] } },
+    { category: "Feelings & Emotions", q: "50. The crowd was ________, cheering loudly as the concert finally began.", ans: "A", opts: { A: ["Enthusiastic", "熱情的/熱心的"], B: ["Weary", "疲憊的"], C: ["Brittle", "脆弱的"], D: ["Melancholy", "憂鬱的"] } },
+    { category: "Feelings & Emotions", q: "51. Santa Claus is always depicted as a ________ man who laughs with a hearty 'Ho, ho, ho!'", ans: "A", opts: { A: ["Jovial", "快活的/高興的"], B: ["Melancholy", "憂鬱的"], C: ["Restless", "坐立不安的"], D: ["Rigid", "死板的"] } },
+    { category: "Feelings & Emotions", q: "52. After running a marathon, the athletes looked incredibly ________ and ready for a nap.", ans: "A", opts: { A: ["Weary", "疲憊的/筋疲力盡的"], B: ["Ecstatic", "狂喜的"], C: ["Vibrant", "有活力的"], D: ["Bold", "大膽的"] } },
+    { category: "Feelings & Emotions", q: "53. Despite the current difficulties, the entrepreneur remained ________ about the company's future.", ans: "A", opts: { A: ["Optimistic", "樂觀的"], B: ["Melancholy", "憂鬱的"], C: ["Cheerless", "不開心的/陰鬱的"], D: ["Brittle", "易碎的"] } },
+    { category: "Feelings & Emotions", q: "54. She was ________ to finish the race, refusing to give up even when her legs started to ache.", ans: "A", opts: { A: ["Resolute", "堅決的/果斷的"], B: ["Gullible", "易受騙的"], C: ["Restless", "躁動的"], D: ["Obsolete", "過時的"] } },
+    { category: "Feelings & Emotions", q: "55. The confusing street signs left the tourists completely ________ as to which way to turn.", ans: "A", opts: { A: ["Bewildered", "困惑的/不知所措的"], B: ["Serene", "寧靜的"], C: ["Content", "滿足的"], D: ["Sleek", "光滑的"] } },
+    { category: "Feelings & Emotions", q: "56. Graduating from college made her feel ________ and ready to conquer the professional world.", ans: "A", opts: { A: ["Empowered", "充滿力量的/獲授權的"], B: ["Cheerless", "憂鬱的"], C: ["Microscopic", "微小的"], D: ["Trivial", "微不足道的"] } },
+    { category: "Feelings & Emotions", q: "57. Unable to fall asleep, the ________ boy tossed and turned in his bed all night.", ans: "A", opts: { A: ["Restless", "焦躁不安的/得不到休息的"], B: ["Serene", "寧靜的"], C: ["Content", "滿足的"], D: ["Rigid", "僵硬的"] } },
+    { category: "Feelings & Emotions", q: "58. The empty, grey streets on a rainy Tuesday felt incredibly ________.", ans: "A", opts: { A: ["Cheerless", "陰鬱的/毫無生氣的"], B: ["Ecstatic", "狂喜的"], C: ["Exuberant", "生機勃勃的"], D: ["Radiant", "光芒四射的"] } },
+    { category: "Feelings & Emotions", q: "59. The plush couch was so ________ that I accidentally fell asleep while reading.", ans: "A", opts: { A: ["Comfortable", "舒適的/自在的"], B: ["Jagged", "鋸齒狀的"], C: ["Rigid", "僵硬的"], D: ["Brittle", "易碎的"] } },
+    { category: "Feelings & Emotions", q: "60. Winning the lottery brought an immediate wave of ________ joy to the family.", ans: "A", opts: { A: ["Euphoric", "極度興奮的/欣快症的"], B: ["Melancholy", "憂鬱的"], C: ["Weary", "疲憊的"], D: ["Coarse", "粗糙的"] } },
+
+    // SIZE, SHAPE & TEXTURE
+    { category: "Size, Shape & Texture", q: "61. The Atlantic Ocean is an ________ body of water that covers a massive portion of the Earth.", ans: "A", opts: { A: ["Immense", "巨大的/廣大無邊的"], B: ["Minuscule", "極小的"], C: ["Compact", "緊湊的"], D: ["Crisp", "脆的"] } },
+    { category: "Size, Shape & Texture", q: "62. The scientist discovered a ________ speck of dust on the camera lens that blurred the image.", ans: "A", opts: { A: ["Minuscule", "微小的/極小的"], B: ["Colossal", "巨幅的"], C: ["Bulky", "體積大的"], D: ["Fluffy", "蓬鬆的"] } },
+    { category: "Size, Shape & Texture", q: "63. The ancient Romans built ________ monuments that still stand tall today.", ans: "A", opts: { A: ["Colossal", "巨大的/龐大的"], B: ["Minuscule", "微小的"], C: ["Slender", "苗條的"], D: ["Crisp", "清脆的"] } },
+    { category: "Size, Shape & Texture", q: "64. The model had a ________ frame that allowed her to fit into the narrow dress easily.", ans: "A", opts: { A: ["Slender", "苗條的/纖細的"], B: ["Bulky", "笨重的"], C: ["Spherical", "球形的"], D: ["Gargantuan", "龐大的"] } },
+    { category: "Size, Shape & Texture", q: "65. A basketball is a perfectly ________ object designed to bounce evenly.", ans: "A", opts: { A: ["Spherical", "球形的/球狀的"], B: ["Angular", "有角的"], C: ["Symmetrical", "對稱的"], D: ["Jagged", "鋸齒狀的"] } },
+    { category: "Size, Shape & Texture", q: "66. Modern buildings often feature ________ designs with sharp corners and clean lines.", ans: "A", opts: { A: ["Angular", "有尖角的/稜角分明的"], B: ["Spherical", "球形的"], C: ["Fluffy", "蓬鬆的"], D: ["Velvety", "天鵝絨般的"] } },
+    { category: "Size, Shape & Texture", q: "67. A human face is mostly ________, meaning one side matches the other almost perfectly.", ans: "A", opts: { A: ["Symmetrical", "對稱的/勻稱的"], B: ["Angular", "有角的"], C: ["Jagged", "凹凸不平的"], D: ["Coarse", "粗糙的"] } },
+    { category: "Size, Shape & Texture", q: "68. The sandpaper had a ________ texture designed to smooth down rough edges of wood.", ans: "A", opts: { A: ["Coarse", "粗糙的/粗劣的"], B: ["Velvety", "絲滑的"], C: ["Fluffy", "蓬鬆的"], D: ["Sleek", "光滑的"] } },
+    { category: "Size, Shape & Texture", q: "69. The cat’s fur felt smooth and ________ after its bath.", ans: "A", opts: { A: ["Velvety", "天鵝絨般柔軟的/絲滑的"], B: ["Coarse", "粗糙的"], C: ["Brittle", "脆的"], D: ["Jagged", "鋸齒狀的"] } },
+    { category: "Size, Shape & Texture", q: "70. Old, dry pages of ancient books become very ________ and can tear at the slightest touch.", ans: "A", opts: { A: ["Brittle", "脆的/易碎的"], B: ["Pliable", "易彎曲的"], C: ["Slender", "苗條的"], D: ["Bulky", "笨重的"] } },
+    { category: "Size, Shape & Texture", q: "71. Clay is a highly ________ material that can easily be molded into various shapes.", ans: "A", opts: { A: ["Pliable", "易彎曲的/柔韌的"], B: ["Rigid", "堅硬的"], C: ["Brittle", "易碎的"], D: ["Angular", "有稜角的"] } },
+    { category: "Size, Shape & Texture", q: "72. The steel beams provided a ________ support system that kept the bridge from swaying.", ans: "A", opts: { A: ["Rigid", "堅固的/死板的"], B: ["Pliable", "柔韌的"], C: ["Fluffy", "蓬鬆的"], D: ["Minuscule", "微小的"] } },
+    { category: "Size, Shape & Texture", q: "73. You need a powerful lens to view ________ organisms like bacteria.", ans: "A", opts: { A: ["Microscopic", "微觀的/用顯微鏡才能看見的"], B: ["Gargantuan", "龐大的"], C: ["Immense", "巨大的"], D: ["Bulky", "笨重的"] } },
+    { category: "Size, Shape & Texture", q: "74. Whale sharks are ________ creatures, measuring up to forty feet in length.", ans: "A", opts: { A: ["Gargantuan", "龐大的/巨大的"], B: ["Minuscule", "微小的"], C: ["Compact", "緊湊的"], D: ["Slender", "苗條的"] } },
+    { category: "Size, Shape & Texture", q: "75. The ________ car was easy to park in the crowded city streets.", ans: "A", opts: { A: ["Compact", "緊湊的小巧的"], B: ["Gargantuan", "龐大的"], C: ["Immense", "巨大的"], D: ["Bulky", "體積大的"] } },
+    { category: "Size, Shape & Texture", q: "76. The marble countertop was perfectly ________, without any bumps or cracks.", ans: "A", opts: { A: ["Smooth", "光滑的/平滑的"], B: ["Jagged", "凹凸不平的"], C: ["Coarse", "粗糙的"], D: ["Brittle", "易碎的"] } },
+    { category: "Size, Shape & Texture", q: "77. The hikers had to be careful not to cut themselves on the ________ rocks along the cliff.", ans: "A", opts: { A: ["Jagged", "鋸齒狀的/參差不齊的"], B: ["Smooth", "光滑的"], C: ["Velvety", "柔軟的"], D: ["Symmetrical", "對稱的"] } },
+    { category: "Size, Shape & Texture", q: "78. She slept soundly on a ________ pillow filled with goose feathers.", ans: "A", opts: { A: ["Fluffy", "蓬鬆的/毛茸茸的"], B: ["Rigid", "堅硬的"], C: ["Coarse", "粗糙的"], D: ["Brittle", "易碎的"] } },
+    { category: "Size, Shape & Texture", q: "79. The winter coat was too ________ to fit into the small gym locker.", ans: "A", opts: { A: ["Bulky", "體積大的/笨重的"], B: ["Slender", "苗條的"], C: ["Minuscule", "微小的"], D: ["Smooth", "光滑的"] } },
+    { category: "Size, Shape & Texture", q: "80. On a cold autumn morning, the air felt wonderfully ________ and refreshing.", ans: "A", opts: { A: ["Crisp", "乾冷的/清新的/脆的"], B: ["Fluffy", "蓬鬆的"], C: ["Velvety", "絲滑的"], D: ["Coarse", "粗糙的"] } },
+
+    // GENERAL DESCRIPTION & EVALUATION
+    { category: "General Description & Evaluation", q: "81. The orchard provided an ________ harvest of apples, leaving us with more than we could eat.", ans: "A", opts: { A: ["Abundant", "豐富的/充裕的"], B: ["Scarce", "缺乏的"], C: ["Trivial", "微不足道的"], D: ["Obsolete", "過時的"] } },
+    { category: "General Description & Evaluation", q: "82. It was a ________ situation when the lights turned on and off by themselves.", ans: "A", opts: { A: ["Bizarre", "古怪的/奇異的"], B: ["Reliable", "可靠的"], C: ["Meticulous", "一絲不苟的"], D: ["Symmetric", "對稱的"] } },
+    { category: "General Description & Evaluation", q: "83. The classroom became completely ________ after the teacher left the room for five minutes.", ans: "A", opts: { A: ["Chaotic", "混亂的/無秩序的"], B: ["Meticulous", "一絲不苟的"], C: ["Serene", "寧靜的"], D: ["Smooth", "光滑的"] } },
+    { category: "General Description & Evaluation", q: "84. The economy is ________, constantly shifting based on global markets and trade agreements.", ans: "A", opts: { A: ["Dynamic", "動態的/不斷變化的"], B: ["Obsolete", "過時的"], C: ["Rigid", "死板的"], D: ["Redundant", "多餘的"] } },
+    { category: "General Description & Evaluation", q: "85. The millionaire was known for his ________ habits, like walking a pet lobster on a leash.", ans: "A", opts: { A: ["Eccentric", "古怪的/特立獨行的"], B: ["Reliable", "可靠的"], C: ["Traditional", "傳統的"], D: ["Subtle", "微妙的"] } },
+    { category: "General Description & Evaluation", q: "86. The opposing chess player was a ________ opponent who had never lost a tournament.", ans: "A", opts: { A: ["Formidable", "可怕的/難對付的/強大的"], B: ["Gullible", "易受騙的"], C: ["Trivial", "微不足道的"], D: ["Minuscule", "微小的"] } },
+    { category: "General Description & Evaluation", q: "87. The ________ tourist fell for the classic street scam and bought a fake watch.", ans: "A", opts: { A: ["Gullible", "輕信的/易受騙的"], B: ["Observant", "觀察敏銳的"], C: ["Shrewd", "精明的"], D: ["Rigid", "死板的"] } },
+    { category: "General Description & Evaluation", q: "88. Books were stacked in a ________ pile on the floor, ready to fall over at any moment.", ans: "A", opts: { A: ["Haphazard", "無計劃的/隨意雜亂的"], B: ["Meticulous", "一絲不苟的"], C: ["Symmetrical", "對稱的"], D: ["Reliable", "可靠的"] } },
+    { category: "General Description & Evaluation", q: "89. Her advice proved to be ________, saving me thousands of dollars on my taxes.", ans: "A", opts: { A: ["Invaluable", "極有價值的/無價的"], B: ["Trivial", "微不足道的"], C: ["Redundant", "多餘的"], D: ["Obsolete", "過時的"] } },
+    { category: "General Description & Evaluation", q: "90. Selling real estate in the city proved to be a highly ________ career choice for her.", ans: "A", opts: { A: ["Lucrative", "賺錢的/獲利豐厚的"], B: ["Trivial", "微不足道的"], C: ["Obsolete", "過時的"], D: ["Cheerless", "憂鬱的"] } },
+    { category: "General Description & Evaluation", q: "91. The watchmaker used ________ precision to assemble the tiny gears inside the watch.", ans: "A", opts: { A: ["Meticulous", "謹慎的/一絲不苟的"], B: ["Haphazard", "雜亂的"], C: ["Chaotic", "混亂的"], D: ["Trivial", "微不足道的"] } },
+    { category: "General Description & Evaluation", q: "92. The outlaw was ________ for robbing trains across the Wild West.", ans: "A", opts: { A: ["Notorious", "惡名昭彰的"], B: ["Humble", "謙虛的"], C: ["Sincere", "真誠的"], D: ["Compassionate", "慈悲的"] } },
+    { category: "General Description & Evaluation", q: "93. Floppy disks are now completely ________, replaced entirely by cloud storage and USB drives.", ans: "A", opts: { A: ["Obsolete", "過時的/被淘汰的"], B: ["Modern", "現代的"], C: ["Dynamic", "動態的"], D: ["Innovative", "創新的"] } },
+    { category: "General Description & Evaluation", q: "94. The old house had a ________ smell that reminded me of my grandfather's attic.", ans: "A", opts: { A: ["Peculiar", "獨特的/古怪的"], B: ["Flawless", "無瑕的"], C: ["Sleek", "光滑的"], D: ["Radiant", "光芒四射的"] } },
+    { category: "General Description & Evaluation", q: "95. The editor deleted the sentence because it repeated the same point and was completely ________.", ans: "A", opts: { A: ["Redundant", "多餘的/贅述的"], B: ["Invaluable", "無價的"], C: ["Meticulous", "一絲不苟的"], D: ["Crucial", "至關重要的"] } },
+    { category: "General Description & Evaluation", q: "96. Fresh water became extremely ________ during the historic three-year drought.", ans: "A", opts: { A: ["Scarce", "缺乏的/罕見的"], B: ["Abundant", "豐富的"], C: ["Lucrative", "賺錢的"], D: ["Superfluous", "多餘的"] } },
+    { category: "General Description & Evaluation", q: "97. Don't waste your energy arguing over ________ matters that won't matter tomorrow.", ans: "A", opts: { A: ["Trivial", "瑣碎的/微不足道的"], B: ["Invaluable", "無價的"], C: ["Formidable", "強大的"], D: ["Colossal", "龐大的"] } },
+    { category: "General Description & Evaluation", q: "98. The global pandemic caused an ________ shutdown of businesses worldwide.", ans: "A", opts: { A: ["Unprecedented", "史無前例的"], B: ["Obsolete", "過時的"], C: ["Trivial", "微不足道的"], D: ["Elegant", "優雅的"] } },
+    { category: "General Description & Evaluation", q: "99. A pocket knife is a ________ tool that can be used for camping, fishing, or opening boxes.", ans: "A", opts: { A: ["Versatile", "多才多藝的/多功能的"], B: ["Rigid", "堅硬的"], C: ["Redundant", "多餘的"], D: ["Obsolete", "過時的"] } },
+    { category: "General Description & Evaluation", q: "100. The children's book was filled with ________ illustrations of flying pigs and talking trees.", ans: "A", opts: { A: ["Whimsical", "怪誕古怪的/異想天開的"], B: ["Notorious", "惡名昭彰的"], C: ["Formidable", "可怕的"], D: ["Rigid", "死板的"] } }
+];
+
+let totalScore = 0;
+const quizContainer = document.getElementById('quiz-container');
+const scoreDisplay = document.getElementById('current-score');
+
+let currentCategory = "";
+
+quizData.forEach((item, index) => {
+    if (item.category !== currentCategory) {
+        currentCategory = item.category;
+        const catHeader = document.createElement('h2');
+        catHeader.className = 'category-title';
+        catHeader.innerText = currentCategory;
+        quizContainer.appendChild(catHeader);
+    }
+
+    const qBlock = document.createElement('div');
+    qBlock.className = 'question-block';
+    
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerText = item.q;
+    qBlock.appendChild(qText);
+    
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'options';
+    
+    ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        
+        const wordText = document.createElement('span');
+        wordText.innerText = letter + ") " + item.opts[letter][0];
+        
+        const transText = document.createElement('span');
+        transText.className = 'translation';
+        transText.innerText = item.opts[letter][1];
+        
+        btn.appendChild(wordText);
+        btn.appendChild(transText);
+        
+        btn.onclick = () => {
+            const allBtns = optionsDiv.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => {
+                b.disabled = true;
+                const currentLetter = b.innerText.charAt(0);
+                if (currentLetter === item.ans) {
+                    b.classList.add('correct');
+                }
+                b.querySelector('.translation').style.display = 'inline-block';
+            });
+            
+            if (letter === item.ans) {
+                totalScore++;
+                scoreDisplay.innerText = totalScore;
+            } else {
+                btn.classList.add('incorrect');
+            }
+        };
+        
+        optionsDiv.appendChild(btn);
+    });
+    
+    qBlock.appendChild(optionsDiv);
+    quizContainer.appendChild(qBlock);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Adverbs English Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .category-title {
+            background-color: #34495e;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .question-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media(min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .translation {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: normal;
+            display: none;
+            background: #f8fafc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        .score-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-weight: bold;
+            z-index: 1000;
+        }
+        @media(max-width: 1024px) {
+            .score-box {
+                position: sticky;
+                top: 0;
+                right: 0;
+                text-align: center;
+                margin-bottom: 20px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="score-box">
+    Score: <span id="current-score">0</span> / 100
+</div>
+
+<div class="container">
+    <h1>100 Adverbs English Quiz</h1>
+    <p style="text-align: center; color: #64748b;">Click on an option to answer. Traditional Chinese translations will appear instantly.</p>
+    
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+const quizData = [
+    // MANNER
+    { category: "Manner", q: "1. The scientist measured the chemical compounds _______ to ensure the experiment's success.", ans: "B", opts: { A: ["jealously", "嫉妒地"], B: ["accurately", "準確地"], C: ["noisily", "嘈雜地"], D: ["hastily", "倉促地"] } },
+    { category: "Manner", q: "2. The ballerina leaped _______ across the stage during the finale.", ans: "A", opts: { A: ["beautifully", "優美地"], B: ["reluctantly", "不情願地"], C: ["loudly", "大聲地"], D: ["fiercely", "猛烈地"] } },
+    { category: "Manner", q: "3. Walking through the dark forest, the hikers _______ stepped over the twisted roots.", ans: "B", opts: { A: ["eagerly", "渴望地"], B: ["cautiously", "謹慎地"], C: ["vigorously", "精力充沛地"], D: ["tenderly", "溫柔地"] } },
+    { category: "Manner", q: "4. He _______ knocked over the vase just to get his sister's attention.", ans: "B", opts: { A: ["meticulously", "一絲不苟地"], B: ["deliberately", "故意地"], C: ["gracefully", "優雅地"], D: ["instinctively", "本能地"] } },
+    { category: "Manner", q: "5. The children ran _______ toward the ice cream truck as it pulled up.", ans: "B", opts: { A: ["jealously", "嫉妒地"], B: ["eagerly", "渴望地"], C: ["silently", "沉默地"], D: ["accurately", "準確地"] } },
+    { category: "Manner", q: "6. The mother lion _______ defended her cubs from the approaching predator.", ans: "B", opts: { A: ["kindly", "親切地"], B: ["fiercely", "兇猛地"], C: ["hastily", "倉促地"], D: ["patiently", "耐心地"] } },
+    { category: "Manner", q: "7. The swan glided _______ across the glassy surface of the lake.", ans: "C", opts: { A: ["noisily", "嘈雜地"], B: ["vigorously", "有力地"], C: ["gracefully", "優雅地"], D: ["reluctantly", "不情願地"] } },
+    { category: "Manner", q: "8. Late for his meeting, Jordan _______ packed his briefcase and ran out the door.", ans: "A", opts: { A: ["hastily", "匆忙地"], B: ["meticulously", "細心地"], C: ["tenderly", "溫柔地"], D: ["beautifully", "完美地"] } },
+    { category: "Manner", q: "9. When the alarm sounded, the firefighter _______ grabbed his gear without thinking.", ans: "B", opts: { A: ["jealously", "嫉妒地"], B: ["instinctively", "本能地"], C: ["patiently", "誠心地"], D: ["loudly", "大聲地"] } },
+    { category: "Manner", q: "10. The toddler _______ clutched his new toy, refusing to share it with anyone else.", ans: "B", opts: { A: ["kindly", "親切地"], B: ["jealously", "嫉妒地/護私地"], C: ["accurately", "正確地"], D: ["silently", "安靜地"] } },
+    { category: "Manner", q: "11. The stranger _______ offered to help the elderly woman carry her heavy groceries.", ans: "A", opts: { A: ["kindly", "仁慈地/親切地"], B: ["fiercely", "猛烈地"], C: ["hastily", "草率地"], D: ["noisily", "喧鬧地"] } },
+    { category: "Manner", q: "12. The thunder roared _______, waking up everyone in the neighborhood.", ans: "C", opts: { A: ["tenderly", "溫柔地"], B: ["gracefully", "優雅地"], C: ["loudly", "大聲地/轟鳴地"], D: ["deliberately", "故意地"] } },
+    { category: "Manner", q: "13. The watchmaker _______ assembled the tiny gears using specialized tweezers.", ans: "A", opts: { A: ["meticulously", "精細地/一絲不苟地"], B: ["eagerly", "急切地"], C: ["reluctantly", "勉強地"], D: ["quickly", "迅速地"] } },
+    { category: "Manner", q: "14. The puppies played _______ in the living room, knocking over a stack of magazines.", ans: "C", opts: { A: ["silently", "寂靜地"], B: ["accurately", "精準地"], C: ["noisily", "喧鬧地"], D: ["cautiously", "小心地"] } },
+    { category: "Manner", q: "15. The teacher _______ explained the math problem a third time for the confused class.", ans: "B", opts: { A: ["fiercely", "嚴厲地"], B: ["patiently", "耐心地"], C: ["hastily", "匆忙地"], D: ["vigorously", "精力充沛地"] } },
+    { category: "Manner", q: "16. The cheetah moved _______ through the tall grass to catch its prey.", ans: "B", opts: { A: ["slowly", "緩慢地"], B: ["quickly", "快速地"], C: ["jealously", "嫉妒地"], D: ["loudly", "響亮地"] } },
+    { category: "Manner", q: "17. The teenager _______ cleaned his room only after his parents threatened to ground him.", ans: "B", opts: { A: ["eagerly", "熱切地"], B: ["reluctantly", "不情願地"], C: ["beautifully", "漂亮地"], D: ["instinctively", "本能地"] } },
+    { category: "Manner", q: "18. The ninja walked _______ across the creaky wooden floorboards without making a sound.", ans: "A", opts: { A: ["silently", "靜靜地"], B: ["vigorously", "大力地"], C: ["noisily", "吵鬧地"], D: ["accurately", "準確地"] } },
+    { category: "Manner", q: "19. She _______ held the fragile newborn kitten in the palm of her hands.", ans: "B", opts: { A: ["fiercely", "猛烈地"], B: ["tenderly", "溫柔地/呵護地"], C: ["hastily", "倉促地"], D: ["deliberately", "蓄意地"] } },
+    { category: "Manner", q: "20. To stay healthy, the athlete trains _______ for five hours every single day.", ans: "C", opts: { A: ["reluctantly", "勉強地"], B: ["tenderly", "溫柔地"], C: ["vigorously", "刻苦地/強健地"], D: ["gracefully", "優雅地"] } },
+
+    // TIME & FREQUENCY
+    { category: "Time & Frequency", q: "21. I _______ brush my teeth before going to bed; I never skip a night.", ans: "B", opts: { A: ["rarely", "很少"], B: ["always", "總是"], C: ["monthly", "每月的"], D: ["yesterday", "昨天"] } },
+    { category: "Time & Frequency", q: "22. The company hosts its shareholder meeting _______, right at the start of every fiscal year.", ans: "C", opts: { A: ["before", "在...之前"], B: ["constantly", "經常地"], C: ["annually", "每年地"], D: ["lately", "最近"] } },
+    { category: "Time & Frequency", q: "23. Please finish your homework _______ you turn on the television.", ans: "A", opts: { A: ["before", "在...之前"], B: ["after", "在...之後"], C: ["rarely", "鮮少"], D: ["instantly", "立即"] } },
+    { category: "Time & Frequency", q: "24. The ticking clock was _______ reminding him that time was running out.", ans: "C", opts: { A: ["seldom", "不常"], B: ["monthly", "按月"], C: ["constantly", "不斷地/持續地"], D: ["yesterday", "昨天"] } },
+    { category: "Time & Frequency", q: "25. The newspaper is delivered _______ to our doorstep by 6:00 AM.", ans: "B", opts: { A: ["annually", "每年"], B: ["daily", "每日/天天"], C: ["tonight", "今晚"], D: ["formerly", "以前"] } },
+    { category: "Time & Frequency", q: "26. If you wake up _______, you will catch a beautiful view of the sunrise.", ans: "A", opts: { A: ["early", "提早地/清晨"], B: ["lately", "近來"], C: ["never", "從不"], D: ["before", "先前"] } },
+    { category: "Time & Frequency", q: "27. After months of hard work and delays, the new park was _______ opened to the public.", ans: "B", opts: { A: ["hourly", "每小時地"], B: ["eventually", "最終/終於"], C: ["rarely", "很少"], D: ["before", "以前"] } },
+    { category: "Time & Frequency", q: "28. The museum was _______ a grand train station before it was renovated in 1995.", ans: "A", opts: { A: ["formerly", "以前/原先"], B: ["recently", "最近"], C: ["occasionally", "偶爾"], D: ["immediately", "立刻"] } },
+    { category: "Time & Frequency", q: "29. The security guard checks the warehouse doors _______ throughout the night shift.", ans: "B", opts: { A: ["never", "從不"], B: ["hourly", "每小時地"], C: ["annually", "每年"], D: ["yesterday", "昨天"] } },
+    { category: "Time & Frequency", q: "30. As soon as the bell rang, the students _______ packed their bags and left.", ans: "C", opts: { A: ["seldom", "很少"], B: ["lately", "最近"], C: ["immediately", "立刻/馬上"], D: ["monthly", "每月"] } },
+    { category: "Time & Frequency", q: "31. I haven’t seen much of Kevin _______; is he busy with his new job?", ans: "B", opts: { A: ["before", "在此之前"], B: ["lately", "最近/近來"], C: ["hourly", "每小時"], D: ["always", "總是"] } },
+    { category: "Time & Frequency", q: "32. The magazine is published _______, so you will receive twelve issues a year.", ans: "A", opts: { A: ["monthly", "每月地"], B: ["daily", "每日"], C: ["early", "早"], D: ["constantly", "不斷地"] } },
+    { category: "Time & Frequency", q: "33. She has _______ visited Europe, but she hopes to go there next summer.", ans: "B", opts: { A: ["always", "總是"], B: ["never", "從未/不曾"], C: ["recently", "最近"], D: ["instantly", "即刻"] } },
+    { category: "Time & Frequency", q: "34. We _______ eat out at restaurants, but we usually prefer cooking at home.", ans: "A", opts: { A: ["occasionally", "偶爾"], B: ["constantly", "經常"], C: ["hourly", "每小時"], D: ["always", "總是"] } },
+    { category: "Time & Frequency", q: "35. Traffic is _______ heavy during rush hour, so expect some major delays.", ans: "C", opts: { A: ["rarely", "鮮少"], B: ["seldom", "罕見"], C: ["often", "經常/往往"], D: ["before", "之前"] } },
+    { category: "Time & Frequency", q: "36. Because he lives so far away, he _______ visits his hometown anymore.", ans: "A", opts: { A: ["rarely", "很少/罕有"], B: ["constantly", "持續"], C: ["always", "老是"], D: ["instantly", "當即"] } },
+    { category: "Time & Frequency", q: "37. The company _______ launched a new app that is already breaking download records.", ans: "B", opts: { A: ["seldom", "很少"], B: ["recently", "最近/日前"], C: ["before", "早前"], D: ["formerly", "先前"] } },
+    { category: "Time & Frequency", q: "38. They _______ watch horror movies because they easily get scared.", ans: "A", opts: { A: ["seldom", "很少/不常"], B: ["always", "總是"], C: ["constantly", "不斷地"], D: ["daily", "每天"] } },
+    { category: "Time & Frequency", q: "39. We are going to see a live theater performance _______ at 8:00 PM.", ans: "B", opts: { A: ["yesterday", "昨天"], B: ["tonight", "今晚"], C: ["formerly", "過去"], D: ["hourly", "每時"] } },
+    { category: "Time & Frequency", q: "40. It rained heavily _______, leaving huge puddles all over the driveway this morning.", ans: "B", opts: { A: ["tonight", "今晚"], B: ["yesterday", "昨天"], C: ["always", "一直"], D: ["eventually", "最終"] } },
+
+    // PLACE & DIRECTION
+    { category: "Place & Direction", q: "41. After graduating from college, Mark decided to move _______ to experience a new culture.", ans: "B", opts: { A: ["backward", "向後"], B: ["abroad", "國外/海外"], C: ["inside", "在裡面"], D: ["nearby", "在附近"] } },
+    { category: "Place & Direction", q: "42. I’ve lost my keys, and I can't find them _______ in the house.", ans: "A", opts: { A: ["anywhere", "任何地方"], B: ["outward", "向外"], C: ["upstairs", "在樓上"], D: ["behind", "在後面"] } },
+    { category: "Place & Direction", q: "43. To do a proper flip, you need to lean _______ before jumping.", ans: "B", opts: { A: ["inside", "向內"], B: ["backward", "向後/倒退地"], C: ["abroad", "到國外"], D: ["overhead", "在頭頂上"] } },
+    { category: "Place & Direction", q: "44. The laundry room is located _______, right next to the basement garage.", ans: "B", opts: { A: ["upstairs", "樓上"], B: ["downstairs", "樓下/地下"], C: ["elsewhere", "其他地方"], D: ["overhead", "高架"] } },
+    { category: "Place & Direction", q: "45. The item you are looking for is out of stock here, but you might find it ______.", ans: "B", opts: { A: ["inside", "裡面"], B: ["elsewhere", "在別處"], C: ["backward", "倒退"], D: ["here", "這裡"] } },
+    { category: "Place & Direction", q: "46. The isolated island was too _______ for a weekend boat trip.", ans: "A", opts: { A: ["far", "遙遠"], B: ["nearby", "近的"], C: ["indoors", "室內"], D: ["somewhere", "某處"] } },
+    { category: "Place & Direction", q: "47. Please place the delivery box right _______ on the front porch.", ans: "C", opts: { A: ["elsewhere", "別處"], B: ["abroad", "國外"], C: ["here", "這裡/此處"], D: ["underground", "地下"] } },
+    { category: "Place & Direction", q: "48. Because of the heavy thunderstorm, the children had to play _______.", ans: "B", opts: { A: ["outside", "室外"], B: ["indoors", "在室內"], C: ["westward", "向西"], D: ["anywhere", "到處"] } },
+    { category: "Place & Direction", q: "49. Step _______ the house where it is warm and dry.", ans: "A", opts: { A: ["inside", "進去裡面"], B: ["everywhere", "到處"], C: ["backward", "向後"], D: ["far", "遠處"] } },
+    { category: "Place & Direction", q: "50. Is there a gas station _______? My car is running out of fuel.", ans: "B", opts: { A: ["abroad", "海外"], B: ["nearby", "附近"], C: ["outward", "向外"], D: ["elsewhere", "別處"] } },
+    { category: "Place & Direction", q: "51. Put on a heavy jacket before you go _______ into the freezing snow.", ans: "C", opts: { A: ["indoors", "室內"], B: ["inside", "內部"], C: ["outside", "到外面"], D: ["here", "這裡"] } },
+    { category: "Place & Direction", q: "52. The window opened _______, swinging out toward the garden.", ans: "B", opts: { A: ["inside", "朝內"], B: ["outward", "向外地"], C: ["everywhere", "到處"], D: ["backward", "向後"] } },
+    { category: "Place & Direction", q: "53. A flock of wild geese flew directly _______ in a perfect V-formation.", ans: "B", opts: { A: ["underground", "在地下"], B: ["overhead", "在頭頂上方/在空中"], C: ["elsewhere", "別處"], D: ["behind", "在後"] } },
+    { category: "Place & Direction", q: "54. I know I left my sunglasses _______ in the living room, but I can't remember where.", ans: "A", opts: { A: ["somewhere", "在某處"], B: ["anywhere", "任何地方"], C: ["abroad", "國外"], D: ["outward", "向外"] } },
+    { category: "Place & Direction", q: "55. Sit _______ next to me so we can look at the photo album together.", ans: "A", opts: { A: ["there", "在那裡"], B: ["elsewhere", "別處"], C: ["far", "遠遠地"], D: ["upward", "向上"] } },
+    { category: "Place & Direction", q: "56. The workers built a secret bunker _______ to prepare for emergencies.", ans: "B", opts: { A: ["overhead", "在頭頂上"], B: ["underground", "在地下"], C: ["outside", "戶外"], D: ["here", "此處"] } },
+    { category: "Place & Direction", q: "57. The hot air balloon floated _______ into the clear blue sky.", ans: "B", opts: { A: ["downward", "向下"], B: ["upward", "向上地/往上"], C: ["backward", "往後"], D: ["inside", "往內"] } },
+    { category: "Place & Direction", q: "58. The pioneers traveled _______ in search of new lands and opportunities.", ans: "A", opts: { A: ["westward", "向西地"], B: ["inside", "內部"], C: ["overhead", "高空"], D: ["nearby", "附近"] } },
+    { category: "Place & Direction", q: "59. Dust was _______ in the abandoned attic, covering every piece of furniture.", ans: "B", opts: { A: ["anywhere", "任何地方"], B: ["everywhere", "到處/無處不在"], C: ["abroad", "國外"], D: ["outward", "向外"] } },
+    { category: "Place & Direction", q: "60. The dog hid _______ the couch because it was terrified of the fireworks.", ans: "B", opts: { A: ["overhead", "在上方"], B: ["behind", "在後面"], C: ["anywhere", "隨處"], D: ["abroad", "國外"] } },
+
+    // DEGREE & INTENSITY
+    { category: "Degree & Intensity", q: "61. I was _______ finished with my essay when the computer suddenly crashed.", ans: "B", opts: { A: ["thoroughly", "徹底地"], B: ["almost", "幾乎"], C: ["moderately", "適度地"], D: ["intensely", "強烈地"] } },
+    { category: "Degree & Intensity", q: "62. You are _______ right about the solution to this complex problem.", ans: "A", opts: { A: ["absolutely", "絕對地/完全地"], B: ["barely", "僅僅"], C: ["slightly", "稍微"], D: ["nearly", "差不多"] } },
+    { category: "Degree & Intensity", q: "63. The whispered voice was so quiet that I could _______ hear it over the static.", ans: "B", opts: { A: ["completely", "完全"], B: ["barely", "幾乎不/勉強能"], C: ["highly", "高度地"], D: ["deeply", "深深地"] } },
+    { category: "Degree & Intensity", q: "64. The old wooden bridge was _______ destroyed by the raging floodwaters.", ans: "B", opts: { A: ["partially", "部分地"], B: ["completely", "徹底地/完全地"], C: ["moderately", "中度地"], D: ["slightly", "輕微地"] } },
+    { category: "Degree & Intensity", q: "65. The loss of their family pet affected them _______ for many weeks.", ans: "A", opts: { A: ["deeply", "深深地/沉痛地"], B: ["rather", "相當"], C: ["nearly", "幾乎"], B: ["barely", "勉強"] } },
+    { category: "Degree & Intensity", q: "66. The two puzzle pieces are _______ identical, except for a tiny color difference.", ans: "A", opts: { A: ["entirely", "完全地/整個地"], B: ["barely", "幾乎不"], C: ["moderately", "適度"], D: ["partially", "局部地"] } },
+    { category: "Degree & Intensity", q: "67. The desert heat during the summer months is _______ difficult to endure.", ans: "B", opts: { A: ["slightly", "稍微"], B: ["extremely", "極端地/極其"], C: ["nearly", "將近"], D: ["barely", "勉強"] } },
+    { category: "Degree & Intensity", q: "68. There was _______ any food left in the refrigerator after the party.", ans: "B", opts: { A: ["completely", "完全"], B: ["hardly", "幾乎沒有"], C: ["highly", "高度"], D: ["thoroughly", "徹底"] } },
+    { category: "Degree & Intensity", q: "69. This prestigious university is _______ recommended by academic counselors worldwide.", ans: "A", opts: { A: ["highly", "高度地/強烈地"], B: ["moderately", "溫和地"], C: ["barely", "勉強"], D: ["almost", "差不多"] } },
+    { category: "Degree & Intensity", q: "70. The sun glared down _______ upon the runners during the final mile of the marathon.", ans: "B", opts: { A: ["slightly", "稍微"], B: ["intensely", "強烈地/劇烈地"], C: ["nearly", "幾乎"], D: ["rather", "頗為"] } },
+    { category: "Degree & Intensity", q: "71. I was _______ leaving the house when the phone started ringing.", ans: "A", opts: { A: ["just", "正當/剛好"], B: ["entirely", "全然"], C: ["deeply", "深刻地"], D: ["thoroughly", "透徹地"] } },
+    { category: "Degree & Intensity", q: "72. The soup was only _______ spicy, making it enjoyable for everyone.", ans: "B", opts: { A: ["intensely", "強烈"], B: ["moderately", "適度地/溫和地"], C: ["completely", "完全"], D: ["absolutely", "絕對"] } },
+    { category: "Degree & Intensity", q: "73. The project is _______ done; we just need to format the final page.", ans: "A", opts: { A: ["nearly", "幾乎/將近"], B: ["barely", "僅"], C: ["deeply", "深"], D: ["rather", "相當"] } },
+    { category: "Degree & Intensity", q: "74. The ancient manuscript was only _______ legible due to water damage.", ans: "B", opts: { A: ["completely", "完好地"], B: ["partially", "部分地/局部地"], C: ["thoroughly", "徹底"], D: ["absolutely", "絕對"] } },
+    { category: "Degree & Intensity", q: "75. The movie was _______ entertaining, though it ran a bit too long.", ans: "A", opts: { A: ["quite", "相當/頗為"], B: ["barely", "幾乎不"], C: ["entirely", "全然"], D: ["slightly", "微小地"] } },
+    { category: "Degree & Intensity", q: "76. The test was _______ difficult, so many students failed to finish on time.", ans: "A", opts: { A: ["rather", "相當/頗為"], B: ["slightly", "稍微"], C: ["nearly", "幾乎"], D: ["barely", "僅僅"] } },
+    { category: "Degree & Intensity", q: "77. The temperature dropped _______ last night, but it is still quite warm outside.", ans: "A", opts: { A: ["slightly", "稍微/輕微地"], B: ["entirely", "完全"], C: ["absolutely", "絕對"], D: ["highly", "高度"] } },
+    { category: "Degree & Intensity", q: "78. You must wash the vegetables _______ before using them in the salad.", ans: "C", opts: { A: ["barely", "草草地"], B: ["slightly", "輕微地"], C: ["thoroughly", "徹底地/仔細地"], D: ["nearly", "將近"] } },
+    { category: "Degree & Intensity", q: "79. The music at the concert was _______ loud, giving me a headache.", ans: "B", opts: { A: ["moderately", "適度"], B: ["too", "太/過於"], C: ["nearly", "幾乎"], D: ["partially", "部分"] } },
+    { category: "Degree & Intensity", q: "80. The cake she baked for the celebration tasted _______ delicious.", ans: "A", opts: { A: ["very", "非常地/很"], B: ["barely", "勉強"], C: ["nearly", "幾乎"], D: ["partially", "局部"] } },
+
+    // EVALUATION & CERTAINTY
+    { category: "Evaluation & Certainty", q: "81. _______, I made a mistake on the budget spreadsheet, and I apologize for the error.", ans: "B", opts: { A: ["Allegedly", "據稱"], B: ["Admittedly", "誠然/無可否認地"], C: ["Hopefully", "但願"], D: ["Naturally", "自然地"] } },
+    { category: "Evaluation & Certainty", q: "82. The suspect _______ stole the diamond necklace, but the police lack hard evidence.", ans: "B", opts: { A: ["certainly", "肯定"], B: ["allegedly", "據聲稱/涉嫌"], C: ["wisely", "聰明地"], D: ["fortunately", "幸好"] } },
+    { category: "Evaluation & Certainty", q: "83. I will _______ attend your graduation ceremony next month; nothing will stop me.", ans: "B", opts: { A: ["perhaps", "也許"], B: ["certainly", "無疑地/一定"], C: ["regrettably", "遺憾地"], D: ["probably", "大概"] } },
+    { category: "Evaluation & Certainty", q: "84. With our star player back on the team, we will _______ win the championship game.", ans: "B", opts: { A: ["possibly", "可能"], B: ["definitely", "必定/明確地"], C: ["regrettably", "可悲地"], D: ["hopefully", "期望地"] } },
+    { category: "Evaluation & Certainty", q: "85. _______, the missing keys were found right inside my jacket pocket.", ans: "B", opts: { A: ["Inevitably", "不可避免地"], B: ["Fortunately", "幸運地/幸好"], C: ["Obviously", "明顯地"], D: ["Honestly", "老實說"] } },
+    { category: "Evaluation & Certainty", q: "86. I can _______ say that I have never seen a more beautiful sunset in my life.", ans: "A", opts: { A: ["honestly", "坦白地/真誠地"], B: ["perhaps", "或許"], C: ["probably", "或許"], D: ["allegedly", "據傳"] } },
+    { category: "Evaluation & Certainty", q: "87. _______, the dark storm clouds will clear up before our outdoor picnic begins.", ans: "B", opts: { A: ["Inevitably", "必然地"], B: ["Hopefully", "抱著希望地/但願"], C: ["Naturally", "天然地"], D: ["Obviously", "顯然地"] } },
+    { category: "Evaluation & Certainty", q: "88. If you leave your ice cream out in the hot sun, it will _______ melt.", ans: "B", opts: { A: ["perhaps", "或許"], B: ["inevitably", "不可避免地/必然"], C: ["surprisingly", "出人意料地"], D: ["fortunately", "所幸"] } },
+    { category: "Evaluation & Certainty", q: "89. _______, the smallest bird in the world weighs less than a single penny.", ans: "B", opts: { A: ["Obviously", "不言而喻地"], B: ["Interestingly", "有趣地"], C: ["Naturally", "理所當然地"], D: ["Probably", "可能"] } },
+    { category: "Evaluation & Certainty", q: "90. Since it is autumn, the leaves are _______ starting to turn red and yellow.", ans: "A", opts: { A: ["naturally", "自然地/理所當然"], B: ["regrettably", "遺憾地"], C: ["possibly", "也許"], D: ["undoubtedly", "確實"] } },
+    { category: "Evaluation & Certainty", q: "91. He wore a heavy winter coat, so he was _______ cold during the walk.", ans: "B", opts: { A: ["perhaps", "大概"], B: ["obviously", "顯然地/明顯地"], C: ["possibly", "可能"], D: ["regrettably", "可惜地"] } },
+    { category: "Evaluation & Certainty", q: "92. _______ I will go to the library later today, depending on the weather.", ans: "A", opts: { A: ["Perhaps", "也許/大概"], B: ["Undoubtedly", "毋庸置疑地"], C: ["Honestly", "老實說"], D: ["Wisely", "明智地"] } },
+    { category: "Evaluation & Certainty", q: "93. The cloud cover means it could _______ rain later this afternoon.", ans: "B", opts: { A: ["certainly", "必定"], B: ["possibly", "可能地/也許"], C: ["undoubtedly", "無疑地"], D: ["fortunately", "好在"] } },
+    { category: "Evaluation & Certainty", q: "94. The train is delayed, so she will _______ miss the opening act of the play.", ans: "A", opts: { A: ["probably", "很可能/大概"], B: ["wisely", "明智地"], C: ["thankfully", "謝天謝地地"], D: ["certainly", "肯定"] } },
+    { category: "Evaluation & Certainty", q: "95. _______, I cannot attend your wedding because I will be traveling out of town.", ans: "B", opts: { A: ["Fortunately", "幸好"], B: ["Regrettably", "遺憾地/很抱歉"], C: ["Naturally", "自不用說"], D: ["Obviously", "明擺著"] } },
+    { category: "Evaluation & Certainty", q: "96. The underdog team, _______, won the championship game against the reigning champions.", ans: "B", opts: { A: ["predictably", "果不其然地"], B: ["surprisingly", "出人意料地/驚人地"], C: ["naturally", "自然地"], D: ["inevitably", "必然"] } },
+    { category: "Evaluation & Certainty", q: "97. She is _______ the most talented musician in the entire orchestra.", ans: "A", opts: { A: ["undoubtedly", "無庸置疑地/確實"], B: ["perhaps", "或者是"], C: ["possibly", "有望"], D: ["regrettably", "不幸地"] } },
+    { category: "Evaluation & Certainty", q: "98. The driver slammed on the brakes, but _______, the car still tapped the bumper ahead.", ans: "A", opts: { A: ["unfortunately", "不幸地/遺憾的是"], B: ["fortunately", "多虧"], C: ["wisely", "聰明地"], D: ["naturally", "理所當然"] } },
+    { category: "Evaluation & Certainty", q: "99. _______, the fire department arrived within minutes to extinguish the kitchen fire.", ans: "B", opts: { A: ["Regrettably", "令人惋惜地"], B: ["Thankfully", "謝天謝地/幸好"], C: ["Possibly", "依稀"], D: ["Perhaps", "恐怕"] } },
+    { category: "Evaluation & Certainty", q: "100. He _______ decided to save a portion of his monthly paycheck into a retirement account.", ans: "A", opts: { A: ["wisely", "明智地/聰明地"], B: ["allegedly", "據稱"], C: ["honestly", "老實地"], D: ["unfortunately", "倒楣地"] } }
+];
+
+let totalScore = 0;
+const quizContainer = document.getElementById('quiz-container');
+const scoreDisplay = document.getElementById('current-score');
+
+let currentCategory = "";
+
+quizData.forEach((item, index) => {
+    // Inject Category Heading if it changes
+    if (item.category !== currentCategory) {
+        currentCategory = item.category;
+        const catHeader = document.createElement('h2');
+        catHeader.className = 'category-title';
+        catHeader.innerText = currentCategory;
+        quizContainer.appendChild(catHeader);
+    }
+
+    // Question Block Setup
+    const qBlock = document.createElement('div');
+    qBlock.className = 'question-block';
+    
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerText = item.q;
+    qBlock.appendChild(qText);
+    
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'options';
+    
+    // Generate choice options
+    ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        
+        const wordText = document.createElement('span');
+        wordText.innerText = letter + ") " + item.opts[letter][0];
+        
+        const transText = document.createElement('span');
+        transText.className = 'translation';
+        transText.innerText = item.opts[letter][1];
+        
+        btn.appendChild(wordText);
+        btn.appendChild(transText);
+        
+        // Handle answer selection click
+        btn.onclick = () => {
+            const allBtns = optionsDiv.querySelectorAll('.option-btn');
+            
+            // Highlight right and wrong answers
+            allBtns.forEach(b => {
+                b.disabled = true;
+                const currentLetter = b.innerText.charAt(0);
+                if (currentLetter === item.ans) {
+                    b.classList.add('correct');
+                }
+                b.querySelector('.translation').style.display = 'inline-block';
+            });
+            
+            if (letter === item.ans) {
+                totalScore++;
+                scoreDisplay.innerText = totalScore;
+            } else {
+                btn.classList.add('incorrect');
+            }
+        };
+        
+        optionsDiv.appendChild(btn);
+    });
+    
+    qBlock.appendChild(optionsDiv);
+    quizContainer.appendChild(qBlock);
+});
+</script>
+
+</body>
+</html>

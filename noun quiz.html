@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Nouns English Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .category-title {
+            background-color: #34495e;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .question-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media(min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .translation {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: normal;
+            display: none;
+            background: #f8fafc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        .score-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-weight: bold;
+            z-index: 1000;
+        }
+        @media(max-width: 1024px) {
+            .score-box {
+                position: sticky;
+                top: 0;
+                right: 0;
+                text-align: center;
+                margin-bottom: 20px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="score-box">
+    Score: <span id="current-score">0</span> / 100
+</div>
+
+<div class="container">
+    <h1>100 Nouns English Quiz</h1>
+    <p style="text-align: center; color: #64748b;">Click on an option to answer. Traditional Chinese translations will appear instantly.</p>
+    
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+const quizData = [
+    // PEOPLE & ROLES
+    { category: "People & Roles", q: "1. The _______ carefully reviewed the blueprints before construction began.", ans: "B", opts: { A: ["Astronaut", "航天員"], B: ["Architect", "建築師"], C: ["Historian", "歷史學家"], D: ["Passenger", "乘客"] } },
+    { category: "People & Roles", q: "2. After months of training, she became the state chess _______.", ans: "C", opts: { A: ["Neighbor", "鄰居"], B: ["Witness", "證人"], C: ["Champion", "冠軍"], D: ["Colleague", "同事"] } },
+    { category: "People & Roles", q: "3. The _______ logged hundreds of hours in zero-gravity simulators.", ans: "B", opts: { A: ["Explorer", "探險家"], B: ["Astronaut", "航天員"], C: ["Prodigy", "神童"], D: ["Diplomat", "外交官"] } },
+    { category: "People & Roles", q: "4. I asked my desk _______ if I could borrow a stapler.", ans: "A", opts: { A: ["Colleague", "同事"], B: ["Ancestor", "祖先"], C: ["Guardian", "監護人"], D: ["Director", "導演/主管"] } },
+    { category: "People & Roles", q: "5. We traced our lineage back to an _______ who arrived here in the 1800s.", ans: "B", opts: { A: ["Innovator", "創新者"], B: ["Ancestor", "祖先"], C: ["Mentor", "導師"], D: ["Novelist", "小說家"] } },
+    { category: "People & Roles", q: "6. The board elected a new _______ to oversee the company’s new direction.", ans: "C", opts: { A: ["Passenger", "乘客"], B: ["Spectator", "觀眾"], C: ["Director", "導演/主管"], D: ["Volunteer", "志願者"] } },
+    { category: "People & Roles", q: "7. A skilled _______ was sent to negotiate the peace treaty between the two nations.", ans: "A", opts: { A: ["Diplomat", "外交官"], B: ["Physician", "醫生"], C: ["Champion", "冠軍"], D: ["Guardian", "監護人"] } },
+    { category: "People & Roles", q: "8. The deep-sea _______ discovered three new species of coral.", ans: "B", opts: { A: ["Neighbor", "鄰居"], B: ["Explorer", "探險家"], C: ["Mentor", "導師"], D: ["Witness", "證人"] } },
+    { category: "People & Roles", q: "9. Legal documents designated her aunt as her legal _______ until she turned eighteen.", ans: "A", opts: { A: ["Guardian", "監護人"], B: ["Prodigy", "神童"], C: ["Spectator", "觀眾"], D: ["Colleague", "同事"] } },
+    { category: "People & Roles", q: "10. The _______ spent years analyzing ancient manuscripts in the archive.", ans: "C", opts: { A: ["Innovator", "創新者"], B: ["Physician", "醫生"], C: ["Historian", "歷史學家"], D: ["Volunteer", "志願者"] } },
+    { category: "People & Roles", q: "11. The tech company is looking for an _______ who can reinvent their software platform.", ans: "B", opts: { A: ["Ancestor", "祖先"], B: ["Innovator", "創新者"], C: ["Passenger", "乘客"], D: ["Architect", "建築師"] } },
+    { category: "People & Roles", q: "12. Having a supportive _______ at my first job helped me adjust quickly.", ans: "C", opts: { A: ["Witness", "證人"], B: ["Novelist", "小說家"], C: ["Mentor", "導師"], D: ["Champion", "冠軍"] } },
+    { category: "People & Roles", q: "13. Our next-door _______ always helps water our plants when we go on vacation.", ans: "A", opts: { A: ["Neighbor", "鄰居"], B: ["Explorer", "探險家"], C: ["Director", "導演/主管"], D: ["Diplomat", "外交官"] } },
+    { category: "People & Roles", q: "14. The best-selling _______ spent two years writing her latest mystery thriller.", ans: "C", opts: { A: ["Prodigy", "神童"], B: ["Spectator", "觀眾"], C: ["Novelist", "小說家"], D: ["Astronaut", "航天員"] } },
+    { category: "People & Roles", q: "15. The flight attendant reminded every _______ to fasten their seatbelt.", ans: "A", opts: { A: ["Passenger", "乘客"], B: ["Guardian", "監護人"], C: ["Volunteer", "志願者"], D: ["Physician", "醫生"] } },
+    { category: "People & Roles", q: "16. If you experience severe symptoms, you should consult a qualified _______.", ans: "B", opts: { A: ["Historian", "歷史學家"], B: ["Physician", "醫生"], C: ["Colleague", "同事"], D: ["Architect", "建築師"] } },
+    { category: "People & Roles", q: "17. The eight-year-old piano _______ played a flawless concerto with the orchestra.", ans: "B", opts: { A: ["Witness", "證人"], B: ["Prodigy", "神童"], C: ["Mentor", "導師"], D: ["Innovator", "創新者"] } },
+    { category: "People & Roles", q: "18. A quiet _______ in the front row watched the entire tennis match without making a sound.", ans: "A", opts: { A: ["Spectator", "觀眾"], B: ["Explorer", "探險家"], C: ["Champion", "冠軍"], D: ["Director", "導演/主管"] } },
+    { category: "People & Roles", q: "19. She decided to serve as a _______ at the local animal shelter on weekends.", ans: "C", opts: { A: ["Novelist", "小說家"], B: ["Neighbor", "鄰居"], C: ["Volunteer", "志願者"], D: ["Astronaut", "航天員"] } },
+    { category: "People & Roles", q: "20. The police asked the _______ to describe exactly what they saw during the accident.", ans: "B", opts: { A: ["Physician", "醫生"], B: ["Witness", "證人"], C: ["Ancestor", "祖先"], D: ["Guardian", "監護人"] } },
+
+    // PLACES & ENVIRONMENTS
+    { category: "Places & Environments", q: "21. The chain of volcanic islands forms a beautiful _______ in the Pacific Ocean.", ans: "C", opts: { A: ["Canyon", "峽谷"], B: ["Metropolis", "大都市"], C: ["Archipelago", "群島"], D: ["Peninsula", "半島"] } },
+    { category: "Places & Environments", q: "22. We stood at the rim of the _______ and looked down at the river miles below.", ans: "B", opts: { A: ["Harbor", "港口"], B: ["Canyon", "峽谷"], C: ["Cathedral", "大教堂"], D: ["Oasis", "綠洲"] } },
+    { category: "Places & Environments", q: "23. Sunlight streamed beautifully through the stained-glass windows of the Gothic _______.", ans: "A", opts: { A: ["Cathedral", "大教堂"], B: ["Laboratory", "實驗室"], C: ["Stadium", "體育場"], D: ["Fortress", "堡壘"] } },
+    { category: "Places & Environments", q: "24. Asia is the largest _______ on Earth by both land area and population.", ans: "C", opts: { A: ["Peninsula", "半島"], B: ["Island", "島嶼"], C: ["Continent", "大陸/大洲"], D: ["Wilderness", "荒野"] } },
+    { category: "Places & Environments", q: "25. Very few plants can survive the extreme heat and dry conditions of the _______.", ans: "B", opts: { A: ["Orchard", "果園"], B: ["Desert", "沙漠"], C: ["Glacier", "冰川"], D: ["Sanctuary", "庇護所"] } },
+    { category: "Places & Environments", q: "26. Millions of people gathered to watch the total solar _______ block out the sun.", ans: "B", opts: { A: ["Horizon", "地平線"], B: ["Eclipse", "日食/月食"], C: ["Theater", "劇院"], D: ["Metropolis", "大都市"] } },
+    { category: "Places & Environments", q: "27. Thick stone walls and deep moats protected the medieval _______.", ans: "B", opts: { A: ["Harbor", "港口"], B: ["Fortress", "堡壘"], C: ["Orchard", "果園"], D: ["Cathedral", "大教堂"] } },
+    { category: "Places & Environments", q: "28. Global warming is causing the massive polar _______ to melt at an alarming rate.", ans: "A", opts: { A: ["Glacier", "冰川"], B: ["Canyon", "峽谷"], C: ["Oasis", "綠洲"], D: ["Peninsula", "半島"] } },
+    { category: "Places & Environments", q: "29. The fishing boats safely docked in the _______ before the storm hit.", ans: "C", opts: { A: ["Continent", "大陸/大洲"], B: ["Wilderness", "荒野"], C: ["Harbor", "港口"], D: ["Archipelago", "群島"] } },
+    { category: "Places & Environments", q: "30. As we drove across the flat plains, the sun slowly dipped below the _______.", ans: "A", opts: { A: ["Horizon", "地平線"], B: ["Sanctuary", "庇護所"], C: ["Theater", "劇院"], D: ["Laboratory", "實驗室"] } },
+    { category: "Places & Environments", q: "31. The only way to reach the remote _______ is by taking a ferry.", ans: "C", opts: { A: ["Metropolis", "大都市"], B: ["Canyon", "峽谷"], C: ["Island", "島嶼"], D: ["Stadium", "體育場"] } },
+    { category: "Places & Environments", q: "32. Scientists in the research _______ are working on developing a new vaccine.", ans: "A", opts: { A: ["Laboratory", "實驗室"], B: ["Cathedral", "大教堂"], C: ["Fortress", "堡壘"], D: ["Harbor", "港口"] } },
+    { category: "Places & Environments", q: "33. New York is a bustling _______ known for its skyscrapers and busy streets.", ans: "B", opts: { A: ["Wilderness", "荒野"], B: ["Metropolis", "大都市"], C: ["Oasis", "綠洲"], D: ["Peninsula", "半島"] } },
+    { category: "Places & Environments", q: "34. Travelers were relieved to find fresh water and palm trees at the desert _______.", ans: "C", opts: { A: ["Glacier", "冰川"], B: ["Horizon", "地平線"], C: ["Oasis", "綠洲"], D: ["Canyon", "峽谷"] } },
+    { category: "Places & Environments", q: "35. In autumn, the apple _______ is filled with families picking fresh fruit.", ans: "A", opts: { A: ["Orchard", "果園"], B: ["Sanctuary", "庇護所"], C: ["Continent", "大陸/大洲"], D: ["Archipelago", "群島"] } },
+    { category: "Places & Environments", q: "36. Florida is a classic example of a _______, as it is surrounded by water on three sides.", ans: "C", opts: { A: ["Island", "島嶼"], B: ["Desert", "沙漠"], C: ["Peninsula", "半島"], D: ["Stadium", "體育場"] } },
+    { category: "Places & Environments", q: "37. The endangered birds found a safe home in the wildlife _______.", ans: "A", opts: { A: ["Sanctuary", "庇護所"], B: ["Theater", "劇院"], C: ["Harbor", "港口"], D: ["Laboratory", "實驗室"] } },
+    { category: "Places & Environments", q: "38. Cheers echoed through the open-air _______ when the home team scored.", ans: "C", opts: { A: ["Cathedral", "大教堂"], B: ["Fortress", "堡壘"], C: ["Stadium", "體育場"], D: ["Horizon", "地平線"] } },
+    { category: "Places & Environments", q: "39. The local drama club is performing their new play at the community _______.", ans: "A", opts: { A: ["Theater", "劇院"], B: ["Metropolis", "大都市"], C: ["Oasis", "綠洲"], D: ["Glacier", "冰川"] } },
+    { category: "Places & Environments", q: "40. Hikers must be fully prepared before entering the vast, untamed _______.", ans: "B", opts: { A: ["Orchard", "果園"], B: ["Wilderness", "荒野"], C: ["Peninsula", "半島"], D: ["Cathedral", "大教堂"] } },
+
+    // OBJECTS & THINGS
+    { category: "Objects & Things", q: "41. Archaeologists uncovered an ancient clay _______ during the excavation.", ans: "B", opts: { A: ["Gadget", "小玩意"], B: ["Artifact", "文物"], C: ["Monument", "紀念碑"], D: ["Instrument", "儀器/樂器"] } },
+    { category: "Objects & Things", q: "42. He rides his _______ to school every morning to get some exercise.", ans: "A", opts: { A: ["Bicycle", "自行車"], B: ["Engine", "引擎"], C: ["Compass", "指南針"], D: ["Helmet", "頭盔"] } },
+    { category: "Objects & Things", q: "43. Without a _______, the hikers lost their sense of direction in the fog.", ans: "C", opts: { A: ["Keypad", "鍵盤"], B: ["Lantern", "燈籠"], C: ["Compass", "指南針"], D: ["Document", "文件"] } },
+    { category: "Objects & Things", q: "44. Please print out the legal _______ and sign it at the bottom.", ans: "D", opts: { A: ["Fossil", "化石"], B: ["Journal", "日記/期刊"], C: ["Passport", "護照"], D: ["Document", "文件"] } },
+    { category: "Objects & Things", q: "45. The mechanic opened the hood to inspect the car's broken _______.", ans: "A", opts: { A: ["Engine", "引擎"], B: ["Umbrella", "雨傘"], C: ["Microscope", "顯微鏡"], D: ["Ornament", "裝飾品"] } },
+    { category: "Objects & Things", q: "46. The museum displayed the petrified _______ of a prehistoric fern.", ans: "B", opts: { A: ["Sculpture", "雕塑"], B: ["Fossil", "化石"], C: ["Artifact", "文物"], D: ["Gadget", "小玩意"] } },
+    { category: "Objects & Things", q: "47. This kitchen _______ can peel, slice, and core an apple in five seconds.", ans: "C", opts: { A: ["Instrument", "儀器/樂器"], B: ["Compass", "指南針"], C: ["Gadget", "小玩意"], D: ["Keypad", "鍵盤"] } },
+    { category: "Objects & Things", q: "48. You must wear a protective _______ while riding a motorcycle.", ans: "B", opts: { A: ["Ornament", "裝飾品"], B: ["Helmet", "頭盔"], C: ["Passport", "護照"], D: ["Lantern", "燈籠"] } },
+    { category: "Objects & Things", q: "49. The cello is a beautiful stringed _______ used in classical music.", ans: "C", opts: { A: ["Document", "文件"], B: ["Monument", "紀念碑"], C: ["Instrument", "儀器/樂器"], D: ["Telescope", "望遠鏡"] } },
+    { category: "Objects & Things", q: "50. She writes down her private thoughts and daily experiences in a personal _______.", ans: "A", opts: { A: ["Journal", "日記/期刊"], B: ["Bicycle", "自行車"], C: ["Engine", "引擎"], D: ["Microscope", "顯微鏡"] } },
+    { category: "Objects & Things", q: "51. Enter your four-digit security code on the _______ to unlock the door.", ans: "B", opts: { A: ["Compass", "指南針"], B: ["Keypad", "鍵盤"], C: ["Lantern", "燈籠"], D: ["Umbrella", "雨傘"] } },
+    { category: "Objects & Things", q: "52. The campers lit a _______ to guide their way through the dark woods.", ans: "C", opts: { A: ["Fossil", "化石"], B: ["Microscope", "顯微鏡"], C: ["Lantern", "燈籠"], D: ["Gadget", "小玩意"] } },
+    { category: "Objects & Things", q: "53. The biologist adjusted the _______ to look closely at the plant cells.", ans: "B", opts: { A: ["Telescope", "望遠鏡"], B: ["Microscope", "顯微鏡"], C: ["Instrument", "儀器/樂器"], D: ["Document", "文件"] } },
+    { category: "Objects & Things", q: "54. A stone _______ was built in the town square to honor the soldiers.", ans: "A", opts: { A: ["Monument", "紀念碑"], B: ["Ornament", "裝飾品"], C: ["Sculpture", "雕塑"], D: ["Passport", "護照"] } },
+    { category: "Objects & Things", q: "55. She hung a delicate glass _______ on the branch of the holiday tree.", ans: "C", opts: { A: ["Artifact", "文物"], B: ["Helmet", "頭盔"], C: ["Ornament", "裝飾品"], D: ["Keypad", "鍵盤"] } },
+    { category: "Objects & Things", q: "56. You cannot travel internationally without a valid _______.", ans: "A", opts: { A: ["Passport", "護照"], B: ["Journal", "日記/期刊"], C: ["Bicycle", "自行車"], D: ["Compass", "指南針"] } },
+    { category: "Objects & Things", q: "57. The artist carved a beautiful marble _______ of a soaring eagle.", ans: "B", opts: { A: ["Engine", "引擎"], B: ["Sculpture", "雕塑"], C: ["Umbrella", "雨傘"], D: ["Fossil", "化石"] } },
+    { category: "Objects & Things", q: "58. Astronomers use a powerful space _______ to observe distant galaxies.", ans: "B", opts: { A: ["Microscope", "顯微鏡"], B: ["Telescope", "望遠鏡"], C: ["Lantern", "燈籠"], D: ["Instrument", "儀器/樂器"] } },
+    { category: "Objects & Things", q: "59. Take an _______ with you because the weather forecast predicts heavy rain.", ans: "B", opts: { A: ["Ornament", "裝飾品"], B: ["Umbrella", "雨傘"], C: ["Helmet", "頭盔"], D: ["Gadget", "小玩意"] } },
+    { category: "Objects & Things", q: "60. In physics class, we calculated the initial _______ of the falling object.", ans: "C", opts: { A: ["Document", "文件"], B: ["Monument", "紀念碑"], C: ["Velocity", "速度"], D: ["Keypad", "鍵盤"] } },
+
+    // ANIMALS & NATURE
+    { category: "Animals & Nature", q: "61. Skier safety teams trigger controlled explosions to prevent a dangerous _______.", ans: "B", opts: { A: ["Hurricane", "颶風"], B: ["Avalanche", "雪崩"], C: ["Tornado", "龍捲風"], D: ["Meteor", "流星"] } },
+    { category: "Animals & Nature", q: "62. The heavy _______ dropped two feet of snow and completely blocked the roads.", ans: "A", opts: { A: ["Blizzard", "暴風雪"], B: ["Canopy", "樹冠層"], C: ["Thunder", "雷聲"], D: ["Lightning", "閃電"] } },
+    { category: "Animals & Nature", q: "63. Monkeys and exotic birds spend most of their lives high up in the rainforest _______.", ans: "C", opts: { A: ["Waterfall", "瀑布"], B: ["Ocean", "海洋"], C: ["Canopy", "樹冠層"], D: ["Forest", "森林"] } },
+    { category: "Animals & Nature", q: "64. The deep-sea expedition filmed a strange, glowing _______ near the ocean floor.", ans: "A", opts: { A: ["Creature", "生物"], B: ["Orchid", "蘭花"], C: ["Predator", "捕食者"], D: ["Leopard", "豹"] } },
+    { category: "Animals & Nature", q: "65. A playful _______ swam alongside our boat and jumped out of the water.", ans: "B", opts: { A: ["Reptile", "爬行動物"], B: ["Dolphin", "海豚"], C: ["Predator", "捕食者"], D: ["Leopard", "豹"] } },
+    { category: "Animals & Nature", q: "66. The majestic _______ soared high above the mountain peaks looking for food.", ans: "A", opts: { A: ["Eagle", "老鷹"], B: ["Creature", "生物"], C: ["Orchid", "蘭花"], D: ["Shatter", "碎片"] } },
+    { category: "Animals & Nature", q: "67. We went hiking through a dense _______ filled with ancient pine trees.", ans: "B", opts: { A: ["Ocean", "海洋"], B: ["Forest", "森林"], C: ["Blizzard", "暴風雪"], D: ["Tornado", "龍捲風"] } },
+    { category: "Animals & Nature", q: "68. The category 4 _______ caused severe flooding along the coastal towns.", ans: "C", opts: { A: ["Avalanche", "雪崩"], B: ["Meteor", "流星"], C: ["Hurricane", "颶風"], D: ["Canopy", "樹冠層"] } },
+    { category: "Animals & Nature", q: "69. With its spotted coat, the stealthy _______ blended perfectly into the tall grass.", ans: "A", opts: { A: ["Leopard", "豹"], B: ["Eagle", "老鷹"], C: ["Dolphin", "海豚"], D: ["Reptile", "爬行動物"] } },
+    { category: "Animals & Nature", q: "70. A bright flash of _______ lit up the night sky right before the power went out.", ans: "C", opts: { A: ["Thunder", "雷聲"], B: ["Wildlife", "野生動物"], C: ["Lightning", "閃電"], D: ["Waterfall", "瀑布"] } },
+    { category: "Animals & Nature", q: "71. The shooting star we saw last night was actually a small _______ burning up in the atmosphere.", ans: "B", opts: { A: ["Hurricane", "颶風"], B: ["Meteor", "流星"], C: ["Tornado", "龍捲風"], D: ["Avalanche", "雪崩"] } },
+    { category: "Animals & Nature", q: "72. The Atlantic _______ separates North America from Europe.", ans: "B", opts: { A: ["Forest", "森林"], B: ["Ocean", "海洋"], C: ["Waterfall", "瀑布"], D: ["Canopy", "樹冠層"] } },
+    { category: "Animals & Nature", q: "73. The rare purple _______ blooms only once a year in the greenhouse.", ans: "A", opts: { A: ["Orchid", "蘭花"], B: ["Shatter", "碎片"], C: ["Creature", "生物"], D: ["Wildlife", "野生動物"] } },
+    { category: "Animals & Nature", q: "74. The lion is a fierce _______ at the top of the savanna food chain.", ans: "C", opts: { A: ["Reptile", "爬行動物"], B: ["Dolphin", "海豚"], C: ["Predator", "捕食者"], D: ["Orchid", "蘭花"] } },
+    { category: "Animals & Nature", q: "75. The snake is a cold-blooded _______ that sheds its skin periodically.", ans: "D", opts: { A: ["Predator", "捕食者"], B: ["Eagle", "老鷹"], C: ["Leopard", "豹"], D: ["Reptile", "爬行動物"] } },
+    { category: "Animals & Nature", q: "76. When the baseball hit the window, the glass broke with a loud _______.", ans: "A", opts: { A: ["Shatter", "粉碎聲/碎片"], B: ["Thunder", "雷聲"], C: ["Lightning", "閃電"], D: ["Blizzard", "暴風雪"] } },
+    { category: "Animals & Nature", q: "77. The loud boom of _______ rattled our windows during the summer storm.", ans: "B", opts: { A: ["Meteor", "流星"], B: ["Thunder", "雷聲"], C: ["Hurricane", "颶風"], D: ["Ocean", "海洋"] } },
+    { category: "Animals & Nature", q: "78. The spinning funnel cloud of the _______ ripped through the farmland.", ans: "A", opts: { A: ["Tornado", "龍捲風"], B: ["Avalanche", "雪崩"], C: ["Canopy", "樹冠層"], D: ["Waterfall", "瀑布"] } },
+    { category: "Animals & Nature", q: "79. Water cascaded down the rocky cliff, creating a spectacular _______.", ans: "C", opts: { A: ["Forest", "森林"], B: ["Wildlife", "野生動物"], C: ["Waterfall", "瀑布"], D: ["Ocean", "海洋"] } },
+    { category: "Animals & Nature", q: "80. National parks are created to protect native _______ and their natural habitats.", ans: "B", opts: { A: ["Shatter", "粉碎聲/碎片"], B: ["Wildlife", "野生動物"], C: ["Creature", "生物"], D: ["Orchid", "蘭花"] } },
+
+    // IDEAS, CONCEPTS & FEELINGS
+    { category: "Ideas, Concepts & Feelings", q: "81. Her career _______ is to become the chief executive of the company.", ans: "B", opts: { A: ["Chaos", "混亂"], B: ["Ambition", "抱負/野心"], C: ["Illusion", "錯覺/幻想"], D: ["Strategy", "策略"] } },
+    { category: "Ideas, Concepts & Feelings", q: "82. The firefighter showed great _______ by entering the burning building to save the puppy.", ans: "A", opts: { A: ["Bravery", "勇敢"], B: ["Nostalgia", "懷舊/鄉愁"], C: ["Theory", "理論"], D: ["Harmony", "和諧"] } },
+    { category: "Ideas, Concepts & Feelings", q: "83. The classroom was in total _______ until the teacher walked through the door.", ans: "C", opts: { A: ["Legacy", "遺產"], B: ["Destiny", "命運"], C: ["Chaos", "混亂"], D: ["Justice", "正義"] } },
+    { category: "Ideas, Concepts & Feelings", q: "84. Driven by pure _______, the child opened every cabinet to see what was inside.", ans: "C", opts: { A: ["Obstacle", "障礙"], B: ["Illusion", "錯覺/幻想"], C: ["Curiosity", "好奇心"], D: ["Victory", "勝利"] } },
+    { category: "Ideas, Concepts & Feelings", q: "85. He believed it was his _______ to travel the world and write books.", ans: "A", opts: { A: ["Destiny", "命運"], B: ["Chaos", "混亂"], C: ["Patience", "耐心"], D: ["Strategy", "策略"] } },
+    { category: "Ideas, Concepts & Feelings", q: "86. Solar panels convert sunlight into clean, renewable _______.", ans: "A", opts: { A: ["Energy", "能量/精力"], B: ["Theory", "理論"], C: ["Knowledge", "知識"], D: ["Motivation", "動力/動機"] } },
+    { category: "Ideas, Concepts & Feelings", q: "87. The citizens celebrated their newly gained _______ after the oppressive regime fell.", ans: "C", opts: { A: ["Legacy", "遺產"], B: ["Obstacle", "障礙"], C: ["Freedom", "自由"], D: ["Nostalgia", "懷舊/鄉愁"] } },
+    { category: "Ideas, Concepts & Feelings", q: "88. We expressed our sincere _______ to the neighbors who helped us move.", ans: "B", opts: { A: ["Illusion", "錯覺/幻想"], B: ["Gratitude", "感激"], C: ["Curiosity", "好奇心"], D: ["Ambition", "抱負/野心"] } },
+    { category: "Ideas, Concepts & Feelings", q: "89. The choir singers blended their voices to create a beautiful _______.", ans: "C", opts: { A: ["Chaos", "混亂"], B: ["Bravery", "勇敢"], C: ["Harmony", "和諧"], D: ["Victory", "勝利"] } },
+    { category: "Ideas, Concepts & Feelings", q: "90. The magician created the _______ that a coin vanished into thin air.", ans: "A", opts: { A: ["Illusion", "錯覺/幻想"], B: ["Theory", "理論"], C: ["Legacy", "遺產"], D: ["Destiny", "命運"] } },
+    { category: "Ideas, Concepts & Feelings", q: "91. The court system is designed to uphold law and ensure _______ for all citizens.", ans: "A", opts: { A: ["Justice", "正義"], B: ["Motivation", "動力/動機"], C: ["Nostalgia", "懷舊/鄉愁"], D: ["Freedom", "自由"] } },
+    { category: "Ideas, Concepts & Feelings", q: "92. Reading books is an excellent way to expand your _______ on various subjects.", ans: "C", opts: { A: ["Obstacle", "障礙"], B: ["Energy", "能量/精力"], C: ["Knowledge", "知識"], D: ["Patience", "耐心"] } },
+    { category: "Ideas, Concepts & Feelings", q: "93. The retiring professor left behind a lasting _______ of research and inspiration.", ans: "A", opts: { A: ["Legacy", "遺產"], B: ["Chaos", "混亂"], C: ["Strategy", "策略"], D: ["Illusion", "錯覺/幻想"] } },
+    { category: "Ideas, Concepts & Feelings", q: "94. The coach's inspiring speech gave the team the _______ they needed to win.", ans: "B", opts: { A: ["Gratitude", "感激"], B: ["Motivation", "動力/動機"], C: ["Theory", "理論"], D: ["Destiny", "命運"] } },
+    { category: "Ideas, Concepts & Feelings", q: "95. Looking at old childhood photographs always fills me with a sense of _______.", ans: "C", opts: { A: ["Bravery", "勇敢"], B: ["Curiosity", "好奇心"], C: ["Nostalgia", "懷舊/鄉愁"], D: ["Justice", "正義"] } },
+    { category: "Ideas, Concepts & Feelings", q: "96. A fallen tree created a major _______ on the bicycle path.", ans: "A", opts: { A: ["Obstacle", "障礙"], B: ["Harmony", "和諧"], C: ["Victory", "勝利"], D: ["Energy", "能量/精力"] } },
+    { category: "Ideas, Concepts & Feelings", q: "97. Teaching a puppy how to sit requires a lot of time and _______.", ans: "B", opts: { A: ["Ambition", "抱負/野心"], B: ["Patience", "耐心"], C: ["Chaos", "混亂"], D: ["Knowledge", "知識"] } },
+    { category: "Ideas, Concepts & Feelings", q: "98. The military general developed a clever _______ to outmaneuver the opposition.", ans: "C", opts: { A: ["Legacy", "遺產"], B: ["Theory", "理論"], C: ["Strategy", "策略"], D: ["Freedom", "自由"] } },
+    { category: "Ideas, Concepts & Feelings", q: "99. Albert Einstein proposed the _______ of relativity in the early 20th century.", ans: "A", opts: { A: ["Theory", "理論"], B: ["Motivation", "動力/動機"], C: ["Obstacle", "障礙"], D: ["Gratitude", "感激"] } },
+    { category: "Ideas, Concepts & Feelings", q: "100. The stadium erupted in celebration to mark the team's historic championship _______.", ans: "C", opts: { A: ["Nostalgia", "懷舊/鄉愁"], B: ["Harmony", "和諧"], C: ["Victory", "勝利"], D: ["Destiny", "命運"] } }
+];
+
+let totalScore = 0;
+const quizContainer = document.getElementById('quiz-container');
+const scoreDisplay = document.getElementById('current-score');
+
+let currentCategory = "";
+
+quizData.forEach((item, index) => {
+    // Inject Category Heading if it changes
+    if (item.category !== currentCategory) {
+        currentCategory = item.category;
+        const catHeader = document.createElement('h2');
+        catHeader.className = 'category-title';
+        catHeader.innerText = currentCategory;
+        quizContainer.appendChild(catHeader);
+    }
+
+    // Question Block Setup
+    const qBlock = document.createElement('div');
+    qBlock.className = 'question-block';
+    
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerText = item.q;
+    qBlock.appendChild(qText);
+    
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'options';
+    
+    // Generate choice options
+    ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        
+        const wordText = document.createElement('span');
+        wordText.innerText = letter + ") " + item.opts[letter][0];
+        
+        const transText = document.createElement('span');
+        transText.className = 'translation';
+        transText.innerText = item.opts[letter][1];
+        
+        btn.appendChild(wordText);
+        btn.appendChild(transText);
+        
+        // Handle answer selection click
+        btn.onclick = () => {
+            const allBtns = optionsDiv.querySelectorAll('.option-btn');
+            
+            // Highlight right and wrong answers
+            allBtns.forEach(b => {
+                b.disabled = true;
+                const currentLetter = b.innerText.charAt(0);
+                if (currentLetter === item.ans) {
+                    b.classList.add('correct');
+                }
+                b.querySelector('.translation').style.display = 'inline-block';
+            });
+            
+            if (letter === item.ans) {
+                totalScore++;
+                scoreDisplay.innerText = totalScore;
+            } else {
+                btn.classList.add('incorrect');
+            }
+        };
+        
+        optionsDiv.appendChild(btn);
+    });
+    
+    qBlock.appendChild(optionsDiv);
+    quizContainer.appendChild(qBlock);
+});
+</script>
+
+</body>
+</html>

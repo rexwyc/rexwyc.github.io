@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Dynamic Verbs English Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .category-title {
+            background-color: #34495e;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .question-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media(min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .translation {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: normal;
+            display: none;
+            background: #f8fafc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        .score-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-weight: bold;
+            z-index: 1000;
+        }
+        @media(max-width: 1024px) {
+            .score-box {
+                position: sticky;
+                top: 0;
+                right: 0;
+                text-align: center;
+                margin-bottom: 20px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="score-box">
+    Score: <span id="current-score">0</span> / 100
+</div>
+
+<div class="container">
+    <h1>100 Dynamic Verbs English Quiz</h1>
+    <p style="text-align: center; color: #64748b;">Click on an option to answer. Traditional Chinese translations will appear instantly.</p>
+    
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+const quizData = [
+    // ACTION & MOVEMENT
+    { category: "Action & Movement", q: "1. The sports car began to ________ down the racetrack as soon as the light turned green.", ans: "B", opts: { A: ["March", "前進/遊行"], B: ["Accelerate", "加速"], C: ["Stumble", "絆倒"], D: ["Glide", "滑行"] } },
+    { category: "Action & Movement", q: "2. The basketball started to ________ away after hitting the edge of the rim.", ans: "A", opts: { A: ["Bounce", "彈跳"], B: ["Traverse", "橫越"], C: ["Flee", "逃跑"], D: ["Navigate", "導航"] } },
+    { category: "Action & Movement", q: "3. We had to ________ up a steep, rocky trail to reach the mountain summit.", ans: "C", opts: { A: ["Zoom", "疾馳"], B: ["Slide", "滑動"], C: ["Climb", "攀爬"], D: ["Plunge", "驟降/跳入"] } },
+    { category: "Action & Movement", q: "4. Seeing the rain start to pour, she decided to ________ across the street to find shelter.", ans: "C", opts: { A: ["Wander", "漫步"], B: ["Pivot", "旋轉/以...為軸"], C: ["Dash", "猛衝"], D: ["Hike", "徒步旅行"] } },
+    { category: "Action & Movement", q: "5. The research team set out to ________ the uncharted depths of the cave system.", ans: "A", opts: { A: ["Explore", "探索"], B: ["Vanish", "消失"], C: ["March", "前進/遊行"], D: ["Sprint", "短跑衝刺"] } },
+    { category: "Action & Movement", q: "6. The startled deer began to ________ into the thick forest when it heard a loud noise.", ans: "B", opts: { A: ["Glide", "滑行"], B: ["Flee", "逃跑"], C: ["Accelerate", "加速"], D: ["Navigate", "導航"] } },
+    { category: "Action & Movement", q: "7. The eagle began to ________ effortlessly on the warm air currents high above the valley.", ans: "C", opts: { A: ["Bounce", "彈跳"], B: ["Stumble", "絆倒"], C: ["Glide", "滑行"], D: ["Race", "賽跑/全速前進"] } },
+    { category: "Action & Movement", q: "8. Every summer, they love to ________ through the national parks for days at a time.", ans: "A", opts: { A: ["Hike", "徒步旅行"], B: ["Plunge", "驟降/跳入"], C: ["Vanish", "消失"], D: ["Zoom", "疾馳"] } },
+    { category: "Action & Movement", q: "9. The dancer managed to ________ gracefully over the puddle without getting wet.", ans: "B", opts: { A: ["Traverse", "橫越"], B: ["Leap", "跳躍"], C: ["Wander", "漫步"], D: ["Pivot", "旋轉/以...為軸"] } },
+    { category: "Action & Movement", q: "10. The band members began to ________ in perfect unison down the parade route.", ans: "C", opts: { A: ["Sprint", "短跑衝刺"], B: ["Stumble", "絆倒"], C: ["March", "前進/遊行"], D: ["Flee", "逃跑"] } },
+    { category: "Action & Movement", q: "11. Captains use advanced radar systems to ________ safely through thick fog.", ans: "A", opts: { A: ["Navigate", "導航"], B: ["Zoom", "疾馳"], C: ["Bounce", "彈跳"], D: ["Explore", "探索"] } },
+    { category: "Action & Movement", q: "12. The daring cliff diver prepared to ________ into the deep blue ocean below.", ans: "B", opts: { A: ["Glide", "滑行"], B: ["Plunge", "驟降/跳入"], C: ["Hike", "徒步旅行"], D: ["March", "前進/遊行"] } },
+    { category: "Action & Movement", q: "13. The two cyclists wanted to ________ each other to the top of the steep hill.", ans: "C", opts: { A: ["Wander", "漫步"], B: ["Stumble", "絆倒"], C: ["Race", "賽跑/全速前進"], D: ["Pivot", "旋轉/以...為軸"] } },
+    { category: "Action & Movement", q: "14. The gold medalist had to ________ the last 50 meters to break the world record.", ans: "A", opts: { A: ["Sprint", "短跑衝刺"], B: ["Climb", "攀爬"], C: ["Flee", "逃跑"], D: ["Navigate", "導航"] } },
+    { category: "Action & Movement", q: "15. Walking in the dark, I started to ________ over a loose root on the path.", ans: "B", opts: { A: ["Accelerate", "加速"], B: ["Stumble", "絆倒"], C: ["Leap", "跳躍"], D: ["Zoom", "疾馳"] } },
+    { category: "Action & Movement", q: "16. The explorers had to ________ a vast desert expanse during their expedition.", ans: "A", opts: { A: ["Traverse", "橫越"], B: ["Bounce", "彈跳"], C: ["Plunge", "驟降/跳入"], D: ["Dash", "猛衝"] } },
+    { category: "Action & Movement", q: "17. The magician made the coin ________ right before the audience's eyes.", ans: "C", opts: { A: ["Wander", "漫步"], B: ["Climb", "攀爬"], C: ["Vanish", "消失"], D: ["Race", "賽跑/全速前進"] } },
+    { category: "Action & Movement", q: "18. Without a map, we decided to ________ aimlessly through the historic streets.", ans: "B", opts: { A: ["Sprint", "短跑衝刺"], B: ["Wander", "漫步"], C: ["Accelerate", "加速"], D: ["March", "前進/遊行"] } },
+    { category: "Action & Movement", q: "19. The race car seemed to ________ past the grandstands at an incredible speed.", ans: "C", opts: { A: ["Glide", "滑行"], B: ["Stumble", "絆倒"], C: ["Zoom", "疾馳"], D: ["Leap", "跳躍"] } },
+    { category: "Action & Movement", q: "20. The basketball player had to ________ on one foot to change direction and avoid the defender.", ans: "A", opts: { A: ["Pivot", "旋轉/以...為軸"], B: ["Flee", "逃跑"], C: ["Plunge", "驟降/跳入"], D: ["Explore", "探索"] } },
+
+    // THOUGHT & COMMUNICATION
+    { category: "Thought & Communication", q: "21. Scientists need to ________ the data thoroughly before publishing their results.", ans: "B", opts: { A: ["Whisper", "低語/耳語"], B: ["Analyze", "分析"], C: ["Suggest", "建議"], D: ["Translate", "翻譯"] } },
+    { category: "Thought & Communication", q: "22. It is important to ________ your ideas clearly during a job interview.", ans: "A", opts: { A: ["Articulate", "清晰表達"], B: ["Deconstruct", "解構"], C: ["Ponder", "沉思"], D: ["Listen", "傾聽"] } },
+    { category: "Thought & Communication", q: "23. The marketing team met to ________ fresh ideas for the new advertising campaign.", ans: "B", opts: { A: ["Evaluate", "評估"], B: ["Brainstorm", "腦力激盪"], C: ["Conclude", "得出結論"], D: ["Debate", "辯論"] } },
+    { category: "Thought & Communication", q: "24. Authors often ________ with illustrators to bring their children's books to life.", ans: "B", opts: { A: ["Hypothesize", "假設"], B: ["Collaborate", "合作"], C: ["Question", "質疑/提問"], D: ["Reflect", "反思/反射"] } },
+    { category: "Thought & Communication", q: "25. The politicians are scheduled to ________ the new tax policy on live television tonight.", ans: "A", opts: { A: ["Debate", "辯論"], B: ["Whisper", "低語/耳語"], C: ["Translate", "翻譯"], D: ["Illustrate", "闡明/插畫"] } },
+    { category: "Thought & Communication", q: "26. Could you ________ on that point? I need a bit more detail to understand.", ans: "C", opts: { A: ["Conclude", "得出結論"], B: ["Ponder", "沉思"], C: ["Elaborate", "詳細闡述"], D: ["Listen", "傾聽"] } },
+    { category: "Thought & Communication", q: "27. The judges will ________ each performance based on technique and creativity.", ans: "A", opts: { A: ["Evaluate", "評估"], B: ["Brainstorm", "腦力激盪"], C: ["Suggest", "建議"], D: ["Hypothesize", "假設"] } },
+    { category: "Thought & Communication", q: "28. Before running the experiment, the chemistry students had to ________ a possible outcome.", ans: "C", opts: { A: ["Translate", "翻譯"], B: ["Articulate", "清晰表達"], C: ["Hypothesize", "假設"], D: ["Deconstruct", "解構"] } },
+    { category: "Thought & Communication", q: "29. The textbook uses diagrams to ________ how the water cycle works.", ans: "B", opts: { A: ["Question", "質疑/提問"], B: ["Illustrate", "闡明/插畫"], C: ["Reflect", "反思/反射"], D: ["Debate", "辯論"] } },
+    { category: "Thought & Communication", q: "30. To be a good leader, you must ________ carefully to the concerns of your team.", ans: "A", opts: { A: ["Listen", "傾聽"], B: ["Elaborate", "詳細闡述"], C: ["Conclude", "得出結論"], D: ["Analyze", "分析"] } },
+    { category: "Thought & Communication", q: "31. The union representative had to ________ with management for better working hours.", ans: "C", opts: { A: ["Whisper", "低語/耳語"], B: ["Ponder", "沉思"], C: ["Negotiate", "談判/協商"], D: ["Hypothesize", "假設"] } },
+    { category: "Thought & Communication", q: "32. The salesperson tried to ________ the customer to buy the extended warranty.", ans: "A", opts: { A: ["Persuade", "說服"], B: ["Deconstruct", "解構"], C: ["Collaborate", "合作"], D: ["Translate", "翻譯"] } },
+    { category: "Thought & Communication", q: "33. Sitting by the quiet lake, he began to ________ the deep meaning of life.", ans: "B", opts: { A: ["Articulate", "清晰表達"], B: ["Ponder", "沉思"], C: ["Suggest", "建議"], D: ["Debate", "辯論"] } },
+    { category: "Thought & Communication", q: "34. A curious student will always ________ the validity of the information presented.", ans: "B", opts: { A: ["Conclude", "得出結論"], B: ["Question", "質疑/提問"], C: ["Illustrate", "闡明/插畫"], D: ["Listen", "傾聽"] } },
+    { category: "Thought & Communication", q: "35. At the end of the year, it is helpful to ________ on your personal achievements.", ans: "C", opts: { A: ["Evaluate", "評估"], B: ["Brainstorm", "腦力激盪"], C: ["Reflect", "反思/反射"], D: ["Negotiate", "談判/協商"] } },
+    { category: "Thought & Communication", q: "36. I would like to ________ that we move the weekly meeting to Friday afternoon.", ans: "A", opts: { A: ["Suggest", "建議"], B: ["Deconstruct", "解構"], C: ["Whisper", "低語/耳語"], D: ["Persuade", "說服"] } },
+    { category: "Thought & Communication", q: "37. We hired an expert to ________ the ancient documents into modern English.", ans: "C", opts: { A: ["Elaborate", "詳細闡述"], B: ["Analyze", "分析"], C: ["Translate", "翻譯"], D: ["Collaborate", "合作"] } },
+    { category: "Thought & Communication", q: "38. Because the baby was sleeping, she chose to ________ the secret to her friend.", ans: "B", opts: { A: ["Debate", "辯論"], B: ["Whisper", "低語/耳語"], C: ["Illustrate", "闡明/插畫"], D: ["Ponder", "沉思"] } },
+    { category: "Thought & Communication", q: "39. Based on the overwhelming evidence, the jury was able to ________ that the suspect was guilty.", ans: "C", opts: { A: ["Question", "質疑/提問"], B: ["Hypothesize", "假設"], C: ["Conclude", "得出結論"], D: ["Reflect", "反思/反射"] } },
+    { category: "Thought & Communication", q: "40. The literature professor asked the class to ________ the complex poem stanza by stanza.", ans: "B", opts: { A: ["Articulate", "清晰表達"], B: ["Deconstruct", "解構"], C: ["Suggest", "建議"], D: ["Listen", "傾聽"] } },
+
+    // CREATION & CHANGE
+    { category: "Creation & Change", q: "41. Successful businesses must ________ quickly to changing market trends.", ans: "C", opts: { A: ["Forge", "鍛造/打造"], B: ["Produce", "生產"], C: ["Adapt", "適應"], D: ["Unify", "統一"] } },
+    { category: "Creation & Change", q: "42. The construction crew is working hard to ________ a new community center downtown.", ans: "A", opts: { A: ["Build", "建造"], B: ["Evolve", "演變/進化"], C: ["Vary", "改變/使多樣化"], D: ["Weave", "編織"] } },
+    { category: "Creation & Change", q: "43. The musician spent hours in the studio to ________ a beautiful piano concerto.", ans: "B", opts: { A: ["Simulate", "模擬"], B: ["Compose", "創作/作曲"], C: ["Modify", "修改/調整"], D: ["Innovate", "創新"] } },
+    { category: "Creation & Change", q: "44. Graphic architects use specialized software to ________ modern website layouts.", ans: "A", opts: { A: ["Design", "設計"], B: ["Cultivate", "培養/耕作"], C: ["Synthesize", "綜合/合成"], D: ["Revitalize", "使恢復生機"] } },
+    { category: "Creation & Change", q: "45. Over millions of years, species ________ to better survive their environments.", ans: "D", opts: { A: ["Reconstruct", "重建"], B: ["Forge", "鍛造/打造"], C: ["Organize", "組織"], D: ["Evolve", "演變/進化"] } },
+    { category: "Creation & Change", q: "46. The blacksmith managed to ________ a durable sword from raw iron.", ans: "A", opts: { A: ["Forge", "鍛造/打造"], B: ["Vary", "改變/使多樣化"], C: ["Adapt", "適應"], D: ["Simulate", "模擬"] } },
+    { category: "Creation & Change", q: "47. Solar panels help to ________ clean, renewable electricity for households.", ans: "C", opts: { A: ["Weave", "編織"], B: ["Synthesize", "綜合/合成"], C: ["Generate", "產生/發電"], D: ["Modify", "修改/調整"] } },
+    { category: "Creation & Change", q: "48. Tech companies always try to ________ by creating brand new gadgets.", ans: "C", opts: { A: ["Reconstruct", "重建"], B: ["Build", "建造"], C: ["Innovate", "創新"], D: ["Organize", "組織"] } },
+    { category: "Creation & Change", q: "49. You may need to ________ the settings on your phone to save battery life.", ans: "B", opts: { A: ["Evolve", "演變/進化"], B: ["Modify", "修改/調整"], C: ["Unify", "統一"], D: ["Compose", "創作/作曲"] } },
+    { category: "Creation & Change", q: "50. It takes a lot of time to ________ a messy closet into an efficient storage space.", ans: "B", opts: { A: ["Forge", "鍛造/打造"], B: ["Organize", "組織"], C: ["Cultivate", "培養/耕作"], D: ["Simulate", "模擬"] } },
+    { category: "Creation & Change", q: "51. The factory is able to ________ thousands of eco-friendly vehicles every year.", ans: "A", opts: { A: ["Produce", "生產"], B: ["Vary", "改變/使多樣化"], C: ["Revitalize", "使恢復生機"], D: ["Adapt", "適應"] } },
+    { category: "Creation & Change", q: "52. Historians want to ________ the ancient temple using 3D printing technology.", ans: "B", opts: { A: ["Design", "設計"], B: ["Reconstruct", "重建"], C: ["Weave", "編織"], D: ["Synthesize", "綜合/合成"] } },
+    { category: "Creation & Change", q: "53. Pilots use advanced software to ________ flight conditions during a severe storm.", ans: "C", opts: { A: ["Generate", "產生/發電"], B: ["Modify", "修改/調整"], C: ["Simulate", "模擬"], D: ["Cultivate", "培養/耕作"] } },
+    { category: "Creation & Change", q: "54. A coat of bright paint can completely ________ a dark and gloomy room.", ans: "A", opts: { A: ["Transform", "改變/轉化"], B: ["Unify", "統一"], C: ["Build", "建造"], D: ["Evolve", "演變/進化"] } },
+    { category: "Creation & Change", q: "55. The new leader hoped to ________ the divided political factions under one goal.", ans: "B", opts: { A: ["Vary", "改變/使多樣化"], B: ["Unify", "統一"], C: ["Compose", "創作/作曲"], D: ["Innovate", "創新"] } },
+    { category: "Creation & Change", q: "56. The chef likes to ________ the ingredients in the soup to keep the menu exciting.", ans: "C", opts: { A: ["Reconstruct", "重建"], B: ["Forge", "鍛造/打造"], C: ["Vary", "改變/使多樣化"], D: ["Organize", "組織"] } },
+    { category: "Creation & Change", q: "57. In the textile class, students learn how to ________ intricate patterns into blankets.", ans: "A", opts: { A: ["Weave", "編織"], B: ["Simulate", "模擬"], C: ["Produce", "生產"], D: ["Adapt", "適應"] } },
+    { category: "Creation & Change", q: "58. Farmers work hard to ________ high-quality crops despite unpredictable weather.", ans: "B", opts: { A: ["Transform", "改變/轉化"], B: ["Cultivate", "培養/耕作"], C: ["Design", "設計"], D: ["Modify", "修改/調整"] } },
+    { category: "Creation & Change", q: "59. The scientist tried to ________ the data from multiple studies into one coherent report.", ans: "A", opts: { A: ["Synthesize", "綜合/合成"], B: ["Evolve", "演變/進化"], C: ["Vary", "改變/使多樣化"], D: ["Build", "建造"] } },
+    { category: "Creation & Change", q: "60. The city council launched an initiative to ________ the neglected downtown district.", ans: "C", opts: { A: ["Unify", "統一"], B: ["Generate", "產生/發電"], C: ["Revitalize", "使恢復生機"], D: ["Compose", "創作/作曲"] } },
+
+    // INTERACTION & EMOTION
+    { category: "Interaction & Emotion", q: "61. I truly ________ all the hard work you put into planning this surprise party.", ans: "B", opts: { A: ["Protect", "保護"], B: ["Appreciate", "感激/欣賞"], C: ["Inspire", "激發/鼓舞"], D: ["Empower", "賦予力量"] } },
+    { category: "Interaction & Emotion", q: "62. We tried to ________ the crying child by offering him a plush teddy bear.", ans: "A", opts: { A: ["Comfort", "安慰"], B: ["Forgive", "原諒"], C: ["Honor", "尊敬/榮耀"], D: ["Connect", "連結"] } },
+    { category: "Interaction & Emotion", q: "63. Teachers always try to ________ their students to read more books over the summer.", ans: "A", opts: { A: ["Encourage", "鼓勵"], B: ["Welcome", "歡迎"], C: ["Trust", "信任"], D: ["Smile", "微笑"] } },
+    { category: "Interaction & Emotion", q: "64. To counsel others effectively, you must learn to ________ with their personal struggles.", ans: "B", opts: { A: ["Motivate", "激勵/推動"], B: ["Empathize", "產生共鳴/同理"], C: ["Celebrate", "慶祝"], D: ["Reassure", "使安心"] } },
+    { category: "Interaction & Emotion", q: "65. It can be difficult to ________ someone who has broken your trust.", ans: "A", opts: { A: ["Forgive", "原諒"], B: ["Protect", "保護"], C: ["Inspire", "激發/鼓舞"], D: ["Unite", "團結"] } },
+    { category: "Interaction & Emotion", q: "66. The friendly host stood at the front door to ________ every guest who arrived.", ans: "C", opts: { A: ["Nurture", "養育/滋養"], B: ["Empower", "賦予力量"], C: ["Greet", "打招呼/迎接"], D: ["Support", "支持"] } },
+    { category: "Interaction & Emotion", q: "67. The speaker's powerful life story managed to ________ the entire audience.", ans: "C", opts: { A: ["Comfort", "安慰"], B: ["Reassure", "使安心"], C: ["Inspire", "激發/鼓舞"], D: ["Trust", "信任"] } },
+    { category: "Interaction & Emotion", q: "68. A great coach knows how to ________ players when they are losing a game.", ans: "A", opts: { A: ["Motivate", "激勵/推動"], B: ["Forgive", "原諒"], C: ["Connect", "連結"], D: ["Smile", "微笑"] } },
+    { category: "Interaction & Emotion", q: "69. Parents do everything they can to ________ their children from potential dangers.", ans: "B", opts: { A: ["Welcome", "歡迎"], B: ["Protect", "保護"], C: ["Appreciate", "感激/欣賞"], D: ["Empathize", "產生共鳴/同理"] } },
+    { category: "Interaction & Emotion", q: "70. The doctor spoke softly to ________ the anxious patient before the procedure.", ans: "A", opts: { A: ["Reassure", "使安心"], B: ["Celebrate", "慶祝"], C: ["Nurture", "養育/滋養"], D: ["Greet", "打招呼/迎接"] } },
+    { category: "Interaction & Emotion", q: "71. Seeing her old friend made her instantly ________ from ear to ear.", ans: "C", opts: { A: ["Trust", "信任"], B: ["Support", "支持"], C: ["Smile", "微笑"], D: ["Honor", "尊敬/榮耀"] } },
+    { category: "Interaction & Emotion", q: "72. It takes a long time to ________ a stranger with your deepest secrets.", ans: "C", opts: { A: ["Inspire", "激發/鼓舞"], B: ["Encourage", "鼓勵"], C: ["Trust", "信任"], D: ["Empower", "賦予力量"] } },
+    { category: "Interaction & Emotion", q: "73. The community center will ________ people of all cultural backgrounds.", ans: "A", opts: { A: ["Welcome", "歡迎"], B: ["Motivate", "激勵/推動"], C: ["Protect", "保護"], D: ["Forgive", "原諒"] } },
+    { category: "Interaction & Emotion", q: "74. Friends should always ________ each other during challenging times in life.", ans: "A", opts: { A: ["Support", "支持"], B: ["Appreciate", "感激/欣賞"], C: ["Smile", "微笑"], D: ["Connect", "連結"] } },
+    { category: "Interaction & Emotion", q: "75. The entire family gathered to ________ grandfather's 90th birthday.", ans: "B", opts: { A: ["Nurture", "養育/滋養"], B: ["Celebrate", "慶祝"], C: ["Reassure", "使安心"], D: ["Empathize", "產生共鳴/同理"] } },
+    { category: "Interaction & Emotion", q: "76. Social media apps are designed to help users ________ with friends worldwide.", ans: "A", opts: { A: ["Connect", "連結"], B: ["Empower", "賦予力量"], C: ["Unite", "團結"], D: ["Honor", "尊敬/榮耀"] } },
+    { category: "Interaction & Emotion", q: "77. The scholarship program aims to ________ young women pursuing careers in engineering.", ans: "B", opts: { A: ["Greet", "打招呼/迎接"], B: ["Empower", "賦予力量"], C: ["Comfort", "安慰"], D: ["Encourage", "鼓勵"] } },
+    { category: "Interaction & Emotion", q: "78. We must ________ the veterans who fought bravely to defend our country.", ans: "C", opts: { A: ["Trust", "信任"], B: ["Nurture", "養育/滋養"], C: ["Honor", "尊敬/榮耀"], D: ["Support", "支持"] } },
+    { category: "Interaction & Emotion", q: "79. Gardeners must carefully ________ young seedlings until they grow strong.", ans: "A", opts: { A: ["Nurture", "養育/滋養"], B: ["Celebrate", "慶祝"], C: ["Connect", "連結"], D: ["Inspire", "激發/鼓舞"] } },
+    { category: "Interaction & Emotion", q: "80. The tragedy caused the neighborhood to ________ and help the affected families.", ans: "C", opts: { A: ["Empower", "賦予力量"], B: ["Appreciate", "感激/欣賞"], C: ["Unite", "團結"], D: ["Smile", "微笑"] } },
+
+    // ACHIEVEMENT & GROWTH
+    { category: "Achievement & Growth", q: "81. Hard work and dedication will help you ________ your long-term career goals.", ans: "A", opts: { A: ["Accomplish", "實現/完成"], B: ["Improve", "改善/進步"], C: ["Blossom", "開花/興旺"], D: ["Flourish", "茁壯/繁榮"] } },
+    { category: "Achievement & Growth", q: "82. The local library plans to ________ a rare collection of historical manuscripts.", ans: "B", opts: { A: ["Exceed", "超過"], B: ["Acquire", "獲得/取得"], C: ["Thrive", "茁壯成長"], D: ["Win", "贏得"] } },
+    { category: "Achievement & Growth", q: "83. If you study diligently, you will eventually ________ a high score on the exam.", ans: "A", opts: { A: ["Attain", "達到/獲得"], B: ["Persist", "堅持"], C: ["Overcome", "克服"], D: ["Prosper", "繁榮/成功"] } },
+    { category: "Achievement & Growth", q: "84. With proper care and sunlight, the rosebuds will finally ________ this spring.", ans: "C", opts: { A: ["Graduate", "畢業"], B: ["Discover", "發現"], C: ["Blossom", "開花/興旺"], D: ["Surpass", "超越"] } },
+    { category: "Achievement & Growth", q: "85. Archaeologists hope to ________ lost artifacts buried deep beneath the sand.", ans: "A", opts: { A: ["Discover", "發現"], B: ["Earn", "賺取/贏得"], C: ["Master", "精通"], D: ["Succeed", "成功"] } },
+    { category: "Achievement & Growth", q: "86. Outstanding employees usually ________ a bonus at the end of the fiscal year.", ans: "B", opts: { A: ["Flourish", "茁壯/繁榮"], B: ["Earn", "賺取/贏得"], C: ["Accomplish", "實現/完成"], D: ["Unlock", "解開/開啟"] } },
+    { category: "Achievement & Growth", q: "87. The runner managed to ________ her own personal record by two full seconds.", ans: "B", opts: { A: ["Thrive", "茁壯成長"], B: ["Exceed", "超過"], C: ["Improve", "改善/進步"], D: ["Acquire", "獲得/取得"] } },
+    { category: "Achievement & Growth", q: "88. Under the new management, the small boutique began to ________ and expand.", ans: "A", opts: { A: ["Flourish", "茁壯/繁榮"], B: ["Graduate", "畢業"], C: ["Persist", "堅持"], D: ["Win", "贏得"] } },
+    { category: "Achievement & Growth", q: "89. The proud parents watched their daughter ________ from university with honors.", ans: "C", opts: { A: ["Attain", "達到/獲得"], B: ["Blossom", "開花/興旺"], C: ["Graduate", "畢業"], D: ["Overcome", "克服"] } },
+    { category: "Achievement & Growth", q: "90. Taking online courses is a fantastic way to ________ your professional skills.", ans: "A", opts: { A: ["Improve", "改善/進步"], B: ["Discover", "發現"], C: ["Prosper", "繁榮/成功"], D: ["Succeed", "成功"] } },
+    { category: "Achievement & Growth", q: "91. It takes years of consistent practice to ________ a musical instrument like the violin.", ans: "A", opts: { A: ["Master", "精通"], B: ["Exceed", "超過"], C: ["Earn", "賺取/贏得"], D: ["Triumph", "獲勝/凱旋"] } },
+    { category: "Achievement & Growth", q: "92. Together, the team found a creative way to ________ the unexpected budget deficit.", ans: "B", opts: { A: ["Flourish", "茁壯/繁榮"], B: ["Overcome", "克服"], C: ["Unlock", "解開/開啟"], D: ["Attain", "達到/獲得"] } },
+    { category: "Achievement & Growth", q: "93. Even when facing failure, you must ________ if you want to reach your dreams.", ans: "A", opts: { A: ["Persist", "堅持"], B: ["Acquire", "獲得/取得"], C: ["Win", "贏得"], D: ["Blossom", "開花/興旺"] } },
+    { category: "Achievement & Growth", q: "94. The tech startup began to ________ after securing a major investment.", ans: "A", opts: { A: ["Prosper", "繁榮/成功"], B: ["Graduate", "畢業"], C: ["Overcome", "克服"], D: ["Improve", "改善/進步"] } },
+    { category: "Achievement & Growth", q: "95. If you work hard and prepare well, you are highly likely to ________.", ans: "A", opts: { A: ["Succeed", "成功"], B: ["Unlock", "解開/開啟"], C: ["Discover", "發現"], D: ["Earn", "賺取/贏得"] } },
+    { category: "Achievement & Growth", q: "96. The tropical plants tend to ________ in warm, humid greenhouse environments.", ans: "B", opts: { A: ["Accomplish", "實現/完成"], B: ["Thrive", "茁壯成長"], C: ["Master", "精通"], D: ["Surpass", "超越"] } },
+    { category: "Achievement & Growth", q: "97. The underdogs managed to ________ over the championship team against all odds.", ans: "A", opts: { A: ["Triumph", "獲勝/凱旋"], B: ["Persist", "堅持"], C: ["Prosper", "繁榮/成功"], D: ["Flourish", "茁壯/繁榮"] } },
+    { category: "Achievement & Growth", q: "98. Reading books can help you ________ new realms of knowledge and imagination.", ans: "A", opts: { A: ["Unlock", "解開/開啟"], B: ["Graduate", "畢業"], C: ["Exceed", "超過"], D: ["Win", "贏得"] } },
+    { category: "Achievement & Growth", q: "99. The athlete trained relentlessly because she wanted to ________ the gold medal.", ans: "A", opts: { A: ["Win", "贏得"], B: ["Attain", "達到/獲得"], C: ["Overcome", "克服"], D: ["Blossom", "開花/興旺"] } },
+    { category: "Achievement & Growth", q: "100. The new electric car model is expected to ________ all sales projections this quarter.", ans: "A", opts: { A: ["Surpass", "超越"], B: ["Discover", "發現"], C: ["Improve", "改善/進步"], D: ["Accomplish", "實現/完成"] } }
+];
+
+let totalScore = 0;
+const quizContainer = document.getElementById('quiz-container');
+const scoreDisplay = document.getElementById('current-score');
+
+let currentCategory = "";
+
+quizData.forEach((item, index) => {
+    // Inject Category Heading if it changes
+    if (item.category !== currentCategory) {
+        currentCategory = item.category;
+        const catHeader = document.createElement('h2');
+        catHeader.className = 'category-title';
+        catHeader.innerText = currentCategory;
+        quizContainer.appendChild(catHeader);
+    }
+
+    // Question Block Setup
+    const qBlock = document.createElement('div');
+    qBlock.className = 'question-block';
+    
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerText = item.q;
+    qBlock.appendChild(qText);
+    
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'options';
+    
+    // Generate choice options
+    ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        
+        const wordText = document.createElement('span');
+        wordText.innerText = letter + ") " + item.opts[letter][0];
+        
+        const transText = document.createElement('span');
+        transText.className = 'translation';
+        transText.innerText = item.opts[letter][1];
+        
+        btn.appendChild(wordText);
+        btn.appendChild(transText);
+        
+        // Handle answer selection click
+        btn.onclick = () => {
+            const allBtns = optionsDiv.querySelectorAll('.option-btn');
+            
+            // Highlight right and wrong answers
+            allBtns.forEach(b => {
+                b.disabled = true;
+                const currentLetter = b.innerText.charAt(0);
+                if (currentLetter === item.ans) {
+                    b.classList.add('correct');
+                }
+                b.querySelector('.translation').style.display = 'inline-block';
+            });
+            
+            if (letter === item.ans) {
+                totalScore++;
+                scoreDisplay.innerText = totalScore;
+            } else {
+                btn.classList.add('incorrect');
+            }
+        };
+        
+        optionsDiv.appendChild(btn);
+    });
+    
+    qBlock.appendChild(optionsDiv);
+    quizContainer.appendChild(qBlock);
+});
+</script>
+
+</body>
+</html>
