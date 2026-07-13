@@ -3,273 +3,526 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Types Identification Quiz</title>
+    <title>Advanced Animal Environment Generator</title>
     <style>
-        :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --primary-color: #4a90e2;
-            --success-color: #2ec4b6;
-            --error-color: #e71d36;
-            --border-color: #e0e0e0;
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .quiz-container {
-            max-width: 650px;
+        .generator-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 650px;
+            overflow: hidden;
+            text-align: center;
+            border: 4px solid #2d3748;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-top: 0;
-            color: #2c3e50;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
+        .card-header {
+            background: #2d3748;
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
-        .progress {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-bottom: 20px;
+        .image-grid {
+            background: #edf2f7;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            padding: 8px;
+            height: 180px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
-        .paragraph-box {
-            background-color: #f8f9fa;
-            border-left: 4px solid var(--primary-color);
-            padding: 15px;
-            margin-bottom: 25px;
+        .image-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .placeholder-text {
+            grid-column: span 3;
+            color: #718096;
             font-style: italic;
-            border-radius: 0 8px 8px 0;
-            white-space: pre-wrap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
 
-        .options-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 25px 0;
+        .card-body {
+            padding: 25px;
         }
 
-        .option-item {
-            background: #ffffff;
-            border: 2px solid var(--border-color);
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .info-group {
+            background: #f7fafc;
+            padding: 10px 14px;
             border-radius: 8px;
-            padding: 12px 18px;
-            margin-bottom: 12px;
+            border-left: 4px solid #4a5568;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #718096;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .value {
+            color: #1a202c;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .select-dropdown {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            color: #4a5568;
+            background-color: white;
+            outline: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
-        .option-item:hover {
-            border-color: var(--primary-color);
-            background-color: #f0f7ff;
+        .select-dropdown:focus {
+            border-color: #2d3748;
         }
 
-        .option-item.correct {
-            background-color: #d4edda !important;
-            border-color: var(--success-color) !important;
-            color: #155724 !important;
+        .animal-tags {
+            display: flex;
+            justify-content: flex-start;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
         }
 
-        .option-item.wrong {
-            background-color: #f8d7da !important;
-            border-color: var(--error-color) !important;
-            color: #721c24 !important;
+        .tag {
+            background: #e2e8f0;
+            color: #2d3748;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
-        .option-item.disabled {
-            pointer-events: none;
+        /* Styling for the new AI prompt block */
+        .prompt-textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #4a5568;
+            resize: none;
+            outline: none;
         }
 
-        .btn {
-            background-color: var(--primary-color);
+        .prompt-textarea:focus {
+            border-color: #4a5568;
+        }
+
+        .btn-generate {
+            background: #2d3748;
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            display: none;
-            width: 100%;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .score-screen {
-            text-align: center;
-            display: none;
-        }
-
-        .score-num {
-            font-size: 3rem;
+            padding: 14px 28px;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: var(--primary-color);
-            margin: 20px 0;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-generate:hover {
+            background: #1a202c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
     </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <!-- Active Quiz View -->
-    <div id="quiz-view">
-        <h1 id="question-title">Identify the Text Type</h1>
-        <div class="progress" id="progress-text">Question 1 of 20</div>
-        <div class="paragraph-box" id="paragraph-text">Loading paragraph...</div>
-        <ul class="options-list" id="options-container"></ul>
-        <button class="btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+<div class="generator-card">
+    <div class="card-header">BIOME MATRIX DATA GENERATOR</div>
+    
+    <div class="image-grid" id="image-box">
+        <div class="placeholder-text">Select or generate a biome to initialize dataset</div>
     </div>
+    
+    <div class="card-body">
+        
+        <div class="parameter-grid">
+            <div class="info-group full-width" style="background: none; border: none; padding: 0;">
+                <label class="label" style="margin-bottom: 6px;">Select Primary Base Ecosystem</label>
+                <select class="select-dropdown" id="habitat-selector" onchange="selectEnvironment()">
+                    <option value="random">— Fully Randomize Matrices —</option>
+                    <option value="0">Lush Rainforest</option>
+                    <option value="1">Sahara Desert</option>
+                    <option value="2">Arctic Tundra</option>
+                    <option value="3">Coral Reef</option>
+                    <option value="4">Serengeti Savanna</option>
+                    <option value="5">Alpine Pine Forest</option>
+                    <option value="6">Active Volcanic Crater</option>
+                    <option value="7">Deep Bioluminescent Cave</option>
+                    <option value="8">Mangrove Coastal Swamp</option>
+                    <option value="9">Redwood Redwood Forest</option>
+                    <option value="10">Subterranean Hydrothermal Vent</option>
+                    <option value="11">Madagascar Stone Forest</option>
+                    <option value="12">High Altitude Tibetan Plateau</option>
+                    <option value="13">Australian Outback Scrub</option>
+                    <option value="14">Alien Exoplanet Outpost</option>
+                    <option value="15">Cyberpunk Neon City Oasis</option>
+                </select>
+            </div>
 
-    <!-- Results View -->
-    <div id="results-view" class="score-screen">
-        <h1>Quiz Complete!</h1>
-        <p>Your final score is:</p>
-        <div class="score-num" id="final-score">0 / 20</div>
-        <p id="feedback-text"></p>
-        <button class="btn" style="display:inline-block;" onclick="restartQuiz()">Try Again</button>
+            <div class="info-group">
+                <span class="label">1. Ecosystem Archetype</span>
+                <span class="value" id="p1-val">—</span>
+            </div>
+            
+            <div class="info-group">
+                <span class="label">2. Climate Profile</span>
+                <span class="value" id="p2-val">—</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">3. Avg Temperature</span>
+                <span class="value" id="p3-val">—</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">4. Humidity Level</span>
+                <span class="value" id="p4-val">—</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">5. Current Time / Cycle</span>
+                <span class="value" id="p5-val">—</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">6. Elevation Zone</span>
+                <span class="value" id="p6-val">—</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">7. Apex Threat Rating</span>
+                <span class="value" id="p7-val">—</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">8. Water Availability</span>
+                <span class="value" id="p8-val">—</span>
+            </div>
+
+            <div class="info-group full-width">
+                <span class="label">9. Dominant Flora (Vegetation)</span>
+                <span class="value" id="p9-val">—</span>
+            </div>
+            
+            <div class="info-group full-width">
+                <span class="label">10. Local Wildlife Tracked</span>
+                <div class="animal-tags" id="p10-box">
+                    <span style="color: #a0aec0;">System idle</span>
+                </div>
+            </div>
+
+            <div class="info-group full-width" style="border-left-color: #3182ce;">
+                <span class="label" style="color: #3182ce;">✨ Dynamic AI Image Generator Prompt</span>
+                <textarea class="prompt-textarea" id="ai-prompt-box" readonly placeholder="Your custom generated AI prompt will appear here..."></textarea>
+            </div>
+        </div>
+        
+        <button class="btn-generate" onclick="generateEnvironment()">COMPUTE WORLD MATRIX</button>
     </div>
 </div>
 
 <script>
-    // 20 unique text passages with cleaned structural tokens to prevent execution bugs
-    const questionBank = [
-        { p: "The old wooden door creaked open, revealing a narrow staircase choked with cobwebs. Dust motes danced in the solitary beam of amber sunlight piercing through the cracked window pane, while the sharp smell of damp earth and decaying paper filled the chilly room.", c: "Descriptive Text" },
-        { p: "To update your system safely, first backup all critical data to an external drive. Next, open your settings menu, navigate to 'Updates and Security', and click 'Check for Updates'. Do not shut down your computer until the progress bar reaches 100%.", c: "Instructive (Procedural)" },
-        { p: "Investing in public transit is no longer a luxury; it is an absolute necessity for economic survival. Cities that pour resources into clean, efficient light rail systems experience a 24% decrease in traffic congestion and a massive surge in local commerce, proving that modern infrastructure pays for itself.", c: "Persuasive (Argumentative)" },
-        { p: "Photosynthesis is the biological process by which green plants utilize sunlight to synthesize nutrients from carbon dioxide and water. During this chemical reaction, plants absorb light through chlorophyll pigments and release oxygen as a metabolic byproduct.", c: "Expository (Informative)" },
-        { p: "As Sarah neared the summit, her breath grew ragged against the biting wind. She remembered what her coach had said back at basecamp, took a deep breath, and made the final leap over the icy crevasse, planting her flag firmly in the snow.", c: "Narrative Text" },
-        { p: "The software application rejected the user input because the field was programmed to hold only a single character, such as 'Y' or 'N'. Passing an entire word into this specific location threw a memory error in the legacy backend code.", c: "Char Data Type" },
-        { p: "When designing long-form printed novels, choosing an elegant, legible typeface for the main blocks of narrative content is critical. Setting this copy between 9pt and 11pt ensures that the reader's eyes do not tire over hours of continuous reading.", c: "Typography (Body Type)" },
-        { p: "In database management systems, variable character arrays are standard fields used to store dynamically sized information like usernames, email addresses, or bios, reserving storage space only for the characters actually typed.", c: "String (Varchar)" },
-        { p: "The file was completely unadorned, lacking any italicized styles, bold headings, embed layouts, or system metadata. It was raw, basic character data that could easily be read across any operating system from 1980 to today without specialized rendering tools.", c: "Plain Text (.txt)" },
-        { p: "The developer embedded anchor elements directly into the document structure, ensuring that clicking on underlined phrases would instantly route the user's web browser to another resource hosted on a completely separate server down the line.", c: "Hypertext (HTML)" },
-        { p: "He was a tall, angular man with a sharp jawline and deep-set grey eyes that seemed constantly fixed on the horizon. His coat was a faded wool trench, frayed at the cuffs and permanently stained with the red clay of the outer valley.", c: "Descriptive Text" },
-        { p: "First, cream together the softened butter and granulated sugar until the mixture is light and fluffy. Slowly add the whisked eggs one at a time to prevent separation, then gently fold in the sifted flour and baking powder using a rubber spatula.", c: "Instructive (Procedural)" },
-        { p: "Allowing smartphones in high school classrooms is a recipe for academic disaster. Study after study confirms that the mere presence of a phone on a desk reduces cognitive capacity and lowers test performance by at least half a letter grade.", c: "Persuasive (Argumentative)" },
-        { p: "The water cycle involves three distinct phase transitions: evaporation, condensation, and precipitation. Solar radiation heats surface water, converting it to vapor, which cools in the upper atmosphere to form clouds before eventually falling back to earth.", c: "Expository (Informative)" },
-        { p: "Leo checked his rear-view mirror nervously as the thunderstorm intensified. The map on his dashboard had lost signal ten miles ago, and the flickering fuel gauge was dropping closer to empty with every passing minute down the forgotten highway.", c: "Narrative Text" },
-        { p: "The program initialized an array allocated specifically for strings of text, allowing the application to stitch sentences together, parse paragraphs for keywords, and display customized welcome messages to users based on their input.", c: "String (Varchar)" },
-        { p: "Unlike structural headlines that scream for attention across a magazine layout, this text layout focuses entirely on legibility, line-height balance, and clean kerning to make reading thousands of words effortless for the consumer.", c: "Typography (Body Type)" },
-        { p: "A data document that wraps normal text inside elements like paragraph tags, div elements, and hyperlink anchor attributes to allow structural cross-linking between separate online pages.", c: "Hypertext (HTML)" },
-        { p: "The script failed because the input received was a multi-character word instead of a single letter code. The architecture required a basic 1-byte storage unit capable of holding exactly one letter, symbol, or punctuation mark.", c: "Char Data Type" },
-        { p: "The legal document was exported purely as basic text streams containing no layout code, hidden fonts, or formatting definitions, ensuring total cross-platform reading compatibility without needing proprietary software packages.", c: "Plain Text (.txt)" }
+    const habitats = [
+        {
+            name: "Lush Tropical Rainforest",
+            images: ["photo-1516026672322-bc52d61a55d5", "photo-1546182990-dffeafbe841d", "photo-1552410260-0fd9b577afa6"],
+            climate: "Hot & Torrential Monsoons",
+            temp: "26°C to 32°C",
+            humidity: "88% (High Saturation)",
+            elevation: "Lowland Basins (Sea Level)",
+            water: "Abundant (Rivers & Precipitation)",
+            flora: "Giant Ferns, Canopy Orchids, Bromeliads",
+            animals: ["Jaguar", "Macaw", "Tree Frog"]
+        },
+        {
+            name: "Sahara Desert Dunes",
+            images: ["photo-1509316975850-ff9c5deb0cd9", "photo-1682687220063-4742bd7fd538", "photo-1539650116574-8efeb43e2750"],
+            climate: "Hyper-Arid / Blazing Sun",
+            temp: "38°C to 47°C",
+            humidity: "12% (Extreme Dry)",
+            elevation: "Plateaus & Dune Valleys",
+            water: "Scarce (Subterranean Aquifers)",
+            flora: "Date Palms, Saguaro Cacti, Desert Sage",
+            animals: ["Fennec Fox", "Dromedary Camel", "Scorpion"]
+        },
+        {
+            name: "Freezing Arctic Tundra",
+            images: ["photo-1517783999520-f068d7431a60", "photo-1489674264251-e78c11622b32", "photo-1525220305885-304313b5ff2e"],
+            climate: "Subzero Polar Gales",
+            temp: "-25°C to -5°C",
+            humidity: "45% (Frost Conditions)",
+            elevation: "Flat Permafrost Plains",
+            water: "Frozen (Ice Caps & Pack Glaciers)",
+            flora: "Arctic Moss, Diamondleaf Willows, Lichen",
+            animals: ["Polar Bear", "Arctic Fox", "Walrus"]
+        },
+        {
+            name: "Deep Ocean Coral Reef",
+            images: ["photo-1546026423-cc4642628d2b", "photo-1682687220199-d0124f48f95b", "photo-1582967788606-a171c1080cb0"],
+            climate: "Warm Marine Currents",
+            temp: "22°C to 28°C",
+            humidity: "100% (Submerged)",
+            elevation: "-15m to -40m Pelagic Zone",
+            water: "Unlimited (Saline Environment)",
+            flora: "Sea Anemones, Kelp Forests, Zooxanthellae",
+            animals: ["Sea Turtle", "Clownfish", "Manta Ray"]
+        },
+        {
+            name: "Serengeti Savanna",
+            images: ["photo-1516426122078-c23e76319801", "photo-1547721064-da6cfb341d50", "photo-1603203042745-f64f7c5e263d"],
+            climate: "Semi-Arid Dry Seasons",
+            temp: "24°C to 34°C",
+            humidity: "35% (Moderate Dry)",
+            elevation: "High Open Grasslands",
+            water: "Seasonal (Localized Water Holes)",
+            flora: "Umbrella Acacia, Baobab Trees, Elephant Grass",
+            animals: ["Lion", "Cheetah", "Giraffe"]
+        },
+        {
+            name: "Alpine Pine Forest",
+            images: ["photo-1448375240586-882707db888b", "photo-1473448912268-2022ce9509d8", "photo-1464822759023-fed622ff2c3b"],
+            climate: "Subalpine Cold / Mountain Air",
+            temp: "8°C to 18°C",
+            humidity: "60% (Mist & Dew)",
+            elevation: "2,500m Montane Range",
+            water: "Freshwater (Melted Snow & Streams)",
+            flora: "Bristlecone Pines, Douglas Firs, Wild Lupines",
+            animals: ["Grizzly Bear", "Grey Wolf", "Bald Eagle"]
+        },
+        {
+            name: "Active Volcanic Crater",
+            images: ["photo-1600647993560-d1a1268b61c2", "photo-1506744038136-46273834b3fb", "photo-1461988320302-91bde64fc8e4"],
+            climate: "Sulfuric Heat & Ash Plumes",
+            temp: "55°C to 110°C",
+            humidity: "20% (Dry Air Smog)",
+            elevation: "1,200m Magma Rim",
+            water: "Rare (Highly Acidic Hot Springs)",
+            flora: "Thermophilic Microalgae, Volcanic Moss",
+            animals: ["Lava Lizard", "Flamingo (Lesser)", "Crater Beetle"]
+        },
+        {
+            name: "Deep Bioluminescent Cave",
+            images: ["photo-1507525428034-b723cf961d3e", "photo-1469474968028-56623f02e42e", "photo-1501854140801-50d01698950b"],
+            climate: "Pitch Black & Stagnant Air",
+            temp: "12°C constant",
+            humidity: "95% (Extreme Humidity)",
+            elevation: "-800m Beneath Surface",
+            water: "Plentiful (Dripping Pools & Rivers)",
+            flora: "Glow-in-the-dark Fungi, Phosphorescent Moss",
+            animals: ["Olm Salamander", "Blind Cave Fish", "Glowworm"]
+        },
+        {
+            name: "Mangrove Coastal Swamp",
+            images: ["photo-1544551763-46a013bb70d5", "photo-1504370805625-d32c54b16100", "photo-1470071459604-3b5ec3a7fe05"],
+            climate: "Stifling Coastal Humidity",
+            temp: "28°C to 35°C",
+            humidity: "90% (Thick Mist)",
+            elevation: "Intertidal Coastlines",
+            water: "Saturated Brackish (Salt + Fresh)",
+            flora: "Red Mangroves, Salt Marsh Grass, Sea Oats",
+            animals: ["Mudskipper", "Saltwater Crocodile", "Manatee"]
+        },
+        {
+            name: "Redwood Forest",
+            images: ["photo-1502082553048-f009c37129b9", "photo-1441974231531-c6227db76b6e", "photo-1511497584788-876760111969"],
+            climate: "Maritime Fog & Shaded Cool",
+            temp: "10°C to 16°C",
+            humidity: "80% (Drenched Canopies)",
+            elevation: "Coast-facing Valleys",
+            water: "Abundant Creepy Creeks & Condensed Fog Dew",
+            flora: "Giant Redwoods, Sword Ferns, Huckleberry Bush",
+            animals: ["Roosevelt Elk", "Banana Slug", "Black Bear"]
+        },
+        {
+            name: "Subterranean Hydrothermal Vent",
+            images: ["photo-1682687220742-aba13b6e50ba", "photo-1682687219640-b3f11f4b7234", "photo-1505118380757-91f5f5632de0"],
+            climate: "Crushing Abyssal Pressure",
+            temp: "2°C to 400°C (Near Vents)",
+            humidity: "100% (Ocean Deep Bed)",
+            elevation: "-3,000m Oceanic Crust",
+            water: "Infinite (Superheated Toxic Water)",
+            flora: "Chemosynthetic Bacteria Mats",
+            animals: ["Giant Tube Worm", "Yeti Crab", "Vampire Squid"]
+        },
+        {
+            name: "Madagascar Stone Forest",
+            images: ["photo-1472214222541-d510753a4707", "photo-1533105079780-92b9be482077", "photo-1447752875215-b2761acb3c5d"],
+            climate: "Harsh Sun & Rocky Thermal Heat",
+            temp: "30°C to 38°C",
+            humidity: "40% (Arid Tops)",
+            elevation: "Jagged Limestone Formations",
+            water: "Deep Canyon Basins Only",
+            flora: "Pachypodium Trees, Succulent Vines",
+            animals: ["Sifaka Lemur", "Fossa", "Chameleon"]
+        },
+        {
+            name: "High Altitude Tibetan Plateau",
+            images: ["photo-1464822759023-fed622ff2c3b", "photo-1519681393784-d120267933ba", "photo-1486873249359-2731bd6da57b"],
+            climate: "Thin Atmosphere & Ice Winds",
+            temp: "-10°C to 12°C",
+            humidity: "20% (Ultra Dry Air)",
+            elevation: "4,500m Above Sea Level",
+            water: "Seasonal Glacier Streams",
+            flora: "Stipa Alpine Grass, Needle Shrubs",
+            animals: ["Snow Leopard", "Wild Yak", "Tibetan Sand Fox"]
+        },
+        {
+            name: "Australian Outback Scrub",
+            images: ["photo-1528164344705-47542687000d", "photo-1513836279014-a89f7a76ae86", "photo-1433832597046-4f10e10ac764"],
+            climate: "Baking Arid Red Plains",
+            temp: "32°C to 42°C",
+            humidity: "25% (Dust Storm Susceptible)",
+            elevation: "Flat Inland Basin",
+            water: "Ephemeral Epizootic Creekbeds",
+            flora: "Eucalyptus, Spinifex Grass, Mulga Shrubs",
+            animals: ["Red Kangaroo", "Bearded Dragon", "Emu"]
+        },
+        {
+            name: "Alien Exoplanet Outpost",
+            images: ["photo-1506318137071-a8e063b4bec0", "photo-1451187580459-43490279c0fa", "photo-1618005182384-a83a8bd57fbe"],
+            climate: "Methane Clouds / Low Gravity",
+            temp: "-80°C to 15°C",
+            humidity: "65% (Chemical Saturated)",
+            elevation: "Xenon Canyons",
+            water: "Liquid Methane Oceans",
+            flora: "Crystalline Spore Pods, Purple Flora",
+            animals: ["Xeno-Grub", "Floating Gas-Sack", "Stalker Roach"]
+        },
+        {
+            name: "Cyberpunk Neon City Oasis",
+            images: ["photo-1515621061946-eff1c2a352bd", "photo-1509198397868-475647b2a1e5", "photo-1478760329108-5c3ed9d495a0"],
+            climate: "Artificial Domed Weather",
+            temp: "22°C Filtered Air",
+            humidity: "50% Control Grid",
+            elevation: "80th Floor Penthouse Garden",
+            water: "Recycled Purified Reservoirs",
+            flora: "Synthetically Engineered Bonsai",
+            animals: ["Holographic Carp", "Robotic Drone Bee", "Stray Cyber-Cat"]
+        }
     ];
 
-    const allOptions = [
-        "Narrative Text", "Descriptive Text", "Expository (Informative)", 
-        "Persuasive (Argumentative)", "Instructive (Procedural)", 
-        "String (Varchar)", "Char Data Type", "Plain Text (.txt)", 
-        "Hypertext (HTML)", "Typography (Body Type)"
-    ];
+    const dynamicTimes = ["Dawn Twilight", "High Noon Zenith", "Golden Dusk Hour", "Lunar Midnight"];
+    const dynamicThreats = ["🟢 Safe / Passive", "🟡 Low Caution Risk", "🟠 Dangerous / Predatory", "🔴 Lethal Ecosystem"];
 
-    let currentQuestions = [];
-    let currentIndex = 0;
-    let score = 0;
-
-    function initQuiz() {
-        // Shuffle selection
-        currentQuestions = [...questionBank].sort(() => Math.random() - 0.5);
-        currentIndex = 0;
-        score = 0;
-        
-        document.getElementById("quiz-view").style.display = "block";
-        document.getElementById("results-view").style.display = "none";
-        
-        showQuestion();
-    }
-
-    function showQuestion() {
-        const currentData = currentQuestions[currentIndex];
-        
-        document.getElementById("progress-text").textContent = "Question " + (currentIndex + 1) + " of 20";
-        // Using textContent explicitly guarantees no raw tags compile as browser elements
-        document.getElementById("paragraph-text").textContent = currentData.p;
-        document.getElementById("next-btn").style.display = "none";
-
-        let choices = [currentData.c];
-        while (choices.length < 4) {
-            let randOpt = allOptions[Math.floor(Math.random() * allOptions.length)];
-            if (!choices.includes(randOpt)) {
-                choices.push(randOpt);
-            }
+    function selectEnvironment() {
+        const selector = document.getElementById("habitat-selector");
+        if (selector.value !== "random") {
+            updateUI(parseInt(selector.value));
         }
-        choices.sort(() => Math.random() - 0.5);
-
-        const container = document.getElementById("options-container");
-        container.innerHTML = "";
-        choices.forEach(opt => {
-            const li = document.createElement("li");
-            li.className = "option-item";
-            li.textContent = opt;
-            li.onclick = () => selectOption(li, opt, currentData.c);
-            container.appendChild(li);
-        });
     }
 
-    function selectOption(element, selected, correct) {
-        const items = document.querySelectorAll(".option-item");
-        
-        items.forEach(item => {
-            item.classList.add("disabled");
-            if (item.textContent === correct) {
-                item.classList.add("correct");
-            }
+    function generateEnvironment() {
+        const selector = document.getElementById("habitat-selector");
+        let targetIndex;
+
+        if (selector.value === "random") {
+            targetIndex = Math.floor(Math.random() * habitats.length);
+        } else {
+            targetIndex = parseInt(selector.value);
+        }
+
+        updateUI(targetIndex);
+    }
+
+    function updateUI(index) {
+        const selected = habitats[index];
+        const calculatedTime = dynamicTimes[Math.floor(Math.random() * dynamicTimes.length)];
+        const calculatedThreat = dynamicThreats[Math.floor(Math.random() * dynamicThreats.length)];
+
+        document.getElementById("p1-val").textContent = selected.name;
+        document.getElementById("p2-val").textContent = selected.climate;
+        document.getElementById("p3-val").textContent = selected.temp;
+        document.getElementById("p4-val").textContent = selected.humidity;
+        document.getElementById("p5-val").textContent = calculatedTime;
+        document.getElementById("p6-val").textContent = selected.elevation;
+        document.getElementById("p7-val").textContent = calculatedThreat;
+        document.getElementById("p8-val").textContent = selected.water;
+        document.getElementById("p9-val").textContent = selected.flora;
+
+        // Populate Images Grid
+        const imageBox = document.getElementById("image-box");
+        imageBox.innerHTML = "";
+        selected.images.forEach(imgId => {
+            const imageUrl = `https://images.unsplash.com/${imgId}?auto=format&fit=crop&w=300&h=400&q=80`;
+            const imgElement = document.createElement("img");
+            imgElement.src = imageUrl;
+            imgElement.alt = selected.name;
+            imageBox.appendChild(imgElement);
         });
 
-        if (selected === correct) {
-            score++;
-        } else {
-            element.classList.add("wrong");
-        }
+        // Build Wildlife Tags
+        const animalsBox = document.getElementById("p10-box");
+        animalsBox.innerHTML = "";
+        selected.animals.forEach(animal => {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = animal;
+            animalsBox.appendChild(tag);
+        });
 
-        document.getElementById("next-btn").style.display = "block";
-    }
-
-    function nextQuestion() {
-        currentIndex++;
-        if (currentIndex < 20) {
-            showQuestion();
-        } else {
-            showResults();
-        }
-    }
-
-    function showResults() {
-        document.getElementById("quiz-view").style.display = "none";
-        document.getElementById("results-view").style.display = "block";
-        document.getElementById("final-score").textContent = score + " / 20";
+        // Generate Custom Text inside AI Prompt Area
+        const animalString = selected.animals.join(", ");
+        const promptText = `A cinematic, ultra-detailed wide shot photography of a ${selected.name} during ${calculatedTime}. Features pristine landscape filled with ${selected.flora}. In the scene, a native ${animalString} can be spotted navigating the environment. The atmosphere is ${selected.climate} at ${selected.temp}, sharp focus, photorealistic, 8k resolution, award-winning composition --ar 16:9`;
         
-        let feedback = "";
-        if (score === 20) feedback = "Flawless victory! You are an expert text analyst.";
-        else if (score >= 15) feedback = "Great job! You clearly understand your text types.";
-        else if (score >= 10) feedback = "Not bad, but you might want to brush up on rhetorical and technical formats.";
-        else feedback = "Keep studying! Try reviewing the differences between content writing, data types, and markup templates.";
-        
-        document.getElementById("feedback-text").textContent = feedback;
+        document.getElementById("ai-prompt-box").value = promptText;
     }
-
-    function restartQuiz() {
-        initQuiz();
-    }
-
-    window.onload = initQuiz;
 </script>
 
 </body>
