@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomials Mastery Quiz</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --success: #16a34a;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .score-board {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .question-box {
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--primary);
+            background-color: #f5f3ff;
+        }
+
+        .option-btn.correct {
+            background-color: #dcfce7;
+            border-color: var(--success);
+            color: #14532d;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2;
+            border-color: #dc2626;
+            color: #7f1d1d;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0fdf4;
+            border-left: 4px solid var(--success);
+            border-radius: 4px;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 5px;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        sup {
+            font-size: 0.75em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <h1 id="topic-title">Polynomials Mastery</h1>
+        <div class="score-board">Score: <span id="score">0</span> / <span id="total-answered">0</span></div>
+    </div>
+
+    <div class="question-box">
+        <div class="question-text" id="question">Loading question...</div>
+        <div class="options-container" id="options"></div>
+    </div>
+
+    <div class="explanation-box" id="explanation-container">
+        <div class="explanation-title">Explanation</div>
+        <div id="explanation-text"></div>
+    </div>
+
+    <button id="next-btn" class="next-btn hidden">Next Question</button>
+</div>
+
+<script>
+    // 50 curated conceptual, computational, and theory questions on division, remainder, factor theorem, and higher roots.
+    const questionsPool = [
+        {
+            q: "According to the Remainder Theorem, if a polynomial P(x) is divided by (x - c), what is the remainder?",
+            o: ["P(-c)", "P(c)", "P(x)/c", "0"],
+            a: 1,
+            e: "The Remainder Theorem explicitly states that when a polynomial P(x) is divided by a linear divisor (x - c), the remainder is equal to P(c)."
+        },
+        {
+            q: "If P(-3) = 0 for a polynomial P(x), which of the following must be a factor of P(x)?",
+            o: ["x - 3", "x + 3", "3x", "x<sup>2</sup> - 9"],
+            a: 1,
+            e: "By the Factor Theorem, if P(c) = 0, then (x - c) is a factor. Here c = -3, so (x - (-3)) simplifies to (x + 3)."
+        },
+        {
+            q: "What is the remainder when P(x) = x<sup>3</sup> - 2x<sup>2</sup> + 5x - 4 is divided by (x - 1)?",
+            o: ["0", "2", "4", "-4"],
+            a: 0,
+            e: "Evaluate P(1): 1<sup>3</sup> - 2(1)<sup>2</sup> + 5(1) - 4 = 1 - 2 + 5 - 4 = 0. The remainder is 0."
+        },
+        {
+            q: "If a polynomial P(x) of degree 4 is divided by a quadratic polynomial D(x) of degree 2, what is the maximum possible degree of the remainder?",
+            o: ["0", "1", "2", "3"],
+            a: 1,
+            e: "The degree of the remainder must always be strictly less than the degree of the divisor. Since the divisor has a degree of 2, the maximum possible degree of the remainder is 1 (linear expression ax + b)."
+        },
+        {
+            q: "Find the value of k such that (x - 2) is a factor of P(x) = 2x<sup>3</sup> - x<sup>2</sup> - kx - 2.",
+            o: ["2", "4", "5", "3"],
+            a: 2,
+            e: "For (x - 2) to be a factor, P(2) must equal 0. P(2) = 2(2)<sup>3</sup> - (2)<sup>2</sup> - k(2) - 2 = 16 - 4 - 2k - 2 = 10 - 2k. Setting 10 - 2k = 0 gives k = 5."
+        },
+        {
+            q: "What is the remainder when P(x) = 3x<sup>4</sup> - x<sup>2</sup> + 2 is divided by (x + 1)?",
+            o: ["2", "4", "3", "0"],
+            a: 1,
+            e: "Evaluate P(-1) since the divisor is x - (-1). P(-1) = 3(-1)<sup>4</sup> - (-1)<sup>2</sup> + 2 = 3(1) - 1 + 2 = 4."
+        },
+        {
+            q: "If a polynomial has roots at x = 1, x = -2, and x = 5, which of the following is a factor of the polynomial?",
+            o: ["(x + 1)(x - 2)", "(x - 1)(x + 2)(x - 5)", "(x + 1)(x - 2)(x + 5)", "(x - 1)(x - 2)"],
+            a: 1,
+            e: "If c is a root, (x - c) is a factor. Thus, the factors are (x - 1), (x - (-2)) = (x + 2), and (x - 5). Their product forms factors of the expression."
+        },
+        {
+            q: "When dividing 2x<sup>3</sup> - 3x<sup>2</sup> + 4x - 5 by (x - 2) using synthetic division, what is the first number written down in the second row (added to the second term)?",
+            o: ["2", "4", "-3", "1"],
+            a: 1,
+            e: "In synthetic division, you bring down the leading coefficient (2). Then multiply it by the divisor's zero (2), yielding 2 * 2 = 4, which is placed under the -3."
+        },
+        {
+            q: "If P(x) is divided by (2x - 1), the remainder according to the Remainder Theorem is equal to:",
+            o: ["P(1)", "P(-1)", "P(1/2)", "P(-1/2)"],
+            a: 2,
+            e: "Set the linear divisor equal to zero: 2x - 1 = 0 implies x = 1/2. Therefore, the remainder is P(1/2)."
+        },
+        {
+            q: "A polynomial P(x) leaves a remainder of 5 when divided by (x - 3). What is P(3)?",
+            o: ["0", "3", "5", "Cannot be determined"],
+            a: 2,
+            e: "By the Remainder Theorem, dividing by (x - 3) yields a remainder equal to P(3). Thus, P(3) = 5."
+        },
+        {
+            q: "Which of the following polynomial degrees can have at most 3 real roots?",
+            o: ["Degree 2", "Degree 3", "Degree 4", "Both Degree 3 and 4"],
+            a: 1,
+            e: "A polynomial of degree n has exactly n complex roots, and at most n real roots. A degree 3 polynomial has at most 3 real roots. Degree 4 can have up to 4."
+        },
+        {
+            q: "If (x + 2) and (x - 1) are both factors of P(x) = x<sup>3</sup> + ax<sup>2</sup> + bx - 2, find the value of a.",
+            o: ["1", "2", "-1", "0"],
+            a: 1,
+            e: "P(1) = 1 + a + b - 2 = 0 -> a + b = 1. P(-2) = -8 + 4a - 2b - 2 = 0 -> 4a - 2b = 10 -> 2a - b = 5. Adding both equations: 3a = 6, so a = 2."
+        },
+        {
+            q: "What is the result when x<sup>2</sup> - 4 is divided by (x - 2)?",
+            o: ["x - 2", "x + 2", "x", "x + 4"],
+            a: 1,
+            e: "Using difference of squares, x<sup>2</sup> - 4 = (x - 2)(x + 2). Dividing by (x - 2) cancels the factor, leaving (x + 2)."
+        },
+        {
+            q: "If P(x) = x<sup>4</sup> - 16, how many linear factors does it have over the field of real numbers?",
+            o: ["1", "2", "3", "4"],
+            a: 1,
+            e: "x<sup>4</sup> - 16 = (x<sup>2</sup> - 4)(x<sup>2</sup> + 4) = (x - 2)(x + 2)(x<sup>2</sup> + 4). The expression (x<sup>2</sup> + 4) has no real roots, so there are 2 real linear factors."
+        },
+        {
+            q: "If a polynomial P(x) is divided by x, the remainder is equal to:",
+            o: ["P(0)", "P(1)", "0", "Undefined"],
+            a: 0,
+            e: "Dividing by x is equivalent to dividing by (x - 0). By the Remainder Theorem, the remainder is P(0)."
+        },
+        {
+            q: "The Rational Root Theorem states that any rational root p/q of a polynomial must satisfy which condition?",
+            o: ["p divides the leading coefficient, q divides the constant term", "p divides the constant term, q divides the leading coefficient", "p and q must both divide the sum of coefficients", "p + q = 0"],
+            a: 1,
+            e: "The numerator p must be an integer factor of the constant term, and the denominator q must be an integer factor of the leading coefficient."
+        },
+        {
+            q: "What is the remainder when x<sup>100</sup> - 1 is divided by (x - 1)?",
+            o: ["100", "-1", "0", "1"],
+            a: 2,
+            e: "Evaluate at x = 1: 1<sup>100</sup> - 1 = 1 - 1 = 0."
+        },
+        {
+            q: "If the remainder of P(x) divided by (x + 5) is -2, then which point must lie on the graph of P(x)?",
+            o: ["(5, -2)", "(-5, -2)", "(-2, -5)", "(-5, 2)"],
+            a: 1,
+            e: "The Remainder Theorem states P(-5) = -2. In coordinate form (x, y), this translates directly to the point (-5, -2)."
+        },
+        {
+            q: "If (x - c) divides P(x) completely with no remainder, then c is called a _____ of P(x).",
+            o: ["Factor", "Zero or Root", "Y-intercept", "Coefficient"],
+            a: 1,
+            e: "If (x - c) divides P(x) perfectly, then P(c) = 0, meaning c is a zero, root, or x-intercept of the polynomial."
+        },
+        {
+            q: "What is the leading coefficient of the quotient when 4x<sup>3</sup> - 2x + 1 is divided by (2x - 1)?",
+            o: ["4", "2", "1", "8"],
+            a: 1,
+            e: "Divide the leading term of the dividend by the leading term of the divisor: 4x<sup>3</sup> / 2x = 2x<sup>2</sup>. The leading coefficient of this quotient is 2."
+        },
+        {
+            q: "If a polynomial P(x) of degree 3 has roots 1, 2, and 3, and a leading coefficient of 2, what is its equation?",
+            o: ["2(x+1)(x+2)(x+3)", "2(x-1)(x-2)(x-3)", "(x-1)(x-2)(x-3) + 2", "x<sup>3</sup> - 6x<sup>2</sup> + 11x - 6"],
+            a: 1,
+            e: "Using factored form: P(x) = a(x - r<sub>1</sub>)(x - r<sub>2</sub>)(x - r<sub>3</sub>). Substituting values gives 2(x - 1)(x - 2)(x - 3)."
+        },
+        {
+            q: "If P(x) = x<sup>3</sup> - kx<sup>2</sup> + 2x - 4 is divisible by (x - 2), what is the value of k?",
+            o: ["1", "2", "3", "4"],
+            a: 1,
+            e: "Divisible means the remainder is 0. P(2) = 2<sup>3</sup> - k(2)<sup>2</sup> + 2(2) - 4 = 8 - 4k + 4 - 4 = 8 - 4k = 0. Solving for k gives 2."
+        },
+        {
+            q: "True or False: Synthetic division can be natively used with any divisor of degree 2 or higher without modifications.",
+            o: ["True", "False"],
+            a: 1,
+            e: "Standard synthetic division is strictly designed for linear divisors of the form (x - c). For higher degrees, polynomial long division or generalized synthetic division must be applied."
+        },
+        {
+            q: "What is the remainder when P(x) = 2x<sup>4</sup> - 3x<sup>3</sup> + x - 5 is divided by (x - 0)?",
+            o: ["2", "-3", "-5", "0"],
+            a: 2,
+            e: "Dividing by (x - 0) requires evaluating P(0). All terms with x become 0, leaving only the constant term, -5."
+        },
+        {
+            q: "If P(x) = Q(x) * D(x) + R(x), what constraint represents the finished condition of the division algorithm regarding R(x)?",
+            o: ["Degree of R(x) > Degree of D(x)", "Degree of R(x) < Degree of D(x) or R(x) = 0", "Degree of R(x) == Degree of Q(x)", "R(x) must be a constant"],
+            a: 1,
+            e: "The division process terminates when the remainder R(x) is either zero or its degree is strictly lower than the degree of the divisor D(x)."
+        },
+        {
+            q: "When factoring x<sup>3</sup> - 8, one factor is (x - 2). What is the other factor?",
+            o: ["x<sup>2</sup> + 4", "x<sup>2</sup> + 2x + 4", "x<sup>2</sup> - 2x + 4", "x<sup>2</sup> + 4x + 4"],
+            a: 1,
+            e: "By the difference of cubes formula, a<sup>3</sup> - b<sup>3</sup> = (a - b)(a<sup>2</sup> + ab + b<sup>2</sup>). For x<sup>3</sup> - 2<sup>3</sup>, it yields (x - 2)(x<sup>2</sup> + 2x + 4)."
+        },
+        {
+            q: "If x = -1 is a root of multiplicity 2 for a polynomial P(x), then P(x) is divisible by:",
+            o: ["(x - 1)<sup>2</sup>", "(x + 1)", "(x + 1)<sup>2</sup>", "x<sup>2</sup> - 1"],
+            a: 2,
+            e: "A root of x = -1 corresponds to a factor of (x - (-1)) = (x + 1). A multiplicity of 2 means this factor is squared: (x + 1)<sup>2</sup>."
+        },
+        {
+            q: "What is the remainder when x<sup>3</sup> + x<sup>2</sup> + x + 1 is divided by (x + 1)?",
+            o: ["0", "4", "2", "-2"],
+            a: 0,
+            e: "Evaluate at x = -1: (-1)<sup>3</sup> + (-1)<sup>2</sup> + (-1) + 1 = -1 + 1 - 1 + 1 = 0."
+        },
+        {
+            q: "If a polynomial division results in a quotient of (x + 3) and a remainder of 2 with a divisor of (x - 1), what was the original dividend?",
+            o: ["x<sup>2</sup> + 2x - 1", "x<sup>2</sup> + 2x - 3", "x<sup>2</sup> + 2x + 1", "x<sup>2</sup> - 4"],
+            a: 0,
+            e: "Dividend = Divisor * Quotient + Remainder = (x - 1)(x + 3) + 2 = (x<sup>2</sup> + 2x - 3) + 2 = x<sup>2</sup> + 2x - 1."
+        },
+        {
+            q: "According to the Factor Theorem, if (x - c) is a factor of P(x), then P(c) equals:",
+            o: ["1", "-c", "0", "A non-zero constant"],
+            a: 2,
+            e: "The Factor Theorem states that (x - c) is a factor of P(x) if and only if P(c) = 0."
+        },
+        {
+            q: "Which of the following is a potential rational root of 2x<sup>3</sup> - 5x + 3?",
+            o: ["1/2", "2", "2/3", "3/2"],
+            a: 3,
+            e: "Factors of constant 3 are &plusmn;1, &plusmn;3. Factors of leading coefficient 2 are &plusmn;1, &plusmn;2. Possible ratios include &plusmn;3/2."
+        },
+        {
+            q: "If P(x) has degree 5, what is the maximum number of times its graph can cross the x-axis?",
+            o: ["3", "4", "5", "Infinite"],
+            a: 2,
+            e: "A polynomial of degree n can have at most n real roots, meaning its graph can intersect or cross the x-axis at most n times (5 times here)."
+        },
+        {
+            q: "What is the remainder when P(x) = x<sup>5</sup> - 32 is divided by (x - 2)?",
+            o: ["0", "32", "-64", "16"],
+            a: 0,
+            e: "Evaluate P(2) = 2<sup>5</sup> - 32 = 32 - 32 = 0."
+        },
+        {
+            q: "If we divide a polynomial by (x<sup>2</sup> - 1), and the remainder is 3x + 2, what is the value of P(1)?",
+            o: ["2", "5", "1", "0"],
+            a: 1,
+            e: "P(x) = Q(x)(x<sup>2</sup> - 1) + (3x + 2). Plugging in x = 1 causes (x<sup>2</sup> - 1) to become 0, leaving P(1) = 3(1) + 2 = 5."
+        },
+        {
+            q: "What is the remainder when x<sup>3</sup> is divided by (x - 3)?",
+            o: ["9", "27", "3", "0"],
+            a: 1,
+            e: "By the Remainder Theorem, evaluate the dividend at x = 3: 3<sup>3</sup> = 27."
+        },
+        {
+            q: "If a cubic polynomial has roots at x=0, x=1, and x=-1, its equation is of the form:",
+            o: ["x(x<sup>2</sup> + 1)", "x<sup>3</sup> - x", "x<sup>3</sup> + x", "x<sup>2</sup> - x"],
+            a: 1,
+            e: "The factors are x, (x - 1), and (x + 1). Multiplying them yields x(x - 1)(x + 1) = x(x<sup>2</sup> - 1) = x<sup>3</sup> - x."
+        },
+        {
+            q: "If the synthetic division array shows a final row of numbers: [1, 3, 0, 5], where 5 is the remainder, what is the quotient polynomial?",
+            o: ["x<sup>3</sup> + 3x<sup>2</sup>", "x<sup>2</sup> + 3x", "x<sup>2</sup> + 3", "x<sup>3</sup> + 3x + 5"],
+            a: 1,
+            e: "The numbers before the remainder represent the descending coefficients of the quotient. Since there are three numbers (1, 3, 0), it represents a quadratic expression: 1x<sup>2</sup> + 3x + 0 = x<sup>2</sup> + 3x."
+        },
+        {
+            q: "If P(x) = x<sup>4</sup> + x<sup>2</sup> + 1, how many real roots does it have?",
+            o: ["0", "2", "4", "1"],
+            a: 0,
+            e: "Let u = x<sup>2</sup>. Then u<sup>2</sup> + u + 1 = 0 has no real solutions because its discriminant is negative. Since u (which is x<sup>2</sup>) cannot be real and positive, x has no real roots."
+        },
+        {
+            q: "What is the remainder when 4x<sup>2</sup> - 6x + 5 is divided by (2x - 1)?",
+            o: ["3", "4", "5", "6"],
+            a: 0,
+            e: "Evaluate at x = 1/2: 4(1/2)<sup>2</sup> - 6(1/2) + 5 = 4(1/4) - 3 + 5 = 1 - 3 + 5 = 3."
+        },
+        {
+            q: "If (x - 1) is a factor of x<sup>3</sup> - 2x<sup>2</sup> + ax - 3, find the value of a.",
+            o: ["2", "4", "3", "1"],
+            a: 1,
+            e: "Set P(1) = 0: 1<sup>3</sup> - 2(1)<sup>2</sup> + a(1) - 3 = 0 -> 1 - 2 + a - 3 = 0 -> a - 4 = 0 -> a = 4."
+        },
+        {
+            q: "When performing polynomial long division, what operation is applied to terms after multiplying the divisor by the current quotient step term?",
+            o: ["Addition", "Subtraction", "Multiplication", "Square Root"],
+            a: 1,
+            e: "Just like numerical long division, you subtract the product of the divisor and the newest quotient term from the dividend expression."
+        },
+        {
+            q: "If P(2) = 7 and P(3) = 0, which linear term is guaranteed to be a factor of P(x)?",
+            o: ["x - 7", "x - 2", "x - 3", "x + 3"],
+            a: 2,
+            e: "Because P(3) = 0, the factor theorem confirms that (x - 3) is a factor of the polynomial."
+        },
+        {
+            q: "What is the remainder when x<sup>3</sup> + 27 is divided by (x + 3)?",
+            o: ["0", "54", "9", "-27"],
+            a: 0,
+            e: "Evaluate at x = -3: (-3)<sup>3</sup> + 27 = -27 + 27 = 0. (Note: x<sup>3</sup> + 27 is a sum of cubes, making x + 3 a perfect factor)."
+        },
+        {
+            q: "If a polynomial P(x) has a degree of n, what is the maximum number of turning points its graph can feature?",
+            o: ["n", "n + 1", "n - 1", "2n"],
+            a: 2,
+            e: "A polynomial graph of degree n can have at most n - 1 turning points (local extrema where the graph changes direction)."
+        },
+        {
+            q: "If P(x) / (x - 4) yields a quotient of x<sup>2</sup> and a remainder of -1, what is P(x)?",
+            o: ["x<sup>3</sup> - 4x<sup>2</sup> - 1", "x<sup>3</sup> - 4x<sup>2</sup> + 1", "x<sup>2</sup> - 4x - 1", "x<sup>3</sup> - 1"],
+            a: 0,
+            e: "P(x) = (x - 4)(x<sup>2</sup>) + (-1) = x<sup>3</sup> - 4x<sup>2</sup> - 1."
+        },
+        {
+            q: "If the constant term of a polynomial is 0, which of the following is always a factor?",
+            o: ["x - 1", "x", "x + 1", "No universal factor exists"],
+            a: 1,
+            e: "If the constant term is 0, evaluating P(0) yields 0. By the Factor Theorem, (x - 0), which is simply x, is a factor."
+        },
+        {
+            q: "What is the remainder when x<sup>4</sup> + 2x<sup>3</sup> - x<sup>2</sup> + 4 is divided by (x + 2)?",
+            o: ["4", "0", "8", "2"],
+            a: 0,
+            e: "Evaluate P(-2): (-2)<sup>4</sup> + 2(-2)<sup>3</sup> - (-2)<sup>2</sup> + 4 = 16 + 2(-8) - 4 + 4 = 16 - 16 - 4 + 4 = 0."
+        },
+        {
+            q: "The complex conjugate root theorem states that if a + bi is a root of a polynomial with real coefficients, then ___ must also be a root.",
+            o: ["a - bi", "-a + bi", "-a - bi", "b + ai"],
+            a: 0,
+            e: "For polynomials with real coefficients, complex roots always occur in conjugate pairs. Thus, if a + bi is a root, a - bi is also a root."
+        },
+        {
+            q: "What is the remainder when P(x) = 2x<sup>3</sup> - 7x<sup>2</sup> + 5x - 1 is divided by (x - 3)?",
+            o: ["3", "5", "2", "1"],
+            a: 1,
+            e: "Evaluate P(3) = 2(3)<sup>3</sup> - 7(3)<sup>2</sup> + 5(3) - 1 = 2(27) - 7(9) + 15 - 1 = 54 - 63 + 15 - 1 = 5."
+        },
+        {
+            q: "If P(x) is divided by (x - c) and the remainder is 0, we can conclude that the line x = c is an x-intercept of the function.",
+            o: ["True", "False"],
+            a: 0,
+            e: "True. A remainder of 0 means P(c) = 0, which structurally defines an x-intercept on a coordinate plane graph."
+        }
+    ];
+
+    let score = 0;
+    let totalAnswered = 0;
+    let currentQuestionIndex = 0;
+    let shuffledQuestions = [];
+
+    const questionEl = document.getElementById("question");
+    const optionsContainer = document.getElementById("options");
+    const explanationContainer = document.getElementById("explanation-container");
+    const explanationText = document.getElementById("explanation-text");
+    const nextBtn = document.getElementById("next-btn");
+    const scoreEl = document.getElementById("score");
+    const totalAnsweredEl = document.getElementById("total-answered");
+
+    // Shuffle implementation to guarantee varied looping order
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function initQuiz() {
+        shuffledQuestions = shuffleArray(questionsPool);
+        currentQuestionIndex = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        // Infinite Loop Guard: If we run through all 50 questions, reshuffle pool and keep going infinitely!
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            shuffledQuestions = shuffleArray(questionsPool);
+            currentQuestionIndex = 0;
+        }
+
+        explanationContainer.style.display = "none";
+        nextBtn.classList.add("hidden");
+        optionsContainer.innerHTML = "";
+
+        const currentQ = shuffledQuestions[currentQuestionIndex];
+        questionEl.innerHTML = `Q${totalAnswered + 1}: ${currentQ.q}`;
+
+        currentQ.o.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.classList.add("option-btn");
+            button.innerHTML = option;
+            button.addEventListener("click", () => handleAnswer(index, button));
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function handleAnswer(selectedIndex, selectedButton) {
+        const currentQ = shuffledQuestions[currentQuestionIndex];
+        const buttons = optionsContainer.querySelectorAll(".option-btn");
+        
+        // Disable all buttons after choice
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (selectedIndex === currentQ.a) {
+            selectedButton.classList.add("correct");
+            score++;
+        } else {
+            selectedButton.classList.add("wrong");
+            buttons[currentQ.a].classList.add("correct");
+        }
+
+        totalAnswered++;
+        scoreEl.innerText = score;
+        totalAnsweredEl.innerText = totalAnswered;
+
+        explanationText.innerHTML = currentQ.e;
+        explanationContainer.style.display = "block";
+        nextBtn.classList.remove("hidden");
+    }
+
+    nextBtn.addEventListener("click", () => {
+        currentQuestionIndex++;
+        loadQuestion();
+    });
+
+    // Fire up the infinite engine
+    initQuiz();
+</script>
+
+</body>
+</html>

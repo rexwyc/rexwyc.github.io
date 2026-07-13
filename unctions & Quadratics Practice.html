@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functions & Quadratics Practice</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .question-card {
+            background: #fafafa;
+            border-left: 4px solid #3498db;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            border-radius: 0 4px 4px 0;
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .toggle-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        .toggle-btn:hover {
+            background-color: #2980b9;
+        }
+        .explanation {
+            display: none;
+            margin-top: 12px;
+            padding: 10px 15px;
+            background-color: #e8f4fd;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #2c3e50;
+        }
+        .control-panel {
+            margin-bottom: 20px;
+            background: #eef2f3;
+            padding: 15px;
+            border-radius: 4px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Functions and Quadratic Functions Practice</h1>
+    <p>Master function notation, domain, range, and the key features of parabolas.</p>
+    
+    <div class="control-panel">
+        <button class="toggle-btn" onclick="toggleAll(true)">Show All Explanations</button>
+        <button class="toggle-btn" style="background-color: #7f8c8d;" onclick="toggleAll(false)">Hide All Explanations</button>
+    </div>
+
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+// Quiz data array containing 50 structured questions and explanations
+const quizData = [
+    // Part 1: Function Notation, Domain, and Range (1-25)
+    { q: "If f(x) = 3x - 5, find f(4).", e: "Substitute 4 for x: f(4) = 3(4) - 5 = 12 - 5 = 7." },
+    { q: "If g(x) = x² + 2x, find g(-3).", e: "Substitute -3 for x: g(-3) = (-3)² + 2(-3) = 9 - 6 = 3." },
+    { q: "Given h(x) = 10 - 2x, find x when h(x) = 4.", e: "Set the equation to 4: 10 - 2x = 4 -> -2x = -6 -> x = 3." },
+    { q: "What is the natural domain of the function f(x) = 5 / (x - 2)?", e: "The denominator cannot be zero. x - 2 ≠ 0, so the domain is all real numbers except x = 2." },
+    { q: "What is the domain of f(x) = √(x - 4)?", e: "The expression under a square root must be non-negative. x - 4 ≥ 0, so x ≥ 4." },
+    { q: "Find the range of f(x) = x² + 3.", e: "Since x² is always ≥ 0, x² + 3 must be ≥ 3. The range is y ≥ 3." },
+    { q: "If f(x) = 2x - 1, find f(a + 1).", e: "Substitute (a + 1) for x: f(a + 1) = 2(a + 1) - 1 = 2a + 2 - 1 = 2a + 1." },
+    { q: "Determine the domain of g(x) = 1 / (x² - 9).", e: "The denominator cannot be zero: x² - 9 ≠ 0 -> (x-3)(x+3) ≠ 0. The domain is all real numbers except x = 3 and x = -3." },
+    { q: "What is the range of the constant function f(x) = -7?", e: "No matter what x is, the output is always -7. The range is exactly { -7 }." },
+    { q: "If f(x) = 4 / x and g(x) = 2x, find f(g(3)).", e: "First find g(3) = 2(3) = 6. Then find f(6) = 4 / 6 = 2/3." },
+    { q: "What is the domain of f(x) = √(9 - x)?", e: "Set the radicand to non-negative: 9 - x ≥ 0 -> 9 ≥ x, or x ≤ 9." },
+    { q: "Find the range of f(x) = -x².", e: "Since x² ≥ 0, multiplying by -1 flips the inequality. The range is y ≤ 0." },
+    { q: "If f(x) = |x - 5|, what is its range?", e: "Absolute value expressions always output values greater than or equal to zero. The range is y ≥ 0." },
+    { q: "Find x if f(x) = x² and f(x) = 49.", e: "Set x² = 49. Taking the square root gives two solutions: x = 7 or x = -7." },
+    { q: "What is the domain of f(x) = 3x + 7?", e: "This is a linear function with no fractions or roots. The domain is all real numbers." },
+    { q: "If f(x) = x³ - 1, find f(-2).", e: "Substitute -2 for x: (-2)³ - 1 = -8 - 1 = -9." },
+    { q: "Does the set of points {(1,2), (2,3), (1,4)} represent a function?", e: "No, because the input x = 1 maps to two different outputs (2 and 4). Functions must have unique outputs for each input." },
+    { q: "What is the range of f(x) = 1/x?", e: "The fraction can never equal 0 because the numerator is 1. The range is all real numbers except y = 0." },
+    { q: "If f(x) = √(x) and g(x) = x - 4, find the domain of f(g(x)).", e: "f(g(x)) = √(x - 4). For the root to be valid, x - 4 ≥ 0, so the domain is x ≥ 4." },
+    { q: "Find f(-x) if f(x) = 2x² - 3x.", e: "Substitute (-x) for x: 2(-x)² - 3(-x) = 2x² + 3x." },
+    { q: "What is the domain of f(x) = 1 / √(x - 1)?", e: "The value under the root must be positive and cannot be 0 because it's in the denominator: x - 1 > 0 -> x > 1." },
+    { q: "If f(x) = 5x - 2, find the inverse function expression for x.", e: "Set y = 5x - 2 -> y + 2 = 5x -> x = (y + 2)/5." },
+    { q: "Find the range of f(x) = |x| + 2.", e: "Since |x| ≥ 0, adding 2 shifts the minimum output to 2. The range is y ≥ 2." },
+    { q: "If f(x) = x², find [f(x+h) - f(x)] / h simplified.", e: "[(x+h)² - x²] / h = [x² + 2xh + h² - x²] / h = [2xh + h²] / h = 2x + h." },
+    { q: "What is the domain of a function representing the real-world height of a ball over time t?", e: "Time cannot be negative, and the tracking stops when it hits the ground. Domain is typically [0, t_ground]." },
+
+    // Part 2: Analyzing Features of Parabolas (26-50)
+    { q: "Find the vertex of the parabola f(x) = (x - 3)² + 4.", e: "This is in vertex form y = a(x - h)² + k, where (h, k) is the vertex. The vertex is (3, 4)." },
+    { q: "What is the axis of symmetry for f(x) = 2(x + 5)² - 1?", e: "The axis of symmetry goes through the x-coordinate of the vertex. Since h = -5, the axis of symmetry is x = -5." },
+    { q: "Find the y-intercept of the quadratic function f(x) = x² - 4x + 7.", e: "Find f(0) by setting x = 0: 0² - 4(0) + 7 = 7. The y-intercept is (0, 7)." },
+    { q: "Find the x-intercepts of f(x) = x² - 9.", e: "Set f(x) = 0: x² - 9 = 0 -> x² = 9 -> x = 3 or x = -3. Intercepts are (3,0) and (-3,0)." },
+    { q: "Does the parabola f(x) = -3x² + 4x - 2 open upward or downward?", e: "The leading coefficient (a = -3) is negative, so the parabola opens downward." },
+    { q: "Find the x-coordinate of the vertex for f(x) = x² - 6x + 5 using the formula x = -b / 2a.", e: "Here a = 1, b = -6. x = -(-6) / (2 * 1) = 6 / 2 = 3." },
+    { q: "Find the y-coordinate of the vertex for f(x) = x² - 6x + 5.", e: "Substitute the x-coordinate (3) back into the function: f(3) = 3² - 6(3) + 5 = 9 - 18 + 5 = -4. Vertex is (3, -4)." },
+    { q: "What is the maximum or minimum value of f(x) = (x - 2)² + 6?", e: "Since it opens upward (a=1 > 0), it has a minimum value equal to the vertex y-value, which is 6." },
+    { q: "Find the axis of symmetry for f(x) = -x² + 8x - 10.", e: "Using x = -b / 2a: x = -8 / (2 * -1) = -8 / -2 = 4. The axis of symmetry is x = 4." },
+    { q: "Find the x-intercepts of f(x) = x² - 5x + 6.", e: "Factor the equation: (x - 2)(x - 3) = 0. The x-intercepts are x = 2 and x = 3." },
+    { q: "Determine the vertex of f(x) = -2x².", e: "This can be written as -2(x - 0)² + 0. The vertex is at the origin, (0, 0)." },
+    { q: "How many x-intercepts does a parabola have if its discriminant (b² - 4ac) is negative?", e: "A negative discriminant means there are no real roots, so it has 0 x-intercepts." },
+    { q: "Find the y-intercept of f(x) = -3(x - 1)² + 5.", e: "Set x = 0: f(0) = -3(0 - 1)² + 5 = -3(1) + 5 = 2. The y-intercept is (0, 2)." },
+    { q: "If a parabola has a vertex at (2, -3) and opens upward, what is its range?", e: "Since it starts at y = -3 and goes up infinitely, the range is y ≥ -3." },
+    { q: "Find the vertex of f(x) = x² + 4x.", e: "x = -4 / (2*1) = -2. y = (-2)² + 4(-2) = 4 - 8 = -4. The vertex is (-2, -4)." },
+    { q: "What is the axis of symmetry for a parabola with x-intercepts at (-2, 0) and (6, 0)?", e: "The axis of symmetry lies exactly halfway between the x-intercepts: x = (-2 + 6) / 2 = 4 / 2 = 2." },
+    { q: "Determine if f(x) = 4x² - 8x + 1 has a maximum or minimum value.", e: "Because a = 4 (positive), the parabola opens upward, meaning it has a minimum value." },
+    { q: "Find the discriminant of f(x) = x² - 4x + 4.", e: "Discriminant = b² - 4ac = (-4)² - 4(1)(4) = 16 - 16 = 0. (Implying exactly 1 x-intercept)." },
+    { q: "Convert f(x) = x² - 8x + 12 into vertex form by completing the square.", e: "x² - 8x + 16 - 16 + 12 = (x - 4)² - 4. Vertex form is f(x) = (x - 4)² - 4." },
+    { q: "What is the range of f(x) = -2(x + 1)² - 7?", e: "The vertex is at (-1, -7) and it opens downward. The range is y ≤ -7." },
+    { q: "Find the x-intercepts of f(x) = 2x² - 8.", e: "Set 2x² - 8 = 0 -> 2x² = 8 -> x² = 4 -> x = 2 or x = -2." },
+    { q: "What is the equation of the axis of symmetry for f(x) = x²?", e: "The vertex is (0,0), so the axis of symmetry is the y-axis, written as x = 0." },
+    { q: "If the vertex of a parabola is (1, 5) and the y-intercept is (0, 3), find the value of 'a' in vertex form.", e: "Use y = a(x - 1)² + 5. Plug in (0,3): 3 = a(0 - 1)² + 5 -> 3 = a(1) + 5 -> a = -2." },
+    { q: "Find the x-coordinate of the vertex for f(x) = 3x² + 12x - 5.", e: "Using x = -b / 2a: x = -12 / (2 * 3) = -12 / 6 = -2." },
+    { q: "What feature of a quadratic function does the constant 'c' represent in standard form f(x) = ax² + bx + c?", e: "The constant 'c' represents the y-value of the y-intercept, because f(0) = a(0)² + b(0) + c = c." }
+];
+
+// Infonote loop: Programmatically generate and inject the HTML structure for all 50 questions
+const container = document.getElementById('quiz-container');
+
+quizData.forEach((item, index) => {
+    const qNum = index + 1;
+    
+    // Create elements dynamically
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerText = `Q${qNum}. ${item.q}`;
+    
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn';
+    btn.innerText = 'Show Explanation';
+    btn.id = `btn-${qNum}`;
+    btn.onclick = () => toggleExplanation(qNum);
+    
+    const expDiv = document.createElement('div');
+    expDiv.className = 'explanation';
+    expDiv.id = `exp-${qNum}`;
+    expDiv.innerText = item.e;
+    
+    // Assemble the card
+    card.appendChild(qText);
+    card.appendChild(btn);
+    card.appendChild(expDiv);
+    
+    // Append to container
+    container.appendChild(card);
+});
+
+// Function to handle individual toggling
+function toggleExplanation(num) {
+    const exp = document.getElementById(`exp-${num}`);
+    const btn = document.getElementById(`btn-${num}`);
+    if (exp.style.display === 'block') {
+        exp.style.display = 'none';
+        btn.innerText = 'Show Explanation';
+    } else {
+        exp.style.display = 'block';
+        btn.innerText = 'Hide Explanation';
+    }
+}
+
+// Global control panel functions utilizing loops
+function toggleAll(show) {
+    for (let i = 1; i <= quizData.length; i++) {
+        const exp = document.getElementById(`exp-${i}`);
+        const btn = document.getElementById(`btn-${i}`);
+        if (show) {
+            exp.style.display = 'block';
+            btn.innerText = 'Hide Explanation';
+        } else {
+            exp.style.display = 'none';
+            btn.innerText = 'Show Explanation';
+        }
+    }
+}
+</script>
+
+</body>
+</html>
