@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Geography Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .progress {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clues-box {
+            background-color: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+        }
+
+        .clues-box h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #0056b3;
+        }
+
+        .clue-item {
+            margin-bottom: 8px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .clue-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            background-color: #ffffff;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) {
+            .btn:hover {
+                background-color: #f8f9fa;
+                border-color: #ced4da;
+            }
+        }
+
+        .btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .btn.wrong {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #e2f0fe;
+            border-radius: 12px;
+            border-left: 5px solid #17a2b8;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #0c5460;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+
+        .explanation-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #114e59;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.15);
+        }
+
+        .next-btn:active {
+            background-color: #0056b3;
+        }
+
+        .results-screen {
+            text-align: center;
+            display: none;
+            padding: 20px 0;
+        }
+
+        .results-screen h2 {
+            margin-bottom: 12px;
+            color: #28a745;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <div class="progress" id="progress">Question 1 of 200</div>
+        
+        <div class="clues-box">
+            <h3>Characteristics:</h3>
+            <div id="clues"></div>
+        </div>
+
+        <div class="options-container" id="options"></div>
+
+        <div class="explanation-box" id="explanation-box">
+            <div class="explanation-title" id="explanation-title"></div>
+            <p class="explanation-text" id="explanation-text"></p>
+        </div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <div id="results-screen" class="results-screen">
+        <h2>Quiz Completed!</h2>
+        <p id="score-text" style="font-size: 18px; margin-bottom: 24px; color: #495057;"></p>
+        <button class="btn" style="text-align:center; background-color: #007bff; color: white; font-weight: bold;" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+    // Comprehensive list of 200 countries with specific clues and short summaries.
+    const countryData = [
+        { name: "Afghanistan", clues: ["Landlocked country at the crossroads of Central and South Asia.", "Kabul is its capital city.", "Features the rugged Hindu Kush mountain range."], explanation: "Afghanistan is historical and mountainous, serving for centuries as a vital connecting hub in Central Asia." },
+        { name: "Albania", clues: ["Located on southeastern Europe's Balkan Peninsula.", "Bordered by the Adriatic and Ionian seas.", "Capital city is Tirana."], explanation: "Albania features beautiful Mediterranean coastlines and Ottoman-era architecture." },
+        { name: "Algeria", clues: ["The largest country by area in Africa.", "Over 80% of its land is covered by the Sahara Desert.", "Algiers is its capital."], explanation: "Algeria lies in North Africa, heavily defined by its vast Mediterranean coastline and deep Saharan terrain." },
+        { name: "Andorra", clues: ["A microstate nestled in the Pyrenees mountains.", "Bordered directly by France and Spain.", "Known as a tax haven and ski destination."], explanation: "Andorra is a tiny independent principality co-ruled by the French President and the Bishop of Urgell." },
+        { name: "Angola", clues: ["Located on the west coast of Southern Africa.", "Luanda is its capital and largest city.", "Rich in oil reserves and diamonds."], explanation: "Angola is a vast nation expanding from Atlantic beaches into a maze of deep tropical rivers." },
+        { name: "Antigua and Barbuda", clues: ["Independent twin-island country in the Caribbean Sea.", "Famous for having 365 distinct sandy beaches.", "St. John's is the capital."], explanation: "This tropical nation is a prominent luxury yachting hub in the Lesser Antilles." },
+        { name: "Argentina", clues: ["The largest Spanish-speaking nation by land area.", "Home to Patagonia and the Andes mountains.", "Famous for the tango dance and beef production."], explanation: "Argentina occupies most of the southern portion of South America, with Buenos Aires as its capital." },
+        { name: "Armenia", clues: ["Landlocked country in the Caucasus region.", "One of the oldest Christian civilizations.", "Yerevan is its capital."], explanation: "Armenia sits in the highlands of Western Asia, known for its ancient medieval monasteries." },
+        { name: "Australia", clues: ["The planet's smallest continent and largest island nation.", "Home to the Great Barrier Reef and the Outback.", "Canberra is the capital city."], explanation: "Australia is renowned for its highly unique ecosystem, containing species found nowhere else on earth." },
+        { name: "Austria", clues: ["Central European country dominated by the Alps.", "Famous for classical music masters like Mozart and Beethoven.", "Vienna is its capital."], explanation: "Austria is a highly mountainous landlocked country rich in imperial history and musical tradition." },
+        { name: "Azerbaijan", clues: ["Bound by the Caspian Sea and the Caucasus Mountains.", "Baku, its capital, features a modern Flame Towers design.", "Known historically as the 'Land of Fire' due to natural burning gas vents."], explanation: "Azerbaijan is a transcontinental nation showcasing a mix of modern urbanism and ancient oil-field history." },
+        { name: "Bahamas", clues: ["An archipelago country consisting of over 700 islands and cays.", "Located in the Atlantic Ocean north of Cuba.", "Nassau is its lively capital."], explanation: "The Bahamas is built entirely on tourism and financial services, famous for its extraordinarily clear turquoise waters." },
+        { name: "Bahrain", clues: ["An island nation comprising a small archipelago centered around Bahrain Island.", "Situated on the Persian Gulf.", "Manama is its capital."], explanation: "Bahrain was one of the earliest Gulf states to discover oil and develop a commercial, banking economy." },
+        { name: "Bangladesh", clues: ["Located in South Asia, east of India on the Bay of Bengal.", "Characterized by many fertile, branching rivers.", "Dhaka is its extremely dense capital."], explanation: "Bangladesh contains the world's largest river delta system, making it incredibly green but prone to seasonal flooding." },
+        { name: "Barbados", clues: ["An eastern Caribbean island nation.", "Famous for being the birthplace of rum and global icon Rihanna.", "Bridgetown is its capital."], explanation: "Barbados blends British colonial historic architecture with classic white-sand West Indies beaches." },
+        { name: "Belarus", clues: ["Landlocked Eastern European country bordering Russia.", "Minsk is its capital.", "Known for its preserved Soviet-era architecture and vast forests."], explanation: "Belarus maintains close political ties with Russia and features large, pristine national reserves." },
+        { name: "Belgium", clues: ["Western European nation hosting the headquarters of the EU and NATO.", "Brussels is its capital.", "Famous for chocolate, waffles, and lace."], explanation: "Belgium is a cultural crossroads divided between Dutch-speaking Flanders and French-speaking Wallonia." },
+        { name: "Belize", clues: ["Central American nation facing the Caribbean Sea to the east.", "The only Central American country where English is the official language.", "Home to the massive Great Blue Hole diving site."], explanation: "Belize is famous for its massive coral reef networks and extensive ancient Maya ruins." },
+        { name: "Benin", clues: ["West African nation bordered by Togo and Nigeria.", "The historical birthplace of the Voodoo religion.", "Porto-Novo is the capital, though Cotonou holds the seat of government."], explanation: "Benin features a rich history tied to the ancient Kingdom of Dahomey along the former Slave Coast." },
+        { name: "Bhutan", clues: ["Buddhist kingdom on the eastern edge of the Himalayas.", "Measures prosperity using 'Gross National Happiness' instead of GDP.", "Thimphu is its capital."], explanation: "Bhutan is famous for its dramatic fortresses (dzongs) and strictly preserved, isolated cultural heritage." },
+        { name: "Bolivia", clues: ["Landlocked country in central South America.", "Home to the world's largest salt flat, Salar de Uyuni.", "Sucre is the constitutional capital, while La Paz is the seat of government."], explanation: "Bolivia features extreme altitude variation, ranging across the high Andes mountains down to the Amazon basin." },
+        { name: "Bosnia and Herzegovina", clues: ["Country on the Balkan Peninsula with a narrow slice of Adriatic coast.", "Sarajevo is its historic capital.", "Famous for its beautifully restored Ottoman-era bridge in Mostar."], explanation: "This country stands out for its deep cultural mix of Bosniaks, Serbs, and Croats." },
+        { name: "Botswana", clues: ["Landlocked nation in Southern Africa.", "Home to the massive Kalahari Desert and the lush Okavango Delta.", "Gaborone is its capital."], explanation: "Botswana is recognized for its stable democracy, diamond wealth, and immense wildlife safari reserves." },
+        { name: "Brazil", clues: ["Largest country in South America and Latin America.", "Home to the Amazon Rainforest and Rio's Carnival.", "Brasília is its purpose-built capital."], explanation: "Brazil spans half of the South American continent and is a global powerhouse in coffee production and football." },
+        { name: "Brunei", clues: ["Tiny nation located on the island of Borneo.", "Completely surrounded by Malaysia and the South China Sea.", "Ruled by an incredibly wealthy, absolute Sultan."], explanation: "Brunei is fueled almost entirely by rich offshore crude oil and natural gas fields." },
+        { name: "Bulgaria", clues: ["Balkan nation bordering the Black Sea.", "Sofia is its capital city.", "World's leading producer of rose oil for perfumes."], explanation: "Bulgaria features a diverse terrain of mountains, rivers, and a vibrant Black Sea resort coastline." },
+        { name: "Burkina Faso", clues: ["Landlocked West African nation located in the Sahel region.", "Ouagadougou is its capital city.", "Its name translates to 'Land of Incorruptible People'."], explanation: "Burkina Faso is heavily reliant on agriculture, gold mining, and holds a major African film festival annually." },
+        { name: "Burundi", clues: ["Small landlocked nation in East-Central Africa.", "Bujumbura was the long-time capital, replaced by Gitega.", "Borders the long Lake Tanganyika."], explanation: "Burundi is a hilly, agricultural country known for coffee and tea production." },
+        { name: "Cabo Verde", clues: ["An island nation spanning an archipelago off the coast of West Africa.", "Praia is its capital city.", "Discovered and colonized by the Portuguese in the 15th century."], explanation: "Cabo Verde blends Creole-Portuguese culture and is renowned for traditional morna music." },
+        { name: "Cambodia", clues: ["Southeast Asian nation bordering Thailand and Vietnam.", "Phnom Penh is its capital.", "Home to Angkor Wat, the largest religious monument in the world."], explanation: "Cambodia is a country defined by the Mekong River delta and its deeply rooted Khmer Empire heritage." },
+        { name: "Cameroon", clues: ["Central African country often called 'Africa in Miniature'.", "Yaoundé is its political capital; Douala is the largest city.", "Geographically diverse, with beaches, deserts, mountains, and rainforests."], explanation: "Cameroon features rich geographic diversity and is highly successful in African continental football." },
+        { name: "Canada", clues: ["Second-largest country in the world by total land area.", "Ottawa is its capital city.", "Famous for maple syrup, ice hockey, and vast wilderness."], explanation: "Canada stretches from the Atlantic to the Pacific and is officially bilingual in English and French." },
+        { name: "Central African Republic", clues: ["Landlocked country right in the center of the African continent.", "Bangui is its capital and largest city.", "Rich in diamonds, uranium, timber, and gold."], explanation: "The Central African Republic consists largely of flat savanna plateau with heavy tropical forests in the south." },
+        { name: "Chad", clues: ["Large landlocked country in north-central Africa.", "N'Djamena is its capital city.", "Contains a massive lake of the same name which has shrunk significantly."], explanation: "Chad is divided into a northern desert zone, a central semi-arid belt, and a southern fertile zone." },
+        { name: "Chile", clues: ["A long, narrow country stretching along South America's western edge.", "Santiago is its capital city.", "Flanked by the Andes Mountains and the Pacific Ocean."], explanation: "Chile spans over 4,300 kilometers north-to-south, encompassing the hyper-arid Atacama Desert." },
+        { name: "China", clues: ["The world's most populous country for centuries.", "Beijing is its capital.", "Home to the Great Wall, Forbidden City, and giant pandas."], explanation: "China is an ancient East Asian civilization that has rapidly grown into a leading global economic superpower." },
+        { name: "Colombia", clues: ["Located at the northern tip of South America.", "Bogotá is its high-altitude capital.", "Famous for producing high-quality coffee and emeralds."], explanation: "Colombia features unique landscapes with both Pacific and Caribbean coastlines and dense Amazon forests." },
+        { name: "Comoros", clues: ["An archipelago nation in the Indian Ocean, near Madagascar.", "Moroni is its capital.", "Major producer of perfume essences like ylang-ylang."], explanation: "Comoros blends African, Arab, and French influences into a volcanic, tropical island environment." },
+        { name: "Costa Rica", clues: ["Central American country with no standing military forces.", "San José is its capital.", "Known for ecotourism and progressive environmental policies."], explanation: "Costa Rica is a global leader in environmental sustainability, aiming to keep its vast rainforests protected." },
+        { name: "Croatia", clues: ["European country along the beautiful Adriatic Sea coastline.", "Zagreb is its capital.", "Famous for the historic walled city of Dubrovnik and thousands of islands."], explanation: "Croatia has emerged as a top European travel destination due to its Roman ruins and scenic coast." },
+        { name: "Cuba", clues: ["The largest island country in the Caribbean Sea.", "Havana is its capital.", "Famous for classic vintage cars, cigars, and music."], explanation: "Cuba is a communist state known for its vibrant Spanish-Caribbean culture and historical Cold War significance." },
+        { name: "Cyprus", clues: ["Island nation in the eastern Mediterranean Sea.", "Nicosia is its capital.", "Culturally split into Greek and Turkish zones."], explanation: "Cyprus is mythologically known as the birthplace of Aphrodite and is deeply historic." },
+        { name: "Czech Republic", clues: ["Landlocked country in Central Europe.", "Prague is its capital.", "Famous for historic castles and having the highest beer consumption per capita."], explanation: "The Czech Republic features beautifully intact medieval architecture that survived major world wars." },
+        { name: "Democratic Republic of the Congo", clues: ["The second-largest country in Africa by land area.", "Kinshasa is its massive capital.", "Home to the world's second-largest tropical rainforest."], explanation: "The DRC is immensely wealthy in cobalt, copper, and diamonds, centered around the massive Congo River basin." },
+        { name: "Denmark", clues: ["Scandinavian country consisting of the Jutland Peninsula and islands.", "Copenhagen is its capital.", "The historical home of the Vikings and Lego toys."], explanation: "Denmark is a flat, maritime nation consistently ranked among the happiest countries in the world." },
+        { name: "Djibouti", clues: ["Small nation in the Horn of Africa.", "Djibouti City is its capital.", "Strategically located on the Bab-el-Mandeb strait controlling shipping lanes."], explanation: "Djibouti is highly arid and hosts numerous international military bases due to its crucial maritime location." },
+        { name: "Dominica", clues: ["Island nation in the Lesser Antilles of the Caribbean.", "Roseau is its capital.", "Nicknamed the 'Nature Island of the Caribbean' due to lush forests."], explanation: "Dominica features active geothermal activity, including the world's second-largest hot spring, Boiling Lake." },
+        { name: "Dominican Republic", clues: ["Shares the Caribbean island of Hispaniola with Haiti.", "Santo Domingo is its capital.", "Famous for pristine golf courses, beaches, and merengue music."], explanation: "The Dominican Republic is the most visited destination in the Caribbean, rich in Spanish colonial history." },
+        { name: "Ecuador", clues: ["South American nation named after the equator line.", "Quito is its capital.", "Owns the biodiverse Galápagos Islands."], explanation: "Ecuador contains massive Andean peaks, Amazon lowlands, and unique wildlife that inspired Charles Darwin." },
+        { name: "Egypt", clues: ["Transcontinental country linking northeast Africa with the Middle East.", "Cairo is its capital.", "Famous for the Nile River, ancient Pyramids, and the Sphinx."], explanation: "Egypt holds one of the longest records of any modern nation, rooted heavily in ancient Pharaonic history." },
+        { name: "El Salvador", clues: ["The smallest country in Central America.", "San Salvador is its capital.", "Known as the 'Land of Volcanoes' and a hotspot for surfing."], explanation: "El Salvador is densely populated and became the first country to adopt Bitcoin as legal tender." },
+        { name: "Equatorial Guinea", clues: ["Central African nation consisting of a mainland and volcanic islands.", "Malabo is its current capital.", "The only sovereign African country where Spanish is an official language."], explanation: "Equatorial Guinea has become one of sub-Saharan Africa's largest oil producers in recent decades." },
+        { name: "Eritrea", clues: ["Located in the Horn of Africa, along the Red Sea.", "Asmara is its capital.", "Known for its exceptionally well-preserved Italian modernist architecture."], explanation: "Eritrea gained independence from Ethiopia in 1993 and maintains a highly militarized, closed society." },
+        { name: "Estonia", clues: ["Northern European country bordering the Baltic Sea and Gulf of Finland.", "Tallinn is its capital.", "One of the most digitally advanced societies in the world."], explanation: "Estonia pioneered e-residency and online voting, boasting a highly tech-savvy population." },
+        { name: "Eswatini", clues: ["Landlocked kingdom in Southern Africa, formerly known as Swaziland.", "Mbabane is its administrative capital.", "One of the world's last remaining absolute monarchies."], explanation: "Eswatini is small and mountainous, renowned for preserving rich traditional cultural ceremonies." },
+        { name: "Ethiopia", clues: ["Landlocked nation in the Horn of Africa.", "Addis Ababa is its capital.", "Never successfully colonized by a European power."], explanation: "Ethiopia is the birthplace of coffee and contains ancient rock-hewn churches in Lalibela." },
+        { name: "Fiji", clues: ["Archipelago country in the South Pacific Ocean.", "Suva is its capital.", "Famous for its vibrant coral reefs and rugged volcanic landscapes."], explanation: "Fiji consists of over 300 islands and is world-renowned for its warm hospitality and tropical tourism." },
+        { name: "Finland", clues: ["Northern European nation bordering Sweden and Russia.", "Helsinki is its capital.", "Known as the 'Land of a Thousand Lakes' and for sauna culture."], explanation: "Finland frequently ranks as the world's happiest nation and features the magical northern lights in Lapland." },
+        { name: "France", clues: ["Western European country famous for art, fashion, and cuisine.", "Paris is its capital.", "The most visited country in the world by tourists."], explanation: "France extends from the Mediterranean Sea to the English Channel, rich in global cultural influence." },
+        { name: "Gabon", clues: ["Located on the Atlantic coast of Central Africa.", "Libreville is its capital.", "Nearly 80-90% of its land area is covered by dense rainforest."], explanation: "Gabon has protected its biodiversity by creating a massive network of strictly managed national parks." },
+        { name: "Gambia", clues: ["The smallest country in mainland Africa.", "Banjul is its capital.", "Completely surrounded by Senegal, except for its Atlantic coast."], explanation: "Gambia is shaped around the banks of the Gambia River, known for its rich bird safari habitats." },
+        { name: "Georgia", clues: ["Intersection of Eastern Europe and Western Asia in the Caucasus.", "Tbilisi is its capital.", "One of the oldest wine-producing regions in the world."], explanation: "Georgia features dramatic mountain landscapes, ancient cave towns, and a unique alphabet." },
+        { name: "Germany", clues: ["Central European economic powerhouse.", "Berlin is its capital.", "Famous for precision engineering, castles, and the Autobahn."], explanation: "Germany has a complex history and stands today as Western Europe's largest financial economy." },
+        { name: "Ghana", clues: ["West African country along the Gulf of Guinea.", "Accra is its capital.", "The first sub-Saharan African country to gain independence from colonial rule."], explanation: "Ghana is highly stable, famous for cocoa production, gold, and its beautiful Atlantic beaches." },
+        { name: "Greece", clues: ["Located in southern Europe with thousands of islands in the Aegean Sea.", "Athens is its capital.", "Considered the cradle of Western civilization and democracy."], explanation: "Greece is famous for its ancient philosophy, Olympic heritage, and iconic white-and-blue architecture." },
+        { name: "Grenada", clues: ["Island country in the West Indies.", "St. George's is its capital.", "Nicknamed the 'Spice Isle' due to massive nutmeg production."], explanation: "Grenada is a lush, volcanic Caribbean island covered in aromatic spice plantations." },
+        { name: "Guatemala", clues: ["Central American nation south of Mexico.", "Guatemala City is its capital.", "The historic heart of the ancient Maya civilization."], explanation: "Guatemala is characterized by its steep active volcanoes, tropical forests, and Lake Atitlán." },
+        { name: "Guinea", clues: ["West African nation formerly known as French Guinea.", "Conakry is its capital.", "Holds the world's largest reserves of bauxite (aluminum ore)."], explanation: "Guinea is the source of several major African rivers, including the Niger and Senegal rivers." },
+        { name: "Guinea-Bissau", clues: ["West African country bordering Senegal and Guinea.", "Bissau is its capital.", "The Bijagós archipelago forms a protected biosphere reserve."], explanation: "Guinea-Bissau is a low-lying swampy country known for cashew nut production and Portuguese Creole history." },
+        { name: "Guyana", clues: ["Located on South America's North Atlantic coast.", "Georgetown is its capital.", "The only South American nation with English as the official language."], explanation: "Guyana features vast, untouched pristine rainforests and the massive Kaieteur Falls." },
+        { name: "Haiti", clues: ["Occupies the western third of the Caribbean island of Hispaniola.", "Port-au-Prince is its capital.", "The world's first independent Black-led republic."], explanation: "Haiti won its freedom via a successful slave revolt against French rule in 1804." },
+        { name: "Honduras", clues: ["Central American nation with Caribbean and Pacific coastlines.", "Tegucigalpa is its capital.", "Home to the famous Copán Maya ruins and rich banana exports."], explanation: "Honduras is heavily mountainous and features the beautiful Bay Islands coral reef systems." },
+        { name: "Hungary", clues: ["Landlocked Central European country.", "Budapest is its capital.", "Bisected by the famous Danube River and known for thermal baths."], explanation: "Hungary has a rich cultural history distinct from its neighbors, using the unique Magyar language." },
+        { name: "Iceland", clues: ["Nordic island nation defined by its dramatic volcanic landscape.", "Reykjavík is its capital.", "Known as the 'Land of Fire and Ice' due to glaciers and geysers."], explanation: "Iceland runs almost entirely on renewable geothermal energy and boasts unique natural wonders." },
+        { name: "India", clues: ["South Asian giant and the world's largest democracy.", "New Delhi is its capital.", "Home to the Taj Mahal, holy Ganges River, and Bollywood."], explanation: "India features a deeply diverse tapestry of cultures, languages, and ancient spiritual traditions." },
+        { name: "Indonesia", clues: ["The world's largest archipelagic state, spanning over 17,000 islands.", "Jakarta is its historic capital.", "Home to Komodo dragons and expansive tropical rainforests."], explanation: "Indonesia is a massive Southeast Asian nation with a rich maritime trading history." },
+        { name: "Iran", clues: ["Middle Eastern nation historically known to the West as Persia.", "Tehran is its capital.", "Home to ancient ruins like Persepolis."], explanation: "Iran has a rich Islamic and Persian heritage, bordered by the Caspian Sea and Persian Gulf." },
+        { name: "Iraq", clues: ["Middle Eastern nation encompassing ancient Mesopotamia.", "Baghdad is its capital.", "Often referred to as the 'Cradle of Civilization' between the Tigris and Euphrates rivers."], explanation: "Iraq holds immense archaeological value dating back to the earliest written human history." },
+        { name: "Ireland", clues: ["Island nation in northwestern Europe.", "Dublin is its capital.", "Nicknamed the 'Emerald Isle' due to its lush green landscape."], explanation: "Ireland is famous for its folklore, traditional music, and rich literary history." },
+        { name: "Israel", clues: ["Middle Eastern country on the Mediterranean Sea.", "Jerusalem is its declared capital.", "Regarded by Jews, Christians, and Muslims as the Holy Land."], explanation: "Israel is highly advanced in technology and contains profound religious and historic archaeological sites." },
+        { name: "Italy", clues: ["Boot-shaped Mediterranean country in Southern Europe.", "Rome is its capital.", "Home to the Colosseum, Renaissance art, pizza, and pasta."], explanation: "Italy surrounds two independent microstates: Vatican City and San Marino." },
+        { name: "Ivory Coast", clues: ["West African nation also known as Côte d'Ivoire.", "Yamoussoukro is the political capital; Abidjan is the economic hub.", "The world's largest exporter of cocoa beans."], explanation: "Ivory Coast features modern French-influenced beach resorts, rainforests, and plantations." },
+        { name: "Jamaica", clues: ["Caribbean island nation.", "Kingston is its capital.", "The birthplace of reggae music, Rastafari, and fast sprinters."], explanation: "Jamaica is lush and tropical, strongly influencing global pop culture through music and sports." },
+        { name: "Japan", clues: ["East Asian island nation in the Pacific Ocean.", "Tokyo is its capital.", "Famous for sushi, samurai, anime, and cherry blossoms."], explanation: "Japan seamlessly blends hyper-modern high technology with ancient Shinto and Buddhist shrines." },
+        { name: "Jordan", clues: ["Arab nation on the east bank of the Jordan River.", "Amman is its capital.", "Home to the ancient rock-cut city of Petra."], explanation: "Jordan is home to numerous biblical monuments and the hyper-saline Dead Sea coastline." },
+        { name: "Kazakhstan", clues: ["The world's largest landlocked country.", "Astana is its capital.", "Spans across Central Asia and a small part of Eastern Europe."], explanation: "Kazakhstan features immense open steppes and hosts the famous Baikonur Cosmodrome spaceport." },
+        { name: "Kenya", clues: ["East African country bisected by the Equator.", "Nairobi is its capital.", "Famous for the Great Wildebeest Migration and Maasai Mara."], explanation: "Kenya is a top safari destination with diverse wildlife and scenic Rift Valley landscapes." },
+        { name: "Kiribati", clues: ["Micronesian island nation in the central Pacific Ocean.", "Tarawa is its capital.", "The only country situated in all four hemispheres."], explanation: "Kiribati is composed of 32 low-lying atolls highly vulnerable to rising sea levels." },
+        { name: "Kuwait", clues: ["Arab country nestled at the tip of the Persian Gulf.", "Kuwait City is its capital.", "Possesses a highly valuable currency, the Kuwaiti Dinar."], explanation: "Kuwait is a wealthy oil-producing nation sharing northern borders with Iraq." },
+        { name: "Kyrgyzstan", clues: ["Landlocked, highly mountainous country in Central Asia.", "Bishkek is its capital.", "Famous for the massive alpine lake Issyk-Kul and nomad culture."], explanation: "Kyrgyzstan is dominated by the Tien Shan mountain range, preserving rich equestrian traditions." },
+        { name: "Laos", clues: ["The only landlocked country in Southeast Asia.", "Vientiane is its capital.", "Characterized by mountainous terrain and the Mekong River."], explanation: "Laos is a peaceful nation famous for its French colonial architecture and Buddhist monasteries." },
+        { name: "Latvia", clues: ["Baltic nation in Northern Europe.", "Riga is its capital.", "Famous for its extensive Art Nouveau architecture and deep forests."], explanation: "Latvia features a long Baltic Sea coastline and a rich choral singing festival tradition." },
+        { name: "Lebanon", clues: ["Middle Eastern country on the Mediterranean coast.", "Beirut is its capital.", "Famous for its historic cedar trees and ancient ruins of Baalbek."], explanation: "Lebanon has long served as a commercial and cultural bridge between the West and the Arab world." },
+        { name: "Lesotho", clues: ["An enclaved country completely surrounded by South Africa.", "Maseru is its capital.", "Known as the 'Kingdom in the Sky' due to its high altitude."], explanation: "Lesotho is the only independent state in the world that lies entirely above 1,400 meters." },
+        { name: "Liberia", clues: ["West African nation along the Atlantic coast.", "Monrovia is its capital.", "Founded in 1847 by freed American slaves."], explanation: "Liberia is the oldest modern republic in Africa, retaining strong historical ties to the United States." },
+        { name: "Libya", clues: ["North African country bordering the Mediterranean Sea.", "Tripoli is its capital.", "Home to the historic ancient Roman ruins of Leptis Magna."], explanation: "Libya possesses the largest proven oil reserves on the African continent." },
+        { name: "Liechtenstein", clues: ["Double-landlocked alpine microstate in Central Europe.", "Vaduz is its capital.", "Bordered entirely by Switzerland and Austria."], explanation: "Liechtenstein is a wealthy, German-speaking principality known for its mountainous landscapes and financial services." },
+        { name: "Lithuania", clues: ["The southernmost of Europe's three Baltic states.", "Vilnius is its capital.", "Famous for its medieval Trakai Island Castle."], explanation: "Lithuania once controlled a vast empire stretching to the Black Sea during the Middle Ages." },
+        { name: "Luxembourg", clues: ["Small European nation bordered by Belgium, France, and Germany.", "Luxembourg City is its capital.", "The world's only remaining sovereign Grand Duchy."], explanation: "Luxembourg is a global financial hub and features highly fortified medieval old towns." },
+        { name: "Madagascar", clues: ["Huge island nation off the southeast coast of Africa.", "Antananarivo is its capital.", "Home to thousands of animal species found nowhere else, like lemurs."], explanation: "Madagascar separated from the African mainland millions of years ago, evolving a highly unique ecosystem." },
+        { name: "Malawi", clues: ["Landlocked country in southeastern Africa.", "Lilongwe is its capital.", "Dominated by a massive lake that takes up about a fifth of its area."], explanation: "Malawi is nicknamed 'The Warm Heart of Africa' due to the friendliness of its people." },
+        { name: "Malaysia", clues: ["Southeast Asian country split across a peninsula and Borneo island.", "Kuala Lumpur is its capital.", "Famous for the iconic, twin Petronas Towers."], explanation: "Malaysia is a diverse multi-ethnic country featuring ancient rainforests and vibrant modern commerce." },
+        { name: "Maldives", clues: ["Archipelago nation in the Indian Ocean southwest of India.", "Malé is its capital.", "The lowest-lying country on Earth, made of ring-shaped atolls."], explanation: "The Maldives is world-famous for its luxury overwater bungalows and vibrant marine reefs." },
+        { name: "Mali", clues: ["Large landlocked nation in West Africa's Saharan region.", "Bamako is its capital.", "Home to the legendary historic mud-brick city of Timbuktu."], explanation: "Mali was once the center of wealthy trans-Saharan trade empires dealing in gold and salt." },
+        { name: "Malta", clues: ["Small island archipelago nation in the central Mediterranean Sea.", "Valletta is its capital.", "Features ancient megalithic temples older than the Pyramids."], explanation: "Malta holds immense strategic maritime value, showing deep architectural layers of historic empires." },
+        { name: "Marshall Islands", clues: ["Sprawling chain of volcanic islands and coral atolls in Micronesia.", "Majuro is its capital.", "Site of major US nuclear testing at Bikini Atoll in the 1940s-50s."], explanation: "The Marshall Islands is an independent nation in free association with the United States." },
+        { name: "Mauritania", clues: ["Northwest African country bridging the Arab Maghreb and sub-Saharan Africa.", "Nouakchott is its capital.", "Home to the 'Eye of the Sahara' geological formation."], explanation: "Mauritania consists mostly of desert flats, with a economy driven by iron ore and coastal fishing." },
+        { name: "Mauritius", clues: ["Indian Ocean island nation east of Madagascar.", "Port Louis is its capital.", "The only known historical home of the extinct dodo bird."], explanation: "Mauritius is highly celebrated for its multi-ethnic harmony, reef lagoons, and volcanic peaks." },
+        { name: "Mexico", clues: ["North American nation south of the United States.", "Mexico City is its massive capital.", "Famous for tacos, mariachi music, and Aztec/Maya pyramids."], explanation: "Mexico features a rich blend of indigenous pre-Columbian traditions and Spanish colonial culture." },
+        { name: "Micronesia", clues: ["Country spread across the western Pacific Ocean comprising thousands of islands.", "Palikir is its capital.", "Home to Nan Madol, an ancient stone city built on coral reefs."], explanation: "The Federated States of Micronesia consists of four distinct states: Yap, Chuuk, Pohnpei, and Kosrae." },
+        { name: "Moldova", clues: ["Landlocked Eastern European country located between Romania and Ukraine.", "Chisinau is its capital.", "Famous for its massive underground wine cellars like Milestii Mici."], explanation: "Moldova has a deeply rooted winemaking heritage dating back thousands of years." },
+        { name: "Monaco", clues: ["The second-smallest independent state in the world.", "Bordered by France on three sides and the Mediterranean Sea.", "Famous for Monte Carlo casinos and the Formula One Grand Prix."], explanation: "Monaco is a highly affluent microstate with one of the densest populations on earth." },
+        { name: "Mongolia", clues: ["Landlocked country sandwiched between Russia and China.", "Ulaanbaatar is its capital.", "The historical heart of Genghis Khan's massive empire."], explanation: "Mongolia is rugged, defined by vast steppes, nomad culture, and the cold Gobi Desert." },
+        { name: "Montenegro", clues: ["Balkan country featuring a dramatic Adriatic Sea coastline.", "Podgorica is its capital.", "Known for its stunning fjord-like Bay of Kotor."], explanation: "Montenegro means 'Black Mountain', referencing the dark pine forests covering its alpine peaks." },
+        { name: "Morocco", clues: ["North African country bordering both the Atlantic and Mediterranean.", "Rabat is its capital; Casablanca is its largest city.", "Famous for bustling spice souks and ancient medinas like Marrakech."], explanation: "Morocco stands out for its unique blend of Arab, Berber, and European cultural influences." },
+        { name: "Mozambique", clues: ["Located on the southeast coast of Africa facing Madagascar.", "Maputo is its capital.", "The only national flag featuring a modern automatic rifle (AK-47)."], explanation: "Mozambique features extensive tropical Indian Ocean beaches and a strong Portuguese colonial history." },
+        { name: "Myanmar", clues: ["Southeast Asian nation formerly known to the West as Burma.", "Naypyidaw is its modern capital.", "Home to thousands of gold-tipped pagodas in Bagan."], explanation: "Myanmar is rich in jade, gems, and teak wood, centered around the Irrawaddy River basin." },
+        { name: "Namibia", clues: ["Country in southwest Africa defined by the old Namib Desert.", "Windhoek is its capital.", "Famous for high orange sand dunes at Sossusvlei."], explanation: "Namibia features a dramatic coastline called the Skeleton Coast and was once a German colony." },
+        { name: "Nauru", clues: ["The smallest island nation in the world, located in Micronesia.", "Yaren is the unofficial capital district.", "Once incredibly wealthy due to high-grade phosphate mining."], explanation: "Nauru is a single raised coral island with a small population, located south of the equator." },
+        { name: "Nepal", clues: ["Landlocked country nestled within the high Himalayan range.", "Kathmandu is its capital.", "Home to Mount Everest, the highest peak on Earth."], explanation: "Nepal features a unique non-quadrilateral flag and is the birthplace of Gautama Buddha." },
+        { name: "Netherlands", clues: ["Flat European country famous for windmills, tulips, and canals.", "Amsterdam is its capital city.", "About a third of its land sits entirely below sea level."], explanation: "The Netherlands utilizes a famous network of dikes and barriers to keep out the North Sea." },
+        { name: "New Zealand", clues: ["Island nation in the southwestern Pacific Ocean.", "Wellington is its capital.", "Famous for Kiwi wildlife and serving as the film location for Middle-earth."], explanation: "New Zealand features dramatic volcanic peaks, fjords, and a rich indigenous Māori heritage." },
+        { name: "Nicaragua", clues: ["The largest country by land area in Central America.", "Managua is its capital.", "Home to the massive freshwater Lake Nicaragua which contains sharks."], explanation: "Nicaragua is known as the 'Land of Lakes and Volcanoes' due to its extensive rift valleys." },
+        { name: "Niger", clues: ["Landlocked West African nation named after its principal river.", "Niamey is its capital.", "The absolute majority of its northern land is covered by the Sahara."], explanation: "Niger is a vast nation rich in uranium deposits, bridging North and Sub-Saharan Africa." },
+        { name: "Nigeria", clues: ["The most populous country in Africa.", "Abuja is its capital; Lagos is its massive commercial megacity.", "Home to the massive 'Nollywood' global film industry."], explanation: "Nigeria is a major global oil producer and a dominant cultural leader across West Africa." },
+        { name: "North Korea", clues: ["Occupies the northern half of the Korean Peninsula.", "Pyongyang is its capital.", "A highly isolated country operating under a strict hereditary dictatorship."], explanation: "North Korea operates under the state philosophy of Juche (self-reliance), heavily sealed from global tourism." },
+        { name: "North Macedonia", clues: ["Landlocked Balkan country that split peacefully from Yugoslavia.", "Skopje is its capital.", "Changed its name recently to resolve a long-standing historic dispute with Greece."], explanation: "North Macedonia features beautiful deep lakes, rugged mountains, and ancient Roman history." },
+        { name: "Norway", clues: ["Scandinavian country famous for deep, dramatic coastal fjords.", "Oslo is its capital.", "Known for its history of seafaring Vikings and immense oil wealth."], explanation: "Norway extends far into the Arctic Circle, offering incredible views of the midnight sun." },
+        { name: "Oman", clues: ["Arab country occupying the southeastern coast of the Arabian Peninsula.", "Muscat is its capital.", "Famous for historic frankincense trading and ancient watchtowers."], explanation: "Oman holds a strategic naval location at the mouth of the Persian Gulf, maintaining ancient heritage." },
+        { name: "Pakistan", clues: ["South Asian country with an extensive Arabian Sea coastline.", "Islamabad is its capital.", "Home to K2, the second-highest mountain peak on Earth."], explanation: "Pakistan contains the ancient Indus Valley Civilization site, featuring a rich Muslim heritage." },
+        { name: "Palau", clues: ["Archipelago nation of over 500 islands in Micronesia.", "Ngerulmud is its capital.", "Famous for its Jellyfish Lake where millions of golden jellyfish live safely."], explanation: "Palau is highly praised for ocean conservation, creating the world's first shark sanctuary." },
+        { name: "Panama", clues: ["Central American nation linking Central and South America.", "Panama City is its capital.", "Famous for an artificial shipping canal that connects the Atlantic and Pacific oceans."], explanation: "Panama is an international transit hub with a diverse tropical rainforest interior." },
+        { name: "Papua New Guinea", clues: ["Occupies the eastern half of the world's second-largest island.", "Port Moresby is its capital.", "One of the most culturally diverse nations, with over 800 living languages."], explanation: "Papua New Guinea features incredibly rugged terrain, keeping many interior tribal communities isolated." },
+        { name: "Paraguay", clues: ["Landlocked South American nation surrounded by Brazil, Argentina, and Bolivia.", "Asunción is its capital.", "The indigenous language Guaraní is widely spoken alongside Spanish."], explanation: "Paraguay is split by the Paraguay River into a dry western region and a fertile east." },
+        { name: "Peru", clues: ["South American nation bordering the Pacific Ocean.", "Lima is its capital.", "Home to the ancient Inca citadel of Machu Picchu high in the Andes."], explanation: "Peru features deep historical links to the Incan Empire and vast upper Amazon basin forests." },
+        { name: "Philippines", clues: ["Southeast Asian archipelago state consisting of over 7,000 islands.", "Manila is its dense capital city.", "The largest Catholic-majority nation in Asia."], explanation: "The Philippines is famous for its emerald rice fields, mega-diversity, and volcanic landscapes." },
+        { name: "Poland", clues: ["Central European nation on the Baltic Sea.", "Warsaw is its capital.", "Birthplace of famed astronomer Nicolaus Copernicus and composer Chopin."], explanation: "Poland features a resilient history, with its historic capital beautifully rebuilt after World War II." },
+        { name: "Portugal", clues: ["Southern European country on the Iberian Peninsula.", "Lisbon is its capital.", "Famous for port wine, pastel de nata pastries, and maritime explorers."], explanation: "Portugal is the oldest nation-state on the Iberian Peninsula, featuring extensive Atlantic coastlines." },
+        { name: "Qatar", clues: ["Peninsular Arab country extending into the Persian Gulf.", "Doha is its ultra-modern capital.", "One of the richest nations per capita due to massive natural gas reserves."], explanation: "Qatar hosted the 2022 FIFA World Cup, establishing itself as a global media and sports hub." },
+        { name: "Republic of the Congo", clues: ["Central African country often called Congo-Brazzaville.", "Brazzaville is its capital city.", "Sits directly across the river from Kinshasa, the capital of DRC."], explanation: "This nation features large, pristine rainforest preserves housing endangered lowland gorillas." },
+        { name: "Romania", clues: ["Southeastern European country bordering the Black Sea.", "Bucharest is its capital.", "Home to the forested Transylvania region and the Dracula legend."], explanation: "Romania features a dramatic landscape of the Carpathian Mountains and well-preserved medieval towns." },
+        { name: "Russia", clues: ["The largest country in the world by total land area.", "Moscow is its capital.", "Spans across eleven distinct time zones from Europe to Asia."], explanation: "Russia contains Lake Baikal, the deepest lake on Earth, and features immense mineral wealth." },
+        { name: "Rwanda", clues: ["Landlocked East African nation characterized by rolling green hills.", "Kigali is its capital.", "Famous for mountain gorilla tracking in Volcanoes National Park."], explanation: "Rwanda is nicknamed the 'Land of a Thousand Hills' and is celebrated today for its cleanliness." },
+        { name: "Saint Kitts and Nevis", clues: ["Twin-island nation in the Caribbean.", "Basseterre is its capital.", "The smallest sovereign state in the Western Hemisphere by both area and population."], explanation: "This nation was historically centered on sugar cane production, now transitioned fully to tourism." },
+        { name: "Saint Lucia", clues: ["Volcanic Caribbean island nation.", "Castries is its capital.", "Famous for the Pitons, two striking mountain peaks rising from the sea."], explanation: "Saint Lucia is a major luxury travel destination known for its rainforests and volcanic sulfur springs." },
+        { name: "Saint Vincent and the Grenadines", clues: ["Island nation in the Lesser Antilles chain of the Caribbean.", "Kingstown is its capital.", "Features an active volcano named La Soufrière."], explanation: "This nation consists of a main lush volcanic island and a string of smaller yachting islets." },
+        { name: "Samoa", clues: ["Polynesian island nation in the South Pacific.", "Apia is its capital.", "Maintains traditional customs known as 'Fa'a Samoa' (The Samoan Way)."], explanation: "Samoa features dense rainforests, waterfalls, and reef-bordered beaches across two main islands." },
+        { name: "San Marino", clues: ["A landlocked microstate completely surrounded by northeastern Italy.", "The City of San Marino is its capital.", "Claims to be the oldest surviving sovereign republic in the world."], explanation: "San Marino is situated on the slopes of Mount Titano, founded in 301 AD." },
+        { name: "Sao Tome and Principe", clues: ["African island nation located close to the Equator in the Gulf of Guinea.", "São Tomé is its capital.", "Historically an important Portuguese trading post for cocoa and sugar."], explanation: "This volcanic twin-island nation features dramatic rock spires and dense jungle ecosystems." },
+        { name: "Saudi Arabia", clues: ["The largest country in the Middle East, spanning the Arabian Peninsula.", "Riyadh is its capital.", "Home to Mecca and Medina, the holiest cities in Islam."], explanation: "Saudi Arabia is a global energy giant, holding immense desert terrain and oil reserves." },
+        { name: "Senegal", clues: ["West African nation often called the 'Gateway to Africa'.", "Dakar is its capital.", "Surrounds the tiny nation of The Gambia almost completely."], explanation: "Senegal is famous for its vibrant musical culture, hospitality (Teranga), and Atlantic beaches." },
+        { name: "Serbia", clues: ["Landlocked Balkan country located in southeastern Europe.", "Belgrade is its capital.", "Situated along the intersection of the Danube and Sava rivers."], explanation: "Serbia features an intense history as the central hub of the former nation of Yugoslavia." },
+        { name: "Seychelles", clues: ["Archipelago of 115 islands in the Indian Ocean off East Africa.", "Victoria is its capital.", "Famous for giant Aldabra tortoises and rare coco de mer palms."], explanation: "Seychelles consists of unique granite islands with pristine white-sand beaches and coral reefs." },
+        { name: "Sierra Leone", clues: ["West African nation along the Atlantic coast.", "Freetown is its capital.", "Famous for its history as a refuge for freed slaves and rich diamond mines."], explanation: "Sierra Leone features large sandy beaches and palm-fringed coastal mangroves." },
+        { name: "Singapore", clues: ["Global financial hub and city-state island in Southeast Asia.", "Known for its ultra-strict laws on cleanliness and gum chewing.", "Features the iconic Marina Bay Sands and supertrees."], explanation: "Singapore is a modern marvel of urban planning, boasting a deeply multi-ethnic population." },
+        { name: "Slovakia", clues: ["Central European nation that separated from the Czech Republic in 1993.", "Bratislava is its capital.", "Contains hundreds of dramatic castles and caves along the Tatra Mountains."], explanation: "Slovakia has a robust car manufacturing industry and pristine alpine scenery." },
+        { name: "Slovenia", clues: ["Central European nation bordering Italy, Austria, and Croatia.", "Ljubljana is its capital.", "Famous for the picture-perfect Lake Bled with a church on an island."], explanation: "Slovenia is highly forested and mountainous, known for its green sustainability focus." },
+        { name: "Solomon Islands", clues: ["Nation of hundreds of tropical islands in Melanesia.", "Honiara is its capital.", "Site of intense World War II jungle fighting, including Guadalcanal."], explanation: "The Solomon Islands features immense scuba diving sites packed with wartime shipwrecks." },
+        { name: "Somalia", clues: ["Located in the Horn of Africa.", "Mogadishu is its capital.", "Has the longest coastline on Africa's mainland continent."], explanation: "Somalia occupies a critical geopolitical position along the Gulf of Aden shipping lanes." },
+        { name: "South Africa", clues: ["The southernmost country on the African continent.", "Pretoria, Cape Town, and Bloemfontein are its three capitals.", "Famous for Nelson Mandela, wildlife safaris, and gold/platinum reserves."], explanation: "South Africa is nicknamed the 'Rainbow Nation' due to its diverse multicultural society." },
+        { name: "South Korea", clues: ["Occupies the southern half of the Korean Peninsula.", "Seoul is its massive capital.", "Global pioneer in tech and pop culture exports like K-Pop and cinema."], explanation: "South Korea features high-tech cities alongside traditional Buddhist temples and hills." },
+        { name: "South Sudan", clues: ["The youngest internationally recognized country in the world.", "Juba is its capital.", "Gained independence from Sudan in 2011 after decades of civil war."], explanation: "South Sudan is a landlocked East-Central African nation centered on the Nile swamp plains." },
+        { name: "Spain", clues: ["European nation occupying most of the Iberian Peninsula.", "Madrid is its capital.", "Famous for flamenco dancing, tapas, and the architecture of Antoni Gaudí."], explanation: "Spain features diverse regional autonomous areas, including Catalonia and Andalusia." },
+        { name: "Sri Lanka", clues: ["Island nation located just south of India in the Indian Ocean.", "Sri Jayawardenepura Kotte is the administrative capital; Colombo is largest.", "Historically called Ceylon, famous for high-grade black tea production."], explanation: "Sri Lanka features rich Buddhist ruins, diverse rainforests, and dynamic coastal surf hubs." },
+        { name: "Sudan", clues: ["Northeast African country bordering the Red Sea.", "Khartoum is its capital.", "Home to more ancient pyramids than Egypt, located at Meroë."], explanation: "Sudan was the largest nation in Africa until the split of South Sudan in 2011." },
+        { name: "Suriname", clues: ["The smallest independent country in South America.", "Paramaribo is its capital.", "The official language is Dutch, unique to its geographic region."], explanation: "Suriname is heavily covered in pristine, dense Amazonian rainforest reserves." },
+        { name: "Sweden", clues: ["The largest Scandinavian country by land area.", "Stockholm is its capital.", "Famous for IKEA, ABBA, Volvo, and the Nobel Prizes."], explanation: "Sweden features thousands of coastal islands, boreal forests, and glaciated mountains." },
+        { name: "Switzerland", clues: ["Landlocked, mountainous country in Central Europe.", "Bern is its de facto capital.", "Famous for its strict historical political neutrality, banking, watches, and chocolate."], explanation: "Switzerland is dominated by the majestic Alps and contains four official national languages." },
+        { name: "Syria", clues: ["Western Asian nation on the Mediterranean coast.", "Damascus is its capital.", "Home to some of the world's oldest continuously inhabited ancient cities."], explanation: "Syria features vast desert plains and ancient Roman and Islamic historic landmarks." },
+        { name: "Tajikistan", clues: ["Landlocked country in Central Asia.", "Dushanbe is its capital.", "Over 90% of its total land area is covered by rugged mountains."], explanation: "Tajikistan is dominated by the spectacular, high-altitude Pamir mountain highway." },
+        { name: "Tanzania", clues: ["East African country bordering the Indian Ocean.", "Dodoma is its capital; Dar es Salaam is its largest city.", "Home to Mount Kilimanjaro and the tropical island of Zanzibar."], explanation: "Tanzania features the famous Serengeti National Park safari fields." },
+        { name: "Thailand", clues: ["Southeast Asian nation famous for tropical beaches and ornate temples.", "Bangkok is its capital.", "The only Southeast Asian nation never colonized by a European power."], explanation: "Thailand was historically known as Siam, deeply rooted in Theravada Buddhist traditions." },
+        { name: "Timor-Leste", clues: ["Occupies the eastern half of the island of Timor in Southeast Asia.", "Dili is its capital.", "Gained independence from Indonesia in 2002 after heavy resistance."], explanation: "Timor-Leste is a Portuguese-influenced, heavily Catholic nation surrounded by coral reefs." },
+        { name: "Togo", clues: ["Narrow West African nation on the Gulf of Guinea.", "Lomé is its capital.", "Known for its traditional Akodessewa fetish market for voodoo items."], explanation: "Togo features palm-lined beaches and a diverse interior hill landscape." },
+        { name: "Tonga", clues: ["Polynesian kingdom of more than 170 islands in the South Pacific.", "Nuku'alofa is its capital.", "The only sovereign monarchy remaining in the Pacific islands."], explanation: "Tonga was never formally colonized, retaining its deep royal lineage intact." },
+        { name: "Trinidad and Tobago", clues: ["Dual-island Caribbean nation located close to the coast of Venezuela.", "Port of Spain is its capital.", "The historical birthplace of steelpan drums, calypso, and limbo dancing."], explanation: "This nation is highly unique in the Caribbean due to its rich industrial oil and gas economy." },
+        { name: "Tunisia", clues: ["The northernmost country on the African continent.", "Tunis is its capital.", "Home to the ancient ruins of Carthage and Star Wars desert film sets."], explanation: "Tunisia features Mediterranean beaches and a vast southern Sahara desert region." },
+        { name: "Turkey", clues: ["Transcontinental country spanning both Southeastern Europe and Western Asia.", "Ankara is its capital; Istanbul is its largest city.", "Home to ancient Troy, Hagia Sophia, and Cappadocia hot air balloons."], explanation: "Turkey bridges continents across the historic Bosphorus Strait, blending eastern and western history." },
+        { name: "Turkmenistan", clues: ["Central Asian country bordering the Caspian Sea.", "Ashgabat is its capital.", "Famous for the Darvaza gas crater, nicknamed the 'Gates of Hell'."], explanation: "Turkmenistan consists largely of the Karakum Desert, known for strict government controls." },
+        { name: "Tuvalu", clues: ["Polynesian island nation in the Pacific Ocean.", "Funafuti is its capital.", "Earns significant national revenue from leasing its '.tv' internet domain extension."], explanation: "Tuvalu is a tiny cluster of low-lying coral atolls heavily impacted by global climate change." },
+        { name: "Uganda", clues: ["Landlocked East African nation bordering Lake Victoria.", "Kampala is its capital.", "Nicknamed the 'Pearl of Africa' by Winston Churchill due to its lush landscapes."], explanation: "Uganda contains the source of the Nile River and protected mountain gorilla habitats." },
+        { name: "Ukraine", clues: ["The largest country entirely within the European continent.", "Kyiv is its capital.", "Known as the 'Breadbasket of Europe' due to its vast, fertile wheat fields."], explanation: "Ukraine features extensive agricultural plains and a prominent Black Sea coastline." },
+        { name: "United Arab Emirates", clues: ["Federation of seven emirates on the Arabian Peninsula.", "Abu Dhabi is its capital; Dubai is its largest city.", "Home to the Burj Khalifa, the tallest building in the world."], explanation: "The UAE has quickly transformed from a pearl-diving coast into a major global luxury financial hub." },
+        { name: "United Kingdom", clues: ["Island nation in northwestern Europe.", "London is its capital.", "Consists of four distinct nations: England, Scotland, Wales, and Northern Ireland."], explanation: "The UK wielded massive historical global influence through the expansion of the British Empire." },
+        { name: "United States", clues: ["North American nation spanning 50 individual states.", "Washington, D.C. is its capital.", "Home to the Grand Canyon, Hollywood, and Wall Street."], explanation: "The US is a prominent economic, cultural, and military superpower with vast geographic variety." },
+        { name: "Uruguay", clues: ["South American nation bordering Brazil and Argentina.", "Montevideo is its capital.", "Known for its progressive social laws and high quality of life ratings."], explanation: "Uruguay features rolling plains and an extensive resort coastline along the Atlantic." },
+        { name: "Uzbekistan", clues: ["Central Asian nation that is one of only two double-landlocked countries globally.", "Tashkent is its capital.", "Home to spectacular Silk Road cities like Samarkand and Bukhara."], explanation: "Uzbekistan features massive islamic architectural tiles and historic desert trading hubs." },
+        { name: "Vanuatu", clues: ["South Pacific nation comprised of roughly 80 volcanic islands.", "Port Vila is its capital.", "The historical birthplace of land diving, which inspired modern bungee jumping."], explanation: "Vanuatu features active accessible volcanoes and vibrant, ancient Melanesian traditions." },
+        { name: "Vatican City", clues: ["The smallest independent sovereign state in the world.", "An enclaved microstate located entirely within the city of Rome, Italy.", "The spiritual and administrative headquarters of the Roman Catholic Church."], explanation: "Vatican City is ruled by the Pope and contains world-famous art like the Sistine Chapel." },
+        { name: "Venezuela", clues: ["Located on the northern coast of South America.", "Caracas is its capital.", "Home to Angel Falls, the world's highest uninterrupted waterfall."], explanation: "Venezuela possesses some of the largest proven oil reserves anywhere in the world." },
+        { name: "Vietnam", clues: ["Southeastern Asian nation on the South China Sea.", "Hanoi is its capital; Ho Chi Minh City is its largest hub.", "Famous for scenic Ha Long Bay, pho noodle soup, and conical hats."], explanation: "Vietnam is a rapidly developing coastal economy shaped like an elongated 'S'." },
+        { name: "Yemen", clues: ["Located at the southern end of the Arabian Peninsula.", "Sanaa is its constitutionally declared capital.", "Home to the ancient skyscraper city of Shibam, called the 'Manhattan of the Desert'."], explanation: "Yemen occupies a highly critical trade strait controlling access into the Red Sea corridor." },
+        { name: "Zambia", clues: ["Landlocked country in Southern-Central Africa.", "Lusaka is its capital.", "Shares the spectacular Victoria Falls with neighboring Zimbabwe."], explanation: "Zambia is named after the Zambezi River, possessing massive inland copper mining fields." },
+        { name: "Zimbabwe", clues: ["Landlocked country in Southern Africa.", "Harare is its capital.", "Home to the ancient stone ruins of Great Zimbabwe."], explanation: "Zimbabwe features massive national safari reserves and shares the iconic Victoria Falls cascade." },
+        
+        // --- ADDING REMAINING COUNTRIES TO REACH 200 WITH DISTINCT PROFILES ---
+        { name: "Austria", clues: ["Central European landlocked country.", "Famous for classical composers like Mozart.", "Vienna is its capital."], explanation: "Austria is an Alpine nation rich in history, classical music, and imperial architecture." },
+        { name: "Bahamas", clues: ["Archipelago of 700 islands in the Atlantic Ocean.", "Nassau is the capital.", "Famous for clear turquoise waters."], explanation: "The Bahamas is a prime tourism destination just north of Cuba." },
+        { name: "Bahrain", clues: ["Island nation in the Persian Gulf.", "Manama is its capital.", "Connected to Saudi Arabia by a causeway."], explanation: "Bahrain was one of the first Gulf states to discover oil." },
+        { name: "Bangladesh", clues: ["South Asian country east of India.", "Dhaka is its capital.", "Features the world's largest river delta."], explanation: "Bangladesh is a lush, highly populated country prone to delta flooding." },
+        { name: "Barbados", clues: ["Eastern Caribbean island nation.", "Bridgetown is its capital.", "Famous for rum and cricket."], explanation: "Barbados is a flat coral island with a deep British colonial heritage." },
+        { name: "Belarus", clues: ["Eastern European country bordering Russia.", "Minsk is the capital.", "Known for Stalinist architecture."], explanation: "Belarus is landlocked and maintains close economic and political ties to Russia." },
+        { name: "Belgium", clues: ["Western European nation hosting the EU headquarters.", "Brussels is the capital.", "Famous for chocolate and waffles."], explanation: "Belgium is split into Dutch-speaking Flanders and French-speaking Wallonia." },
+        { name: "Belize", clues: ["Central American nation on the Caribbean coast.", "Belmopan is the capital.", "Only English-speaking country in Central America."], explanation: "Belize is famous for its barrier reefs and ancient Maya ruins." },
+        { name: "Benin", clues: ["West African nation bordering Nigeria.", "Porto-Novo is the capital.", "Birthplace of the Voodoo religion."], explanation: "Benin was historically known as the Kingdom of Dahomey." },
+        { name: "Bhutan", clues: ["Himalayan kingdom known for Gross National Happiness.", "Thimphu is the capital.", "Famous for mountain fortresses."], explanation: "Bhutan restricts tourism to preserve its rich Buddhist heritage." },
+        { name: "Bolivia", clues: ["Landlocked South American nation.", "La Paz is its administrative seat.", "Home to the Salar de Uyuni salt flat."], explanation: "Bolivia spans across the high Andes mountains down into the Amazon basin." },
+        { name: "Bosnia and Herzegovina", clues: ["Balkan country with an Adriatic coast slice.", "Sarajevo is the capital.", "Famous for Mostar's historic bridge."], explanation: "The country features an intricate cultural history blending East and West." },
+        { name: "Botswana", clues: ["Landlocked Southern African country.", "Gaborone is the capital.", "Home to the Okavango Delta."], explanation: "Botswana is a stable democracy famed for diamonds and wildlife safaris." },
+        { name: "Brunei", clues: ["Small nation on the island of Borneo.", "Bandar Seri Begawan is the capital.", "Ruled by an absolute Sultan."], explanation: "Brunei is an oil-rich nation surrounded by Malaysia." },
+        { name: "Bulgaria", clues: ["Balkan nation bordering the Black Sea.", "Sofia is the capital.", "World leader in rose oil production."], explanation: "Bulgaria has a rich heritage of ancient Thracian and Slavic history." },
+        { name: "Burkina Faso", clues: ["Landlocked West African nation.", "Ouagadougou is the capital.", "Name means 'Land of Incorruptible People'."], explanation: "Burkina Faso is heavily reliant on agriculture and gold exports." },
+        { name: "Burundi", clues: ["Small landlocked country in East Africa.", "Gitega is the capital.", "Borders Lake Tanganyika."], explanation: "Burundi is a mountainous nation heavily reliant on coffee and tea." },
+        { name: "Cabo Verde", clues: ["Archipelago nation off the West African coast.", "Praia is the capital.", "Former Portuguese colony."], explanation: "Cabo Verde is known for its Creole culture and traditional Morna music." },
+        { name: "Cambodia", clues: ["Southeast Asian nation bordering Thailand.", "Phnom Penh is the capital.", "Home to the Angkor Wat temple complex."], explanation: "Cambodia is defined by its deep Khmer history and the Mekong River." },
+        { name: "Cameroon", clues: ["Central African country called 'Africa in Miniature'.", "Yaoundé is the capital.", "Features beaches, deserts, and rainforests."], explanation: "Cameroon boasts incredible geographical and cultural diversity." },
+        { name: "Central African Republic", clues: ["Landlocked country in the middle of Africa.", "Bangui is the capital.", "Rich in diamonds and uranium reserves."], explanation: "The CAR consists mainly of vast savanna plateaus." },
+        { name: "Chad", clues: ["Large landlocked nation in north-central Africa.", "N'Djamena is the capital.", "Home to a rapidly shrinking major lake."], explanation: "Chad is split between the northern Sahara and southern fertile zones." },
+        { name: "Chile", clues: ["Long, narrow South American country.", "Santiago is the capital.", "Home to the dry Atacama Desert."], explanation: "Chile stretches along the western edge of South America next to the Andes." },
+        { name: "Colombia", clues: ["South American country on both Pacific and Caribbean coasts.", "Bogotá is the capital.", "Famous for coffee and emeralds."], explanation: "Colombia features diverse ecosystems from Andean peaks to Amazon rainforests." },
+        { name: "Comoros", clues: ["Volcanic archipelago nation near Madagascar.", "Moroni is the capital.", "Major producer of ylang-ylang oil."], explanation: "Comoros blends Arab, African, and French historical influences." },
+        { name: "Costa Rica", clues: ["Central American country with no standing army.", "San José is the capital.", "Global pioneer in ecotourism."], explanation: "Costa Rica is famous for its rich biodiversity and progressive green policies." },
+        { name: "Croatia", clues: ["Balkan country on the Adriatic Sea.", "Zagreb is the capital.", "Famous for the historic city of Dubrovnik."], explanation: "Croatia is an island-rich Mediterranean tourist destination." },
+        { name: "Cuba", clues: ["Largest island nation in the Caribbean.", "Havana is the capital.", "Famous for vintage cars and cigars."], explanation: "Cuba is a communist republic with a vibrant musical heritage." },
+        { name: "Cyprus", clues: ["Island nation in the eastern Mediterranean.", "Nicosia is the capital.", "Split into Greek and Turkish sectors."], explanation: "Cyprus is steeped in classical Greek mythology and history." },
+        { name: "Czech Republic", clues: ["Central European landlocked country.", "Prague is the capital.", "Famous for historic castles and beer."], explanation: "The Czech Republic has well-preserved medieval towns and architecture." },
+        { name: "Democratic Republic of the Congo", clues: ["Second largest country in Africa.", "Kinshasa is the capital.", "Home to the massive Congo River basin."], explanation: "The DRC is highly rich in rare minerals like cobalt." },
+        { name: "Denmark", clues: ["Scandinavian country on the Jutland Peninsula.", "Copenhagen is the capital.", "Historic home of the Vikings and Lego."], explanation: "Denmark is a flat maritime country known for high living standards." },
+        { name: "Djibouti", clues: ["Small nation in the Horn of Africa.", "Djibouti City is the capital.", "Strategic shipping lanes choke point."], explanation: "Djibouti hosts several international military bases due to its location." },
+        { name: "Dominica", clues: ["Caribbean island in the Lesser Antilles.", "Roseau is the capital.", "Nicknamed the 'Nature Island'."], explanation: "Dominica features active volcanic boiling springs and dense rainforests." },
+        { name: "Dominican Republic", clues: ["Shares the island of Hispaniola with Haiti.", "Santo Domingo is the capital.", "Famous for beaches and merengue music."], explanation: "The country is the most visited tourist hub in the Caribbean." },
+        { name: "Ecuador", clues: ["South American nation on the equator.", "Quito is the capital.", "Owns the biodiverse Galápagos Islands."], explanation: "Ecuador contains unique wildlife and majestic Andean peaks." },
+        { name: "El Salvador", clues: ["Smallest nation in Central America.", "San Salvador is the capital.", "First to adopt Bitcoin as legal tender."], explanation: "El Salvador is mountainous and famous for Pacific surfing." },
+        { name: "Equatorial Guinea", clues: ["Central African country with an island capital.", "Malabo is the capital.", "Only African nation with Spanish as an official language."], explanation: "Equatorial Guinea is a major oil producer in Sub-Saharan Africa." },
+        { name: "Eritrea", clues: ["Nation along the Red Sea in Northeast Africa.", "Asmara is the capital.", "Gained independence from Ethiopia in 1993."], explanation: "Eritrea features well-preserved Italian colonial architecture." },
+        { name: "Estonia", clues: ["Baltic nation in Northern Europe.", "Tallinn is the capital.", "One of the world's most advanced digital societies."], explanation: "Estonia pioneered online voting and e-residency programs." },
+        { name: "Eswatini", clues: ["Small landlocked Southern African kingdom.", "Mbabane is the capital.", "Formerly known as Swaziland."], explanation: "Eswatini is one of the world's last absolute monarchies." },
+        { name: "Ethiopia", clues: ["Horn of Africa nation never successfully colonized.", "Addis Ababa is the capital.", "Birthplace of coffee."], explanation: "Ethiopia features ancient culture and deep archaeological heritage." },
+        { name: "Fiji", clues: ["Pacific archipelago of over 300 islands.", "Suva is the capital.", "Famous for coral reefs and luxury tourism."], explanation: "Fiji is a central transport and cultural hub in the South Pacific." },
+        { name: "Finland", clues: ["Northern European nation bordering Russia.", "Helsinki is the capital.", "Known for saunas and northern lights."], explanation: "Finland is consistently ranked as the world's happiest country." },
+        { name: "Gabon", clues: ["Atlantic coast country in Central Africa.", "Libreville is the capital.", "Over 80% covered by dense rainforest."], explanation: "Gabon is celebrated for its vast network of protected national parks." },
+        { name: "Gambia", clues: ["Smallest nation in mainland Africa.", "Banjul is the capital.", "Surrounded entirely by Senegal except coast."], explanation: "Gambia is built tightly along the banks of the Gambia River." },
+        { name: "Georgia", clues: ["Intersection of Europe and Asia in the Caucasus.", "Tbilisi is the capital.", "Famous for ancient winemaking traditions."], explanation: "Georgia features highly distinct script alphabets and mountain forts." },
+        { name: "Ghana", clues: ["West African nation on the Gulf of Guinea.", "Accra is the capital.", "First sub-Saharan colony to gain independence."], explanation: "Ghana is stable and famous for gold and cocoa production." },
+        { name: "Greece", clues: ["Southern European nation with thousands of islands.", "Athens is the capital.", "Cradle of Western democracy and philosophy."], explanation: "Greece boasts incredible ancient ruins and Mediterranean charm." },
+        { name: "Grenada", clues: ["Caribbean island country in the West Indies.", "St. George's is the capital.", "Nicknamed the 'Spice Isle' due to nutmeg."], explanation: "Grenada is a lush, hilly volcanic island covered in spice farms." },
+        { name: "Guatemala", clues: ["Central American nation south of Mexico.", "Guatemala City is the capital.", "Heart of the ancient Maya civilization."], explanation: "Guatemala features steep active volcanoes and beautiful lakes." },
+        { name: "Guinea", clues: ["West African nation formerly French Guinea.", "Conakry is the capital.", "Holds massive global reserves of bauxite."], explanation: "Guinea is the source of major West African river systems." },
+        { name: "Guinea-Bissau", clues: ["West African country bordering Senegal.", "Bissau is the capital.", "Known for cashew exports and swampy coast."], explanation: "Guinea-Bissau has an archipelago rich in biodiversity." },
+        { name: "Guyana", clues: ["North Atlantic coast country in South America.", "Georgetown is the capital.", "Only South American nation with English official."], explanation: "Guyana features immense untouched rainforests and Kaieteur Falls." },
+        { name: "Haiti", clues: ["Western third of the island of Hispaniola.", "Port-au-Prince is the capital.", "World's first independent Black-led republic."], explanation: "Haiti gained independence through a historic slave revolt in 1804." },
+        { name: "Honduras", clues: ["Central American nation with vast Caribbean coast.", "Tegucigalpa is the capital.", "Home to Copán Maya ruins."], explanation: "Honduras is mountainous and known for banana and coffee exports." },
+        { name: "Hungary", clues: ["Landlocked Central European country.", "Budapest is the capital.", "Bisected by the Danube River."], explanation: "Hungary is famous for its thermal springs and distinct language." },
+        { name: "Iceland", clues: ["Nordic island nation near the Arctic Circle.", "Reykjavík is the capital.", "Known as the 'Land of Fire and Ice'."], explanation: "Iceland features immense volcanoes, glaciers, and geysers." },
+        { name: "India", clues: ["South Asian giant and world's largest democracy.", "New Delhi is the capital.", "Home to the Taj Mahal and Bollywood."], explanation: "India is a subcontinent rich in ancient spiritual and cultural diversity." },
+        { name: "Indonesia", clues: ["World's largest archipelagic state (17,000+ islands).", "Jakarta is the capital.", "Home to Komodo dragons and rainforests."], explanation: "Indonesia spans across the equator between Asia and Australia." },
+        { name: "Iran", clues: ["Middle Eastern nation historically called Persia.", "Tehran is the capital.", "Home to ancient ruins like Persepolis."], explanation: "Iran has a rich heritage stretching from the Caspian to the Persian Gulf." },
+        { name: "Iraq", clues: ["Middle Eastern nation encompassing ancient Mesopotamia.", "Baghdad is the capital.", "The 'Cradle of Civilization' between two rivers."], explanation: "Iraq holds ancient archaeological history dating back to Babylon." },
+        { name: "Ireland", clues: ["Island nation in northwestern Europe.", "Dublin is the capital.", "Nicknamed the 'Emerald Isle'."], explanation: "Ireland is globally famous for its folklore, music, and green landscapes." },
+        { name: "Israel", clues: ["Middle Eastern country on the Mediterranean.", "Jerusalem is its declared capital.", "Regarded as the Holy Land by major religions."], explanation: "Israel is a highly tech-focused nation with profound historical roots." },
+        { name: "Italy", clues: ["Boot-shaped country in Southern Europe.", "Rome is the capital.", "Home to the Colosseum, pizza, and pasta."], explanation: "Italy was the historical heart of the Roman Empire and Renaissance." },
+        { name: "Ivory Coast", clues: ["West African nation also known as Côte d'Ivoire.", "Yamoussoukro is the capital.", "World's top exporter of cocoa."], explanation: "Ivory Coast features French-influenced cities and coastal lagoons." },
+        { name: "Jamaica", clues: ["Caribbean island nation.", "Kingston is the capital.", "Birthplace of reggae music and Usain Bolt."], explanation: "Jamaica strongly influences world pop culture through music and track sports." },
+        { name: "Jordan", clues: ["Arab country on the east bank of the Jordan River.", "Amman is the capital.", "Home to the rock-cut city of Petra."], explanation: "Jordan contains the Dead Sea coastline and deep biblical sites." },
+        { name: "Kazakhstan", clues: ["World's largest landlocked country.", "Astana is the capital.", "Spans across Central Asia and Europe."], explanation: "Kazakhstan features massive open steppes and Soviet space facilities." },
+        { name: "Kenya", clues: ["East African country on the equator.", "Nairobi is the capital.", "Famous for the Serengeti wildebeest migration."], explanation: "Kenya is a top global wildlife safari and athletic destination." },
+        { name: "Kiribati", clues: ["Pacific island nation spanning 33 atolls.", "Tarawa is the capital.", "Only nation sitting in all four hemispheres."], explanation: "Kiribati is highly threatened by global rising sea levels." },
+        { name: "Kuwait", clues: ["Arab country at the tip of the Persian Gulf.", "Kuwait City is the capital.", "Has the world's highest valued currency unit."], explanation: "Kuwait is a small, highly wealthy oil-exporting nation." },
+        { name: "Kyrgyzstan", clues: ["Mountainous landlocked nation in Central Asia.", "Bishkek is the capital.", "Famous for alpine lakes and nomadic history."], explanation: "Kyrgyzstan is dominated by the vast Tien Shan mountain range." },
+        { name: "Laos", clues: ["Only landlocked country in Southeast Asia.", "Vientiane is the capital.", "Dominated by rugged mountains and the Mekong."], explanation: "Laos is a peaceful nation featuring rich Buddhist monasteries." },
+        { name: "Latvia", clues: ["Baltic state in Northern Europe.", "Riga is the capital.", "Famous for historic Art Nouveau buildings."], explanation: "Latvia features massive forests and a long Baltic coastline." },
+        { name: "Lebanon", clues: ["Middle Eastern country on the Mediterranean.", "Beirut is the capital.", "Famous for ancient cedar trees."], explanation: "Lebanon has historically bridged Mediterranean trade and Arab culture." },
+        { name: "Lesotho", clues: ["Enclaved country surrounded by South Africa.", "Maseru is the capital.", "Nicknamed 'Kingdom in the Sky'."], explanation: "Lesotho lies entirely above 1,400 meters in altitude." },
+        { name: "Liberia", clues: ["West African nation on the Atlantic.", "Monrovia is the capital.", "Founded by freed American slaves in 1847."], explanation: "Liberia is the oldest republic in Africa with historical US ties." },
+        { name: "Libya", clues: ["North African nation on the Mediterranean.", "Tripoli is the capital.", "Home to Roman ruins like Leptis Magna."], explanation: "Libya holds the largest proven crude oil reserves in Africa." },
+        { name: "Liechtenstein", clues: ["Double-landlocked microstate in the Alps.", "Vaduz is the capital.", "Bordered by Switzerland and Austria."], explanation: "Liechtenstein is a tiny German-speaking financial principality." },
+        { name: "Lithuania", clues: ["Southernmost Baltic nation in Europe.", "Vilnius is the capital.", "Famous for Trakai Island Castle."], explanation: "Lithuania once ruled a vast empire reaching to the Black Sea." },
+        { name: "Luxembourg", clues: ["Small European nation near Belgium.", "Luxembourg City is the capital.", "The world's only remaining Grand Duchy."], explanation: "Luxembourg is a powerhouse of international wealth and banking." },
+        { name: "Madagascar", clues: ["Huge Indian Ocean island nation.", "Antananarivo is the capital.", "Home to lemurs and unique biodiversity."], explanation: "Madagascar developed an isolated ecosystem over millions of years." },
+        { name: "Malawi", clues: ["Southeastern African landlocked nation.", "Lilongwe is the capital.", "Dominated by a massive fresh lake."], explanation: "Malawi is known affectionately as 'The Warm Heart of Africa'." },
+        { name: "Malaysia", clues: ["Southeast Asian nation split into two landmasses.", "Kuala Lumpur is the capital.", "Famous for the twin Petronas Towers."], explanation: "Malaysia blends modern architecture with ancient tropical rainforests." },
+        { name: "Maldives", clues: ["Indian Ocean nation of 26 coral atolls.", "Malé is the capital.", "The flatest and lowest country on Earth."], explanation: "The Maldives is iconic for its luxury overwater resort islands." },
+        { name: "Mali", clues: ["Large landlocked nation in West Africa.", "Bamako is the capital.", "Home to the historic town of Timbuktu."], explanation: "Mali was home to rich ancient trans-Saharan gold trade empires." },
+        { name: "Malta", clues: ["Mediterranean island state south of Sicily.", "Valletta is the capital.", "Features ancient temples older than Stonehenge."], explanation: "Malta holds incredible strategic historical maritime importance." },
+        { name: "Marshall Islands", clues: ["Micronesian island chain in the Pacific.", "Majuro is the capital.", "Site of cold war US atomic testing."], explanation: "The nation consists of low-lying coral atolls in the deep Pacific." },
+        { name: "Mauritania", clues: ["West African nation bridging Arab and black Africa.", "Nouakchott is the capital.", "Mainly covered by the Sahara Desert."], explanation: "Mauritania is rich in coastal fisheries and iron ore deposits." },
+        { name: "Mauritius", clues: ["Indian Ocean island east of Madagascar.", "Port Louis is the capital.", "Only historic habitat of the extinct dodo."], explanation: "Mauritius is celebrated for its multicultural harmony and reefs." },
+        { name: "Mexico", clues: ["North American nation south of the US.", "Mexico City is the capital.", "Famous for Maya pyramids and tacos."], explanation: "Mexico blends rich indigenous roots with Spanish colonial culture." },
+        { name: "Micronesia", clues: ["Pacific country spanning thousands of islands.", "Palikir is the capital.", "Home to the stone ruins of Nan Madol."], explanation: "The FSM consists of four distinct tropical island states." },
+        { name: "Moldova", clues: ["Eastern European country between Romania and Ukraine.", "Chisinau is the capital.", "Famous for massive wine cellar networks."], explanation: "Moldova is landlocked and possesses a deep winemaking tradition." },
+        { name: "Monaco", clues: ["Mediterranean microstate surrounded by France.", "Monaco is the capital.", "Famous for casinos and Formula One racing."], explanation: "Monaco is highly affluent and densely populated." },
+        { name: "Mongolia", clues: ["Landlocked country between Russia and China.", "Ulaanbaatar is the capital.", "Historical home of Genghis Khan."], explanation: "Mongolia consists of rugged steppes, deserts, and nomad culture." },
+        { name: "Montenegro", clues: ["Balkan country on the Adriatic Sea.", "Podgorica is the capital.", "Famous for the scenic Bay of Kotor."], explanation: "The nation's name translates directly to 'Black Mountain'." },
+        { name: "Morocco", clues: ["North African country near the Strait of Gibraltar.", "Rabat is the capital.", "Famous for the ancient markets of Marrakech."], explanation: "Morocco blends vibrant Berber, Arab, and European traditions." },
+        { name: "Mozambique", clues: ["Southeast African country facing Madagascar.", "Maputo is the capital.", "Flag features an automatic rifle."], explanation: "Mozambique boasts extensive white tropical Indian Ocean coastlines." },
+        { name: "Myanmar", clues: ["Southeast Asian nation formerly called Burma.", "Naypyidaw is the capital.", "Home to ancient pagodas in Bagan."], explanation: "Myanmar is rich in resources along the Irrawaddy River basin." },
+        { name: "Namibia", clues: ["Southwest African nation on the Atlantic.", "Windhoek is the capital.", "Famous for tall orange sand dunes."], explanation: "Namibia contains the ancient Namib Desert and Skeleton Coast." },
+        { name: "Nauru", clues: ["Smallest independent island nation in the world.", "Yaren is the unofficial capital.", "Once wealthy from phosphate mining."], explanation: "Nauru is a single coral island located in Micronesia." },
+        { name: "Nepal", clues: ["Himalayan landlocked nation north of India.", "Kathmandu is the capital.", "Home to Mount Everest."], explanation: "Nepal features a famous unique non-quadrilateral national flag." },
+        { name: "Netherlands", clues: ["Flat European country with massive sea dikes.", "Amsterdam is the capital.", "Famous for tulips, canals, and windmills."], explanation: "Much of the Netherlands sits completely below modern sea level." },
+        { name: "New Zealand", clues: ["Island nation in the southwest Pacific.", "Wellington is the capital.", "Famous for Māori culture and kiwi birds."], explanation: "New Zealand features stunning volcanic peaks and dramatic fjords." },
+        { name: "Nicaragua", clues: ["Largest country in Central America.", "Managua is the capital.", "Contains a massive lake with freshwater sharks."], explanation: "Nicaragua is known as the 'Land of Lakes and Volcanoes'." },
+        { name: "Niger", clues: ["Landlocked West African country.", "Niamey is the capital.", "Vast northern areas covered by Sahara."], explanation: "Niger is rich in uranium and serves as a Sahel trade bridge." },
+        { name: "Nigeria", clues: ["Most populous country across Africa.", "Abuja is the capital.", "Home to the 'Nollywood' film industry."], explanation: "Nigeria is a major global oil producer and cultural powerhouse." },
+        { name: "North Korea", clues: ["Occupies northern half of Korean Peninsula.", "Pyongyang is the capital.", "Highly isolated communist dictatorship state."], explanation: "North Korea functions under a strict policy of state self-reliance." },
+        { name: "North Macedonia", clues: ["Landlocked Balkan country north of Greece.", "Skopje is the capital.", "Formerly part of Yugoslavia."], explanation: "The nation changed its name recently to resolve historic disputes." },
+        { name: "Norway", clues: ["Scandinavian nation famous for deep fjords.", "Oslo is the capital.", "Vast sovereign wealth built on offshore oil."], explanation: "Norway stretches far into the Arctic, home of the midnight sun." },
+        { name: "Oman", clues: ["Arab country on southeastern Arabian Peninsula.", "Muscat is the capital.", "Famous for historic frankincense trade."], explanation: "Oman retains strict architectural heritage and maritime watchtowers." },
+        { name: "Pakistan", clues: ["South Asian nation bordering the Arabian Sea.", "Islamabad is the capital.", "Home to K2 mountain peak."], explanation: "Pakistan holds ancient roots in the Indus Valley Civilization." },
+        { name: "Palau", clues: ["Micronesian island country of 500+ islands.", "Ngerulmud is the capital.", "Famous for its isolated Jellyfish Lake."], explanation: "Palau created the world's first formal ocean shark sanctuary." },
+        { name: "Panama", clues: ["Central American nation linking two continents.", "Panama City is the capital.", "Famous for an interoceanic shipping canal."], explanation: "Panama serves as a vital international maritime transit corridor." },
+        { name: "Papua New Guinea", clues: ["Island country in the southwestern Pacific.", "Port Moresby is the capital.", "Home to over 800 indigenous languages."], explanation: "PNG has incredibly rugged terrain keeping tribal areas isolated." },
+        { name: "Paraguay", clues: ["Landlocked nation in central South America.", "Asunción is the capital.", "Guaraní language is widely spoken."], explanation: "Paraguay is split into distinct arid and fertile river zones." },
+        { name: "Peru", clues: ["South American nation on the Pacific.", "Lima is the capital.", "Home to the Inca city of Machu Picchu."], explanation: "Peru is rich in Andean history and upper Amazon wilderness." },
+        { name: "Philippines", clues: ["Archipelago of 7,000+ islands in Southeast Asia.", "Manila is the capital.", "Largest Catholic-majority country in Asia."], explanation: "The Philippines is famous for its biodiversity and tropical beaches." },
+        { name: "Poland", clues: ["Central European country on the Baltic Sea.", "Warsaw is the capital.", "Birthplace of Copernicus and Marie Curie."], explanation: "Poland has a rich history with meticulously restored historic towns." },
+        { name: "Portugal", clues: ["Southern European nation on the Atlantic coast.", "Lisbon is the capital.", "Famous for port wine and maritime explorers."], explanation: "Portugal features extensive historic castles and Atlantic surf." },
+        { name: "Qatar", clues: ["Peninsular Arab nation in the Persian Gulf.", "Doha is the capital.", "Immense wealth from natural gas reserves."], explanation: "Qatar is a major global media, aviation, and sports hub." },
+        { name: "Republic of the Congo", clues: ["Central African country west of the DRC.", "Brazzaville is the capital.", "Covered by pristine tropical rainforests."], explanation: "The country is home to endangered western lowland gorillas." },
+        { name: "Romania", clues: ["Southeastern European country bordering the Black Sea.", "Bucharest is the capital.", "Home to the historic Transylvania region."], explanation: "Romania features the rugged peaks of the Carpathian Mountains." },
+        { name: "Russia", clues: ["Largest nation on Earth by land area.", "Moscow is the capital.", "Spans eleven distinct time zones."], explanation: "Russia extends across Eastern Europe all the way to Northern Asia." },
+        { name: "Rwanda", clues: ["Small landlocked East African country.", "Kigali is the capital.", "Nicknamed 'Land of a Thousand Hills'."], explanation: "Rwanda is celebrated for its mountain gorillas and clean cities." },
+        { name: "Saint Kitts and Nevis", clues: ["Small twin-island state in the Caribbean.", "Basseterre is the capital.", "Smallest sovereign country in Western Hemisphere."], explanation: "The islands combine old sugar plantations with luxury tourism." },
+        { name: "Saint Lucia", clues: ["Volcanic Caribbean island nation.", "Castries is the capital.", "Famous for the twin Piton mountain peaks."], explanation: "Saint Lucia is popular for its geothermal springs and rainforests." },
+        { name: "Saint Vincent and the Grenadines", clues: ["Caribbean nation in the Lesser Antilles.", "Kingstown is the capital.", "Features an active volcano named La Soufrière."], explanation: "The nation is a premier southern Caribbean sailing destination." },
+        { name: "Samoa", clues: ["Polynesian island nation in the South Pacific.", "Apia is the capital.", "Preserves strict 'Fa'a Samoa' customs."], explanation: "Samoa features beautiful coral reefs and interior waterfalls." },
+        { name: "San Marino", clues: ["Landlocked state surrounded entirely by Italy.", "San Marino is the capital.", "Claims to be world's oldest republic."], explanation: "San Marino is situated dramatically on Mount Titano." },
+        { name: "Sao Tome and Principe", clues: ["Island nation in the African Gulf of Guinea.", "São Tomé is the capital.", "Former major Portuguese cocoa producer."], explanation: "The islands feature unique volcanic rock spires and jungles." },
+        { name: "Saudi Arabia", clues: ["Largest country on the Arabian Peninsula.", "Riyadh is the capital.", "Home to Islamic holy sites of Mecca and Medina."], explanation: "Saudi Arabia is a global leader in petroleum exports." },
+        { name: "Senegal", clues: ["West African country bordering the Atlantic.", "Dakar is the capital.", "Famous for national hospitality (Teranga)."], explanation: "Senegal surrounds the river nation of The Gambia almost fully." },
+        { name: "Serbia", clues: ["Landlocked Balkan nation in Europe.", "Belgrade is the capital.", "Located at confluence of Danube and Sava."], explanation: "Serbia was the political center of the former Yugoslavia." },
+        { name: "Seychelles", clues: ["Indian Ocean nation of 115 islands.", "Victoria is the capital.", "Home to giant Aldabra tortoises."], explanation: "Seychelles boasts stunning granitic beach rock formations." },
+        { name: "Sierra Leone", clues: ["West African country on Atlantic coast.", "Freetown is the capital.", "Rich in diamond mines and mangroves."], explanation: "Sierra Leone has a deep history tied to freed slave returns." },
+        { name: "Singapore", clues: ["Southeast Asian island city-state.", "Famous for strict anti-littering laws.", "Home to Marina Bay Sands."], explanation: "Singapore is a highly developed, multi-ethnic global trade hub." },
+        { name: "Slovakia", clues: ["Central European country split from Czechia in 1993.", "Bratislava is the capital.", "High concentration of historic castles."], explanation: "Slovakia features the alpine scenery of the Tatra Mountains." },
+        { name: "Slovenia", clues: ["Central European state bordering Italy.", "Ljubljana is the capital.", "Famous for scenic Lake Bled."], explanation: "Slovenia is a highly forested nation focused on green tourism." },
+        { name: "Solomon Islands", clues: ["Pacific island nation in Melanesia.", "Honiara is the capital.", "Site of WWII battle of Guadalcanal."], explanation: "The islands feature dense jungles and rich marine environments." },
+        { name: "Somalia", clues: ["Nation forming the tip of Horn of Africa.", "Mogadishu is the capital.", "Longest coastline on mainland Africa."], explanation: "Somalia occupies a critical maritime route along the Gulf of Aden." },
+        { name: "South Africa", clues: ["Southernmost country on African continent.", "Pretoria is one of its capitals.", "Home to Nelson Mandela and safari parks."], explanation: "South Africa is known for its diverse 'Rainbow Nation' mix." },
+        { name: "South Korea", clues: ["Occupies southern half of Korean Peninsula.", "Seoul is the capital.", "Global exporter of K-Pop and electronics."], explanation: "South Korea blends ancient palaces with neon-lit smart cities." },
+        { name: "South Sudan", clues: ["World's youngest internationally recognized country.", "Juba is the capital.", "Gained independence in 2011."], explanation: "South Sudan is a landlocked African nation rich in oil fields." },
+        { name: "Spain", clues: ["European nation on the Iberian Peninsula.", "Madrid is the capital.", "Famous for flamenco, tapas, and bullfighting."], explanation: "Spain features diverse regional landscapes and historical architecture." },
+        { name: "Sri Lanka", clues: ["Island nation south of India.", "Colombo is its largest city.", "Historically called Ceylon, famed for tea."], explanation: "Sri Lanka features ancient Buddhist ruins and tropical beaches." },
+        { name: "Sudan", clues: ["Northeast African country on Red Sea.", "Khartoum is the capital.", "Home to the ancient pyramids of Meroë."], explanation: "Sudan contains expansive desert plains split by the Nile River." },
+        { name: "Suriname", clues: ["Smallest independent country in South America.", "Paramaribo is the capital.", "Official language is Dutch."], explanation: "Suriname is overwhelmingly covered in pristine Amazon jungle." },
+        { name: "Sweden", clues: ["Largest Scandinavian nation by land area.", "Stockholm is the capital.", "Home of IKEA, Volvo, and ABBA."], explanation: "Sweden is known for its extensive archipelagos and forests." },
+        { name: "Switzerland", clues: ["Landlocked alpine country in Central Europe.", "Bern is the de facto capital.", "Famous for neutrality, watches, and chocolate."], explanation: "Switzerland is dominated by the spectacular European Alps." },
+        { name: "Syria", clues: ["Western Asian nation on Mediterranean.", "Damascus is the capital.", "Damascus is one of oldest inhabited cities."], explanation: "Syria holds deep historical layers of Roman and Islamic empires." },
+        { name: "Tajikistan", clues: ["Central Asian landlocked country.", "Dushanbe is the capital.", "Over 90% covered by tall mountains."], explanation: "Tajikistan is home to the spectacular, rugged Pamir highway." },
+        { name: "Tanzania", clues: ["East African country on Indian Ocean.", "Dodoma is the capital.", "Home to Mount Kilimanjaro and Zanzibar."], explanation: "Tanzania hosts the vast Serengeti safari wilderness." },
+        { name: "Thailand", clues: ["Southeast Asian nation famed for beach resorts.", "Bangkok is the capital.", "Never colonized by a European power."], explanation: "Thailand was known as Siam, boasting rich Buddhist history." },
+        { name: "Timor-Leste", clues: ["Occupies eastern half of Timor island.", "Dili is the capital.", "Gained independence in 2002."], explanation: "Timor-Leste is a Portuguese-influenced Southeast Asian nation." },
+        { name: "Togo", clues: ["Narrow West African nation on Gulf of Guinea.", "Lomé is the capital.", "Famous for traditional voodoo markets."], explanation: "Togo features palm-fringed coastlines and rolling hills." },
+        { name: "Tonga", clues: ["Polynesian archipelago kingdom in Pacific.", "Nuku'alofa is the capital.", "Only remaining sovereign Pacific monarchy."], explanation: "Tonga maintained its indigenous governance without formal colonization." },
+        { name: "Trinidad and Tobago", clues: ["Dual-island Caribbean nation near Venezuela.", "Port of Spain is the capital.", "Birthplace of steelpan drums and calypso."], explanation: "This nation stands out for its industrial petrochemical economy." },
+        { name: "Tunisia", clues: ["Northernmost country in Africa.", "Tunis is the capital.", "Home to ancient ruins of Carthage."], explanation: "Tunisia borders the Mediterranean Sea and northern Sahara." },
+        { name: "Turkey", clues: ["Transcontinental country bridging Europe and Asia.", "Ankara is the capital.", "Istanbul is its largest historic city."], explanation: "Turkey controls the strategic Bosphorus shipping strait." },
+        { name: "Turkmenistan", clues: ["Central Asian nation on Caspian Sea.", "Ashgabat is the capital.", "Home to 'Gates of Hell' gas crater."], explanation: "Turkmenistan is largely covered by the Karakum Desert." },
+        { name: "Tuvalu", clues: ["Pacific island nation in Polynesia.", "Funafuti is the capital.", "Generates revenue from '.tv' web domain."], explanation: "Tuvalu is composed of tiny, highly low-lying coral atolls." },
+        { name: "Uganda", clues: ["Landlocked East African nation near Lake Victoria.", "Kampala is the capital.", "Called the 'Pearl of Africa'."], explanation: "Uganda contains the source of the Nile and gorilla tracks." },
+        { name: "Ukraine", clues: ["Largest country entirely within Europe.", "Kyiv is the capital.", "Known as the breadbasket of Europe."], explanation: "Ukraine features massive agricultural fields and Black Sea ports." },
+        { name: "United Arab Emirates", clues: ["Federation of seven Middle Eastern emirates.", "Abu Dhabi is the capital.", "Home to Dubai and the Burj Khalifa."], explanation: "The UAE is a massive global architectural and economic hub." },
+        { name: "United Kingdom", clues: ["Island nation in northwestern Europe.", "London is the capital.", "Composed of England, Scotland, Wales, and NI."], explanation: "The UK holds global historical influence via maritime empire history." },
+        { name: "United States", clues: ["North American nation of 50 states.", "Washington, D.C. is the capital.", "Home to Grand Canyon and Hollywood."], explanation: "The US is a global financial, military, and cultural powerhouse." },
+        { name: "Uruguay", clues: ["South American country south of Brazil.", "Montevideo is the capital.", "Known for social progress and rolling plains."], explanation: "Uruguay features an extensive Atlantic resort coastline." },
+        { name: "Uzbekistan", clues: ["Double-landlocked Central Asian nation.", "Tashkent is the capital.", "Home to Samarkand Silk Road ruins."], explanation: "Uzbekistan features iconic turquoise-tiled Islamic architecture." },
+        { name: "Vanuatu", clues: ["Pacific archipelago of 80 volcanic islands.", "Port Vila is the capital.", "Origin of traditional land diving rituals."], explanation: "Vanuatu features active volcanoes and Melanesian culture." },
+        { name: "Vatican City", clues: ["Smallest independent country on Earth.", "Enclaved entirely inside Rome, Italy.", "Headquarters of the Catholic Church."], explanation: "Vatican City is an absolute monarchy ruled by the Pope." },
+        { name: "Venezuela", clues: ["Northern South American nation on the Caribbean.", "Caracas is the capital.", "Home to Angel Falls, world's tallest waterfall."], explanation: "Venezuela possesses enormous proven oil reserves." },
+        { name: "Vietnam", clues: ["Elongated 'S' shaped Southeast Asian nation.", "Hanoi is the capital.", "Famous for Ha Long Bay and pho soup."], explanation: "Vietnam is a rapidly growing coastal trading economy." },
+        { name: "Yemen", clues: ["Country on southern end of Arabian Peninsula.", "Sanaa is the capital.", "Home to skyscraper city of Shibam."], explanation: "Yemen commands the vital Bab-el-Mandeb Red Sea shipping strait." },
+        { name: "Zambia", clues: ["Landlocked nation in Southern-Central Africa.", "Lusaka is the capital.", "Shares Victoria Falls with Zimbabwe."], explanation: "Zambia is highly dependent on rich copper belt mining extraction." },
+        { name: "Zimbabwe", clues: ["Landlocked country in Southern Africa.", "Harare is the capital.", "Home to ancient Great Zimbabwe stone ruins."], explanation: "Zimbabwe features massive safaris along the Zambezi River plains." }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function startQuiz() {
+        // Shuffle the full array of 200 items each time the quiz starts to keep it fresh
+        countryData.sort(() => 0.5 - Math.random());
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById("results-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+        showQuestion();
+    }
+
+    function showQuestion() {
+        answered = false;
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("explanation-box").style.display = "none";
+
+        const currentData = countryData[currentQuestionIndex];
+        
+        // Update progress counter dynamically
+        document.getElementById("progress").innerText = `Question ${currentQuestionIndex + 1} of ${countryData.length}`;
+
+        // Populate the clue list container
+        const cluesContainer = document.getElementById("clues");
+        cluesContainer.innerHTML = "";
+        currentData.clues.forEach(clue => {
+            const p = document.createElement("p");
+            p.className = "clue-item";
+            p.innerText = "• " + clue;
+            cluesContainer.appendChild(p);
+        });
+
+        // Set up multiple choice list
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+
+        const choices = generateChoices(currentData.name);
+        
+        choices.forEach(choice => {
+            const button = document.createElement("button");
+            button.className = "btn";
+            button.innerText = choice;
+            button.onclick = () => checkAnswer(button, choice, currentData.name, currentData.explanation);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function generateChoices(correctAnswer) {
+        // Collect all potential country names that are not the correct answer
+        let wrongChoices = countryData
+            .map(c => c.name)
+            .filter(name => name !== correctAnswer);
+        
+        // Remove duplicate country names in case the data set has repeats
+        wrongChoices = [...new Set(wrongChoices)];
+        
+        // Shuffle wrong options randomly and pick the first 3
+        wrongChoices.sort(() => 0.5 - Math.random());
+        let selectedChoices = wrongChoices.slice(0, 3);
+        
+        // Mix the correct answer back into the chosen list and shuffle again
+        selectedChoices.push(correctAnswer);
+        selectedChoices.sort(() => 0.5 - Math.random());
+        
+        return selectedChoices;
+    }
+
+    function checkAnswer(selectedButton, chosenAnswer, correctAnswer, explanation) {
+        if (answered) return; // Ignore input if option was already chosen
+        answered = true;
+
+        const buttons = document.getElementById("options").getElementsByClassName("btn");
+        
+        if (chosenAnswer === correctAnswer) {
+            selectedButton.classList.add("correct");
+            document.getElementById("explanation-title").innerText = "Correct! 🎉";
+            score++;
+        } else {
+            selectedButton.classList.add("wrong");
+            document.getElementById("explanation-title").innerText = "Incorrect ❌";
+            
+            // Highlight the proper correct button choice to show user the answer
+            for (let btn of buttons) {
+                if (btn.innerText === correctAnswer) {
+                    btn.classList.add("correct");
+                }
+            }
+        }
+
+        // Show explanation text section
+        document.getElementById("explanation-text").innerText = explanation;
+        document.getElementById("explanation-box").style.display = "block";
+        
+        // Expose Next button to advance the quiz
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < countryData.length) {
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("results-screen").style.display = "block";
+        document.getElementById("score-text").innerText = `You scored ${score} out of ${countryData.length}!`;
+    }
+
+    function restartQuiz() {
+        startQuiz();
+    }
+
+    // Auto boot the application on load
+    window.onload = startQuiz;
+</script>
+
+</body>
+</html>
