@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Types Identification Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #4a90e2;
+            --success-color: #2ec4b6;
+            --error-color: #e71d36;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-container {
+            max-width: 650px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .progress {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .paragraph-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 25px;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            white-space: pre-wrap;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+
+        .option-item {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff;
+        }
+
+        .option-item.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success-color) !important;
+            color: #155724 !important;
+        }
+
+        .option-item.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--error-color) !important;
+            color: #721c24 !important;
+        }
+
+        .option-item.disabled {
+            pointer-events: none;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .score-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .score-num {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <!-- Active Quiz View -->
+    <div id="quiz-view">
+        <h1 id="question-title">Identify the Text Type</h1>
+        <div class="progress" id="progress-text">Question 1 of 20</div>
+        <div class="paragraph-box" id="paragraph-text">Loading paragraph...</div>
+        <ul class="options-list" id="options-container"></ul>
+        <button class="btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <!-- Results View -->
+    <div id="results-view" class="score-screen">
+        <h1>Quiz Complete!</h1>
+        <p>Your final score is:</p>
+        <div class="score-num" id="final-score">0 / 20</div>
+        <p id="feedback-text"></p>
+        <button class="btn" style="display:inline-block;" onclick="restartQuiz()">Try Again</button>
+    </div>
+</div>
+
+<script>
+    // 20 unique text passages with cleaned structural tokens to prevent execution bugs
+    const questionBank = [
+        { p: "The old wooden door creaked open, revealing a narrow staircase choked with cobwebs. Dust motes danced in the solitary beam of amber sunlight piercing through the cracked window pane, while the sharp smell of damp earth and decaying paper filled the chilly room.", c: "Descriptive Text" },
+        { p: "To update your system safely, first backup all critical data to an external drive. Next, open your settings menu, navigate to 'Updates and Security', and click 'Check for Updates'. Do not shut down your computer until the progress bar reaches 100%.", c: "Instructive (Procedural)" },
+        { p: "Investing in public transit is no longer a luxury; it is an absolute necessity for economic survival. Cities that pour resources into clean, efficient light rail systems experience a 24% decrease in traffic congestion and a massive surge in local commerce, proving that modern infrastructure pays for itself.", c: "Persuasive (Argumentative)" },
+        { p: "Photosynthesis is the biological process by which green plants utilize sunlight to synthesize nutrients from carbon dioxide and water. During this chemical reaction, plants absorb light through chlorophyll pigments and release oxygen as a metabolic byproduct.", c: "Expository (Informative)" },
+        { p: "As Sarah neared the summit, her breath grew ragged against the biting wind. She remembered what her coach had said back at basecamp, took a deep breath, and made the final leap over the icy crevasse, planting her flag firmly in the snow.", c: "Narrative Text" },
+        { p: "The software application rejected the user input because the field was programmed to hold only a single character, such as 'Y' or 'N'. Passing an entire word into this specific location threw a memory error in the legacy backend code.", c: "Char Data Type" },
+        { p: "When designing long-form printed novels, choosing an elegant, legible typeface for the main blocks of narrative content is critical. Setting this copy between 9pt and 11pt ensures that the reader's eyes do not tire over hours of continuous reading.", c: "Typography (Body Type)" },
+        { p: "In database management systems, variable character arrays are standard fields used to store dynamically sized information like usernames, email addresses, or bios, reserving storage space only for the characters actually typed.", c: "String (Varchar)" },
+        { p: "The file was completely unadorned, lacking any italicized styles, bold headings, embed layouts, or system metadata. It was raw, basic character data that could easily be read across any operating system from 1980 to today without specialized rendering tools.", c: "Plain Text (.txt)" },
+        { p: "The developer embedded anchor elements directly into the document structure, ensuring that clicking on underlined phrases would instantly route the user's web browser to another resource hosted on a completely separate server down the line.", c: "Hypertext (HTML)" },
+        { p: "He was a tall, angular man with a sharp jawline and deep-set grey eyes that seemed constantly fixed on the horizon. His coat was a faded wool trench, frayed at the cuffs and permanently stained with the red clay of the outer valley.", c: "Descriptive Text" },
+        { p: "First, cream together the softened butter and granulated sugar until the mixture is light and fluffy. Slowly add the whisked eggs one at a time to prevent separation, then gently fold in the sifted flour and baking powder using a rubber spatula.", c: "Instructive (Procedural)" },
+        { p: "Allowing smartphones in high school classrooms is a recipe for academic disaster. Study after study confirms that the mere presence of a phone on a desk reduces cognitive capacity and lowers test performance by at least half a letter grade.", c: "Persuasive (Argumentative)" },
+        { p: "The water cycle involves three distinct phase transitions: evaporation, condensation, and precipitation. Solar radiation heats surface water, converting it to vapor, which cools in the upper atmosphere to form clouds before eventually falling back to earth.", c: "Expository (Informative)" },
+        { p: "Leo checked his rear-view mirror nervously as the thunderstorm intensified. The map on his dashboard had lost signal ten miles ago, and the flickering fuel gauge was dropping closer to empty with every passing minute down the forgotten highway.", c: "Narrative Text" },
+        { p: "The program initialized an array allocated specifically for strings of text, allowing the application to stitch sentences together, parse paragraphs for keywords, and display customized welcome messages to users based on their input.", c: "String (Varchar)" },
+        { p: "Unlike structural headlines that scream for attention across a magazine layout, this text layout focuses entirely on legibility, line-height balance, and clean kerning to make reading thousands of words effortless for the consumer.", c: "Typography (Body Type)" },
+        { p: "A data document that wraps normal text inside elements like paragraph tags, div elements, and hyperlink anchor attributes to allow structural cross-linking between separate online pages.", c: "Hypertext (HTML)" },
+        { p: "The script failed because the input received was a multi-character word instead of a single letter code. The architecture required a basic 1-byte storage unit capable of holding exactly one letter, symbol, or punctuation mark.", c: "Char Data Type" },
+        { p: "The legal document was exported purely as basic text streams containing no layout code, hidden fonts, or formatting definitions, ensuring total cross-platform reading compatibility without needing proprietary software packages.", c: "Plain Text (.txt)" }
+    ];
+
+    const allOptions = [
+        "Narrative Text", "Descriptive Text", "Expository (Informative)", 
+        "Persuasive (Argumentative)", "Instructive (Procedural)", 
+        "String (Varchar)", "Char Data Type", "Plain Text (.txt)", 
+        "Hypertext (HTML)", "Typography (Body Type)"
+    ];
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    function initQuiz() {
+        // Shuffle selection
+        currentQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        score = 0;
+        
+        document.getElementById("quiz-view").style.display = "block";
+        document.getElementById("results-view").style.display = "none";
+        
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const currentData = currentQuestions[currentIndex];
+        
+        document.getElementById("progress-text").textContent = "Question " + (currentIndex + 1) + " of 20";
+        // Using textContent explicitly guarantees no raw tags compile as browser elements
+        document.getElementById("paragraph-text").textContent = currentData.p;
+        document.getElementById("next-btn").style.display = "none";
+
+        let choices = [currentData.c];
+        while (choices.length < 4) {
+            let randOpt = allOptions[Math.floor(Math.random() * allOptions.length)];
+            if (!choices.includes(randOpt)) {
+                choices.push(randOpt);
+            }
+        }
+        choices.sort(() => Math.random() - 0.5);
+
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        choices.forEach(opt => {
+            const li = document.createElement("li");
+            li.className = "option-item";
+            li.textContent = opt;
+            li.onclick = () => selectOption(li, opt, currentData.c);
+            container.appendChild(li);
+        });
+    }
+
+    function selectOption(element, selected, correct) {
+        const items = document.querySelectorAll(".option-item");
+        
+        items.forEach(item => {
+            item.classList.add("disabled");
+            if (item.textContent === correct) {
+                item.classList.add("correct");
+            }
+        });
+
+        if (selected === correct) {
+            score++;
+        } else {
+            element.classList.add("wrong");
+        }
+
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < 20) {
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById("quiz-view").style.display = "none";
+        document.getElementById("results-view").style.display = "block";
+        document.getElementById("final-score").textContent = score + " / 20";
+        
+        let feedback = "";
+        if (score === 20) feedback = "Flawless victory! You are an expert text analyst.";
+        else if (score >= 15) feedback = "Great job! You clearly understand your text types.";
+        else if (score >= 10) feedback = "Not bad, but you might want to brush up on rhetorical and technical formats.";
+        else feedback = "Keep studying! Try reviewing the differences between content writing, data types, and markup templates.";
+        
+        document.getElementById("feedback-text").textContent = feedback;
+    }
+
+    function restartQuiz() {
+        initQuiz();
+    }
+
+    window.onload = initQuiz;
+</script>
+
+</body>
+</html>
