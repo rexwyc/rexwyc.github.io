@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Environment Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .generator-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 550px;
+            overflow: hidden;
+            text-align: center;
+            border: 4px solid #4a5568;
+        }
+
+        .card-header {
+            background: #4a5568;
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .image-grid {
+            background: #edf2f7;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            padding: 6px;
+            height: 200px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .placeholder-text {
+            grid-column: span 3;
+            color: #718096;
+            font-style: italic;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #4a5568;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .value {
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .select-dropdown {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            color: #4a5568;
+            background-color: white;
+            margin-bottom: 15px;
+            outline: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .select-dropdown:focus {
+            border-color: #4a5568;
+        }
+
+        .animal-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-generate {
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-generate:hover {
+            background: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="generator-card">
+    <div class="card-header">HABITAT GALLERY GENERATOR</div>
+    
+    <div class="image-grid" id="image-box">
+        <div class="placeholder-text">Select or generate an environment to see photos</div>
+    </div>
+    
+    <div class="card-body">
+        
+        <div class="info-group">
+            <span class="label">Choose Ecosystem</span>
+            <select class="select-dropdown" id="habitat-selector" onchange="selectEnvironment()">
+                <option value="random">— Randomize on Generate —</option>
+                <option value="0">Lush Rainforest</option>
+                <option value="1">Sahara Desert</option>
+                <option value="2">Arctic Tundra</option>
+                <option value="3">Coral Reef</option>
+                <option value="4">Serengeti Savanna</option>
+                <option value="5">Alpine Pine Forest</option>
+            </select>
+        </div>
+
+        <div class="info-group">
+            <span class="label">Ecosystem Type</span>
+            <span class="value" id="ecosystem-val">—</span>
+        </div>
+        
+        <div class="info-group">
+            <span class="label">Climate Condition</span>
+            <span class="value" id="climate-val">—</span>
+        </div>
+        
+        <div class="info-group">
+            <span class="label">Local Wildlife</span>
+            <div class="animal-tags" id="animals-box">
+                <span style="color: #a0aec0;">None discovered yet</span>
+            </div>
+        </div>
+        
+        <button class="btn-generate" onclick="generateEnvironment()">GENERATE WORLD</button>
+    </div>
+</div>
+
+<script>
+    // Explicit Unsplash photo IDs mapped out to ensure unique images per category
+    const habitats = [
+        {
+            name: "Lush Rainforest",
+            images: ["photo-1516026672322-bc52d61a55d5", "photo-1546182990-dffeafbe841d", "photo-1552410260-0fd9b577afa6"],
+            climate: "Humid & Tropical Monsoons",
+            animals: ["Jaguar", "Macaw", "Tree Frog"]
+        },
+        {
+            name: "Sahara Desert",
+            images: ["photo-1509316975850-ff9c5deb0cd9", "photo-1682687220063-4742bd7fd538", "photo-1539650116574-8efeb43e2750"],
+            climate: "Arid & Blazing Sun",
+            animals: ["Fennec Fox", "Camel", "Scorpion"]
+        },
+        {
+            name: "Arctic Tundra",
+            images: ["photo-1517783999520-f068d7431a60", "photo-1489674264251-e78c11622b32", "photo-1525220305885-304313b5ff2e"],
+            climate: "Subzero & Heavy Snow",
+            animals: ["Polar Bear", "Arctic Fox", "Walrus"]
+        },
+        {
+            name: "Coral Reef",
+            images: ["photo-1546026423-cc4642628d2b", "photo-1682687220199-d0124f48f95b", "photo-1582967788606-a171c1080cb0"],
+            climate: "Warm Coastal Currents",
+            animals: ["Sea Turtle", "Clownfish", "Manta Ray"]
+        },
+        {
+            name: "Serengeti Savanna",
+            images: ["photo-1516426122078-c23e76319801", "photo-1547721064-da6cfb341d50", "photo-1603203042745-f64f7c5e263d"],
+            climate: "Dry Season Grasslands",
+            animals: ["Lion", "Cheetah", "Giraffe"]
+        },
+        {
+            name: "Alpine Pine Forest",
+            images: ["photo-1448375240586-882707db888b", "photo-1473448912268-2022ce9509d8", "photo-1464822759023-fed622ff2c3b"],
+            climate: "Crisp & Cool Breeze",
+            animals: ["Grizzly Bear", "Grey Wolf", "Bald Eagle"]
+        }
+    ];
+
+    function selectEnvironment() {
+        const selector = document.getElementById("habitat-selector");
+        if (selector.value !== "random") {
+            updateUI(parseInt(selector.value));
+        }
+    }
+
+    function generateEnvironment() {
+        const selector = document.getElementById("habitat-selector");
+        let targetIndex;
+
+        if (selector.value === "random") {
+            targetIndex = Math.floor(Math.random() * habitats.length);
+        } else {
+            targetIndex = parseInt(selector.value);
+        }
+
+        updateUI(targetIndex);
+    }
+
+    function updateUI(index) {
+        const selected = habitats[index];
+        const imageBox = document.getElementById("image-box");
+        const ecosystemVal = document.getElementById("ecosystem-val");
+        const climateVal = document.getElementById("climate-val");
+        const animalsBox = document.getElementById("animals-box");
+
+        ecosystemVal.textContent = selected.name;
+        climateVal.textContent = selected.climate;
+
+        imageBox.innerHTML = "";
+        
+        // Loop through the fixed independent image array for that specific environment
+        selected.images.forEach(imgId => {
+            const imageUrl = `https://images.unsplash.com/${imgId}?auto=format&fit=crop&w=300&h=400&q=80`;
+            const imgElement = document.createElement("img");
+            imgElement.src = imageUrl;
+            imgElement.alt = selected.name;
+            imageBox.appendChild(imgElement);
+        });
+
+        // Render Tags
+        animalsBox.innerHTML = "";
+        selected.animals.forEach(animal => {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = animal;
+            animalsBox.appendChild(tag);
+        });
+    }
+</script>
+
+</body>
+</html>
