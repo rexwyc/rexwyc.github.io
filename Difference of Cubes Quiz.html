@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference of Cubes Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        .progress {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .formula-box {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: var(--border-radius);
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) {
+            .option-btn:hover {
+                border-color: var(--primary-color);
+                background: #f0f6ff;
+            }
+        }
+
+        .option-btn.correct {
+            background-color: #ecfdf5;
+            border-color: var(--success-color);
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        .option-btn.incorrect {
+            background-color: #fef2f2;
+            border-color: var(--error-color);
+            color: #991b1b;
+        }
+
+        .explanation-box {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .explanation-box h4 {
+            margin: 0 0 8px 0;
+            color: #4b5563;
+        }
+
+        .action-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .results {
+            text-align: center;
+            display: none;
+        }
+
+        .results h2 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <div class="progress" id="progress-text">Question 1 of 20</div>
+        <div class="formula-box">
+            <strong>Formula Reminder:</strong><br>
+            a³ - b³ = (a - b)(a² + ab + b²)
+        </div>
+        <div class="question" id="question-text">Factor completely: x³ - 8</div>
+        
+        <div class="options-list" id="options-container">
+            </div>
+
+        <div class="explanation-box" id="explanation-container">
+            <h4>Explanation:</h4>
+            <p id="explanation-text"></p>
+        </div>
+
+        <button class="action-btn" id="action-button" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <div id="results-screen" class="results">
+        <h2>Quiz Complete!</h2>
+        <p>Your ultimate score is:</p>
+        <div class="score" id="score-text">0 / 20</div>
+        <button class="action-btn" style="display: block;" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            q: "Factor completely: x³ - 8",
+            options: [
+                "(x - 2)(x² + 2x + 4)",
+                "(x - 2)(x² - 2x + 4)",
+                "(x - 2)(x² + 4x + 4)",
+                "(x - 2)³"
+            ],
+            correct: 0,
+            exp: "x³ - 8 is a difference of cubes where a = x and b = 2. Following the formula (a - b)(a² + ab + b²), we get (x - 2)(x² + 2x + 4)."
+        },
+        {
+            q: "Factor completely: y³ - 27",
+            options: [
+                "(y - 3)(y² - 3y + 9)",
+                "(y - 3)(y² + 3y + 9)",
+                "(y - 3)(y² + 6y + 9)",
+                "(y + 3)(y² - 3y + 9)"
+            ],
+            correct: 1,
+            exp: "Here, a = y and b = 3. Using the formula, it expands to (y - 3)(y² + 3y + 9)."
+        },
+        {
+            q: "Factor completely: 8x³ - 1",
+            options: [
+                "(2x - 1)(2x² + 2x + 1)",
+                "(2x - 1)(4x² - 2x + 1)",
+                "(2x - 1)(4x² + 2x + 1)",
+                "(4x - 1)(2x² + 2x + 1)"
+            ],
+            correct: 2,
+            exp: "8x³ is (2x)³ and 1 is 1³. So a = 2x and b = 1. Note that a² = (2x)² = 4x², and ab = (2x)(1) = 2x. Result: (2x - 1)(4x² + 2x + 1)."
+        },
+        {
+            q: "Factor completely: 27m³ - 64",
+            options: [
+                "(3m - 4)(9m² + 12m + 16)",
+                "(3m - 4)(9m² - 12m + 16)",
+                "(3m - 4)(3m² + 12m + 16)",
+                "(3m + 4)(9m² - 12m + 16)"
+            ],
+            correct: 0,
+            exp: "a = 3m and b = 4. Therefore, a² = 9m², ab = 12m, and b² = 16. The match is (3m - 4)(9m² + 12m + 16)."
+        },
+        {
+            q: "Factor completely: a³b³ - 125",
+            options: [
+                "(ab - 5)(a²b² - 5ab + 25)",
+                "(ab - 5)(ab + 5)(ab - 5)",
+                "(ab - 5)(a²b² + 5ab + 25)",
+                "(ab + 5)(a²b² - 5ab + 25)"
+            ],
+            correct: 2,
+            exp: "Here, a = ab and b = 5. Substituting into the formula gives (ab - 5)(a²b² + 5ab + 25)."
+        },
+        {
+            q: "Factor completely: x³ - 1",
+            options: [
+                "(x - 1)(x² - x + 1)",
+                "(x - 1)(x² + x + 1)",
+                "(x - 1)³",
+                "(x + 1)(x² - x + 1)"
+            ],
+            correct: 1,
+            exp: "A fundamental case where a = x and b = 1. It factors straight into (x - 1)(x² + x + 1)."
+        },
+        {
+            q: "Factor completely: 64x³ - 125y³",
+            options: [
+                "(4x - 5y)(16x² + 20xy + 25y²)",
+                "(4x - 5y)(16x² - 20xy + 25y²)",
+                "(8x - 25y)(8x² + 20xy + 5y²)",
+                "(4x - 5y)(4x² + 20xy + 5y²)"
+            ],
+            correct: 0,
+            exp: "a = 4x and b = 5y. Squaring 4x gives 16x², multiplying them gives 20xy, and squaring 5y gives 25y². So we get (4x - 5y)(16x² + 20xy + 25y²)."
+        },
+        {
+            q: "Factor completely: 2x³ - 16",
+            options: [
+                "2(x - 2)(x² - 2x + 4)",
+                "2(x - 2)(x² + 2x + 4)",
+                "(2x - 4)(x² + 2x + 4)",
+                "2(x - 2)³"
+            ],
+            correct: 1,
+            exp: "Always look for a GCF first! Factor out 2 to get 2(x³ - 8). Then factor the difference of cubes inside to get 2(x - 2)(x² + 2x + 4)."
+        },
+        {
+            q: "Factor completely: 3y³ - 81",
+            options: [
+                "3(y - 3)(y² - 3y + 9)",
+                "(3y - 9)(y² + 3y + 9)",
+                "3(y - 3)(y² + 3y + 9)",
+                "3(y - 3)³"
+            ],
+            correct: 2,
+            exp: "Factor out the GCF of 3 first: 3(y³ - 27). Factoring the cubes yields 3(y - 3)(y² + 3y + 9)."
+        },
+        {
+            q: "Factor completely: x⁴ - 8x",
+            options: [
+                "x(x - 2)(x² + 2x + 4)",
+                "x(x - 2)(x² - 2x + 4)",
+                "x(x - 2)³",
+                "(x² - 2)(x² + 2x + 4)"
+            ],
+            correct: 0,
+            exp: "Factor out the GCF of x first: x(x³ - 8). Factoring the remaining difference of cubes gives x(x - 2)(x² + 2x + 4)."
+        },
+        {
+            q: "Factor completely: 125 - x³",
+            options: [
+                "(5 - x)(25 - 5x + x²)",
+                "(5 - x)(25 + 5x + x²)",
+                "(x - 5)(25 + 5x + x²)",
+                "(5 - x)³"
+            ],
+            correct: 1,
+            exp: "The order matters. here, a = 5 and b = x. The formula delivers (5 - x)(5² + 5(x) + x²) = (5 - x)(25 + 5x + x²)."
+        },
+        {
+            q: "Factor completely: 8 - 27m³",
+            options: [
+                "(2 - 3m)(4 + 6m + 9m²)",
+                "(2 - 3m)(4 - 6m + 9m²)",
+                "(3m - 2)(4 + 6m + 9m²)",
+                "(2 - 3m)(4 + 6m + 3m²)"
+            ],
+            correct: 0,
+            exp: "a = 2 and b = 3m. Putting it together: (2 - 3m)(2² + (2)(3m) + (3m)²) = (2 - 3m)(4 + 6m + 9m²)."
+        },
+        {
+            q: "Factor completely: x⁶ - 1",
+            options: [
+                "(x² - 1)(x⁴ + x² + 1)",
+                "(x - 1)(x + 1)(x² + x + 1)(x² - x + 1)",
+                "(x³ - 1)(x³ + 1)",
+                "All of the above are correct representations, but the fully factored form is option 2."
+            ],
+            correct: 3,
+            exp: "x⁶ - 1 can be seen as (x³)² - 1² (difference of squares) or (x²)³ - 1³ (difference of cubes). Factoring it fully leads down to option 2, meaning all stages/options build into this true absolute factorization."
+        },
+        {
+            q: "Factor completely: 8a³ - 343",
+            options: [
+                "(2a - 7)(4a² + 14a + 49)",
+                "(2a - 7)(4a² - 14a + 49)",
+                "(2a - 7)(2a² + 14a + 49)",
+                "(4a - 7)(2a² + 14a + 49)"
+            ],
+            correct: 0,
+            exp: "Since 7³ = 343, our parameters are a = 2a and b = 7. Applying the formula gives (2a - 7)(4a² + 14a + 49)."
+        },
+        {
+            q: "Factor completely: 1000 - 27x³",
+            options: [
+                "(10 - 3x)(100 - 30x + 9x²)",
+                "(10 - 3x)(100 + 30x + 9x²)",
+                "(10 - 3x)(10 + 30x + 9x²)",
+                "(3x - 10)(100 + 30x + 9x²)"
+            ],
+            correct: 1,
+            exp: "a = 10 and b = 3x. Plugging these in generates (10 - 3x)(100 + 30x + 9x²)."
+        },
+        {
+            q: "What is the sign sequence inside the factors for a Difference of Cubes?",
+            options: [
+                "Minus, Plus, Plus",
+                "Minus, Minus, Plus",
+                "Plus, Minus, Plus",
+                "Minus, Plus, Minus"
+            ],
+            correct: 0,
+            exp: "Remember the SOAP acronym for keeping track of signs: Same (minus), Opposite (plus), Always Positive (plus). So it is (a - b)(a² + ab + b²)."
+        },
+        {
+            q: "Factor completely: 54x³ - 2",
+            options: [
+                "2(3x - 1)(9x² - 3x + 1)",
+                "2(3x - 1)(9x² + 3x + 1)",
+                "2(3x - 1)³",
+                "(6x - 2)(9x² + 3x + 1)"
+            ],
+            correct: 1,
+            exp: "Pull out the common factor 2 first: 2(27x³ - 1). Then factor the inside: 2(3x - 1)(9x² + 3x + 1)."
+        },
+        {
+            q: "Factor completely: x³y⁶ - 1",
+            options: [
+                "(xy² - 1)(x²y⁴ + xy² + 1)",
+                "(xy² - 1)(x²y⁴ - xy² + 1)",
+                "(xy - 1)(x²y² + xy + 1)",
+                "(xy² - 1)³"
+            ],
+            correct: 0,
+            exp: "Here, a = xy² and b = 1. Therefore, a² = x²y⁴ and ab = xy². This fits perfect with option 1."
+        },
+        {
+            q: "Factor completely: 24x⁴ - 3x",
+            options: [
+                "3x(2x - 1)(4x² - 2x + 1)",
+                "3x(2x - 1)³",
+                "3x(2x - 1)(4x² + 2x + 1)",
+                "3(2x² - x)(4x² + 2x + 1)"
+            ],
+            correct: 2,
+            exp: "Factor out the GCF 3x to get 3x(8x³ - 1). Factoring the remaining difference of cubes yields 3x(2x - 1)(4x² + 2x + 1)."
+        },
+        {
+            q: "Factor completely: x⁹ - y⁹",
+            options: [
+                "(x³ - y³)(x⁶ + x³y³ + y⁶)",
+                "(x³ - y³)(x³ + y³)",
+                "(x - y)(x² + xy + y²)(x⁶ + x³y³ + y⁶)",
+                "Options 1 and 3 are both correct, but option 3 is fully factored."
+            ],
+            correct: 3,
+            exp: "Treating it as ((x³)³ - (y³)³) yields (x³ - y³)(x⁶ + x³y³ + y⁶). However, (x³ - y³) can be broken down even further into (x - y)(x² + xy + y²). Thus, option 3 represents the complete factorization breakdown."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let hasAnswered = false;
+
+    const progressText = document.getElementById('progress-text');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const explanationContainer = document.getElementById('explanation-container');
+    const explanationText = document.getElementById('explanation-text');
+    const actionButton = document.getElementById('action-button');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultsScreen = document.getElementById('results-screen');
+    const scoreText = document.getElementById('score-text');
+
+    function loadQuestion() {
+        hasAnswered = false;
+        actionButton.style.display = 'none';
+        explanationContainer.style.display = 'none';
+        
+        const currentQuestion = quizData[currentQuestionIndex];
+        progressText.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+        questionText.innerText = currentQuestion.q;
+        
+        optionsContainer.innerHTML = '';
+        currentQuestion.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.innerText = option;
+            button.onclick = () => selectOption(index, button);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function selectOption(selectedIndex, selectedButton) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+
+        const currentQuestion = quizData[currentQuestionIndex];
+        const buttons = optionsContainer.getElementsByClassName('option-btn');
+
+        if (selectedIndex === currentQuestion.correct) {
+            selectedButton.classList.add('correct');
+            score++;
+        } else {
+            selectedButton.classList.add('incorrect');
+            buttons[currentQuestion.correct].classList.add('correct');
+        }
+
+        explanationText.innerText = currentQuestion.exp;
+        explanationContainer.style.display = 'block';
+        
+        if (currentQuestionIndex === quizData.length - 1) {
+            actionButton.innerText = "See Results";
+        } else {
+            actionButton.innerText = "Next Question";
+        }
+        actionButton.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        quizScreen.style.display = 'none';
+        resultsScreen.style.display = 'block';
+        scoreText.innerText = `${score} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        resultsScreen.style.display = 'none';
+        quizScreen.style.display = 'block';
+        loadQuestion();
+    }
+
+    // Initial trigger to load first question
+    loadQuestion();
+</script>
+
+</body>
+</html>

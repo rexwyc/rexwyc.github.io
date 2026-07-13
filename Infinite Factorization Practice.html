@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Factorization Practice</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fb;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .question-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        button {
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        button:hover:not([disabled]) {
+            background-color: #eef2f7;
+            border-color: #3498db;
+        }
+        .correct {
+            background-color: #2ecc71 !important;
+            color: white;
+            border-color: #2ecc71;
+        }
+        .wrong {
+            background-color: #e74c3c !important;
+            color: white;
+            border-color: #e74c3c;
+        }
+        .explanation {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #e8f4fd;
+            border-left: 4px solid #2980b9;
+            border-radius: 4px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        #score-board {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        #loading {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Infinite Factorization Practice</h1>
+    <p class="description">Answer the questions below. As you scroll or complete them, new questions will generate infinitely!</p>
+    
+    <div id="score-board">Questions Answered: <span id="answered-count">0</span></div>
+    
+    <div id="quiz-box"></div>
+    <div id="loading">Generating more algebraic challenges...</div>
+
+    <script>
+        let questionCount = 0;
+        let answeredCount = 0;
+        const quizBox = document.getElementById('quiz-box');
+        const answeredCountSpan = document.getElementById('answered-count');
+
+        // Helper to generate random integers
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Helper to format polynomial terms nicely
+        function formatTerm(coeff, variable, power) {
+            if (coeff === 0) return '';
+            let sign = coeff > 0 ? ' + ' : ' - ';
+            let absCoeff = Math.abs(coeff);
+            
+            let coeffStr = absCoeff === 1 && power > 0 ? '' : absCoeff;
+            let varStr = power === 0 ? '' : (power === 1 ? variable : `${variable}²`);
+            
+            return { sign, text: coeffStr + varStr };
+        }
+
+        function generateExpression(a, b, c, d) {
+            // (ax + b)(cx + d) = ac x^2 + (ad + bc)x + bd
+            let x2Coeff = a * c;
+            let xCoeff = (a * d) + (b * c);
+            let constTerm = b * d;
+
+            let str = `${x2Coeff === 1 ? '' : (x2Coeff === -1 ? '-' : x2Coeff)}x²`;
+            
+            if (xCoeff !== 0) {
+                str += xCoeff > 0 ? ` + ${xCoeff === 1 ? '' : xCoeff}x` : ` - ${Math.abs(xCoeff)}x`;
+            }
+            if (constTerm !== 0) {
+                str += constTerm > 0 ? ` + ${constTerm}` : ` - ${Math.abs(constTerm)}`;
+            }
+            return str;
+        }
+
+        function formatFactor(m, n) {
+            if (m === 1) return `(x ${n >= 0 ? '+' : '-'} ${Math.abs(n)})`;
+            if (m === -1) return `(-x ${n >= 0 ? '+' : '-'} ${Math.abs(n)})`;
+            return `(${m}x ${n >= 0 ? '+' : '-'} ${Math.abs(n)})`;
+        }
+
+        // Generates a dynamic factorization question
+        function generateQuestion() {
+            questionCount++;
+            
+            // Types: 1 = Difference of Squares, 2 = Monic Quadratic (a=1), 3 = Non-monic Quadratic
+            const type = getRandomInt(1, 3);
+            let expression = "";
+            let correctAnswer = "";
+            let wrongAnswers = [];
+            let explanation = "";
+
+            if (type === 1) {
+                // Difference of Squares: a^2 x^2 - b^2 = (ax - b)(ax + b)
+                let a = getRandomInt(1, 8);
+                let b = getRandomInt(1, 10);
+                let complexX = a === 1 ? "x²" : `${a*a}x²`;
+                expression = `${complexX} - ${b*b}`;
+                correctAnswer = `${formatFactor(a, -b)}${formatFactor(a, b)}`;
+                
+                wrongAnswers = [
+                    `${formatFactor(a, -b)}${formatFactor(a, -b)}`,
+                    `${formatFactor(a*a, -b)}${formatFactor(1, b)}`,
+                    `(${a}x - ${b*b})(${a}x + 1)`
+                ];
+                
+                explanation = `This follows the <b>Difference of Squares</b> identity: <i>A² - B² = (A - B)(A + B)</i>.<br>Here, A = ${a === 1 ? 'x' : a + 'x'} and B = ${b}. Therefore, it factors neatly into ${correctAnswer}.`;
+
+            } else if (type === 2) {
+                // Monic Quadratic: (x + b)(x + d)
+                let b = 0, d = 0;
+                while(b === 0) b = getRandomInt(-8, 8);
+                while(d === 0) d = getRandomInt(-8, 8);
+                
+                expression = generateExpression(1, b, 1, d);
+                correctAnswer = `${formatFactor(1, b)}${formatFactor(1, d)}`;
+                
+                wrongAnswers = [
+                    `${formatFactor(1, -b)}${formatFactor(1, -d)}`,
+                    `${formatFactor(1, b + 1)}${formatFactor(1, d - 1)}`,
+                    `${formatFactor(1, b * d)}${formatFactor(1, 1)}`
+                ];
+                
+                explanation = `To factor <i>x² + bx + c</i>, look for two numbers that <b>multiply to ${b*d}</b> (the constant) and <b>add up to ${b+d}</b> (the x coefficient).<br>Those numbers are ${b} and ${d}, giving us ${correctAnswer}.`;
+
+            } else {
+                // Non-monic Quadratic: (ax + b)(cx + d)
+                let a = getRandomInt(2, 4);
+                let c = getRandomInt(1, 3);
+                let b = getRandomInt(-5, 5);
+                let d = getRandomInt(-5, 5);
+                if (b === 0) b = 1;
+                if (d === 0) d = -1;
+
+                expression = generateExpression(a, b, c, d);
+                correctAnswer = `${formatFactor(a, b)}${formatFactor(c, d)}`;
+                
+                wrongAnswers = [
+                    `${formatFactor(a, -b)}${formatFactor(c, -d)}`,
+                    `${formatFactor(a, d)}${formatFactor(c, b)}`,
+                    `${formatFactor(a*c, b)}${formatFactor(1, d)}`
+                ];
+                
+                explanation = `Using the grouping/AC method or trial-and-error, we split the middle term and find binomial factors whose product yields the original expression. Expanding ${correctAnswer} using FOIL gives back our starting equation.`;
+            }
+
+            // Shuffle choices
+            let choices = [correctAnswer, ...wrongAnswers];
+            choices.sort(() => Math.random() - 0.5);
+
+            // Create HTML Structure
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-container';
+            qDiv.innerHTML = `
+                <div class="question-text">Question ${questionCount}: Factor completely: <code style="background:#eee; padding:2px 6px; border-radius:4px;">${expression}</code></div>
+                <div class="options">
+                    ${choices.map(choice => `<button onclick="checkAnswer(this, '${choice === correctAnswer}', ${questionCount})">${choice}</button>`).join('')}
+                </div>
+                <div class="explanation" id="exp-${questionCount}">${explanation}</div>
+            `;
+            
+            quizBox.appendChild(qDiv);
+        }
+
+        // Handle answer selection
+        function checkAnswer(button, isCorrect, id) {
+            const container = button.parentElement;
+            const buttons = container.querySelectorAll('button');
+            const expDiv = document.getElementById(`exp-${id}`);
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect === 'true') {
+                button.classList.add('correct');
+            } else {
+                button.classList.add('wrong');
+                // Highlight the correct one
+                buttons.forEach(btn => {
+                    // Quick matching check fallback via a simple custom tracking or logic
+                });
+            }
+            
+            expDiv.style.display = 'block';
+            answeredCount++;
+            answeredCountSpan.textContent = answeredCount;
+        }
+
+        // Generate the initial batch of 50 questions
+        function initQuiz() {
+            for (let i = 0; i < 50; i++) {
+                generateQuestion();
+            }
+        }
+
+        // Infinite scroll logic: load 10 more when hitting the bottom
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                for (let i = 0; i < 10; i++) {
+                    generateQuestion();
+                }
+            }
+        });
+
+        // Initialize on load
+        initQuiz();
+    </script>
+</body>
+</html>

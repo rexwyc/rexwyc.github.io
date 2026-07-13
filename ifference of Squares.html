@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference of Squares Quiz</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --success: #2ec4b6;
+            --danger: #e71d36;
+            --background: #f8f9fa;
+            --text: #2b2d42;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .review-box {
+            background: #edf2f4;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #edf2f4;
+        }
+
+        .question-card {
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #d8f3dc;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: var(--danger);
+            color: #721c24;
+        }
+
+        .explanation {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #e2eafc;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .nav-btn {
+            display: block;
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+
+        #results-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .restart-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Difference of Squares Quiz</h1>
+    
+    <div id="intro-review" class="review-box">
+        <strong>Quick Formula Reminder:</strong><br>
+        Rule: a² - b² = (a - b)(a + b)
+    </div>
+
+    <div id="quiz-ui">
+        <div class="quiz-stats">
+            <span id="progress-text">Question 1 of 20</span>
+            <span id="score-text">Score: 0</span>
+        </div>
+
+        <div id="question-container"></div>
+        <button id="next-btn" class="nav-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <div id="results-screen">
+        <h2>Quiz Completed!</h2>
+        <p id="final-score" style="font-size: 1.3rem; font-weight: bold;"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Try Again</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    { q: "Factor: x² - 4", o: ["(x - 2)(x - 2)", "(x - 2)(x + 2)", "(x - 4)(x + 1)", "(x + 2)(x + 2)"], a: 1, e: "x² - 4 is a difference of squares where a = x and b = 2. Formula: (x - 2)(x + 2)." },
+    { q: "Factor: y² - 25", o: ["(y - 5)(y + 5)", "(y - 5)(y - 5)", "(y - 25)(y + 1)", "(y + 5)(y + 5)"], a: 0, e: "y² - 25 is a difference of squares where a = y and b = 5. Formula: (y - 5)(y + 5)." },
+    { q: "Factor: 9x² - 16", o: ["(9x - 4)(9x + 4)", "(3x - 4)(3x - 4)", "(3x - 4)(3x + 4)", "(3x - 8)(3x + 8)"], a: 2, e: "9x² is (3x)² and 16 is 4². Thus, a = 3x and b = 4. Result: (3x - 4)(3x + 4)." },
+    { q: "Factor: 4a² - 49", o: ["(2a - 7)(2a + 7)", "(2a - 7)²", "(4a - 7)(4a + 7)", "(2a - 49)(2a + 1)"], a: 0, e: "4a² is (2a)² and 49 is 7². Thus, a = 2a and b = 7. Result: (2a - 7)(2a + 7)." },
+    { q: "Factor: m² - 1", o: ["(m - 1)(m - 1)", "(m - 1)(m + 1)", "(m - 1)²", "Not factorable"], a: 1, e: "1 is a perfect square (1²). So, m² - 1² factors into (m - 1)(m + 1)." },
+    { q: "Factor: 100 - w²", o: ["(w - 10)(w + 10)", "(10 - w)(10 - w)", "(10 - w)(10 + w)", "(50 - w)(50 + w)"], a: 2, e: "100 is 10². Keeping the structural order, it becomes (10 - w)(10 + w)." },
+    { q: "Factor: 16x² - 81y²", o: ["(4x - 9y)(4x + 9y)", "(4x - 9y)²", "(8x - 9y)(8x + 9y)", "(2x - 3y)(2x + 3y)"], a: 0, e: "16x² = (4x)² and 81y² = (9y)². This results in (4x - 9y)(4x + 9y)." },
+    { q: "Factor completely: 2x² - 8", o: ["2(x - 4)(x + 4)", "(2x - 4)(x + 2)", "2(x - 2)(x + 2)", "2(x - 2)²"], a: 2, e: "First, pull out the GCF of 2: 2(x² - 4). Then factor the difference of squares: 2(x - 2)(x + 2)." },
+    { q: "Factor: x⁴ - 16", o: ["(x² - 4)(x² + 4)", "(x - 2)(x + 2)(x² + 4)", "(x - 2)⁴", "(x² - 4)²"], a: 1, e: "First step yields (x² - 4)(x² + 4). The first term (x² - 4) is another difference of squares, breaking down completely into (x - 2)(x + 2)(x² + 4)." },
+    { q: "Factor: 36 - 121k²", o: ["(6 - 11k)(6 + 11k)", "(6 - 11k)²", "(11k - 6)(11k + 6)", "(18 - 11k)(18 + 11k)"], a: 0, e: "36 = 6² and 121k² = (11k)². Follow the order: (6 - 11k)(6 + 11k)." },
+    { q: "Factor: 49x² - 1", o: ["(7x - 1)²", "(7x - 1)(7x + 1)", "(49x - 1)(49x + 1)", "(7x + 1)²"], a: 1, e: "49x² is (7x)² and 1 is 1². It splits into (7x - 1)(7x + 1)." },
+    { q: "Factor: x² + 9", o: ["(x - 3)(x + 3)", "(x + 3)(x + 3)", "Not factorable using real numbers", "(x + 3)²"], a: 2, e: "This is a *sum* of squares, not a difference. It cannot be factored using real numbers." },
+    { q: "Factor: 25a² - 64b²", o: ["(5a - 8b)(5a + 8b)", "(5a - 8b)²", "(25a - 8b)(25a + 8b)", "(8b - 5a)(8b + 5a)"], a: 0, e: "25a² = (5a)² and 64b² = (8b)². It factors into (5a - 8b)(5a + 8b)." },
+    { q: "Factor completely: 3x² - 75", o: ["3(x - 25)(x + 25)", "3(x - 5)(x + 5)", "(3x - 15)(x + 5)", "3(x - 5)²"], a: 1, e: "Factor out the GCF 3 to get 3(x² - 25). Then factor the inside: 3(x - 5)(x + 5)." },
+    { q: "Factor: 144m² - 169n²", o: ["(12m - 13n)²", "(12m - 13n)(12m + 13n)", "(144m - 169n)(144m + 169n)", "(12m + 13n)²"], a: 1, e: "144m² is (12m)² and 169n² is (13n)². It results in (12m - 13n)(12m + 13n)." },
+    { q: "Factor: x²y² - 100", o: ["(xy - 10)(xy - 10)", "(x - 10)(y + 10)", "(xy - 10)(xy + 10)", "(xy - 50)(xy + 50)"], a: 2, e: "x²y² is the square of (xy), and 100 is 10². Thus: (xy - 10)(xy + 10)." },
+    { q: "Factor completely: x⁴ - y⁴", o: ["(x² - y²)(x² + y²)", "(x - y)(x + y)(x² + y²)", "(x - y)²(x + y)²", "(x - y)⁴"], a: 1, e: "First step: (x² - y²)(x² + y²). The left side factors further into (x - y)(x + y), matching option 2." },
+    { q: "Factor: 9 - 49x²", o: ["(3 - 7x)(3 + 7x)", "(7x - 3)(7x + 3)", "(3 - 7x)²", "(4.5 - 7x)(4.5 + 7x)"], a: 0, e: "9 is 3² and 49x² is (7x)². Keeping the order gives (3 - 7x)(3 + 7x)." },
+    { q: "Factor completely: 5x³ - 20x", o: ["5x(x² - 4)", "5(x - 2)(x + 2)", "5x(x - 2)(x + 2)", "5x(x - 2)²"], a: 2, e: "Factor out the GCF 5x first: 5x(x² - 4). Then break down the difference of squares: 5x(x - 2)(x + 2)." },
+    { q: "Factor: 4x² - 121", o: ["(2x - 11)(2x - 11)", "(2x - 11)(2x + 11)", "(2x - 121)(2x + 1)", "(4x - 11)(4x + 11)"], a: 1, e: "4x² is (2x)² and 121 is 11². The factored expression is (2x - 11)(2x + 11)." }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+    answered = false;
+    document.getElementById("next-btn").style.display = "none";
+    
+    const container = document.getElementById("question-container");
+    const current = quizData[currentQuestion];
+    
+    document.getElementById("progress-text").innerText = `Question ${currentQuestion + 1} of ${quizData.length}`;
+    
+    let optionsHtml = current.o.map((option, idx) => 
+        `<button class="option-btn" onclick="checkAnswer(${idx}, this)">${option}</button>`
+    ).join("");
+
+    container.innerHTML = `
+        <div class="question-card active">
+            <div class="question-text">${current.q}</div>
+            <div class="options-list">${optionsHtml}</div>
+            <div id="explanation-box" class="explanation">${current.e}</div>
+        </div>
+    `;
+}
+
+function checkAnswer(selectedIdx, btn) {
+    if (answered) return;
+    answered = true;
+    
+    const current = quizData[currentQuestion];
+    const buttons = document.querySelectorAll(".option-btn");
+    
+    if (selectedIdx === current.a) {
+        btn.classList.add("correct");
+        score++;
+        document.getElementById("score-text").innerText = `Score: ${score}`;
+    } else {
+        btn.classList.add("wrong");
+        buttons[current.a].classList.add("correct");
+    }
+    
+    document.getElementById("explanation-box").style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    document.getElementById("quiz-ui").style.display = "none";
+    document.getElementById("intro-review").style.display = "none";
+    const resultsScreen = document.getElementById("results-screen");
+    resultsScreen.style.display = "block";
+    document.getElementById("final-score").innerText = `You scored ${score} out of ${quizData.length}! (${Math.round((score/quizData.length)*100)}%)`;
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById("score-text").innerText = "Score: 0";
+    document.getElementById("quiz-ui").style.display = "block";
+    document.getElementById("intro-review").style.display = "block";
+    document.getElementById("results-screen").style.display = "none";
+    loadQuestion();
+}
+
+// Initialize quiz
+loadQuestion();
+</script>
+
+</body>
+</html>

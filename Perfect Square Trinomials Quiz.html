@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Square Trinomials Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #4a90e2;
+            --success-color: #2ec4b6;
+            --error-color: #e71d36;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 14px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) {
+            .option-btn:hover:not(:disabled) {
+                border-color: var(--primary-color);
+                background-color: #f0f6ff;
+            }
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #e6f9f7;
+            color: #0f6357;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            border-color: var(--error-color);
+            background-color: #ffebe0;
+            color: #901220;
+        }
+
+        .explanation-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .action-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: none;
+        }
+
+        .action-btn:hover {
+            background-color: #357abd;
+        }
+
+        .results-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .results-screen h2 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .score-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <div class="status">
+            <span id="question-number">Question 1 of 20</span>
+            <span id="score-counter">Score: 0</span>
+        </div>
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        <div id="question" class="question"></div>
+        <div id="options" class="options-container"></div>
+        <div id="explanation" class="explanation-box"></div>
+        <button id="action-button" class="action-btn">Next Question</button>
+    </div>
+
+    <div id="results-screen" class="results-screen">
+        <h2>Quiz Complete!</h2>
+        <div class="score-text" id="final-score"></div>
+        <p id="feedback-text" style="margin-bottom: 20px; color: #555;"></p>
+        <button class="action-btn" style="display: block;" onclick="restartQuiz()">Try Again</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "Factor the perfect square trinomial: x² + 6x + 9",
+            options: ["(x + 3)²", "(x - 3)²", "(x + 9)²", "(x + 3)(x - 3)"],
+            correct: 0,
+            exp: "Take the square root of the first term (x) and the last term (3). Since the middle sign is positive, it factors into (x + 3)². Check: 2 * x * 3 = 6x."
+        },
+        {
+            q: "Factor the perfect square trinomial: x² - 10x + 25",
+            options: ["(x + 5)²", "(x - 5)²", "(x - 25)²", "(x - 5)(x + 5)"],
+            correct: 1,
+            exp: "The square root of 25 is 5. Since the middle term is negative (-10x), the sign inside the binomial must be negative: (x - 5)². Check: 2 * x * (-5) = -10x."
+        },
+        {
+            q: "What value of 'c' makes x² + 12x + c a perfect square trinomial?",
+            options: ["6", "12", "36", "144"],
+            correct: 2,
+            exp: "To find 'c', take half of the middle coefficient and square it: (12 / 2)² = 6² = 36."
+        },
+        {
+            q: "Factor the perfect square trinomial: x² + 2x + 1",
+            options: ["(x + 2)²", "(x - 1)²", "(x + 1)(x - 1)", "(x + 1)²"],
+            correct: 3,
+            exp: "The square root of 1 is 1, and half of 2 is 1. Since the middle term is positive, it factors perfectly into (x + 1)²."
+        },
+        {
+            q: "What value of 'c' makes x² - 16x + c a perfect square trinomial?",
+            options: ["8", "-8", "64", "16"],
+            correct: 2,
+            exp: "Take half of the middle coefficient (-16 / 2 = -8) and square it: (-8)² = 64. Note that 'c' is always positive in a standard perfect square trinomial."
+        },
+        {
+            q: "Factor the perfect square trinomial: 4x² + 12x + 9",
+            options: ["(2x + 3)²", "(2x - 3)²", "(4x + 3)²", "(2x + 9)²"],
+            correct: 0,
+            exp: "The square root of the first term 4x² is 2x, and the square root of 9 is 3. The middle term is positive, so it matches (2x + 3)². Check: 2 * (2x) * 3 = 12x."
+        },
+        {
+            q: "Factor the perfect square trinomial: 9x² - 24x + 16",
+            options: ["(3x + 4)²", "(3x - 4)²", "(9x - 4)²", "(3x - 16)³"],
+            correct: 1,
+            exp: "The square root of 9x² is 3x, and the square root of 16 is 4. Because the middle sign is negative, it factors to (3x - 4)². Check: 2 * 3x * (-4) = -24x."
+        },
+        {
+            q: "What value of 'b' makes x² + bx + 49 a perfect square trinomial if b > 0?",
+            options: ["7", "14", "28", "49"],
+            correct: 1,
+            exp: "The square root of 49 is 7. The middle coefficient 'b' must equal 2 times the square root of the last term, so 2 * 7 = 14."
+        },
+        {
+            q: "Factor the perfect square trinomial: x² - 20x + 100",
+            options: ["(x - 10)²", "(x + 10)²", "(x - 50)²", "(x - 10)(x + 10)"],
+            correct: 0,
+            exp: "The square root of 100 is 10. The negative middle sign means it factors into (x - 10)²."
+        },
+        {
+            q: "Factor the perfect square trinomial: 25x² + 20x + 4",
+            options: ["(5x - 2)²", "(25x + 2)²", "(5x + 4)²", "(5x + 2)²"],
+            correct: 3,
+            exp: "The square root of 25x² is 5x, and the square root of 4 is 2. The middle term is positive, giving us (5x + 2)². Check: 2 * 5x * 2 = 20x."
+        },
+        {
+            q: "Which of the following is NOT a perfect square trinomial?",
+            options: ["x² + 4x + 4", "x² - 6x + 9", "x² + 10x + 15", "x² + 14x + 49"],
+            correct: 2,
+            exp: "For x² + 10x + 15 to be a perfect square, the last term would have to be (10/2)² = 25, not 15."
+        },
+        {
+            q: "Factor the perfect square trinomial: 16x² - 40x + 25",
+            options: ["(4x - 5)²", "(4x + 5)²", "(8x - 5)²", "(4x - 25)²"],
+            correct: 0,
+            exp: "The square root of 16x² is 4x and the square root of 25 is 5. With a negative middle term, it factors to (4x - 5)²."
+        },
+        {
+            q: "What value of 'c' makes x² - 3x + c a perfect square trinomial?",
+            options: ["9", "1.5", "2.25", "6"],
+            correct: 2,
+            exp: "Take half of the middle term coefficient: -3 / 2 = -1.5. Square it: (-1.5)² = 2.25 (or 9/4)."
+        },
+        {
+            q: "Factor the perfect square trinomial: x² + 18x + 81",
+            options: ["(x - 9)²", "(x + 9)²", "(x + 18)²", "(x + 9)(x - 9)"],
+            correct: 1,
+            exp: "The square root of 81 is 9, and half of 18 is 9. It perfectly fits the pattern (x + 9)²."
+        },
+        {
+            q: "Factor the perfect square trinomial: 49x² - 14x + 1",
+            options: ["(7x + 1)²", "(7x - 1)²", "(49x - 1)²", "(7x - 2)²"],
+            correct: 1,
+            exp: "The square root of 49x² is 7x and the square root of 1 is 1. The middle sign is negative, giving (7x - 1)²."
+        },
+        {
+            q: "What value of 'b' makes 4x² + bx + 9 a perfect square trinomial if b > 0?",
+            options: ["6", "12", "18", "36"],
+            correct: 1,
+            exp: "The square root of 4x² is 2x and of 9 is 3. The middle coefficient is 2 * (root of first) * (root of last) = 2 * 2 * 3 = 12."
+        },
+        {
+            q: "Factor the perfect square trinomial: x² - 8x + 16",
+            options: ["(x - 4)²", "(x + 4)²", "(x - 8)²", "(x - 4)(x + 4)"],
+            correct: 0,
+            exp: "The square root of 16 is 4, and the middle sign is negative, yielding (x - 4)²."
+        },
+        {
+            q: "Factor the perfect square trinomial: 36x² + 60x + 25",
+            options: ["(6x - 5)²", "(6x + 5)²", "(6x + 25)²", "(36x + 5)²"],
+            correct: 1,
+            exp: "The square root of 36x² is 6x and of 25 is 5. With a positive middle term, we get (6x + 5)²."
+        },
+        {
+            q: "Which expression is the expanded form of (2x - 7)²?",
+            options: ["4x² - 49", "4x² - 14x + 49", "4x² - 28x + 49", "4x² + 28x + 49"],
+            correct: 2,
+            exp: "Using the formula (a - b)² = a² - 2ab + b²: (2x)² - 2(2x)(7) + 7² = 4x² - 28x + 49."
+        },
+        {
+            q: "Factor completely: 2x² + 12x + 18",
+            options: ["(2x + 6)²", "2(x + 3)²", "2(x + 9)²", "(2x + 3)(x + 6)"],
+            correct: 1,
+            exp: "First, factor out the GCF of 2 to get 2(x² + 6x + 9). Then factor the perfect square trinomial inside the parentheses to get 2(x + 3)²."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let hasAnswered = false;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const explanationEl = document.getElementById("explanation");
+    const actionBtn = document.getElementById("action-button");
+    const qNumEl = document.getElementById("question-number");
+    const scoreEl = document.getElementById("score-counter");
+    const progressEl = document.getElementById("progress");
+    const quizScreen = document.getElementById("quiz-screen");
+    const resultsScreen = document.getElementById("results-screen");
+    const finalScoreEl = document.getElementById("final-score");
+    const feedbackEl = document.getElementById("feedback-text");
+
+    function loadQuestion() {
+        hasAnswered = false;
+        actionBtn.style.display = "none";
+        explanationEl.style.display = "none";
+        
+        let currentQuestion = questions[currentQuestionIndex];
+        questionEl.textContent = currentQuestion.q;
+        
+        qNumEl.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        progressEl.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+        
+        optionsEl.innerHTML = "";
+        currentQuestion.options.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.className = "option-btn";
+            button.textContent = option;
+            button.onclick = () => selectOption(index);
+            optionsEl.appendChild(button);
+        });
+    }
+
+    function selectOption(selectedIndex) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+        
+        let currentQuestion = questions[currentQuestionIndex];
+        const buttons = optionsEl.children;
+        
+        if (selectedIndex === currentQuestion.correct) {
+            buttons[selectedIndex].classList.add("correct");
+            score++;
+            scoreEl.textContent = `Score: ${score}`;
+        } else {
+            buttons[selectedIndex].classList.add("wrong");
+            buttons[currentQuestion.correct].classList.add("correct");
+        }
+        
+        // Disable all buttons
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+        
+        // Show explanation and action button
+        explanationEl.textContent = currentQuestion.exp;
+        explanationEl.style.display = "block";
+        
+        if (currentQuestionIndex === questions.length - 1) {
+            actionBtn.textContent = "Finish Quiz";
+        } else {
+            actionBtn.textContent = "Next Question";
+        }
+        actionBtn.style.display = "block";
+    }
+
+    actionBtn.onclick = () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    };
+
+    function showResults() {
+        quizScreen.style.display = "none";
+        resultsScreen.style.display = "block";
+        finalScoreEl.textContent = `${score} / ${questions.length}`;
+        
+        let percentage = (score / questions.length) * 100;
+        if (percentage === 100) {
+            feedbackEl.textContent = "Perfect! You're a master of Perfect Square Trinomials!";
+        } else if (percentage >= 80) {
+            feedbackEl.textContent = "Great job! You have a solid grasp on this topic.";
+        } else if (percentage >= 50) {
+            feedbackEl.textContent = "Good effort! Review the explanations to reinforce your skills.";
+        } else {
+            feedbackEl.textContent = "Keep practicing! Reviewing standard quadratic factoring forms will help.";
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        scoreEl.textContent = "Score: 0";
+        resultsScreen.style.display = "none";
+        quizScreen.style.display = "block";
+        loadQuestion();
+    }
+
+    // Initialize the quiz
+    loadQuestion();
+</script>
+
+</body>
+</html>
