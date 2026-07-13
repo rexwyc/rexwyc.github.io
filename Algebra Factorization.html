@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Factorization Hub | Complete Quiz Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: #0c4a6e;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(2, 84, 115, 0.15);
+            border-bottom: 4px solid #0284c7;
+        }
+        
+        h1 {
+            color: #075985;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #0284c7, #075985);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #0369a1;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(2, 84, 115, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #bae6fd;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(2, 84, 115, 0.2);
+            border-color: #0284c7;
+        }
+        
+        .card-header {
+            padding: 25px 25px 15px;
+            border-bottom: 1px solid #bae6fd;
+            background: linear-gradient(to right, #f0f9ff, white);
+        }
+        
+        .card-header h2 {
+            color: #075985;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h2 i {
+            color: #0284c7;
+            font-size: 1.3rem;
+        }
+        
+        .card-content {
+            padding: 20px 25px;
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            color: #0b3b4b;
+            margin-bottom: 20px;
+        }
+        
+        .examples {
+            background-color: #f0f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0284c7;
+        }
+        
+        .examples h3 {
+            color: #075985;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .example-item {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px;
+            background-color: #f0f9ff;
+            border-top: 1px solid #bae6fd;
+            text-align: center;
+        }
+        
+        .page-link {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #0284c7;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .page-link:hover {
+            background-color: #075985;
+            transform: scale(1.02);
+        }
+        
+        .page-link i {
+            margin-left: 8px;
+        }
+        
+        .quick-links {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 20px rgba(2, 84, 115, 0.1);
+            border: 1px solid #bae6fd;
+        }
+        
+        .quick-links h2 {
+            color: #075985;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .link-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .link-item {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #e0f2fe;
+            color: #075985;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            background-color: #0284c7;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #0369a1;
+            border-top: 1px solid #bae6fd;
+        }
+        
+        @media (max-width: 768px) {
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> Algebra Factorization Hub</h1>
+            <p class="subtitle">Test and sharpen your algebraic skills. Explore fundamental factoring techniques and challenge yourself with interactive math quizzes.</p>
+        </header>
+        
+        <main>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-infinity"></i> Infinite Practice</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Endless practice problems covering a wide array of mixed factorization methods to build speed and accuracy.</p>
+                        <div class="examples">
+                            <h3>Focus Areas:</h3>
+                            <div class="example-item">Mixed Methods</div>
+                            <div class="example-item">Speed & Fluency</div>
+                            <div class="example-item">Skill Mastery</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Infinite%20Factorization%20Practice.html" class="page-link" target="_blank">Start Practice <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-border-all"></i> Difference of Squares</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Master the art of breaking down binomials that represent one perfect square subtracted from another.</p>
+                        <div class="examples">
+                            <h3>Focus Areas:</h3>
+                            <div class="example-item">Pattern Recognition</div>
+                            <div class="example-item">Formula: a² - b²</div>
+                            <div class="example-item">Binomial Conjugates</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/ifference%20of%20Squares.html" class="page-link" target="_blank">Start Squares Quiz <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cube"></i> Difference of Cubes</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Learn how to factor polynomials representing the difference between two perfect cubic terms.</p>
+                        <div class="examples">
+                            <h3>Focus Areas:</h3>
+                            <div class="example-item">Formula: a³ - b³</div>
+                            <div class="example-item">SOAP Sign Rule</div>
+                            <div class="example-item">Trinomial Outlines</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Difference%20of%20Cubes%20Quiz.html" class="page-link" target="_blank">Start Cubes Quiz <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-shapes"></i> Perfect Square Trinomials</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Identify and factor three-term expressions that simplify beautifully into a single squared binomial.</p>
+                        <div class="examples">
+                            <h3>Focus Areas:</h3>
+                            <div class="example-item">Formula: a² ± 2ab + b²</div>
+                            <div class="example-item">Middle Term Checks</div>
+                            <div class="example-item">Squared Binomials</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Perfect%20Square%20Trinomials%20Quiz.html" class="page-link" target="_blank">Start Trinomials Quiz <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cubes"></i> Sum of Cubes</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Discover the specific factoring patterns required to break down the addition of two perfect cubic terms.</p>
+                        <div class="examples">
+                            <h3>Focus Areas:</h3>
+                            <div class="example-item">Formula: a³ + b³</div>
+                            <div class="example-item">Linear Factor Sign</div>
+                            <div class="example-item">Irreducible Components</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://rexwyc.github.io/Sum%20of%20Cubes%20Quiz.html" class="page-link" target="_blank">Start Sum of Cubes Quiz <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-links">
+                <h2><i class="fas fa-bolt"></i> Quick Quiz Selection</h2>
+                <div class="link-list">
+                    <a href="https://rexwyc.github.io/Infinite%20Factorization%20Practice.html" class="link-item" target="_blank"><i class="fas fa-infinity"></i> Infinite Practice</a>
+                    <a href="https://rexwyc.github.io/ifference%20of%20Squares.html" class="link-item" target="_blank"><i class="fas fa-border-all"></i> Difference of Squares</a>
+                    <a href="https://rexwyc.github.io/Difference%20of%20Cubes%20Quiz.html" class="link-item" target="_blank"><i class="fas fa-cube"></i> Difference of Cubes</a>
+                    <a href="https://rexwyc.github.io/Perfect%20Square%20Trinomials%20Quiz.html" class="link-item" target="_blank"><i class="fas fa-shapes"></i> Perfect Square Trinomials</a>
+                    <a href="https://rexwyc.github.io/Sum%20of%20Cubes%20Quiz.html" class="link-item" target="_blank"><i class="fas fa-cubes"></i> Sum of Cubes</a>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Algebra Factorization Hub &copy; 2026 | Created for rexwyc.github.io</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Smooth scroll implementation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Element scroll-in animation logic
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.topic-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
