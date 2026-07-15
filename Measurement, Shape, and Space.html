@@ -2,81 +2,155 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKDSE Math: Shape & Space Trainer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HKEAA Math Quiz: Measurement, Shape & Space</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #16a34a;
-            --error: #dc2626;
-            --dark: #1e293b;
-            --light: #f8fafc;
+            --primary: #0070f3;
+            --primary-hover: #0051b3;
+            --success: #10b981;
+            --error: #ef4444;
+            --background: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #f0f2f5;
-            color: var(--dark);
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 12px;
             display: flex;
-            justify-content: center;
-            padding: 15px;
+            flex-direction: column;
+            align-items: center;
             min-height: 100vh;
         }
 
-        .game-container {
+        .container {
             width: 100%;
             max-width: 600px;
-            background: white;
+            background: var(--card-bg);
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             padding: 20px;
-            display: flex;
-            flex-direction: column;
+            margin-top: 10px;
         }
 
         header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        p.subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Collapsible Formula Section */
+        .formula-container {
+            margin-bottom: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .formula-header {
+            background-color: #f3f4f6;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
+            user-select: none;
         }
 
-        .score-board {
+        .formula-content {
+            display: none;
+            padding: 15px;
+            background-color: #f9fafb;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .formula-section {
+            margin-bottom: 12px;
+        }
+
+        .formula-section h5 {
+            color: var(--primary);
+            margin-bottom: 4px;
             font-size: 0.9rem;
-            font-weight: bold;
-            color: #64748b;
+            border-bottom: 1px dashed #d1d5db;
+            padding-bottom: 2px;
+        }
+
+        .formula-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .formula-list li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background: #f9fafb;
+            padding: 10px 16px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid #e5e7eb;
         }
 
         .score-val {
             color: var(--primary);
-            font-size: 1.1rem;
         }
 
-        .badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        .question-text {
-            font-size: 1.15rem;
-            line-height: 1.5;
+        .progress-bar {
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
             margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 1.1rem;
             font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-main);
         }
 
         .options-grid {
@@ -86,561 +160,571 @@
             margin-bottom: 20px;
         }
 
-        .btn-option {
-            background: var(--light);
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 14px;
-            text-align: left;
+        .btn-opt {
+            background-color: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 14px 16px;
             font-size: 1rem;
+            font-weight: 500;
+            text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
-            -webkit-tap-highlight-color: transparent;
+            color: var(--text-main);
         }
 
-        .btn-option:active {
+        .btn-opt:active {
             transform: scale(0.98);
         }
 
-        .btn-option.correct {
-            background-color: #dcfce7;
+        .btn-opt.correct {
+            background-color: #ecfdf5;
             border-color: var(--success);
-            color: #14532d;
-            font-weight: bold;
+            color: #047857;
         }
 
-        .btn-option.wrong {
-            background-color: #fee2e2;
+        .btn-opt.wrong {
+            background-color: #fef2f2;
             border-color: var(--error);
-            color: #7f1d1d;
+            color: #b91c1c;
+        }
+
+        .btn-opt:disabled {
+            cursor: not-allowed;
         }
 
         .explanation-box {
-            background: #f1f5f9;
+            background-color: #eff6ff;
             border-left: 4px solid var(--primary);
             padding: 15px;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 12px 12px 0;
             margin-bottom: 20px;
             display: none;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 0.9rem;
         }
 
         .explanation-box h4 {
+            color: var(--primary);
             margin-bottom: 6px;
-            color: var(--dark);
         }
 
         .btn-next {
-            background: var(--primary);
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 10px;
             padding: 14px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
             width: 100%;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
             display: none;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 112, 243, 0.2);
         }
 
-        .btn-next:hover {
-            background: var(--primary-hover);
+        .btn-next:active {
+            background-color: var(--primary-hover);
         }
 
-        /* Math layout adjustments */
-        sub, sup {
-            font-size: 75%;
-            line-height: 0;
-            position: relative;
-            vertical-align: baseline;
+        .alert-box {
+            background: #ecfdf5;
+            border: 1px solid var(--success);
+            color: #047857;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
         }
-        sup { top: -0.5em; }
-        sub { bottom: -0.25em; }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <header>
-        <h2>DSE Space & Shape</h2>
-        <div class="score-board">
-            Score: <span id="score" class="score-val">0</span> | 
-            Streak: <span id="streak" class="score-val">0</span>
-        </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>HKEAA Maths Trainer</h1>
+            <p class="subtitle">Measurement, Shape, and Space</p>
+        </header>
 
-    <div id="game-body">
-        <span id="topic-badge" class="badge">Topic</span>
-        <div id="question" class="question-text">Loading question...</div>
-        
-        <div id="options" class="options-grid">
+        <div class="formula-container">
+            <div class="formula-header" onclick="toggleFormulas()">
+                <span>📐 Study Formulas Reference Sheet</span>
+                <span id="formula-toggle-icon">▼</span>
+            </div>
+            <div class="formula-content" id="formula-content">
+                <div class="formula-section">
+                    <h5>Mensuration (Area & Volume)</h5>
+                    <ul class="formula-list">
+                        <li>• <b>Volume of Cylinder:</b> V = π * r² * h</li>
+                        <li>• <b>Curved Surface Area of Cone:</b> A = π * r * l</li>
+                        <li>• <b>Volume of Pyramid:</b> V = (1/3) * Base Area * h</li>
+                        <li>• <b>Volume of Sphere:</b> V = (4/3) * π * r³</li>
+                        <li>• <b>Total S.A. of Hemisphere:</b> A = 3 * π * r²</li>
+                        <li>• <b>Total S.A. of Cylinder:</b> A = 2πr(r + h)</li>
+                        <li>• <b>Arc Length:</b> L = 2 * π * r * (θ / 360°)</li>
+                        <li>• <b>Sector Area:</b> A = π * r² * (θ / 360°)</li>
+                    </ul>
+                </div>
+                <div class="formula-section">
+                    <h5>Coordinate Geometry</h5>
+                    <ul class="formula-list">
+                        <li>• <b>Distance Formula:</b> d = √((x₂-x₁)² + (y₂-y₁)²)</li>
+                        <li>• <b>Midpoint Formula:</b> M = ((x₁+x₂)/2, (y₁+y₂)/2)</li>
+                        <li>• <b>Slope (m):</b> m = (y₂ - y₁) / (x₂ - x₁)</li>
+                        <li>• <b>Perpendicular Slopes:</b> m₁ * m₂ = -1</li>
+                        <li>• <b>Circle Standard Form:</b> (x - h)² + (y - k)² = r²</li>
+                        <li>• <b>Circle General Form:</b> x² + y² + Dx + Ey + F = 0 <br>&nbsp;&nbsp;<i>Center = (-D/2, -E/2)</i></li>
+                    </ul>
+                </div>
+                <div class="formula-section">
+                    <h5>Trigonometry & Shapes</h5>
+                    <ul class="formula-list">
+                        <li>• <b>Identity 1:</b> sin²θ + cos²θ = 1</li>
+                        <li>• <b>Identity 2:</b> 1 + tan²θ = sec²θ</li>
+                        <li>• <b>Triangle Area (SAS):</b> Area = 0.5 * a * b * sin C</li>
+                        <li>• <b>Sine Rule:</b> a / sin A = b / sin B = c / sin C</li>
+                        <li>• <b>Interior Angles Sum:</b> (n - 2) * 180°</li>
+                        <li>• <b>Regular Exterior Angle:</b> 360° / n</li>
+                        <li>• <b>Space Diagonal:</b> d = √(l² + w² + h²)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert-box" id="loop-alert">
+            Great Job! You cleared all 50 questions! Shuffling deck to start a new loop...
+        </div>
+
+        <div class="scoreboard">
+            <div>Score: <span id="score" class="score-val">0</span> / <span id="question-count" class="score-val">0</span></div>
+            <div>Hi-Score: <span id="hi-score" class="score-val">0</span></div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div class="question-box" id="question">
+            Loading your question...
+        </div>
+
+        <div class="options-grid" id="options">
             </div>
 
-        <div id="explanation" class="explanation-box">
+        <div class="explanation-box" id="explanation">
             <h4>Step-by-Step Explanation:</h4>
             <p id="explanation-text"></p>
         </div>
 
-        <button id="btn-next" class="btn-next" onclick="nextQuestion()">Next Question &rarr;</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next Question</button>
     </div>
-</div>
 
-<script>
-// The 50-Question Bank according to HKDSE Syllabus
-const questionBank = [
-    // --- 1. Deductive Geometry & Circles (1-10) ---
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "In a circle, an arc of length 4π cm subtends an angle of 60° at the circumference. Find the radius of the circle.",
-        options: ["6 cm", "12 cm", "24 cm", "48 cm"],
-        answer: 2,
-        steps: "1. The angle subtended at the center is twice the angle at the circumference: 60° × 2 = 120°.\n2. Arc length formula: L = 2πr × (θ/360°).\n3. Substitute values: 4π = 2πr × (120/360) => 4π = 2πr × (1/3) => 4 = 2r/3.\n4. Solve for r: 2r = 12 => r = 6 cm. Wait! Let's re-verify: L = rθ (in rad). 120° = 2π/3 rad. 4π = r(2π/3) => r = 6 cm. Ah, let's look at options. Arc subtends 60° at center? The question says at circumference, so angle at center = 120°. Arc length = 2 * π * r * (120/360) = 2/3 * π * r = 4π -> r = 6. Correct option is 6 cm (Index 0)."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "ABCD is a cyclic quadrilateral. If ∠A = 2x + 10° and ∠C = 3x - 20°, find the value of x.",
-        options: ["34°", "38°", "42°", "45°"],
-        answer: 1,
-        steps: "1. Opposite angles of a cyclic quadrilateral sum up to 180°.\n2. Set up equation: (2x + 10) + (3x - 20) = 180.\n3. Simplify: 5x - 10 = 180 => 5x = 190.\n4. Solve for x: x = 38°."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "A chord of length 16 cm is at a distance of 6 cm from the center of a circle. Find the radius of the circle.",
-        options: ["8 cm", "10 cm", "12 cm", "14 cm"],
-        answer: 1,
-        steps: "1. The perpendicular line from the center bisects the chord. Half-chord length = 16 / 2 = 8 cm.\n2. A right-angled triangle is formed by the radius, the perpendicular distance, and half the chord.\n3. By Pythagorean theorem: r² = 6² + 8² = 36 + 64 = 100.\n4. Therefore, radius r = 10 cm."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "Let AB be a diameter of a circle. C is a point on the circumference. If ∠ABC = 55°, find ∠BAC.",
-        options: ["25°", "35°", "45°", "55°"],
-        answer: 1,
-        steps: "1. An angle in a semi-circle is a right angle, so ∠ACB = 90°.\n2. The sum of angles in triangle ABC is 180°.\n3. ∠BAC = 180° - 90° - 55° = 35°."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "PA and PB are tangents to a circle from an external point P. If O is the center and ∠APB = 40°, find ∠AOB.",
-        options: ["100°", "120°", "140°", "160°"],
-        answer: 2,
-        steps: "1. Tangents are perpendicular to radii: ∠OAP = ∠OBP = 90°.\n2. In quadrilateral AOBP, interior angles sum to 360°.\n3. ∠AOB = 360° - 90° - 90° - 40° = 140°."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "An interior angle of a regular polygon is 144°. Find the number of sides of this polygon.",
-        options: ["8", "10", "12", "15"],
-        answer: 1,
-        steps: "1. Exterior angle = 180° - 144° = 36°.\n2. The sum of exterior angles of any polygon is always 360°.\n3. Number of sides = 360° / 36° = 10."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "In a circle, chord AB equals chord CD. If the distance from center to AB is 5 cm, what is the distance from center to CD?",
-        options: ["2.5 cm", "5 cm", "10 cm", "Cannot be determined"],
-        answer: 1,
-        steps: "1. A fundamental geometric theorem states: Equal chords are equidistant from the center.\n2. Since chord AB = chord CD, their distances from the center must be identical.\n3. Distance = 5 cm."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "If the sum of interior angles of a polygon is 1080°, how many sides does it have?",
-        options: ["6", "7", "8", "9"],
-        answer: 2,
-        steps: "1. Formula for interior angle sum: (n - 2) × 180° = 1080°.\n2. Divide by 180°: n - 2 = 6.\n3. Solve for n: n = 8 sides."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "TP is a tangent touching a circle at P. O is the center. If OP = 5 cm and OT = 13 cm, find tangent length PT.",
-        options: ["8 cm", "10 cm", "11 cm", "12 cm"],
-        answer: 3,
-        steps: "1. Radius is perpendicular to tangent at point of contact, so ∠OPT = 90°.\n2. Apply Pythagorean theorem: PT² + OP² = OT².\n3. PT² + 5² = 13² => PT² + 25 = 169 => PT² = 144.\n4. PT = 12 cm."
-    },
-    {
-        topic: "Deductive Geometry & Circles",
-        q: "In a cyclic quad ABCD, if ∠A is three times ∠C, find ∠C.",
-        options: ["30°", "45°", "60°", "90°"],
-        answer: 1,
-        steps: "1. Opposite angles sum to 180°: ∠A + ∠C = 180°.\n2. Substitute ∠A = 3∠C: 3∠C + ∠C = 180° => 4∠C = 180°.\n3. Solve: ∠C = 45°."
-    },
+    <script>
+        // Collapsible trigger
+        function toggleFormulas() {
+            const content = document.getElementById('formula-content');
+            const icon = document.getElementById('formula-toggle-icon');
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.innerText = '▼';
+            } else {
+                content.style.display = 'block';
+                icon.innerText = '▲';
+            }
+        }
 
-    // --- 2. Coordinate Geometry (11-20) ---
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the slope of a line perpendicular to the line passing through (2, 5) and (4, 9).",
-        options: ["2", "-2", "1/2", "-1/2"],
-        answer: 3,
-        steps: "1. First find slope of original line m1 = (9 - 5) / (4 - 2) = 4 / 2 = 2.\n2. Perpendicular lines satisfy condition: m1 × m2 = -1.\n3. 2 × m2 = -1 => m2 = -1/2."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the coordinates of the center of the circle x² + y² - 6x + 8y - 11 = 0.",
-        options: ["(3, -4)", "(-3, 4)", "(6, -8)", "(-6, 8)"],
-        answer: 0,
-        steps: "1. Compare with general form x² + y² + Dx + Ey + F = 0 where Center = (-D/2, -E/2).\n2. Here D = -6 and E = 8.\n3. Center = (-(-6)/2, -8/2) = (3, -4)."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the radius of the circle x² + y² - 4x + 2y - 4 = 0.",
-        options: ["2", "3", "4", "9"],
-        answer: 1,
-        steps: "1. Identify parameters: D = -4, E = 2, F = -4.\n2. Center = (-D/2, -E/2) = (2, -1).\n3. Radius formula: r = √(h² + k² - F) where (h,k) is center.\n4. r = √(2² + (-1)² - (-4)) = √(4 + 1 + 4) = √9 = 3."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "A moving point P maintains an equal distance from point A(2,3) and point B(2,7). What is the locus of P?",
-        options: ["x = 2", "y = 5", "x = 5", "y = 2"],
-        answer: 1,
-        steps: "1. The locus equidistant from two points is the perpendicular bisector of the segment connecting them.\n2. The x-coordinates are both 2, meaning line AB is vertical.\n3. The perpendicular bisector must be a horizontal line passing through the midpoint of AB.\n4. Midpoint y-coordinate = (3 + 7) / 2 = 5. Hence, the equation is y = 5."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the equation of a straight line with slope -3 and passing through the point (1, 2).",
-        options: ["3x + y - 5 = 0", "3x - y - 1 = 0", "x + 3y - 7 = 0", "3x + y + 5 = 0"],
-        answer: 0,
-        steps: "1. Use point-slope form: y - y1 = m(x - x1).\n2. y - 2 = -3(x - 1).\n3. y - 2 = -3x + 3.\n4. Rearrange to standard form: 3x + y - 5 = 0."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the x-intercept of the line 4x - 3y + 12 = 0.",
-        options: ["3", "-3", "4", "-4"],
-        answer: 1,
-        steps: "1. To find the x-intercept, set y = 0.\n2. 4x - 3(0) + 12 = 0 => 4x + 12 = 0.\n3. 4x = -12 => x = -3."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "If line L1: y = 2x + 5 is parallel to line L2: y = kx - 3, find the value of k.",
-        options: ["2", "-2", "1/2", "-1/2"],
-        answer: 0,
-        steps: "1. Parallel lines have equal slopes.\n2. The slope of L1 is 2.\n3. Therefore, the slope of L2 (which is k) must be 2."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the distance between points A(1, 2) and B(4, 6).",
-        options: ["3", "4", "5", "7"],
-        answer: 2,
-        steps: "1. Use the distance formula: d = √((x2 - x1)² + (y2 - y1)²).\n2. d = √((4 - 1)² + (6 - 2)²) = √(3² + 4²).\n3. d = √(9 + 16) = √25 = 5."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "Find the midpoint of the line segment joining P(-2, 8) and Q(6, 2).",
-        options: ["(2, 5)", "(4, 5)", "(2, 3)", "(4, 3)"],
-        answer: 0,
-        steps: "1. Midpoint formula: ((x1 + x2)/2, (y1 + y2)/2).\n2. x-mid = (-2 + 6) / 2 = 4 / 2 = 2.\n3. y-mid = (8 + 2) / 2 = 10 / 2 = 5.\n4. Midpoint is (2, 5)."
-    },
-    {
-        topic: "Coordinate Geometry",
-        q: "What is the equation of the locus of point P which moves such that its distance from the origin is always 5?",
-        options: ["x + y = 25", "x² + y² = 5", "x² + y² = 25", "x + y = 5"],
-        answer: 2,
-        steps: "1. Distance from origin to (x, y) is √(x² + y²).\n2. Given distance = 5, we square both sides: x² + y² = 5².\n3. The locus equation is x² + y² = 25."
-    },
+        // Questions Database
+        const questionsDatabase = [
+            {
+                q: "Find the volume of a right circular cylinder with radius 7 cm and height 10 cm. (Take π = 22/7)",
+                o: ["1540 cm³", "154 cm³", "2200 cm³", "1078 cm³"],
+                a: 0,
+                e: "Formula: Volume = π * r² * h. \nCalculation: (22/7) * 7 * 7 * 10 = 154 * 10 = 1540 cm³."
+            },
+            {
+                q: "The coordinates of points A and B are (3, 5) and (9, 13) respectively. Find the length of the line segment AB.",
+                o: ["14", "10", "12", "8"],
+                a: 1,
+                e: "Using the distance formula: d = √((x₂ - x₁)² + (y₂ - y₁)²).\nCalculation: √((9-3)² + (13-5)²) = √(6² + 8²) = √(36+64) = √100 = 10."
+            },
+            {
+                q: "The interior angle of a regular polygon is 144°. How many sides does the polygon have?",
+                o: ["8", "9", "10", "12"],
+                a: 2,
+                e: "Each exterior angle = 180° - 144° = 36°.\nNumber of sides (n) = 360° / (Exterior Angle) = 360° / 36 = 10 sides."
+            },
+            {
+                q: "Find the distance between the point P(4, -3) and the origin (0,0).",
+                o: ["5", "7", "1", "25"],
+                a: 0,
+                e: "Using Pythagoras theorem: d = √(x² + y²).\nd = √(4² + (-3)²) = √(16 + 9) = √25 = 5."
+            },
+            {
+                q: "The curved surface area of a right circular cone is given by πrl. If r = 5 cm and the slant height l = 13 cm, find its curved surface area in terms of π.",
+                o: ["90π cm²", "65π cm²", "60π cm²", "120π cm²"],
+                a: 1,
+                e: "Curved Surface Area = π * r * l. Given r = 5 and l = 13.\nArea = π * 5 * 13 = 65π cm²."
+            },
+            {
+                q: "If the coordinates of P are (-2, 7) and Q are (4, -3), find the coordinates of the midpoint of PQ.",
+                o: ["(1, 2)", "(1, 5)", "(2, 4)", "(3, 2)"],
+                a: 0,
+                e: "Midpoint formula: ((x₁ + x₂)/2, (y₁ + y₂)/2).\nCalculation: ((-2 + 4)/2, (7 + -3)/2) = (2/2, 4/2) = (1, 2)."
+            },
+            {
+                q: "A right pyramid has a square base of side length 6 cm and a height of 10 cm. Find its volume.",
+                o: ["180 cm³", "60 cm³", "120 cm³", "360 cm³"],
+                a: 1,
+                e: "Volume of a pyramid = (1/3) * Base Area * Height.\nBase Area = 6 * 6 = 36 cm².\nVolume = (1/3) * 36 * 10 = 12 * 10 = 60 cm³."
+            },
+            {
+                q: "What is the slope of a line passing through (2, 5) and (5, 14)?",
+                o: ["3", "-3", "1/3", "9"],
+                a: 0,
+                e: "Slope (m) = (y₂ - y₁) / (x₂ - x₁).\nCalculation: (14 - 5) / (5 - 2) = 9 / 3 = 3."
+            },
+            {
+                q: "In a right-angled triangle ABC (where ∠B = 90°), if AB = 8 cm and BC = 15 cm, find the value of sin A.",
+                o: ["15/17", "8/17", "15/8", "8/15"],
+                a: 0,
+                e: "First find hypotenuse AC = √(8² + 15²) = √(64 + 225) = √289 = 17 cm.\nsin A = Opposite / Hypotenuse = BC / AC = 15 / 17."
+            },
+            {
+                q: "Find the equation of the straight line which passes through the origin and has a slope of -4.",
+                o: ["y = -4x", "y = 4x", "x + 4y = 0", "y = x - 4"],
+                a: 0,
+                e: "The equation of a line passing through the origin is y = mx. Since m = -4, the equation is y = -4x."
+            },
+            {
+                q: "A solid sphere has a radius of 3 cm. Find its volume in terms of π.",
+                o: ["36π cm³", "12π cm³", "108π cm³", "4.5π cm³"],
+                a: 0,
+                e: "Volume of sphere = (4/3) * π * r³.\nCalculation: (4/3) * π * 3³ = (4/3) * π * 27 = 36π cm³."
+            },
+            {
+                q: "Find the sum of the interior angles of a convex hexagon.",
+                o: ["720°", "540°", "360°", "900°"],
+                a: 0,
+                e: "Sum of interior angles = (n - 2) * 180°.\nFor a hexagon, n = 6.\nCalculation: (6 - 2) * 180° = 4 * 180° = 720°."
+            },
+            {
+                q: "If the scale of a map is 1 : 20000, and a road measures 5 cm on the map, what is the actual length of the road in kilometers?",
+                o: ["1 km", "10 km", "0.1 km", "5 km"],
+                a: 0,
+                e: "Actual length = 5 cm * 20000 = 100,000 cm.\nConvert to meters: 100,000 cm / 100 = 1000 m.\nConvert to kilometers: 1000 m = 1 km."
+            },
+            {
+                q: "An arc of a circle of radius 14 cm subtends an angle of 60° at the center. Find the length of the arc. (Take π = 22/7)",
+                o: ["14.67 cm", "22 cm", "7.33 cm", "44 cm"],
+                a: 0,
+                e: "Arc length = 2 * π * r * (θ / 360°).\nCalculation: 2 * (22/7) * 14 * (60/360) = 88 * (1/6) ≈ 14.67 cm."
+            },
+            {
+                q: "Find the area of a sector of a circle with radius 6 cm and sector angle 120° in terms of π.",
+                o: ["12π cm²", "6π cm²", "18π cm²", "24π cm²"],
+                a: 0,
+                e: "Sector Area = π * r² * (θ / 360°).\nCalculation: π * 6² * (120/360) = 36π * (1/3) = 12π cm²."
+            },
+            {
+                q: "Two similar pyramids have heights of 4 cm and 8 cm. If the volume of the smaller pyramid is 10 cm³, find the volume of the larger pyramid.",
+                o: ["20 cm³", "40 cm³", "80 cm³", "160 cm³"],
+                a: 2,
+                e: "The ratio of volumes of similar figures is the cube of the ratio of their corresponding lengths.\nRatio of heights = 8/4 = 2.\nRatio of volumes = 2³ = 8.\nVolume of larger pyramid = 10 * 8 = 80 cm³."
+            },
+            {
+                q: "Identify the equation of a circle centered at (2, -3) with a radius of 5.",
+                o: ["(x - 2)² + (y + 3)² = 25", "(x + 2)² + (y - 3)² = 25", "(x - 2)² + (y + 3)² = 5", "(x + 2)² + (y - 3)² = 5"],
+                a: 0,
+                e: "Standard circle equation: (x - h)² + (y - k)² = r².\nWith center (2, -3) and r = 5:\n(x - 2)² + (y - (-3))² = 5² => (x - 2)² + (y + 3)² = 25."
+            },
+            {
+                q: "If the bearing of town A from town B is 065°, what is the bearing of town B from town A?",
+                o: ["245°", "115°", "295°", "065°"],
+                a: 0,
+                e: "Back bearing = Front bearing + 180° (if front bearing < 180°).\nCalculation: 65° + 180° = 245°."
+            },
+            {
+                q: "A rectangular block has dimensions 3 cm, 4 cm, and 12 cm. Find the length of its space diagonal.",
+                o: ["13 cm", "19 cm", "15 cm", "17 cm"],
+                a: 0,
+                e: "Space diagonal d = √(l² + w² + h²).\nCalculation: d = √(3² + 4² + 12²) = √(9 + 16 + 144) = √169 = 13 cm."
+            },
+            {
+                q: "Find the total surface area of a solid hemisphere of radius 7 cm. (Take π = 22/7)",
+                o: ["462 cm²", "308 cm²", "154 cm²", "616 cm²"],
+                a: 0,
+                e: "Total Surface Area of hemisphere = 3 * π * r².\nCalculation: 3 * (22/7) * 7 * 7 = 3 * 22 * 7 = 462 cm²."
+            },
+            {
+                q: "A ladder 10 m long leans against a vertical wall. If the ladder makes an angle of 60° with the ground, how high up the wall does it reach?",
+                o: ["8.66 m", "5 m", "7.07 m", "10 m"],
+                a: 0,
+                e: "sin 60° = Height / Hypotenuse => Height = 10 * sin 60°.\nCalculation: 10 * 0.866 = 8.66 m."
+            },
+            {
+                q: "Find the slope of a straight line perpendicular to the line 2x - 3y + 6 = 0.",
+                o: ["-3/2", "2/3", "3/2", "-2/3"],
+                a: 0,
+                e: "Rearranging 2x - 3y + 6 = 0 to y = mx + c gives y = (2/3)x + 2. Slope m₁ = 2/3.\nPerpendicular slope m₂ = -1 / m₁ = -3/2."
+            },
+            {
+                q: "The coordinates of A and B are (-1, 4) and (5, -2) respectively. Find the equation of the straight line passing through A and B in general form.",
+                o: ["x + y - 3 = 0", "x - y + 5 = 0", "2x + y - 2 = 0", "x + y + 3 = 0"],
+                a: 0,
+                e: "Slope m = (-2 - 4) / (5 - (-1)) = -6 / 6 = -1.\nUsing point-slope form with A(-1,4): y - 4 = -1(x + 1) => y - 4 = -x - 1 => x + y - 3 = 0."
+            },
+            {
+                q: "For any angle θ, simplify: sin²θ + cos²θ + tan²θ.",
+                o: ["sec²θ", "1", "csc²θ", "2"],
+                a: 0,
+                e: "We know sin²θ + cos²θ = 1.\nTherefore, sin²θ + cos²θ + tan²θ = 1 + tan²θ = sec²θ."
+            },
+            {
+                q: "If the area of two similar triangles is in the ratio 9 : 25, find the ratio of their corresponding heights.",
+                o: ["3 : 5", "9 : 25", "81 : 625", "1.5 : 2.5"],
+                a: 0,
+                e: "Ratio of areas is the square of the ratio of corresponding heights (h₁/h₂)² = A₁/A₂.\nTherefore, h₁/h₂ = √(9/25) = 3/5 or 3 : 5."
+            },
+            {
+                q: "The volume of a sphere is 36π cm³. Find its diameter.",
+                o: ["6 cm", "3 cm", "12 cm", "9 cm"],
+                a: 0,
+                e: "Volume = (4/3) * π * r³ = 36π => r³ = 27 => r = 3 cm.\nDiameter = 2 * r = 6 cm."
+            },
+            {
+                q: "In triangle ABC, a = 5 cm, b = 6 cm, and the included angle C = 30°. Find the area of the triangle.",
+                o: ["7.5 cm²", "15 cm²", "12 cm²", "6.5 cm²"],
+                a: 0,
+                e: "Area of triangle = 0.5 * a * b * sin C.\nCalculation: 0.5 * 5 * 6 * sin 30° = 15 * 0.5 = 7.5 cm²."
+            },
+            {
+                q: "The equation of a circle is x² + y² - 4x + 6y - 12 = 0. Find the coordinates of its center.",
+                o: ["(2, -3)", "(-2, 3)", "(4, -6)", "(-4, 6)"],
+                a: 0,
+                e: "Center of x² + y² + Dx + Ey + F = 0 is (-D/2, -E/2).\nHere, D = -4, E = 6. Center = (-(-4)/2, -6/2) = (2, -3)."
+            },
+            {
+                q: "Which of the following describes the locus of points equidistant from two fixed points A and B?",
+                o: ["The perpendicular bisector of segment AB", "The angle bisector of AB", "A circle with diameter AB", "A straight line parallel to AB"],
+                a: 0,
+                e: "By definition, the set of points equidistant from two given points is the perpendicular bisector of the line segment joining them."
+            },
+            {
+                q: "If a line has a y-intercept of -3 and an x-intercept of 4, find its equation.",
+                o: ["3x - 4y - 12 = 0", "4x - 3y - 12 = 0", "3x + 4y - 12 = 0", "3x - 4y + 12 = 0"],
+                a: 0,
+                e: "Intercept form: x/a + y/b = 1 => x/4 + y/(-3) = 1.\nMultiply both sides by 12: 3x - 4y = 12 => 3x - 4y - 12 = 0."
+            },
+            {
+                q: "A cylindrical container of radius 6 cm and height 15 cm is full of water. If the water is poured into a rectangular prism of base 10 cm by 9 cm, find the height of water in the prism. (Take π = 3)",
+                o: ["18 cm", "15 cm", "20 cm", "12 cm"],
+                a: 0,
+                e: "Volume of cylinder = π * r² * h = 3 * 6² * 15 = 3 * 36 * 15 = 1620 cm³.\nVolume of Prism = Base Area * height => 1620 = (10 * 9) * h => 1620 = 90h => h = 18 cm."
+            },
+            {
+                q: "In a circle, a chord of length 16 cm is 6 cm away from the center. Find the radius of the circle.",
+                o: ["10 cm", "8 cm", "12 cm", "14 cm"],
+                a: 0,
+                e: "The perpendicular from the center bisects the chord into segments of 8 cm.\nA right-angled triangle is formed by the radius (r), distance (6), and half chord (8).\nUsing Pythagoras: r = √(6² + 8²) = √100 = 10 cm."
+            },
+            {
+                q: "What is the angle sum of the exterior angles of any convex polygon?",
+                o: ["360°", "180°", "720°", "It depends on the number of sides"],
+                a: 0,
+                e: "The sum of the exterior angles of any convex polygon is always constant and equals 360°."
+            },
+            {
+                q: "Find the distance between the two parallel lines y = 2x + 5 and y = 2x - 5.",
+                o: ["2√5", "10", "5", "√5"],
+                a: 0,
+                e: "The distance formula between two parallel lines y = mx + c₁ and y = mx + c₂ is |c₁ - c₂| / √(1 + m²).\nCalculation: |5 - (-5)| / √(1 + 2²) = 10 / √5 = 2√5."
+            },
+            {
+                q: "The angle of elevation of the top of a tower from a point 30 m away from its base on level ground is 30°. Find the height of the tower.",
+                o: ["17.32 m", "15 m", "10 m", "20 m"],
+                a: 0,
+                e: "tan 30° = Height / 30 => Height = 30 * tan 30° = 30 * (1/√3) = 10√3 ≈ 17.32 m."
+            },
+            {
+                q: "An regular octagon has an exterior angle of:",
+                o: ["45°", "60°", "135°", "30°"],
+                a: 0,
+                e: "Exterior angle of a regular polygon = 360° / n.\nFor an octagon, n = 8.\nCalculation: 360° / 8 = 45°."
+            },
+            {
+                q: "Find the area of a regular hexagon with side length 4 cm. (Round to 1 decimal place)",
+                o: ["41.6 cm²", "24.0 cm²", "48.0 cm²", "32.4 cm²"],
+                a: 0,
+                e: "Area of a regular hexagon = (3√3 / 2) * s².\nCalculation: (3√3 / 2) * 4² = (3√3 / 2) * 16 = 24√3 ≈ 41.57 cm²."
+            },
+            {
+                q: "What is the locus of a point moving such that it maintains a constant distance of 4 cm from a fixed point O?",
+                o: ["A circle centered at O with radius 4 cm", "A sphere centered at O with radius 4 cm", "A line parallel to O", "A square centered at O"],
+                a: 0,
+                e: "In a 2D plane, the locus of points at a constant distance from a fixed point is a circle with that fixed point as center and the constant distance as its radius."
+            },
+            {
+                q: "If a cone and a cylinder have the exact same radius and height, what is the ratio of the volume of the cone to the volume of the cylinder?",
+                o: ["1 : 3", "3 : 1", "1 : 2", "2 : 3"],
+                a: 0,
+                e: "Volume of cone = (1/3)πr²h. Volume of cylinder = πr²h. \nThe ratio of Cone : Cylinder is therefore 1 : 3."
+            },
+            {
+                q: "Find the value of cos 120°.",
+                o: ["-0.5", "0.5", "-0.866", "0.866"],
+                a: 0,
+                e: "cos 120° = cos(180° - 60°) = -cos 60° = -0.5."
+            },
+            {
+                q: "A rectangular container with dimensions 10 cm by 8 cm by 5 cm is melted and recast into a cube. What is the side length of the cube? (Round to 2 decimal places)",
+                o: ["7.37 cm", "6.32 cm", "8.00 cm", "6.93 cm"],
+                a: 0,
+                e: "Volume of cuboid = 10 * 8 * 5 = 400 cm³.\nFor a cube, s³ = 400 => s = ∛400 ≈ 7.37 cm."
+            },
+            {
+                q: "If the coordinates of point A are (2, y) and B are (5, 7), and the slope of line AB is 2, find the value of y.",
+                o: ["1", "3", "5", "9"],
+                a: 0,
+                e: "Slope m = (y₂ - y₁) / (x₂ - x₁) => 2 = (7 - y) / (5 - 2).\n2 = (7 - y) / 3 => 6 = 7 - y => y = 1."
+            },
+            {
+                q: "Find the perimeter of a semi-circle of radius 7 cm. (Take π = 22/7)",
+                o: ["36 cm", "22 cm", "44 cm", "29 cm"],
+                a: 0,
+                e: "Perimeter of semi-circle = πr + 2r (arc + straight diameter edge).\nCalculation: (22/7) * 7 + 2 * 7 = 22 + 14 = 36 cm."
+            },
+            {
+                q: "In triangle ABC, angle A = 45°, angle B = 60°, and side a = 10 cm. Using the Sine Rule, find side b.",
+                o: ["12.25 cm", "8.16 cm", "14.14 cm", "10.00 cm"],
+                a: 0,
+                e: "Sine Rule: a / sin A = b / sin B => 10 / sin 45° = b / sin 60°.\nb = 10 * (sin 60° / sin 45°) = 10 * (0.866 / 0.707) ≈ 12.25 cm."
+            },
+            {
+                q: "Find the area of a cyclic quadrilateral ABCD if it is a rectangle with dimensions 8 cm and 6 cm.",
+                o: ["48 cm²", "28 cm²", "24 cm²", "14 cm²"],
+                a: 0,
+                e: "Any rectangle is a cyclic quadrilateral. Its area is simply Length * Width = 8 * 6 = 48 cm²."
+            },
+            {
+                q: "If a line has the equation 3x - 4y + 8 = 0, what is its gradient (slope)?",
+                o: ["3/4", "-3/4", "4/3", "-4/3"],
+                a: 0,
+                e: "Convert to slope-intercept form (y = mx + c):\n4y = 3x + 8 => y = (3/4)x + 2.\nTherefore, the gradient is 3/4."
+            },
+            {
+                q: "The coordinates of the endpoints of a diameter of a circle are (1, 2) and (7, 10). Find the radius of the circle.",
+                o: ["5", "10", "25", "7.5"],
+                a: 0,
+                e: "First, find diameter length = √((7-1)² + (10-2)²) = √(6² + 8²) = √100 = 10.\nRadius = Diameter / 2 = 10 / 2 = 5."
+            },
+            {
+                q: "What is the true bearing of South-West (SW)?",
+                o: ["225°", "135°", "045°", "315°"],
+                a: 0,
+                e: "North is 000°, East is 090°, South is 180°, and West is 270°.\nSouth-West is halfway between South and West: 180° + 45° = 225°."
+            },
+            {
+                q: "A sector of a circle with a radius of 12 cm has an arc length of 6π cm. Find the angle of the sector.",
+                o: ["90°", "60°", "45°", "120°"],
+                a: 0,
+                e: "Arc length = 2 * π * r * (θ / 360°) => 6π = 2 * π * 12 * (θ / 360°).\n6π = 24π * (θ / 360°) => 1/4 = θ / 360° => θ = 90°."
+            },
+            {
+                q: "Which of the following is the formula for the total surface area of a solid right circular cylinder?",
+                o: ["2πr(r + h)", "2πrh", "πr(r + l)", "4πr²"],
+                a: 0,
+                e: "Total Surface Area = Curved surface + 2 circular bases = 2πrh + 2πr² = 2πr(r + h)."
+            }
+        ];
 
-    // --- 3. Trigonometry and 3D Space (21-30) ---
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "In triangle ABC, a = 5, b = 7, and ∠C = 30°. Find the exact area of the triangle.",
-        options: ["8.75", "17.5", "35", "70"],
-        answer: 0,
-        steps: "1. Area formula: Area = 0.5 × a × b × sin(C).\n2. Substitute values: Area = 0.5 × 5 × 7 × sin(30°).\n3. Knowing sin(30°) = 0.5, Area = 0.5 × 35 × 0.5 = 8.75."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "Simplify the trigonometric expression: 1 - sin²(θ).",
-        options: ["sin²(θ)", "cos²(θ)", "tan²(θ)", "1"],
-        answer: 1,
-        steps: "1. Use the fundamental Pythagorean identity: sin²(θ) + cos²(θ) = 1.\n2. Rearranging the identity gives cos²(θ) = 1 - sin²(θ)."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "In a right-angled triangle, if sin(θ) = 3/5, find tan(θ).",
-        options: ["3/4", "4/3", "4/5", "5/3"],
-        answer: 0,
-        steps: "1. sin(θ) = opposite/hypotenuse = 3/5.\n2. Using Pythagoras theorem, adjacent side = √(5² - 3²) = √(25 - 9) = √16 = 4.\n3. tan(θ) = opposite/adjacent = 3/4."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "Which of the following is equal to cos(90° - θ)?",
-        options: ["cos(θ)", "-cos(θ)", "sin(θ)", "-sin(θ)"],
-        answer: 2,
-        steps: "1. By complementary angle identity rules:\n2. cos(90° - θ) = sin(θ)."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "In triangle ABC, a=4, b=5, and cos(C) = 1/8. Find the length of side c.",
-        options: ["√36", "√38", "6", "√42"],
-        answer: 2,
-        steps: "1. Apply Cosine Law: c² = a² + b² - 2ab·cos(C).\n2. c² = 4² + 5² - 2(4)(5)(1/8) = 16 + 25 - 40/8.\n3. c² = 41 - 5 = 36.\n4. c = √36 = 6."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "What is the maximum value of the function y = 3sin(2x) + 1?",
-        options: ["1", "3", "4", "7"],
-        answer: 2,
-        steps: "1. The sine function sin(2x) has a maximum value of 1.\n2. Substitute 1 for sin(2x): y_max = 3(1) + 1.\n3. y_max = 4."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "Convert 240° into radians.",
-        options: ["2π/3", "3π/4", "4π/3", "5π/3"],
-        answer: 2,
-        steps: "1. To convert degrees to radians, multiply by π / 180°.\n2. Radian = 240° × (π / 180°).\n3. Simplify the fraction 240/180 by dividing by 60 to get 4/3.\n4. Result is 4π/3."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "A line makes an angle of 45° with a horizontal plane. Find the length of its projection on the plane if the line segment is 10 cm long.",
-        options: ["5 cm", "5√2 cm", "10√2 cm", "10 cm"],
-        answer: 1,
-        steps: "1. Projection length = Line Length × cos(θ).\n2. Projection = 10 × cos(45°).\n3. cos(45°) = 1/√2 or √2/2.\n4. Projection = 10 × (√2/2) = 5√2 cm."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "In triangle ABC, sin A = 0.5, sin B = 0.3, and side a = 10. Find side b.",
-        options: ["5", "6", "8", "15"],
-        answer: 1,
-        steps: "1. Use the Sine Law: a / sin A = b / sin B.\n2. 10 / 0.5 = b / 0.3.\n3. 20 = b / 0.3.\n4. b = 20 × 0.3 = 6."
-    },
-    {
-        topic: "Trigonometry & 3D Space",
-        q: "A cube has a side length of 2 cm. Find the length of its space diagonal (joining opposite corners).",
-        options: ["2√2 cm", "2√3 cm", "4 cm", "8 cm"],
-        answer: 1,
-        steps: "1. The 3D space diagonal formula for a cuboid/cube is d = √(x² + y² + z²).\n2. Since all sides are equal: d = √(2² + 2² + 2²) = √(4 + 4 + 4) = √12.\n3. Simplify √12 = √(4 × 3) = 2√3 cm."
-    },
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let hiScore = localStorage.getItem('hiScore') || 0;
 
-    // --- 4. Mensuration (31-40) ---
-    {
-        topic: "Mensuration",
-        q: "If the radius of a sphere is doubled, how many times will its volume increase?",
-        options: ["2 times", "4 times", "6 times", "8 times"],
-        answer: 3,
-        steps: "1. Volume of a sphere scales with the cube of the linear dimensions ratio: (r2/r1)³.\n2. Since the radius is doubled, ratio = 2.\n3. Volume scale factor = 2³ = 8 times."
-    },
-    {
-        topic: "Mensuration",
-        q: "Find the total surface area of a solid cylinder with base radius 3 cm and height 5 cm.",
-        options: ["15π cm²", "30π cm²", "42π cm²", "48π cm²"],
-        answer: 3,
-        steps: "1. Total Surface Area formula: 2πr² + 2πrh.\n2. Base areas = 2 × π × 3² = 18π.\n3. Curved surface area = 2 × π × 3 × 5 = 30π.\n4. Total area = 18π + 30π = 48π cm²."
-    },
-    {
-        topic: "Mensuration",
-        q: "A sector of a circle has a radius of 6 cm and an arc length of 4 cm. Find its area.",
-        options: ["12 cm²", "24 cm²", "36 cm²", "48 cm²"],
-        answer: 0,
-        steps: "1. Area of a sector can be computed directly using: Area = 0.5 × arc length × radius.\n2. Area = 0.5 × 4 × 6.\n3. Area = 12 cm²."
-    },
-    {
-        topic: "Mensuration",
-        q: "The base areas of two similar cones are in the ratio 4 : 9. Find the ratio of their volumes.",
-        options: ["2 : 3", "4 : 9", "8 : 27", "16 : 81"],
-        answer: 2,
-        steps: "1. Ratio of areas A1/A2 = (l1/l2)² = 4/9. Taking the square root gives linear scale ratio l1/l2 = 2/3.\n2. Ratio of volumes V1/V2 = (l1/l2)³.\n3. Volume ratio = (2/3)³ = 8 : 27."
-    },
-    {
-        topic: "Mensuration",
-        q: "Find the volume of a right pyramid with a square base of side 6 cm and a height of 10 cm.",
-        options: ["60 cm³", "120 cm³", "180 cm³", "360 cm³"],
-        answer: 1,
-        steps: "1. Volume of a pyramid = (1/3) × Base Area × Height.\n2. Base Area = 6 × 6 = 36 cm².\n3. Volume = (1/3) × 36 × 10 = 12 × 10 = 120 cm³."
-    },
-    {
-        topic: "Mensuration",
-        q: "A right circular cone has a base radius of 5 cm and a slant height of 13 cm. Find its volume.",
-        options: ["100π cm³", "300π cm³", "325π cm³", "120π cm³"],
-        answer: 0,
-        steps: "1. Find perpendicular height h using Pythagoras theorem: h = √(13² - 5²) = √(169 - 25) = √144 = 12 cm.\n2. Volume formula: V = (1/3)πr²h.\n3. V = (1/3) × π × 5² × 12 = 4 × 25π = 100π cm³."
-    },
-    {
-        topic: "Mensuration",
-        q: "The volume of a hemisphere is 18π cm³. Find its radius.",
-        options: ["3 cm", "6 cm", "9 cm", "12 cm"],
-        answer: 0,
-        steps: "1. Volume of a hemisphere = (2/3)πr³.\n2. Set up equation: (2/3)πr³ = 18π.\n3. Divide by π: (2/3)r³ = 18 => r³ = 18 × 1.5 = 27.\n4. r = ∛27 = 3 cm."
-    },
-    {
-        topic: "Mensuration",
-        q: "Find the arc length of a sector with a radius of 14 cm and a sector angle of 90°. (Take π = 22/7)",
-        options: ["11 cm", "22 cm", "44 cm", "88 cm"],
-        answer: 1,
-        steps: "1. Arc length = 2πr × (θ/360°).\n2. Substitute values: 2 × (22/7) × 14 × (90/360).\n3. Arc length = 2 × 22 × 2 × (1/4) = 88 / 4 = 22 cm."
-    },
-    {
-        topic: "Mensuration",
-        q: "If the surface area of a cube is 150 cm², find the volume of the cube.",
-        options: ["25 cm³", "75 cm³", "125 cm³", "625 cm³"],
-        answer: 2,
-        steps: "1. A cube has 6 faces. Area of 1 face = 150 / 6 = 25 cm².\n2. Side length of the cube = √25 = 5 cm.\n3. Volume of the cube = side³ = 5³ = 125 cm³."
-    },
-    {
-        topic: "Mensuration",
-        q: "A rectangular water tank has base dimensions 4 m by 3 m. If 24 m³ of water is poured in, what is the depth?",
-        options: ["1 m", "2 m", "3 m", "4 m"],
-        answer: 1,
-        steps: "1. Volume = length × width × depth.\n2. 24 = 4 × 3 × depth => 24 = 12 × depth.\n3. depth = 24 / 12 = 2 m."
-    },
+        document.getElementById('hi-score').innerText = hiScore;
 
-    // --- 5. Transformation and Polar Coordinates (41-50) ---
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "A point A(3, -2) is reflected across the x-axis. Find its new coordinates.",
-        options: ["(-3, -2)", "(3, 2)", "(-3, 2)", "(2, 3)"],
-        answer: 1,
-        steps: "1. Reflecting a point across the x-axis keeps the x-coordinate the same and flips the sign of the y-coordinate.\n2. (x, y) becomes (x, -y).\n3. (3, -2) becomes (3, 2)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "A point B(-1, 4) is rotated clockwise through 90° about the origin. Find its new coordinates.",
-        options: ["(4, 1)", "(-4, -1)", "(4, -1)", "(-4, 1)"],
-        answer: 0,
-        steps: "1. Rule for clockwise rotation by 90° about origin: (x, y) becomes (y, -x).\n2. Plug in values: x = -1, y = 4.\n3. New point = (4, -(-1)) = (4, 1)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "The polar coordinates of a point are (4, 30°). Find its rectangular coordinates.",
-        options: ["(2, 2√3)", "(2√3, 2)", "(2, 2)", "(4, 4)"],
-        answer: 1,
-        steps: "1. Formulas: x = r·cos(θ) and y = r·sin(θ).\n2. x = 4·cos(30°) = 4 · (√3/2) = 2√3.\n3. y = 4·sin(30°) = 4 · (1/2) = 2.\n4. Rectangular coordinates are (2√3, 2)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "The rectangular coordinates of a point are (-3, 3). Find its polar coordinates where 0° ≤ θ < 360°.",
-        options: ["(3, 135°)", "(3√2, 45°)", "(3√2, 135°)", "(6, 225°)"],
-        answer: 2,
-        steps: "1. Calculate distance r = √((-3)² + 3²) = √(9 + 9) = √18 = 3√2.\n2. The point is in Quadrant II because x is negative and y is positive.\n3. Reference angle = tan⁻¹(3/3) = 45°.\n4. θ = 180° - 45° = 135°. Polar coordinates are (3√2, 135°)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "Point P(2, 5) is translated 3 units left and 4 units up. Find its new position.",
-        options: ["(5, 9)", "(-1, 9)", "(-1, 1)", "(5, 1)"],
-        answer: 1,
-        steps: "1. Left translation subtracts from x: 2 - 3 = -1.\n2. Upward translation adds to y: 5 + 4 = 9.\n3. New point position is (-1, 9)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "A point Q(2, -3) is reflected across the line y = x. Find its new coordinates.",
-        options: ["(-2, 3)", "(3, -2)", "(-3, 2)", "(-2, -3)"],
-        answer: 2,
-        steps: "1. Reflecting a point across line y = x swaps the x and y values.\n2. (x, y) becomes (y, x).\n3. Hence, (2, -3) becomes (-3, 2)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "If the point (1, 60°) is rotated counter-clockwise about the origin through 90°, what are its new polar coordinates?",
-        options: ["(1, 150°)", "(1, -30°)", "(2, 150°)", "(1, 90°)"],
-        answer: 0,
-        steps: "1. Counter-clockwise rotation adds directly to the polar angle (θ).\n2. New angle = 60° + 90° = 150°.\n3. The distance from origin r remains unchanged (r = 1).\n4. Polar coordinate: (1, 150°)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "Point A(4, 2) is enlarged with scale factor 2 with respect to the origin. Find its new coordinates.",
-        options: ["(2, 1)", "(6, 4)", "(8, 4)", "(16, 4)"],
-        answer: 2,
-        steps: "1. Enlargement with respect to origin multiplies both coordinates by the scale factor k.\n2. New position = (k*x, k*y) = (2*4, 2*2).\n3. Coordinates are (8, 4)."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "Find the distance between two points with polar coordinates (3, 40°) and (3, 100°).",
-        options: ["3", "3√2", "6", "9"],
-        answer: 0,
-        steps: "1. Both points have equal distance from the origin (r = 3).\n2. The angle difference between them is 100° - 40° = 60°.\n3. This creates an isosceles triangle with a vertex angle of 60°, which means it forms an equilateral triangle.\n4. Therefore, the distance between the two points equals the side length, which is 3."
-    },
-    {
-        topic: "Transformation & Polar Coordinates",
-        q: "Point P(-5, -12) is reflected across the origin. Find the coordinates of the new point.",
-        options: ["(5, 12)", "(-5, 12)", "(5, -12)", "(12, 5)"],
-        answer: 0,
-        steps: "1. Reflection across the origin changes the sign of both coordinates.\n2. (x, y) becomes (-x, -y).\n3. (-5, -12) becomes (5, 12)."
-    }
-];
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
-// Game State Variables
-let currentQuestionIndex = 0;
-let score = 0;
-let streak = 0;
-let answered = false;
-let orderHistory = [];
+        function initGame() {
+            questions = shuffle([...questionsDatabase]);
+            currentIndex = 0;
+            document.getElementById('question-count').innerText = questionsDatabase.length;
+            showQuestion();
+        }
 
-// Initialize & shuffle tracking array to prevent predictable patterns
-function initGame() {
-    orderHistory = [...Array(questionBank.length).keys()];
-    shuffleArray(orderHistory);
-    currentQuestionIndex = 0;
-    showQuestion();
-}
+        function showQuestion() {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('loop-alert').style.display = 'none';
 
-function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-}
+            let qData = questions[currentIndex];
+            document.getElementById('question').innerText = `Q${currentIndex + 1}. ${qData.q}`;
+            
+            let progressPercent = (currentIndex / questions.length) * 100;
+            document.getElementById('progress').style.width = `${progressPercent}%`;
 
-function showQuestion() {
-    answered = false;
-    document.getElementById("explanation").style.display = "none";
-    document.getElementById("btn-next").style.display = "none";
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
 
-    // Infinite loop safeguard: reshuffle when all 50 questions are done
-    if (currentQuestionIndex >= orderHistory.length) {
-        shuffleArray(orderHistory);
-        currentQuestionIndex = 0;
-    }
+            qData.o.forEach((option, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opt';
+                btn.innerText = option;
+                btn.onclick = () => selectOption(idx, btn);
+                optionsDiv.appendChild(btn);
+            });
+        }
 
-    const currentQIdx = orderHistory[currentQuestionIndex];
-    const qData = questionBank[currentQIdx];
+        function selectOption(selectedIndex, btnSelected) {
+            let qData = questions[currentIndex];
+            const optionButtons = document.querySelectorAll('.btn-opt');
 
-    document.getElementById("topic-badge").innerText = qData.topic;
-    document.getElementById("question").innerText = qData.q;
-    
-    const optionsContainer = document.getElementById("options");
-    optionsContainer.innerHTML = "";
+            optionButtons.forEach(btn => btn.disabled = true);
 
-    qData.options.forEach((opt, idx) => {
-        const button = document.createElement("button");
-        button.className = "btn-option";
-        button.innerText = opt;
-        button.onclick = () => checkAnswer(idx, button);
-        optionsContainer.appendChild(button);
-    });
-}
+            if (selectedIndex === qData.a) {
+                btnSelected.classList.add('correct');
+                score++;
+                document.getElementById('score').innerText = score;
+                if (score > hiScore) {
+                    hiScore = score;
+                    localStorage.setItem('hiScore', hiScore);
+                    document.getElementById('hi-score').innerText = hiScore;
+                }
+            } else {
+                btnSelected.classList.add('wrong');
+                optionButtons[qData.a].classList.add('correct');
+            }
 
-function checkAnswer(selectedIndex, selectedButton) {
-    if (answered) return; // Prevent double answering
-    answered = true;
+            document.getElementById('explanation-text').innerText = qData.e;
+            document.getElementById('explanation').style.display = 'block';
 
-    const currentQIdx = orderHistory[currentQuestionIndex];
-    const qData = questionBank[currentQIdx];
-    const optionButtons = document.getElementsByClassName("btn-option");
+            document.getElementById('btn-next').style.display = 'block';
+            document.getElementById('btn-next').scrollIntoView({ behavior: 'smooth' });
+        }
 
-    if (selectedIndex === qData.answer) {
-        selectedButton.classList.add("correct");
-        score += 10;
-        streak += 1;
-    } else {
-        selectedButton.classList.add("wrong");
-        optionButtons[qData.answer].classList.add("correct"); // show true answer
-        streak = 0;
-    }
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= questions.length) {
+                document.getElementById('loop-alert').style.display = 'block';
+                setTimeout(() => {
+                    initGame();
+                }, 1500);
+            } else {
+                showQuestion();
+            }
+        }
 
-    // Update scoreboard elements
-    document.getElementById("score").innerText = score;
-    document.getElementById("streak").innerText = streak;
-
-    // Output explanation
-    document.getElementById("explanation-text").innerText = qData.steps;
-    document.getElementById("explanation").style.display = "block";
-    
-    // Display next button
-    document.getElementById("btn-next").style.display = "block";
-}
-
-function nextQuestion() {
-    currentQuestionIndex++;
-    showQuestion();
-}
-
-// Start game on window load
-window.onload = initGame;
-</script>
-
+        initGame();
+    </script>
 </body>
 </html>

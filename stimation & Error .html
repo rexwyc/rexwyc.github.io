@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimation & Error Quiz</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .score-board {
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .streak {
+            color: #d97706;
+            font-size: 0.9rem;
+        }
+
+        .question-box {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.correct {
+            background-color: #ecfdf5;
+            border-color: var(--success);
+            color: #047857;
+        }
+
+        .btn.wrong {
+            background-color: #fef2f2;
+            border-color: var(--error);
+            color: #b91c1c;
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .explanation-box {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 5px;
+            color: #1e293b;
+        }
+
+        .action-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Math styling helper */
+        .math {
+            font-family: "Courier New", Courier, monospace;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="score-board">Score: <span id="score">0</span></div>
+        <div class="streak" id="streak-container" style="display: none;">🔥 Streak: <span id="streak">0</span></div>
+        <div class="score-board">Q: <span id="q-num">1</span></div>
+    </header>
+
+    <main>
+        <div class="question-box" id="question">Loading...</div>
+        <div class="options-grid" id="options"></div>
+        
+        <div class="explanation-box" id="explanation">
+            <h4>Step-by-Step Explanation:</h4>
+            <p id="explanation-text"></p>
+        </div>
+
+        <button class="action-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </main>
+</div>
+
+<script>
+// Base dataset of 50 unique questions regarding numerical error calculations.
+const baseQuestions = [
+    {
+        q: "The actual value is 8.00 and the estimated value is 7.80. What is the absolute error?",
+        options: ["0.20", "0.02", "-0.20", "0.25"],
+        answer: "0.20",
+        steps: "1. Absolute Error = |Actual - Estimated|\n2. |8.00 - 7.80| = |0.20|\n3. Result = 0.20"
+    },
+    {
+        q: "If the actual value is 10.0 and the estimate is 10.5, find the absolute error.",
+        options: ["0.5", "0.05", "-0.5", "1.0"],
+        answer: "0.5",
+        steps: "1. Absolute Error = |Actual - Estimated|\n2. |10.0 - 10.5| = |-0.5|\n3. Absolute values are always positive = 0.5"
+    },
+    {
+        q: "A length of 5.0m is measured with a device with a maximum absolute error of 0.05m. Find the relative error.",
+        options: ["0.01", "0.05", "0.10", "0.02"],
+        answer: "0.01",
+        steps: "1. Relative Error = Max Absolute Error / Actual Value\n2. Relative Error = 0.05 / 5.0\n3. Result = 0.01"
+    },
+    {
+        q: "What is the percentage error of a measured value of 48g when the actual value is 50g?",
+        options: ["4%", "2%", "5%", "4.1%"],
+        answer: "4%",
+        steps: "1. Absolute Error = |50 - 48| = 2\n2. Relative Error = 2 / 50 = 0.04\n3. Percentage Error = 0.04 * 100% = 4%"
+    },
+    {
+        q: "An index measurement of 2.00 has a maximum absolute error of 0.04. What is its percentage error?",
+        options: ["2%", "4%", "0.02%", "8%"],
+        answer: "2%",
+        steps: "1. Relative Error = 0.04 / 2.00 = 0.02\n2. Percentage Error = 0.02 * 100% = 2%"
+    },
+    {
+        q: "A weighing scale reads 120 kg. If the maximum absolute error of the scale is 1.2 kg, find the relative error.",
+        options: ["0.01", "0.10", "0.012", "0.12"],
+        answer: "0.01",
+        steps: "1. Relative Error = Absolute Error / Measured Value\n2. Relative Error = 1.2 / 120\n3. Result = 0.01"
+    },
+    {
+        q: "A true value is 0.25. The approximated value is 0.24. What is the relative error?",
+        options: ["0.04", "0.01", "0.25", "0.08"],
+        answer: "0.04",
+        steps: "1. Absolute Error = |0.25 - 0.24| = 0.01\n2. Relative Error = Absolute Error / True Value = 0.01 / 0.25\n3. Result = 0.04"
+    },
+    {
+        q: "Find the percentage error if an actual value of 80 is estimated as 76.",
+        options: ["5%", "4%", "6.25%", "8%"],
+        answer: "5%",
+        steps: "1. Absolute Error = |80 - 76| = 4\n2. Relative Error = 4 / 80 = 0.05\n3. Percentage Error = 0.05 * 100% = 5%"
+    },
+    {
+        q: "A speedometer has a max absolute error of 3 km/h. If the reading is 60 km/h, what is the relative error?",
+        options: ["0.05", "0.03", "0.20", "0.15"],
+        answer: "0.05",
+        steps: "1. Relative Error = Absolute Error / Speed Reading\n2. Relative Error = 3 / 60 = 1 / 20\n3. Result = 0.05"
+    },
+    {
+        q: "The actual mass is 400g. The measured mass is 408g. What is the percentage error?",
+        options: ["2%", "8%", "1.96%", "4%"],
+        answer: "2%",
+        steps: "1. Absolute Error = |400 - 408| = 8g\n2. Relative Error = 8 / 400 = 0.02\n3. Percentage Error = 0.02 * 100% = 2%"
+    },
+    {
+        q: "If the relative error of a measurement is 0.025, what is its percentage error?",
+        options: ["2.5%", "0.25%", "25%", "0.025%"],
+        answer: "2.5%",
+        steps: "1. Percentage Error = Relative Error * 100%\n2. 0.025 * 100% = 2.5%"
+    },
+    {
+        q: "If the percentage error is 0.5%, what is the corresponding relative error?",
+        options: ["0.005", "0.05", "0.5", "0.0005"],
+        answer: "0.005",
+        steps: "1. Relative Error = Percentage Error / 100\n2. 0.5 / 100 = 0.005"
+    },
+    {
+        q: "The measurement 12.5 cm has a maximum absolute error of 0.05 cm. Find the maximum relative error.",
+        options: ["0.004", "0.04", "0.005", "0.002"],
+        answer: "0.004",
+        steps: "1. Max Relative Error = Max Absolute Error / Measurement\n2. 0.05 / 12.5 = 5 / 1250\n3. Result = 0.004"
+    },
+    {
+        q: "An area is estimated to be 150 sq. meters, but its actual size is 160 sq. meters. Find the absolute error.",
+        options: ["10 sq.m", "15 sq.m", "5 sq.m", "20 sq.m"],
+        answer: "10 sq.m",
+        steps: "1. Absolute Error = |Actual - Estimated|\n2. |160 - 150| = 10"
+    },
+    {
+        q: "A box has an actual volume of 2.50 cubic meters. It is estimated at 2.45 cubic meters. Find the percentage error.",
+        options: ["2%", "5%", "2.04%", "1.5%"],
+        answer: "2%",
+        steps: "1. Absolute Error = |2.50 - 2.45| = 0.05\n2. Relative Error = 0.05 / 2.50 = 0.02\n3. Percentage Error = 0.02 * 100% = 2%"
+    },
+    {
+        q: "If the actual value of a constant is 1.25 and its estimate is 1.20, find the absolute error.",
+        options: ["0.05", "0.04", "0.25", "0.02"],
+        answer: "0.05",
+        steps: "1. Absolute Error = |1.25 - 1.20|\n2. Result = 0.05"
+    },
+    {
+        q: "A rope's length is recorded as 20m with a percentage error of 1%. What is the absolute error?",
+        options: ["0.2m", "2m", "0.02m", "0.1m"],
+        answer: "0.2m",
+        steps: "1. Relative Error = 1% / 100 = 0.01\n2. Absolute Error = Relative Error * Measured Value\n3. 0.01 * 20 = 0.2m"
+    },
+    {
+        q: "A watch gains 6 seconds every 24 hours. What is the percentage error of this watch over one day?",
+        options: ["0.0069%", "0.069%", "0.69%", "0.00069%"],
+        answer: "0.0069%",
+        steps: "1. Total seconds in 24 hours = 24 * 60 * 60 = 86,400 seconds\n2. Relative Error = 6 / 86,400 ≈ 0.00006944\n3. Percentage Error ≈ 0.00006944 * 100% ≈ 0.0069%"
+    },
+    {
+        q: "The actual temperature is 20°C, but a sensor reads 21°C. What is the percentage error?",
+        options: ["5%", "4.76%", "1%", "10%"],
+        answer: "5%",
+        steps: "1. Absolute Error = |20 - 21| = 1°C\n2. Relative Error = 1 / 20 = 0.05\n3. Percentage Error = 0.05 * 100% = 5%"
+    },
+    {
+        q: "A measured length is 10.0 cm ± 0.1 cm. What is the maximum percentage error?",
+        options: ["1%", "0.1%", "10%", "2%"],
+        answer: "1%",
+        steps: "1. Absolute Error = 0.1 cm\n2. Relative Error = 0.1 / 10.0 = 0.01\n3. Percentage Error = 0.01 * 100% = 1%"
+    },
+    {
+        q: "If an experimental value is 9.8 and the theoretical value is 10.0, find the percentage error.",
+        options: ["2%", "0.2%", "2.04%", "1.96%"],
+        answer: "2%",
+        steps: "1. Absolute Error = |10.0 - 9.8| = 0.2\n2. Relative Error = 0.2 / 10.0 = 0.02\n3. Percentage Error = 0.02 * 100% = 2%"
+    },
+    {
+        q: "A scale reads 250 g. If the absolute error is 5 g, what is the relative error?",
+        options: ["0.02", "0.05", "0.2", "0.002"],
+        answer: "0.02",
+        steps: "1. Relative Error = 5 / 250\n2. Relative Error = 1 / 50 = 0.02"
+    },
+    {
+        q: "A chemist estimates a solution volume as 50 mL. The exact volume is 49 mL. Find the absolute error.",
+        options: ["1 mL", "0.1 mL", "2 mL", "1.02 mL"],
+        answer: "1 mL",
+        steps: "1. Absolute Error = |Actual - Estimated| = |49 - 50| = 1 mL."
+    },
+    {
+        q: "For the previous question, what is the percentage error to 2 decimal places? (Exact 49 mL, Estimated 50 mL)",
+        options: ["2.04%", "2.00%", "2.08%", "1.96%"],
+        answer: "2.04%",
+        steps: "1. Absolute Error = 1\n2. Relative Error = 1 / 49 ≈ 0.020408\n3. Percentage Error = 2.04%"
+    },
+    {
+        q: "A wooden board is measured as 2.4 meters. The true length is 2.5 meters. What is the relative error?",
+        options: ["0.04", "0.0416", "0.1", "0.01"],
+        answer: "0.04",
+        steps: "1. Absolute Error = |2.5 - 2.4| = 0.1\n2. Relative Error = Absolute Error / True Value = 0.1 / 2.5 = 0.04"
+    },
+    {
+        q: "The true height of a building is 100m. A device measures it as 99m. Find the percentage error.",
+        options: ["1%", "0.1%", "1.01%", "0.99%"],
+        answer: "1%",
+        steps: "1. Absolute Error = |100 - 99| = 1m\n2. Relative Error = 1 / 100 = 0.01\n3. Percentage Error = 1%"
+    },
+    {
+        q: "A stopwatch has a precision of 0.01s. It is used to record a time of 5.00s. What is the maximum percentage error?",
+        options: ["0.2%", "0.1%", "2%", "0.02%"],
+        answer: "0.2%",
+        steps: "1. Max Absolute Error = 0.01s\n2. Relative Error = 0.01 / 5.00 = 0.002\n3. Percentage Error = 0.002 * 100% = 0.2%"
+    },
+    {
+        q: "The actual weight is 64 kg. The estimated weight is 60 kg. What is the percentage error?",
+        options: ["6.25%", "6.67%", "4%", "5.8%"],
+        answer: "6.25%",
+        steps: "1. Absolute Error = |64 - 60| = 4\n2. Relative Error = 4 / 64 = 1/16 = 0.0625\n3. Percentage Error = 6.25%"
+    },
+    {
+        q: "What is the absolute error when 3.1416 is used as an approximation for 3.14?",
+        options: ["0.0016", "0.001", "0.016", "0.0006"],
+        answer: "0.0016",
+        steps: "1. Absolute Error = |3.1416 - 3.1400| = 0.0016"
+    },
+    {
+        q: "A speed is recorded as 120 mph with a relative error of 0.05. Find the absolute error.",
+        options: ["6 mph", "5 mph", "12 mph", "60 mph"],
+        answer: "6 mph",
+        steps: "1. Absolute Error = Relative Error * Recorded Value\n2. Absolute Error = 0.05 * 120 = 6 mph"
+    },
+    {
+        q: "The true population of a town is 15,000. It is estimated at 14,850. Find the percentage error.",
+        options: ["1%", "1.5%", "1.01%", "0.99%"],
+        answer: "1%",
+        steps: "1. Absolute Error = |15000 - 14850| = 150\n2. Relative Error = 150 / 15000 = 0.01\n3. Percentage Error = 1%"
+    },
+    {
+        q: "An angle is measured as 45° with an absolute error of 0.9°. What is the relative error?",
+        options: ["0.02", "0.20", "0.01", "0.09"],
+        answer: "0.02",
+        steps: "1. Relative Error = 0.9 / 45 = 9 / 450 = 1 / 50 = 0.02"
+    },
+    {
+        q: "If a quantity is measured as 250 units with a maximum percentage error of 4%, find the maximum absolute error.",
+        options: ["10 units", "4 units", "25 units", "5 units"],
+        answer: "10 units",
+        steps: "1. Relative Error = 4 / 100 = 0.04\n2. Absolute Error = 0.04 * 250 = 10 units"
+    },
+    {
+        q: "A digital scale has a resolution of 0.1g. A mass of 4.0g is weighed. Find the max percentage error.",
+        options: ["2.5%", "1%", "0.25%", "25%"],
+        answer: "2.5%",
+        steps: "1. Max Absolute Error = 0.1g\n2. Relative Error = 0.1 / 4.0 = 0.025\n3. Percentage Error = 2.5%"
+    },
+    {
+        q: "A baker estimates needing 10 cups of flour but actually needs 8. What is the percentage error?",
+        options: ["25%", "20%", "10%", "15%"],
+        answer: "25%",
+        steps: "1. Absolute Error = |8 - 10| = 2\n2. Relative Error = 2 / 8 = 0.25 (divided by actual value)\n3. Percentage Error = 25%"
+    },
+    {
+        q: "A student measures the acceleration due to gravity as 9.5 m/s² instead of 9.8 m/s². Find the relative error (rounded).",
+        options: ["0.0306", "0.0315", "0.03", "0.0316"],
+        answer: "0.0306",
+        steps: "1. Absolute Error = |9.8 - 9.5| = 0.3\n2. Relative Error = 0.3 / 9.8 ≈ 0.03061"
+    },
+    {
+        q: "A measured distance is 400m. If the relative error is 0.005, what is the absolute error?",
+        options: ["2m", "0.2m", "20m", "0.5m"],
+        answer: "2m",
+        steps: "1. Absolute Error = Relative Error * Distance\n2. Absolute Error = 0.005 * 400 = 2m"
+    },
+    {
+        q: "A value of 3.6 is rounded to 4. What is the absolute error of this approximation?",
+        options: ["0.4", "0.6", "-0.4", "0.1"],
+        answer: "0.4",
+        steps: "1. Absolute Error = |3.6 - 4| = |-0.4| = 0.4"
+    },
+    {
+        q: "For the previous question, what is the percentage error of the rounded value (4) relative to the actual (3.6)?",
+        options: ["11.1%", "10%", "12.5%", "11.5%"],
+        answer: "11.1%",
+        steps: "1. Absolute Error = 0.4\n2. Relative Error = 0.4 / 3.6 = 1/9 ≈ 0.1111\n3. Percentage Error ≈ 11.1%"
+    },
+    {
+        q: "If the actual value is 75 and the percentage error is 8%, find the absolute error.",
+        options: ["6", "8", "5", "12"],
+        answer: "6",
+        steps: "1. Relative Error = 8% = 0.08\n2. Absolute Error = 0.08 * 75 = 6"
+    },
+    {
+        q: "A gas tank has a true capacity of 60 liters. An estimate says 63 liters. What is the percentage error?",
+        options: ["5%", "3%", "4.76%", "5.3%"],
+        answer: "5%",
+        steps: "1. Absolute Error = |60 - 63| = 3 liters\n2. Relative Error = 3 / 60 = 0.05\n3. Percentage Error = 5%"
+    },
+    {
+        q: "A measurement of 1.5V is made with a voltmeter having a relative error of 0.02. What is the absolute error?",
+        options: ["0.03V", "0.3V", "0.02V", "0.015V"],
+        answer: "0.03V",
+        steps: "1. Absolute Error = Relative Error * True Value\n2. Absolute Error = 0.02 * 1.5 = 0.03V"
+    },
+    {
+        q: "If actual value = A, and approximated value = X. What is the formula for absolute error?",
+        options: ["|A - X|", "(A - X) / A", "(|A - X| / A) * 100", "A - X"],
+        answer: "|A - X|",
+        steps: "1. Absolute Error is defined as the magnitude of difference: |Actual - Approximation|"
+    },
+    {
+        q: "If actual value = A, and approximated value = X. What is the formula for relative error?",
+        options: ["|A - X| / A", "|A - X|", "(|A - X| / A) * 100", "X / A"],
+        answer: "|A - X| / A",
+        steps: "1. Relative error scales absolute error by actual value: |Actual - Approximation| / Actual"
+    },
+    {
+        q: "A runner aims for a 4-minute mile but runs it in 4 minutes 12 seconds. Find the percentage error.",
+        options: ["5%", "12%", "3%", "4%"],
+        answer: "5%",
+        steps: "1. Actual target = 4 mins = 240 seconds\n2. Actual time = 4 mins 12 secs = 252 seconds\n3. Absolute Error = 12 seconds\n4. Percentage Error = (12 / 240) * 100% = 5%"
+    },
+    {
+        q: "A pressure gauge is accurate to within ±2% of its maximum reading. If max is 100 psi, what is the max absolute error?",
+        options: ["2 psi", "1 psi", "0.02 psi", "4 psi"],
+        answer: "2 psi",
+        steps: "1. Absolute Error = percentage * Max Value\n2. Absolute Error = 2% of 100 = 2 psi"
+    },
+    {
+        q: "A software test estimates a routine will take 200ms, but it takes 190ms. What is the percentage error?",
+        options: ["5.26%", "5.00%", "5.15%", "4.8%"],
+        answer: "5.26%",
+        steps: "1. Actual time = 190ms, Estimated = 200ms\n2. Absolute Error = 10ms\n3. Relative Error = 10 / 190 ≈ 0.05263\n4. Percentage Error ≈ 5.26%"
+    },
+    {
+        q: "A measurement is 80m. The max absolute error is 0.4m. Calculate the relative error.",
+        options: ["0.005", "0.05", "0.004", "0.02"],
+        answer: "0.005",
+        steps: "1. Relative Error = 0.4 / 80\n2. Relative Error = 4 / 800 = 1 / 200 = 0.005"
+    },
+    {
+        q: "An error of 0.5 units on an actual value of 10 units yields what percentage error?",
+        options: ["5%", "0.5%", "50%", "2.5%"],
+        answer: "5%",
+        steps: "1. Relative Error = 0.5 / 10 = 0.05\n2. Percentage Error = 0.05 * 100% = 5%"
+    },
+    {
+        q: "An object of 500g is weighed at 505g. What is the percentage error?",
+        options: ["1%", "5%", "0.1%", "2%"],
+        answer: "1%",
+        steps: "1. Absolute Error = |500 - 505| = 5g\n2. Relative Error = 5 / 500 = 0.01\n3. Percentage Error = 1%"
+    }
+];
+
+let questionsList = [...baseQuestions];
+let currentQuestionIndex = 0;
+let score = 0;
+let streak = 0;
+let answered = false;
+
+// Shuffle function for randomized infinite loop replay
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Initialize and shuffle
+shuffleArray(questionsList);
+
+function loadQuestion() {
+    answered = false;
+    document.getElementById("next-btn").style.display = "none";
+    document.getElementById("explanation").style.display = "none";
+
+    // Infinite loop check: if we reach the end of the 50 questions, reshuffle and start over
+    if (currentQuestionIndex >= questionsList.length) {
+        shuffleArray(questionsList);
+        currentQuestionIndex = 0;
+    }
+
+    const currentData = questionsList[currentQuestionIndex];
+    document.getElementById("q-num").innerText = score + 1; // Displays progress
+    document.getElementById("question").innerText = currentData.q;
+
+    // Shuffle options dynamically so layout varies
+    let choices = [...currentData.options];
+    shuffleArray(choices);
+
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+
+    choices.forEach(option => {
+        const button = document.createElement("button");
+        button.className = "btn";
+        button.innerText = option;
+        button.onclick = () => selectOption(button, option, currentData);
+        optionsContainer.appendChild(button);
+    });
+}
+
+function selectOption(selectedBtn, chosenValue, questionData) {
+    if (answered) return;
+    answered = true;
+
+    const optionsContainer = document.getElementById("options");
+    const buttons = optionsContainer.getElementsByClassName("btn");
+
+    // Check correctness
+    if (chosenValue === questionData.answer) {
+        selectedBtn.classList.add("correct");
+        score++;
+        streak++;
+        document.getElementById("score").innerText = score;
+        if (streak >= 3) {
+            document.getElementById("streak-container").style.display = "inline";
+            document.getElementById("streak").innerText = streak;
+        }
+    } else {
+        selectedBtn.classList.add("wrong");
+        streak = 0;
+        document.getElementById("streak-container").style.display = "none";
+        // Show correct option
+        Array.from(buttons).forEach(btn => {
+            if (btn.innerText === questionData.answer) {
+                btn.classList.add("correct");
+            }
+        });
+    }
+
+    // Disable all options
+    Array.from(buttons).forEach(btn => btn.disabled = true);
+
+    // Show step explanation
+    document.getElementById("explanation-text").innerHTML = questionData.steps.replace(/\n/g, "<br>");
+    document.getElementById("explanation").style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    loadQuestion();
+}
+
+// Start Game
+loadQuestion();
+</script>
+
+</body>
+</html>
