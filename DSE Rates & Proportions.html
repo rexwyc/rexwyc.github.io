@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Master: Rates & Proportions</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #3b5a84;
+            --secondary: #13c2c2;
+            --background: #f0f2f5;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --success: #52c41a;
+            --error: #ff4d4f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #595959;
+            background: #fafafa;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .question-box {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: #fff;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+            color: var(--text);
+            outline: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.correct {
+            background-color: #f6ffed;
+            border-color: var(--success);
+            color: #389e0d;
+        }
+
+        .btn.wrong {
+            background-color: #fff2f0;
+            border-color: var(--error);
+            color: #cf1322;
+        }
+
+        .feedback-card {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            color: #0050b3;
+            margin-bottom: 5px;
+        }
+
+        .explanation {
+            font-size: 0.9rem;
+            color: #262626;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            display: none;
+            box-shadow: 0 4px 12px rgba(74, 111, 165, 0.2);
+        }
+
+        .action-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Phone friendly touches */
+        @media (max-width: 400px) {
+            .game-container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .question-box {
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <h1>Math Master</h1>
+        <div class="stats-bar">
+            <span id="score-display">Score: 0</span>
+            <span id="streak-display">Streak: 0🔥</span>
+            <span id="progress-display">Q: 1/50</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="question-box" id="question">Loading question...</div>
+        
+        <div class="options-grid" id="options">
+            </div>
+
+        <div class="feedback-card" id="feedback">
+            <div class="feedback-title" id="feedback-status">Correct!</div>
+            <div class="explanation" id="explanation">Step-by-step explanation goes here.</div>
+        </div>
+
+        <button class="action-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </main>
+</div>
+
+<script>
+    // 50 uniquely generated questions balancing Ratios, Rates, Direct/Inverse Variations, Maps & Scales
+    const questionDatabase = [
+        {
+            q: "A map has a scale of 1:50,000. If two parks are 6 cm apart on the map, what is the actual distance in kilometers?",
+            o: ["3 km", "30 km", "0.3 km", "300 km"],
+            a: 0,
+            exp: "Step 1: Multiply map distance by scale: 6 cm × 50,000 = 300,000 cm.\nStep 2: Convert to meters: 300,000 ÷ 100 = 3,000 m.\nStep 3: Convert to kilometers: 3,000 ÷ 1,000 = 3 km."
+        },
+        {
+            q: "If y varies directly with x, and y = 15 when x = 3, find y when x = 7.",
+            o: ["35", "21", "10.5", "45"],
+            a: 0,
+            exp: "Step 1: Write direct variation formula: y = kx.\nStep 2: Find constant k: 15 = k(3) -> k = 5.\nStep 3: Solve for new y: y = 5 × 7 = 35."
+        },
+        {
+            q: "It takes 4 painters 6 hours to paint a house. If they work at the same speed, how many hours would it take 3 painters?",
+            o: ["8 hours", "4.5 hours", "5 hours", "12 hours"],
+            a: 0,
+            exp: "Step 1: This is inverse variation: (Painters × Time) = Constant workload.\nStep 2: Workload = 4 × 6 = 24 painter-hours.\nStep 3: Solve for 3 painters: 3 × Time = 24 -> Time = 8 hours."
+        },
+        {
+            q: "A car travels 240 miles on 8 gallons of gas. What is its fuel efficiency unit rate?",
+            o: ["30 miles per gallon", "24 miles per gallon", "40 miles per gallon", "32 miles per gallon"],
+            a: 0,
+            exp: "Step 1: Divide distance by gas used to find the unit rate.\nStep 2: 240 miles ÷ 8 gallons = 30 miles per gallon (mpg)."
+        },
+        {
+            q: "Simplify the ratio of 45 minutes to 1.5 hours.",
+            o: ["1 : 2", "3 : 1", "3 : 10", "1 : 3"],
+            a: 0,
+            exp: "Step 1: Convert units to match. 1.5 hours = 90 minutes.\nStep 2: Form ratio: 45 : 90.\nStep 3: Simplify by dividing both parts by 45: 1 : 2."
+        },
+        {
+            q: "A recipe uses 3 cups of flour for every 2 cups of sugar. If you use 9 cups of flour, how much sugar is needed?",
+            o: ["6 cups", "4.5 cups", "8 cups", "5 cups"],
+            a: 0,
+            exp: "Step 1: Set up the proportion: 3/2 = 9/x.\nStep 2: Cross-multiply: 3x = 18.\nStep 3: Solve for x: x = 6."
+        },
+        {
+            q: "If y varies inversely with x, and y = 8 when x = 5, find y when x = 10.",
+            o: ["4", "16", "2.5", "20"],
+            a: 0,
+            exp: "Step 1: Inverse variation formula: x × y = k.\nStep 2: Find k: 5 × 8 = 40.\nStep 3: Solve for new y: 10 × y = 40 -> y = 4."
+        },
+        {
+            q: "On a blueprint, a wall 12 meters long is drawn as 6 cm. What is the scale of the blueprint?",
+            o: ["1 : 200", "1 : 2", "1 : 20", "1 : 2,000"],
+            a: 0,
+            exp: "Step 1: Convert meters to centimeters: 12 m = 1,200 cm.\nStep 2: Write scale ratio: 6 cm : 1,200 cm.\nStep 3: Simplify by dividing by 6: 1 : 200."
+        },
+        {
+            q: "A machine produces 150 bottles in 5 minutes. At this rate, how many bottles can it produce in 12 minutes?",
+            o: ["360 bottles", "300 bottles", "450 bottles", "250 bottles"],
+            a: 0,
+            exp: "Step 1: Find unit rate: 150 bottles ÷ 5 minutes = 30 bottles per minute.\nStep 2: Multiply by target time: 30 × 12 = 360 bottles."
+        },
+        {
+            q: "If 5 kilograms of apples cost $12.50, how much will 8 kilograms of apples cost?",
+            o: ["$20.00", "$18.00", "$22.50", "$16.00"],
+            a: 0,
+            exp: "Step 1: Find price per kg: $12.50 ÷ 5 = $2.50.\nStep 2: Multiply by target weight: $2.50 × 8 = $20.00."
+        },
+        {
+            q: "An scale model of a tower uses 1 : 150. If the model tower is 40 cm tall, how tall is the actual tower in meters?",
+            o: ["60 m", "6 m", "600 m", "15 m"],
+            a: 0,
+            exp: "Step 1: Multiply model height by scale: 40 × 150 = 6,000 cm.\nStep 2: Convert centimeters to meters: 6,000 ÷ 100 = 60 m."
+        },
+        {
+            q: "If x and y are in direct variation, and x is doubled, what happens to y?",
+            o: ["It doubles", "It is halved", "It remains unchanged", "It quadruples"],
+            a: 0,
+            exp: "Step 1: Direct variation means y = kx.\nStep 2: If x becomes 2x, then new y = k(2x) = 2(kx).\nStep 3: Therefore, y also doubles."
+        },
+        {
+            q: "If x and y are in inverse variation, and x is doubled, what happens to y?",
+            o: ["It is halved", "It doubles", "It is quartered", "It triples"],
+            a: 0,
+            exp: "Step 1: Inverse variation means x × y = k.\nStep 2: If x becomes 2x, then (2x) × new_y = k.\nStep 3: Rearranging: new_y = k / (2x) = y / 2. It is halved."
+        },
+        {
+            q: "A car drives at a constant speed. If it covers 180 km in 3 hours, how long will it take to travel 300 km?",
+            o: ["5 hours", "4.5 hours", "6 hours", "4 hours"],
+            a: 0,
+            exp: "Step 1: Find speed: 180 km ÷ 3 hrs = 60 km/h.\nStep 2: Calculate time for 300 km: 300 km ÷ 60 km/h = 5 hours."
+        },
+        {
+            q: "A school has a student-to-teacher ratio of 18 : 1. If there are 36 teachers, how many students are there?",
+            o: ["648", "540", "612", "720"],
+            a: 0,
+            exp: "Step 1: Write proportion: Students/Teachers = 18/1.\nStep 2: Put in knowns: Students/36 = 18/1.\nStep 3: Cross-multiply: Students = 18 × 36 = 648."
+        },
+        {
+            q: "On a map with scale 1 : 200,000, two cities are 8 cm apart. What is their actual distance in km?",
+            o: ["16 km", "1.6 km", "160 km", "1,600 km"],
+            a: 0,
+            exp: "Step 1: Map calculation: 8 × 200,000 = 1,600,000 cm.\nStep 2: Convert to meters: 1,600,000 ÷ 100 = 16,000 m.\nStep 3: Convert to km: 16,000 ÷ 1,000 = 16 km."
+        },
+        {
+            q: "If y varies directly with the square of x, and y = 12 when x = 2, find y when x = 4.",
+            o: ["48", "24", "96", "36"],
+            a: 0,
+            exp: "Step 1: Formula: y = k * x².\nStep 2: 12 = k * 2² -> 12 = 4k -> k = 3.\nStep 3: For x = 4: y = 3 * 4² = 3 * 16 = 48."
+        },
+        {
+            q: "If 10 workers can complete a job in 12 days, how many days will it take 15 workers to do the same job?",
+            o: ["8 days", "10 days", "6 days", "18 days"],
+            a: 0,
+            exp: "Step 1: Workload is constant (inverse variation): 10 × 12 = 120 worker-days.\nStep 2: Solve for 15 workers: 15 × Days = 120.\nStep 3: Days = 120 ÷ 15 = 8 days."
+        },
+        {
+            q: "Convert the speed of 90 km/h into meters per second (m/s).",
+            o: ["25 m/s", "30 m/s", "20 m/s", "15 m/s"],
+            a: 0,
+            exp: "Step 1: Convert km to m: 90 km = 90,000 m.\nStep 2: Convert hours to seconds: 1 hour = 3,600 seconds.\nStep 3: Calculate: 90,000 ÷ 3,600 = 25 m/s."
+        },
+        {
+            q: "A map has a scale of 2 cm : 5 km. If the actual distance is 25 km, how far apart are they on the map?",
+            o: ["10 cm", "5 cm", "12.5 cm", "20 cm"],
+            a: 0,
+            exp: "Step 1: Set up the proportion: (Map cm) / (Actual km) = 2/5.\nStep 2: 2/5 = x/25.\nStep 3: Cross multiply: 5x = 50 -> x = 10 cm."
+        },
+        {
+            q: "If a pool empties at a rate of 150 liters per minute, how long will it take to empty a 9,000-liter pool?",
+            o: ["60 minutes", "45 minutes", "75 minutes", "90 minutes"],
+            a: 0,
+            exp: "Step 1: Time = Total Volume ÷ Flow Rate.\nStep 2: Time = 9,000 ÷ 150 = 60 minutes."
+        },
+        {
+            q: "The ratio of red marbles to blue marbles is 3 : 5. If there are 40 blue marbles, how many red marbles are there?",
+            o: ["24", "15", "20", "30"],
+            a: 0,
+            exp: "Step 1: Set up the ratio: R/B = 3/5.\nStep 2: R/40 = 3/5.\nStep 3: Solve for R: R = (3 × 40) ÷ 5 = 24."
+        },
+        {
+            q: "A gear system has inverse variation between gear teeth and rotation speed. Gear A (20 teeth) spins at 120 RPM. How fast does Gear B (30 teeth) spin?",
+            o: ["80 RPM", "180 RPM", "60 RPM", "100 RPM"],
+            a: 0,
+            exp: "Step 1: Since it's inverse, (Teeth × RPM) is constant: 20 × 120 = 2400.\nStep 2: Set up equation for B: 30 × RPM = 2400.\nStep 3: Solve: RPM = 2400 ÷ 30 = 80 RPM."
+        },
+        {
+            q: "If 3 liters of paint cover 24 square meters, how many liters are needed for 64 square meters?",
+            o: ["8 liters", "6 liters", "10 liters", "12 liters"],
+            a: 0,
+            exp: "Step 1: Find coverage per liter: 24 ÷ 3 = 8 sq meters per liter.\nStep 2: Divide total target area by coverage rate: 64 ÷ 8 = 8 liters."
+        },
+        {
+            q: "A scale on a model airplane is 1 : 48. If the actual wing span is 12 meters, how long is the model wing span in cm?",
+            o: ["25 cm", "50 cm", "2.5 cm", "4.8 cm"],
+            a: 0,
+            exp: "Step 1: Convert actual size to cm: 12 m = 1,200 cm.\nStep 2: Scale down: 1,200 ÷ 48 = 25 cm."
+        },
+        {
+            q: "If y is directly proportional to x, and y = 28 when x = 4, find x when y = 49.",
+            o: ["7", "6", "8", "9"],
+            a: 0,
+            exp: "Step 1: Formula y = kx. Find k: 28 = k(4) -> k = 7.\nStep 2: Put in new y: 49 = 7x.\nStep 3: Solve: x = 49 ÷ 7 = 7."
+        },
+        {
+            q: "The scale of a floor plan is 1 : 100. If an office room is drawn as 5 cm by 4 cm, what is its actual area in square meters?",
+            o: ["20 sq m", "200 sq m", "2 sq m", "2,000 sq m"],
+            a: 0,
+            exp: "Step 1: Convert map lengths to actual lengths: 5 cm × 100 = 500 cm = 5 m. 4 cm × 100 = 400 cm = 4 m.\nStep 2: Calculate actual area: 5 m × 4 m = 20 sq m."
+        },
+        {
+            q: "If a runner covers 400 meters in 80 seconds, what is their average speed?",
+            o: ["5 m/s", "8 m/s", "4 m/s", "6 m/s"],
+            a: 0,
+            exp: "Step 1: Speed = Distance ÷ Time.\nStep 2: Speed = 400 m ÷ 80 s = 5 m/s."
+        },
+        {
+            q: "Three people split a prize in the ratio 2 : 3 : 5. If the total prize is $1,000, how much does the person with the middle share get?",
+            o: ["$300", "$200", "$500", "$150"],
+            a: 0,
+            exp: "Step 1: Add total ratio parts: 2 + 3 + 5 = 10 parts.\nStep 2: Find value of one part: $1,000 ÷ 10 = $100.\nStep 3: Calculate middle share (3 parts): 3 × $100 = $300."
+        },
+        {
+            q: "In a science lab, pressure varies inversely with volume. If pressure is 2 atm when volume is 6L, what is pressure when volume is 3L?",
+            o: ["4 atm", "1 atm", "3 atm", "12 atm"],
+            a: 0,
+            exp: "Step 1: Inverse relation: P × V = k.\nStep 2: Find constant: 2 × 6 = 12.\nStep 3: Solve for new pressure: P × 3 = 12 -> P = 4 atm."
+        },
+        {
+            q: "A map uses a scale of 1 inch : 12 miles. How many inches represents 54 miles?",
+            o: ["4.5 inches", "5 inches", "4.2 inches", "6 inches"],
+            a: 0,
+            exp: "Step 1: Set up proportion: 1 / 12 = x / 54.\nStep 2: Solve: 12x = 54.\nStep 3: x = 54 ÷ 12 = 4.5 inches."
+        },
+        {
+            q: "If 12 yards of fabric cost $96, how much would 5 yards of the same fabric cost?",
+            o: ["$40", "$45", "$35", "$50"],
+            a: 0,
+            exp: "Step 1: Find price per yard: $96 ÷ 12 = $8 per yard.\nStep 2: Multiply by target yardage: $8 × 5 = $40."
+        },
+        {
+            q: "Two cities are 250 km apart. On a map they are 5 cm apart. What is the scale ratio?",
+            o: ["1 : 5,000,000", "1 : 50,000", "1 : 500,000", "1 : 25,000"],
+            a: 0,
+            exp: "Step 1: Convert 250 km to cm: 250 km = 250,000 m = 25,000,000 cm.\nStep 2: Write scale: 5 : 25,000,000.\nStep 3: Simplify: 1 : 5,000,000."
+        },
+        {
+            q: "If y varies inversely with x, and y = 12 when x = 3, find y when x = 9.",
+            o: ["4", "36", "6", "1.5"],
+            a: 0,
+            exp: "Step 1: Inverse variation: y × x = k.\nStep 2: Find constant k: 12 × 3 = 36.\nStep 3: Solve for new y: y × 9 = 36 -> y = 4."
+        },
+        {
+            q: "A faucet drips 15 ml of water per minute. How much water is wasted in 2 hours?",
+            o: ["1.8 liters", "1.5 liters", "180 ml", "30 ml"],
+            a: 0,
+            exp: "Step 1: Find total minutes in 2 hours: 2 × 60 = 120 minutes.\nStep 2: Calculate ml wasted: 15 ml × 120 = 1,800 ml.\nStep 3: Convert ml to liters: 1,800 ml ÷ 1,000 = 1.8 liters."
+        },
+        {
+            q: "The ratio of boys to girls in a club is 4 : 7. If there are 28 girls, what is the total number of members?",
+            o: ["44", "16", "35", "48"],
+            a: 0,
+            exp: "Step 1: Find number of boys (B): B / 28 = 4 / 7 -> B = (4 × 28) ÷ 7 = 16.\nStep 2: Add boys and girls: 16 boys + 28 girls = 44 members."
+        },
+        {
+            q: "If a car uses 6 liters of fuel for every 100 km, how much fuel does it need for 350 km?",
+            o: ["21 liters", "18 liters", "24 liters", "15 liters"],
+            a: 0,
+            exp: "Step 1: Set up direct proportion: 6/100 = x/350.\nStep 2: Solve: x = (6 × 350) ÷ 100.\nStep 3: x = 2100 ÷ 100 = 21 liters."
+        },
+        {
+            q: "If a typist can type 200 words in 4 minutes, how many words can they type in 15 minutes?",
+            o: ["750 words", "600 words", "800 words", "700 words"],
+            a: 0,
+            exp: "Step 1: Find typing rate: 200 words ÷ 4 mins = 50 words/min.\nStep 2: Multiply by target minutes: 50 × 15 = 750 words."
+        },
+        {
+            q: "An object's weight on Earth varies directly with its weight on the Moon. If a 90 kg person weighs 15 kg on the Moon, how much does a 60 kg person weigh on the Moon?",
+            o: ["10 kg", "12 kg", "8 kg", "15 kg"],
+            a: 0,
+            exp: "Step 1: Find the scale factor: 90 ÷ 15 = 6 (Earth weight is 6x Moon weight).\nStep 2: Divide 60 kg by 6 = 10 kg."
+        },
+        {
+            q: "If 8 pipes can fill a tank in 45 minutes, how many minutes will it take 10 pipes of the same size?",
+            o: ["36 minutes", "40 minutes", "50 minutes", "30 minutes"],
+            a: 0,
+            exp: "Step 1: Inverse variation: 8 × 45 = 360 pipe-minutes.\nStep 2: Solve for 10 pipes: 10 × Time = 360.\nStep 3: Time = 36 minutes."
+        },
+        {
+            q: "On a physical globe, 1 cm represents 400 km. If the distance between two capitals is 4.5 cm, what is the actual distance?",
+            o: ["1,800 km", "1,600 km", "2,000 km", "1,500 km"],
+            a: 0,
+            exp: "Step 1: Multiply globe distance by scale: 4.5 × 400.\nStep 2: 4.5 × 400 = 1,800 km."
+        },
+        {
+            q: "Simplify the ratio 18 : 24 : 36 to its simplest form.",
+            o: ["3 : 4 : 6", "2 : 3 : 4", "3 : 4 : 5", "1 : 2 : 3"],
+            a: 0,
+            exp: "Step 1: Find the Greatest Common Divisor (GCD) of 18, 24, and 36, which is 6.\nStep 2: Divide each number by 6: 18÷6 : 24÷6 : 36÷6.\nStep 3: Result: 3 : 4 : 6."
+        },
+        {
+            q: "A model ship is built with a scale of 1 : 250. If the actual ship is 50 meters long, how long is the model in centimeters?",
+            o: ["20 cm", "25 cm", "15 cm", "40 cm"],
+            a: 0,
+            exp: "Step 1: Convert actual length to cm: 50 m = 5,000 cm.\nStep 2: Scale down: 5,000 ÷ 250 = 20 cm."
+        },
+        {
+            q: "If y is directly proportional to x, and y = 12 when x = 8, find y when x = 12.",
+            o: ["18", "16", "14", "24"],
+            a: 0,
+            exp: "Step 1: Formula y = kx. Find k: 12 = k(8) -> k = 1.5.\nStep 2: Put in new x: y = 1.5 × 12 = 18."
+        },
+        {
+            q: "If y is inversely proportional to x, and y = 15 when x = 4, find x when y = 10.",
+            o: ["6", "5", "8", "7.5"],
+            a: 0,
+            exp: "Step 1: Inverse variation formula: y × x = k.\nStep 2: Find k: 15 × 4 = 60.\nStep 3: Solve for new x: 10 × x = 60 -> x = 6."
+        },
+        {
+            q: "An builder uses a scale of 2 inches to 3 feet. If a room measures 12 inches on the drawing, what is its actual size in feet?",
+            o: ["18 feet", "16 feet", "24 feet", "15 feet"],
+            a: 0,
+            exp: "Step 1: Set up ratio: (drawing inches) / (actual feet) = 2/3.\nStep 2: Solve 2/3 = 12/x.\nStep 3: Cross-multiply: 2x = 36 -> x = 18 feet."
+        },
+        {
+            q: "If 15 bags of cement weigh 750 kg, how much do 7 bags weigh?",
+            o: ["350 kg", "300 kg", "400 kg", "375 kg"],
+            a: 0,
+            exp: "Step 1: Find weight of 1 bag: 750 kg ÷ 15 = 50 kg.\nStep 2: Multiply by target amount: 50 kg × 7 = 350 kg."
+        },
+        {
+            q: "A machine can seal 80 cans in 20 seconds. How many cans can it seal in 1 minute?",
+            o: ["240 cans", "160 cans", "320 cans", "200 cans"],
+            a: 0,
+            exp: "Step 1: Find rate per second: 80 cans ÷ 20 seconds = 4 cans/sec.\nStep 2: Convert 1 minute to 60 seconds.\nStep 3: Multiply: 4 × 60 = 240 cans."
+        },
+        {
+            q: "The ratio of angles in a triangle is 1 : 2 : 3. What is the measure of the largest angle? (Sum of angles = 180 degrees)",
+            o: ["90°", "60°", "120°", "80°"],
+            a: 0,
+            exp: "Step 1: Add ratio parts: 1 + 2 + 3 = 6 parts.\nStep 2: Divide 180 by 6 to find 1 part: 180° ÷ 6 = 30°.\nStep 3: Largest angle is 3 parts: 3 × 30° = 90°."
+        },
+        {
+            q: "On a map of scale 1 : 1,000,000, a highway is 7.5 cm long. What is its actual length in km?",
+            o: ["75 km", "7.5 km", "750 km", "7500 km"],
+            a: 0,
+            exp: "Step 1: Calculate map distance: 7.5 × 1,000,000 = 7,500,000 cm.\nStep 2: Convert to meters: 7,500,000 ÷ 100 = 75,000 m.\nStep 3: Convert to kilometers: 75,000 ÷ 1,000 = 75 km."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let totalAnswered = 0;
+    let isAnswered = false;
+    let currentOptions = [];
+
+    // Helper to shuffle options so key 'A' is not always index 0
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function loadQuestion() {
+        isAnswered = false;
+        document.getElementById("feedback").style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+
+        // INFINITE LOOP logic: When we reach 50, cycle back smoothly
+        const qIndex = currentQuestionIndex % questionDatabase.length;
+        const currentData = questionDatabase[qIndex];
+
+        // Update progress counters (loops infinitely, so counts total answered)
+        document.getElementById("progress-display").innerText = `Q: ${(totalAnswered + 1)}`;
+
+        // Set up the question text
+        document.getElementById("question").innerText = currentData.q;
+
+        // Clone and shuffle options safely
+        currentOptions = currentData.o.map((option, idx) => {
+            return { text: option, isCorrect: idx === currentData.a };
+        });
+        shuffleArray(currentOptions);
+
+        // Display options
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+        currentOptions.forEach((option, idx) => {
+            const button = document.createElement("button");
+            button.className = "btn";
+            button.innerText = option.text;
+            button.onclick = () => selectOption(idx);
+            optionsDiv.appendChild(button);
+        });
+    }
+
+    function selectOption(selectedIndex) {
+        if (isAnswered) return;
+        isAnswered = true;
+
+        const qIndex = currentQuestionIndex % questionDatabase.length;
+        const currentData = questionDatabase[qIndex];
+        const optionsDiv = document.getElementById("options");
+        const buttons = optionsDiv.getElementsByClassName("btn");
+
+        const selectedOption = currentOptions[selectedIndex];
+        const feedbackCard = document.getElementById("feedback");
+        const feedbackStatus = document.getElementById("feedback-status");
+        const explanationText = document.getElementById("explanation");
+
+        totalAnswered++;
+
+        if (selectedOption.isCorrect) {
+            buttons[selectedIndex].classList.add("correct");
+            score += 10;
+            streak++;
+            feedbackStatus.innerText = "Correct! 🎉";
+            feedbackStatus.style.color = "#389e0d";
+            feedbackCard.style.backgroundColor = "#f6ffed";
+            feedbackCard.style.borderColor = "#b7eb8f";
+        } else {
+            buttons[selectedIndex].classList.add("wrong");
+            // Highlight the correct answer for clarity
+            for (let i = 0; i < currentOptions.length; i++) {
+                if (currentOptions[i].isCorrect) {
+                    buttons[i].classList.add("correct");
+                }
+            }
+            streak = 0;
+            feedbackStatus.innerText = "Incorrect 💡";
+            feedbackStatus.style.color = "#cf1322";
+            feedbackCard.style.backgroundColor = "#fff2f0";
+            feedbackCard.style.borderColor = "#ffccc7";
+        }
+
+        // Show Explanation
+        explanationText.innerText = currentData.exp;
+        feedbackCard.style.display = "block";
+
+        // Update HUD
+        document.getElementById("score-display").innerText = `Score: ${score}`;
+        document.getElementById("streak-display").innerText = `Streak: ${streak}🔥`;
+
+        // Show next button
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+
+    // Initialize the Game
+    window.onload = function() {
+        // Randomize the first start index of 50 questions
+        currentQuestionIndex = Math.floor(Math.random() * questionDatabase.length);
+        loadQuestion();
+    };
+</script>
+</body>
+</html>
