@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebraic Identities Practice Quiz</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --success: #10B981;
+            --error: #EF4444;
+            --dark: #1F2937;
+            --light: #F3F4F6;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .score-board {
+            background: var(--light);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .question-box {
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) {
+            .option-btn:hover:not([disabled]) {
+                background: #E0E7FF;
+                border-color: var(--primary);
+            }
+        }
+
+        .option-btn[disabled] {
+            cursor: not-allowed;
+        }
+
+        .option-btn.correct {
+            background: #D1FAE5;
+            border-color: var(--success);
+            color: #065F46;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background: #FEE2E2;
+            border-color: var(--error);
+            color: #991B1B;
+        }
+
+        .feedback-box {
+            display: none;
+            background: #EFF6FF;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .feedback-box h3 {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .feedback-box p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-line;
+        }
+
+        .next-btn {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .next-btn:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <header>
+        <h1>Algebra Practice</h1>
+        <div class="score-board">Score: <span id="score">0</span> / <span id="total">0</span></div>
+    </header>
+
+    <div class="question-box" id="question">Loading question...</div>
+
+    <div class="options-container" id="options">
+        </div>
+
+    <div class="feedback-box" id="feedback">
+        <h3>Step-by-Step Explanation:</h3>
+        <p id="explanation-text"></p>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="loadNextQuestion()">Next Question &rarr;</button>
+</div>
+
+<script>
+    // 30 distinct algebra identity questions
+    const questionPool = [
+        {
+            q: "Expand: (x + 4)²",
+            options: ["x² + 8x + 16", "x² + 16", "x² + 4x + 16", "x² + 8x + 8"],
+            correct: 0,
+            explain: "Using the identity (a + b)² = a² + 2ab + b²:\nHere, a = x and b = 4.\n(x + 4)² = x² + 2(x)(4) + 4²\n= x² + 8x + 16."
+        },
+        {
+            q: "Factor completely: x² - 25",
+            options: ["(x - 5)(x + 5)", "(x - 5)²", "(x + 5)²", "(x - 25)(x + 1)"],
+            correct: 0,
+            explain: "Using the difference of squares: a² - b² = (a - b)(a + b):\nHere, a = x and b = 5 (since 25 = 5²).\nx² - 5² = (x - 5)(x + 5)."
+        },
+        {
+            q: "Expand: (y - 7)²",
+            options: ["y² - 14y + 49", "y² - 49", "y² - 7y + 49", "y² + 14y + 49"],
+            correct: 0,
+            explain: "Using the identity (a - b)² = a² - 2ab + b²:\nHere, a = y and b = 7.\n(y - 7)² = y² - 2(y)(7) + 7²\n= y² - 14y + 49."
+        },
+        {
+            q: "Expand: (2x + 3)²",
+            options: ["4x² + 12x + 9", "4x² + 9", "2x² + 12x + 9", "4x² + 6x + 9"],
+            correct: 0,
+            explain: "Using (a + b)² = a² + 2ab + b²:\nHere, a = 2x and b = 3.\n(2x + 3)² = (2x)² + 2(2x)(3) + 3²\n= 4x² + 12x + 9."
+        },
+        {
+            q: "Expand: (3a - 4b)²",
+            options: ["9a² - 24ab + 16b²", "9a² - 16b²", "9a² + 24ab + 16b²", "3a² - 12ab + 4b²"],
+            correct: 0,
+            explain: "Using (a - b)² = a² - 2ab + b²:\nHere, a = 3a and b = 4b.\n(3a - 4b)² = (3a)² - 2(3a)(4b) + (4b)²\n= 9a² - 24ab + 16b²."
+        },
+        {
+            q: "Factor: 4x² - 9y²",
+            options: ["(2x - 3y)(2x + 3y)", "(2x - 3y)²", "(4x - 9y)(4x + 9y)", "(2x + 3y)²"],
+            correct: 0,
+            explain: "Using a² - b² = (a - b)(a + b):\nRewrite 4x² as (2x)² and 9y² as (3y)².\n(2x)² - (3y)² = (2x - 3y)(2x + 3y)."
+        },
+        {
+            q: "Calculate using identities: 99²",
+            options: ["9801", "9901", "9800", "9999"],
+            correct: 0,
+            explain: "Write 99 as (100 - 1) and use (a - b)² = a² - 2ab + b²:\n(100 - 1)² = 100² - 2(100)(1) + 1²\n= 10000 - 200 + 1\n= 9801."
+        },
+        {
+            q: "Calculate using identities: 41 × 39",
+            options: ["1599", "1601", "1600", "1589"],
+            correct: 0,
+            explain: "Write as (40 + 1)(40 - 1). Use (a + b)(a - b) = a² - b²:\n(40 + 1)(40 - 1) = 40² - 1²\n= 1600 - 1\n= 1599."
+        },
+        {
+            q: "Factor: x² + 10x + 25",
+            options: ["(x + 5)²", "(x - 5)³", "(x - 5)(x + 5)", "(x + 10)²"],
+            correct: 0,
+            explain: "Identify as a perfect square trinomial: a² + 2ab + b² = (a + b)².\nHere, x² + 2(x)(5) + 5² matches perfectly with a = x and b = 5.\nSo, it factors to (x + 5)²."
+        },
+        {
+            q: "Factor: m² - 12m + 36",
+            options: ["(m - 6)²", "(m + 6)²", "(m - 6)(m + 6)", "(m - 18)²"],
+            correct: 0,
+            explain: "Identify as a perfect square trinomial: a² - 2ab + b² = (a - b)².\nHere, m² - 2(m)(6) + 6² matches with a = m and b = 6.\nSo, it factors to (m - 6)²."
+        },
+        {
+            q: "Expand: (5x + 2y)(5x - 2y)",
+            options: ["25x² - 4y²", "25x² + 4y²", "25x² - 20xy + 4y²", "5x² - 2y²"],
+            correct: 0,
+            explain: "Using (a + b)(a - b) = a² - b²:\nHere, a = 5x and b = 2y.\n(5x + 2y)(5x - 2y) = (5x)² - (2y)² = 25x² - 4y²."
+        },
+        {
+            q: "Expand: (x - 1/2)²",
+            options: ["x² - x + 1/4", "x² - 1/4", "x² - x - 1/4", "x² - 2x + 1/4"],
+            correct: 0,
+            explain: "Using (a - b)² = a² - 2ab + b²:\n(x - 1/2)² = x² - 2(x)(1/2) + (1/2)²\n= x² - x + 1/4."
+        },
+        {
+            q: "Expand: (2a + 5b)²",
+            options: ["4a² + 20ab + 25b²", "4a² + 25b²", "4a² + 10ab + 25b²", "2a² + 20ab + 5b²"],
+            correct: 0,
+            explain: "Using (a + b)² = a² + 2ab + b²:\n(2a + 5b)² = (2a)² + 2(2a)(5) + (5b)²\n= 4a² + 20ab + 25b²."
+        },
+        {
+            q: "Factor: 49 - t²",
+            options: ["(7 - t)(7 + t)", "(7 - t)²", "(t - 7)(t + 7)", "(49 - t)(1 + t)"],
+            correct: 0,
+            explain: "Using a² - b² = (a - b)(a + b):\n49 - t² = 7² - t² = (7 - t)(7 + t)."
+        },
+        {
+            q: "Calculate: 52² using identities",
+            options: ["2704", "2504", "2604", "2700"],
+            correct: 0,
+            explain: "Write 52 as (50 + 2). Use (a + b)² = a² + 2ab + b²:\n(50 + 2)² = 50² + 2(50)(2) + 2²\n= 2500 + 200 + 4\n= 2704."
+        },
+        {
+            q: "Expand: (x/3 + 3)²",
+            options: ["x²/9 + 2x + 9", "x²/9 + 9", "x²/3 + 2x + 9", "x²/9 + x + 9"],
+            correct: 0,
+            explain: "Using (a + b)² = a² + 2ab + b²:\n(x/3 + 3)² = (x/3)² + 2(x/3)(3) + 3²\n= x²/9 + 2x + 9."
+        },
+        {
+            q: "Factor: 16x² - 1",
+            options: ["(4x - 1)(4x + 1)", "(4x - 1)²", "(16x - 1)(16x + 1)", "(8x - 1)(8x + 1)"],
+            correct: 0,
+            explain: "Using difference of squares:\n16x² - 1 = (4x)² - 1² = (4x - 1)(4x + 1)."
+        },
+        {
+            q: "Expand: (4 - 3y)²",
+            options: ["16 - 24y + 9y²", "16 - 9y²", "16 - 12y + 9y²", "16 + 24y + 9y²"],
+            correct: 0,
+            explain: "Using (a - b)² = a² - 2ab + b²:\n(4 - 3y)² = 4² - 2(4)(3y) + (3y)²\n= 16 - 24y + 9y²."
+        },
+        {
+            q: "If x + y = 10 and xy = 21, find x² + y².",
+            options: ["58", "100", "79", "42"],
+            correct: 0,
+            explain: "Use the identity (x + y)² = x² + 2xy + y²:\nSubstitute values: 10² = (x² + y²) + 2(21)\n100 = (x² + y²) + 42\nx² + y² = 100 - 42 = 58."
+        },
+        {
+            q: "If x - y = 4 and xy = 12, find x² + y².",
+            options: ["40", "16", "28", "8"],
+            correct: 0,
+            explain: "Use the identity (x - y)² = x² - 2xy + y²:\nSubstitute values: 4² = (x² + y²) - 2(12)\n16 = (x² + y²) - 24\nx² + y² = 16 + 24 = 40."
+        },
+        {
+            q: "Expand: (ab + c)²",
+            options: ["a²b² + 2abc + c²", "a²b² + c²", "ab² + 2abc + c²", "a²b² + abc + c²"],
+            correct: 0,
+            explain: "Using (x + y)² = x² + 2xy + y² where x = ab and y = c:\n(ab + c)² = (ab)² + 2(ab)(c) + c²\n= a²b² + 2abc + c²."
+        },
+        {
+            q: "Factor: 9x² - 30x + 25",
+            options: ["(3x - 5)²", "(3x + 5)²", "(3x - 5)(3x + 5)", "(9x - 5)²"],
+            correct: 0,
+            explain: "Identify as a² - 2ab + b²:\n(3x)² - 2(3x)(5) + 5² matches perfectly with a = 3x and b = 5.\nSo, it factors to (3x - 5)²."
+        },
+        {
+            q: "Calculate: 105 × 95",
+            options: ["9975", "10025", "9925", "9900"],
+            correct: 0,
+            explain: "Write as (100 + 5)(100 - 5). Use (a + b)(a - b) = a² - b²:\n(100 + 5)(100 - 5) = 100² - 5²\n= 10000 - 25\n= 9975."
+        },
+        {
+            q: "Expand: (2x - 1/2x)²  (for x ≠ 0)",
+            options: ["4x² - 2 + 1/(4x²)", "4x² - 4 + 1/(4x²)", "4x² - 2 - 1/(4x²)", "4x² + 1/(4x²)"],
+            correct: 0,
+            explain: "Using (a - b)² = a² - 2ab + b²:\n(2x - 1/2x)² = (2x)² - 2(2x)(1/2x) + (1/2x)²\n= 4x² - 2 + 1/(4x²)."
+        },
+        {
+            q: "Factor: x² - y²/100",
+            options: ["(x - y/10)(x + y/10)", "(x - y/100)(x + y/100)", "(x - y/10)²", "(x + y/10)²"],
+            correct: 0,
+            explain: "Using a² - b² = (a - b)(a + b):\nHere, b = y/10 (since (y/10)² = y²/100).\nx² - (y/10)² = (x - y/10)(x + y/10)."
+        },
+        {
+            q: "Expand: (7x + 8y)(7x - 8y)",
+            options: ["49x² - 64y²", "49x² + 64y²", "49x² - 112xy + 64y²", "7x² - 8y²"],
+            correct: 0,
+            explain: "Using (a + b)(a - b) = a² - b²:\n(7x + 8y)(7x - 8y) = (7x)² - (8y)²\n= 49x² - 64y²."
+        },
+        {
+            q: "Factor: 1 - 64a²",
+            options: ["(1 - 8a)(1 + 8a)", "(1 - 8a)²", "(8a - 1)(8a + 1)", "(1 - 64a)(1 + 64a)"],
+            correct: 0,
+            explain: "Using difference of squares: 1 - 64a² = 1² - (8a)²\n= (1 - 8a)(1 + 8a)."
+        },
+        {
+            q: "Expand: (2a/3 - 3/2b)²",
+            options: ["4a²/9 - 2ab + 9/4b²", "4a²/9 - ab + 9/4b²", "4a²/9 - 2ab - 9/4b²", "4a²/9 + 9/4b²"],
+            correct: 0,
+            explain: "Using (x - y)² = x² - 2xy + y²:\n(2a/3)² - 2(2a/3)(3/2b) + (3/2b)²\n= 4a²/9 - 2ab + 9/4b²."
+        },
+        {
+            q: "If x² - y² = 24 and x - y = 4, find x + y.",
+            options: ["6", "8", "12", "96"],
+            correct: 0,
+            explain: "Use the identity x² - y² = (x - y)(x + y):\nSubstitute values: 24 = 4 * (x + y)\nDivide by 4: x + y = 6."
+        },
+        {
+            q: "Expand: (x + 0.1)²",
+            options: ["x² + 0.2x + 0.01", "x² + 0.1x + 0.01", "x² + 0.01", "x² + 0.2x + 0.1"],
+            correct: 0,
+            explain: "Using (a + b)² = a² + 2ab + b²:\n(x + 0.1)² = x² + 2(x)(0.1) + 0.1²\n= x² + 0.2x + 0.01."
+        }
+    ];
+
+    let score = 0;
+    let totalAnswered = 0;
+    let currentQuestion = null;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const explanationTextEl = document.getElementById("explanation-text");
+    const nextBtnEl = document.getElementById("next-btn");
+    const scoreEl = document.getElementById("score");
+    const totalEl = document.getElementById("total");
+
+    // Helper function to shuffle array elements (Fisher-Yates)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function loadNextQuestion() {
+        // Reset visual state
+        feedbackEl.style.display = "none";
+        nextBtnEl.style.display = "none";
+        optionsEl.innerHTML = "";
+
+        // Select a random question from the pool (Infinite Loop)
+        const randomIndex = Math.floor(Math.random() * questionPool.length);
+        currentQuestion = questionPool[randomIndex];
+
+        questionEl.textContent = currentQuestion.q;
+
+        // Shuffle the options so they aren't always in the same order
+        // Track the correct option after shuffling
+        const optionsWithMetadata = currentQuestion.options.map((opt, idx) => ({
+            text: opt,
+            isCorrect: idx === currentQuestion.correct
+        }));
+        
+        shuffle(optionsWithMetadata);
+
+        // Generate the buttons
+        optionsWithMetadata.forEach(opt => {
+            const button = document.createElement("button");
+            button.className = "option-btn";
+            button.textContent = opt.text;
+            button.onclick = () => selectOption(button, opt.isCorrect);
+            optionsEl.appendChild(button);
+        });
+    }
+
+    function selectOption(selectedBtn, isCorrect) {
+        // Disable all buttons immediately
+        const buttons = optionsEl.querySelectorAll(".option-btn");
+        buttons.forEach(btn => btn.setAttribute("disabled", "true"));
+
+        if (isCorrect) {
+            selectedBtn.classList.add("correct");
+            score++;
+        } else {
+            selectedBtn.classList.add("wrong");
+            // Find and highlight the correct one
+            buttons.forEach(btn => {
+                // If it's the right text, reveal it
+                const matchesCorrectOption = currentQuestion.options[currentQuestion.correct];
+                if (btn.textContent === matchesCorrectOption) {
+                    btn.classList.add("correct");
+                }
+            });
+        }
+
+        totalAnswered++;
+        
+        // Update scoreboard
+        scoreEl.textContent = score;
+        totalEl.textContent = totalAnswered;
+
+        // Display explanation
+        explanationTextEl.textContent = currentQuestion.explain;
+        feedbackEl.style.display = "block";
+
+        // Show Next Button
+        nextBtnEl.style.display = "block";
+    }
+
+    // Initialize the first question
+    loadNextQuestion();
+</script>
+
+</body>
+</html>
