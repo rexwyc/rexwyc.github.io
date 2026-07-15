@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factorization Challenge</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: #e0e7ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: var(--primary-hover);
+        }
+
+        .question-box {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            background: #ddd6fe;
+            color: #6d28d9;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .expression {
+            font-size: 1.6rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        @media (hover: hover) {
+            .btn:hover:not([disabled]) {
+                border-color: var(--primary);
+                background: #f5f3ff;
+            }
+        }
+
+        .btn:active:not([disabled]) {
+            transform: scale(0.98);
+        }
+
+        .btn.correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+        }
+
+        .btn.incorrect {
+            background-color: var(--error) !important;
+            color: white !important;
+            border-color: var(--error) !important;
+        }
+
+        .explanation-box {
+            display: none;
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .explanation-box h3 {
+            color: #1d4ed8;
+            margin-bottom: 5px;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .next-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Screen States */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .start-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div id="start-screen" class="screen active">
+        <h1>Factorization Quiz</h1>
+        <p style="margin: 15px 0; color: #6b7280; line-height: 1.5;">
+            Master polynomials! Practice 50 dynamic questions covering Common Factors, Grouping, and Algebraic Identities. Runs forever to keep you sharp!
+        </p>
+        <button class="start-btn" onclick="startGame()">Start Playing</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="stats-bar">
+            <span id="score-display">Score: 0</span>
+            <span id="progress-display">Q: 1/50</span>
+        </div>
+
+        <div class="question-box">
+            <div id="category" class="category-tag">Common Factor</div>
+            <div id="expression" class="expression">3x² + 6x</div>
+        </div>
+
+        <div id="options-container" class="options-grid">
+            </div>
+
+        <div id="explanation" class="explanation-box">
+            <h3>Step-by-Step Explanation:</h3>
+            <p id="explanation-text"></p>
+        </div>
+
+        <button id="next-btn" class="next-btn" onclick="nextQuestion()">Next Question &rarr;</button>
+    </div>
+</div>
+
+<script>
+    // 50 Handcrafted / Synthesized Questions
+    const questionsDatabase = [
+        // --- 1. COMMON FACTORS (GCF) ---
+        {
+            category: "Common Factor",
+            expr: "3x² + 6x",
+            options: ["3x(x + 2)", "3(x² + 2)", "x(3x + 6)", "3x²(1 + 2x)"],
+            correct: 0,
+            step: "1. Find the GCF of the coefficients 3 and 6, which is 3.\n2. Find the GCF of x² and x, which is x.\n3. Pull out 3x: 3x(x + 2)."
+        },
+        {
+            category: "Common Factor",
+            expr: "5y³ - 15y²",
+            options: ["5y²(y - 3)", "5y(y² - 3)", "y²(5y - 15)", "5(y³ - 3y²)"],
+            correct: 0,
+            step: "1. GCF of 5 and 15 is 5.\n2. GCF of y³ and y² is y².\n3. Pull out 5y²: 5y²(y - 3)."
+        },
+        {
+            category: "Common Factor",
+            expr: "4a²b + 8ab²",
+            options: ["4ab(a + 2b)", "4ab(a + b)", "2ab(2a + 4b)", "4(a²b + 2ab²)"],
+            correct: 0,
+            step: "1. GCF of 4 and 8 is 4.\n2. GCF of a²b and ab² is ab.\n3. Divide both terms by 4ab: 4ab(a + 2b)."
+        },
+        {
+            category: "Common Factor",
+            expr: "7x⁴ - 21x³ + 14x²",
+            options: ["7x²(x² - 3x + 2)", "7x(x³ - 3x² + 2)", "x²(7x² - 21x + 14)", "7(x⁴ - 3x³ + 2x²)"],
+            correct: 0,
+            step: "1. GCF of 7, 21, and 14 is 7.\n2. GCF of x⁴, x³, and x² is x².\n3. Pull out 7x²: 7x²(x² - 3x + 2)."
+        },
+        {
+            category: "Common Factor",
+            expr: "12ab - 18ac",
+            options: ["6a(2b - 3c)", "6(2ab - 3ac)", "a(12b - 18c)", "6ab(2 - 3c)"],
+            correct: 0,
+            step: "1. GCF of 12 and 18 is 6.\n2. Both terms share the variable 'a'.\n3. Factoring out 6a yields: 6a(2b - 3c)."
+        },
+        {
+            category: "Common Factor",
+            expr: "2x³y - 8x²y²",
+            options: ["2x²y(x - 4y)", "2xy(x² - 4xy)", "x²y(2x - 8y)", "2x²y²(x - 4)"],
+            correct: 0,
+            step: "1. GCF of 2 and 8 is 2.\n2. GCF of x³y and x²y² is x²y.\n3. Factoring out 2x²y yields: 2x²y(x - 4y)."
+        },
+        {
+            category: "Common Factor",
+            expr: "10m²n - 15mn²",
+            options: ["5mn(2m - 3n)", "5m(2mn - 3n²)", "5mn(2 - 3)", "5m²n²(2n - 3m)"],
+            correct: 0,
+            step: "1. GCF of 10 and 15 is 5.\n2. Both share 'mn'.\n3. Factor out 5mn: 5mn(2m - 3n)."
+        },
+        {
+            category: "Common Factor",
+            expr: "9p³q² + 12p²q³",
+            options: ["3p²q²(3p + 4q)", "3pq(3p² + 4q²)", "9p²q²(p + q)", "3p²q²(3p² + 4q²)"],
+            correct: 0,
+            step: "1. GCF of 9 and 12 is 3.\n2. GCF of variables is p²q².\n3. Factoring out 3p²q² yields: 3p²q²(3p + 4q)."
+        },
+        {
+            category: "Common Factor",
+            expr: "8x⁵ - 12x⁴ + 4x³",
+            options: ["4x³(2x² - 3x + 1)", "4x³(2x² - 3x)", "4x²(2x³ - 3x² + x)", "2x³(4x² - 6x + 2)"],
+            correct: 0,
+            step: "1. GCF of coefficients is 4.\n2. Smallest exponent for x is x³.\n3. Pull out 4x³: 4x³(2x² - 3x + 1)."
+        },
+        {
+            category: "Common Factor",
+            expr: "24x²y - 16xy²",
+            options: ["8xy(3x - 2y)", "8xy(3x + 2y)", "4xy(6x - 4y)", "8x²y²(3 - 2)"],
+            correct: 0,
+            step: "1. GCF of 24 and 16 is 8.\n2. Pull out the shared xy.\n3. Result: 8xy(3x - 2y)."
+        },
+
+        // --- 2. GROUPING TERMS ---
+        {
+            category: "Grouping Terms",
+            expr: "xy + 3x + 2y + 6",
+            options: ["(x + 2)(y + 3)", "(x + 3)(y + 2)", "(xy + 3)(2y + 6)", "(x - 2)(y - 3)"],
+            correct: 0,
+            step: "1. Group: (xy + 3x) + (2y + 6).\n2. Factor GCFs: x(y + 3) + 2(y + 3).\n3. Combine shared binomial: (x + 2)(y + 3)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "ab - 4a + 3b - 12",
+            options: ["(a + 3)(b - 4)", "(a - 4)(b + 3)", "(a - 3)(b + 4)", "(ab - 4)(3b - 12)"],
+            correct: 0,
+            step: "1. Group: (ab - 4a) + (3b - 12).\n2. Factor: a(b - 4) + 3(b - 4).\n3. Combine: (a + 3)(b - 4)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "x² + 2x + xy + 2y",
+            options: ["(x + y)(x + 2)", "(x + 2)(y + 2)", "(x² + y)(x + 2)", "(x - y)(x - 2)"],
+            correct: 0,
+            step: "1. Group: (x² + 2x) + (xy + 2y).\n2. Factor: x(x + 2) + y(x + 2).\n3. Combine: (x + y)(x + 2)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "2x² - 4x + xy - 2y",
+            options: ["(2x + y)(x - 2)", "(2x - y)(x + 2)", "(2x + y)(x + 2)", "(x - 2y)(2x + 1)"],
+            correct: 0,
+            step: "1. Group: (2x² - 4x) + (xy - 2y).\n2. Factor: 2x(x - 2) + y(x - 2).\n3. Combine: (2x + y)(x - 2)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "pq - 3p - 2q + 6",
+            options: ["(p - 2)(q - 3)", "(p + 2)(q + 3)", "(p - 3)(q - 2)", "(pq - 2)(q - 3)"],
+            correct: 0,
+            step: "1. Group: (pq - 3p) + (-2q + 6).\n2. Factor: p(q - 3) - 2(q - 3).\n3. Combine: (p - 2)(q - 3)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "5ax - 5ay + bx - by",
+            options: ["(5a + b)(x - y)", "(5a - b)(x + y)", "(a + b)(5x - 5y)", "(5a + b)(x + y)"],
+            correct: 0,
+            step: "1. Group: (5ax - 5ay) + (bx - by).\n2. Factor: 5a(x - y) + b(x - y).\n3. Combine: (5a + b)(x - y)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "3x² - 3xy + 2x - 2y",
+            options: ["(3x + 2)(x - y)", "(3x - 2)(x + y)", "(3x + 2)(x + y)", "(x - 2)(3x + y)"],
+            correct: 0,
+            step: "1. Group: (3x² - 3xy) + (2x - 2y).\n2. Factor: 3x(x - y) + 2(x - y).\n3. Combine: (3x + 2)(x - y)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "x³ + x² + 2x + 2",
+            options: ["(x² + 2)(x + 1)", "(x² + 1)(x + 2)", "(x + 2)(x² + 2)", "(x² - 2)(x - 1)"],
+            correct: 0,
+            step: "1. Group: (x³ + x²) + (2x + 2).\n2. Factor: x²(x + 1) + 2(x + 1).\n3. Combine: (x² + 2)(x + 1)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "2my - 8m + xy - 4x",
+            options: ["(2m + x)(y - 4)", "(2m - x)(y + 4)", "(2m + x)(y + 4)", "(y - 4)(2m - x)"],
+            correct: 0,
+            step: "1. Group: (2my - 8m) + (xy - 4x).\n2. Factor: 2m(y - 4) + x(y - 4).\n3. Combine: (2m + x)(y - 4)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "am - bm - an + bn",
+            options: ["(a - b)(m - n)", "(a + b)(m - n)", "(a - b)(m + n)", "(a + n)(m - b)"],
+            correct: 0,
+            step: "1. Group: (am - bm) - (an - bn).\n2. Factor: m(a - b) - n(a - b).\n3. Combine: (a - b)(m - n)."
+        },
+
+        // --- 3. IDENTITIES: DIFFERENCE OF SQUARES ---
+        {
+            category: "Identities",
+            expr: "x² - 16",
+            options: ["(x - 4)(x + 4)", "(x - 4)²", "(x + 4)²", "(x - 8)(x + 8)"],
+            correct: 0,
+            step: "1. Recognize difference of squares: a² - b² = (a-b)(a+b).\n2. Here, a = x and b = 4.\n3. Result: (x - 4)(x + 4)."
+        },
+        {
+            category: "Identities",
+            expr: "4y² - 9",
+            options: ["(2y - 3)(2y + 3)", "(2y - 3)²", "(4y - 3)(4y + 3)", "(2y - 9)(2y + 9)"],
+            correct: 0,
+            step: "1. 4y² is (2y)² and 9 is 3².\n2. Apply a² - b² = (a-b)(a+b).\n3. Result: (2y - 3)(2y + 3)."
+        },
+        {
+            category: "Identities",
+            expr: "25a² - 36b²",
+            options: ["(5a - 6b)(5a + 6b)", "(5a - 6b)(5a + b)", "(5a - 6b)²", "(25a - 36b)(25a + 36b)"],
+            correct: 0,
+            step: "1. Identify squares: (5a)² - (6b)².\n2. Apply the difference of squares formula.\n3. Result: (5a - 6b)(5a + 6b)."
+        },
+        {
+            category: "Identities",
+            expr: "1 - 49x²",
+            options: ["(1 - 7x)(1 + 7x)", "(1 - 7x)²", "(7x - 1)(7x + 1)", "(1 - 49x)(1 + 49x)"],
+            correct: 0,
+            step: "1. Written as 1² - (7x)².\n2. Formula: (1 - 7x)(1 + 7x)."
+        },
+        {
+            category: "Identities",
+            expr: "x² - 81y²",
+            options: ["(x - 9y)(x + 9y)", "(x - 9y)²", "(x - 81y)(x + 81y)", "(x - 9)(x + 9y)"],
+            correct: 0,
+            step: "1. x² - (9y)².\n2. Apply difference of squares to get (x - 9y)(x + 9y)."
+        },
+
+        // --- 4. IDENTITIES: PERFECT SQUARE TRINOMIALS ---
+        {
+            category: "Identities",
+            expr: "x² + 6x + 9",
+            options: ["(x + 3)²", "(x - 3)²", "(x + 3)(x + 2)", "(x + 9)²"],
+            correct: 0,
+            step: "1. Check for Perfect Square: a² + 2ab + b² = (a + b)².\n2. Here, a = x, b = 3, and 2ab = 2(x)(3) = 6x.\n3. Factored form: (x + 3)²."
+        },
+        {
+            category: "Identities",
+            expr: "x² - 10x + 25",
+            options: ["(x - 5)²", "(x + 5)²", "(x - 5)(x + 5)", "(x - 10)²"],
+            correct: 0,
+            step: "1. Match with a² - 2ab + b² = (a - b)².\n2. Here, a = x, b = 5, and 2ab = 10x.\n3. Result: (x - 5)²."
+        },
+        {
+            category: "Identities",
+            expr: "4x² + 12x + 9",
+            options: ["(2x + 3)²", "(2x - 3)²", "(4x + 3)²", "(2x + 9)²"],
+            correct: 0,
+            step: "1. (2x)² + 2(2x)(3) + 3².\n2. This is a perfect square trinomial.\n3. Result: (2x + 3)²."
+        },
+        {
+            category: "Identities",
+            expr: "9y² - 24y + 16",
+            options: ["(3y - 4)²", "(3y + 4)²", "(3y - 4)(3y + 4)", "(9y - 4)²"],
+            correct: 0,
+            step: "1. (3y)² - 2(3y)(4) + 4².\n2. Match with (a - b)².\n3. Result: (3y - 4)²."
+        },
+        {
+            category: "Identities",
+            expr: "25a² + 20ab + 4b²",
+            options: ["(5a + 2b)²", "(5a - 2b)²", "(5a + 2b)(5a - 2b)", "(25a + 4b)²"],
+            correct: 0,
+            step: "1. (5a)² + 2(5a)(2b) + (2b)².\n2. Perfect square trinomial (+).\n3. Result: (5a + 2b)²."
+        },
+
+        // --- 5. IDENTITIES: CUBES (SUM/DIFFERENCE) ---
+        {
+            category: "Identities",
+            expr: "x³ + 8",
+            options: ["(x + 2)(x² - 2x + 4)", "(x + 2)(x² + 2x + 4)", "(x - 2)(x² + 2x + 4)", "(x + 2)³"],
+            correct: 0,
+            step: "1. Sum of Cubes: a³ + b³ = (a + b)(a² - ab + b²).\n2. Here, a = x, b = 2.\n3. Plug in: (x + 2)(x² - 2x + 4)."
+        },
+        {
+            category: "Identities",
+            expr: "y³ - 27",
+            options: ["(y - 3)(y² + 3y + 9)", "(y - 3)(y² - 3y + 9)", "(y + 3)(y² - 3y + 9)", "(y - 3)³"],
+            correct: 0,
+            step: "1. Difference of Cubes: a³ - b³ = (a - b)(a² + ab + b²).\n2. Here, a = y, b = 3.\n3. Plug in: (y - 3)(y² + 3y + 9)."
+        },
+        {
+            category: "Identities",
+            expr: "8a³ + 27b³",
+            options: ["(2a + 3b)(4a² - 6ab + 9b²)", "(2a + 3b)(4a² + 6ab + 9b²)", "(2a - 3b)(4a² + 6ab + 9b²)", "(2a + 3b)³"],
+            correct: 0,
+            step: "1. (2a)³ + (3b)³.\n2. Apply sum of cubes formula.\n3. Result: (2a + 3b)(4a² - 6ab + 9b²)."
+        },
+        {
+            category: "Identities",
+            expr: "64 - x³",
+            options: ["(4 - x)(16 + 4x + x²)", "(4 - x)(16 - 4x + x²)", "(4 + x)(16 - 4x + x²)", "(4 - x)³"],
+            correct: 0,
+            step: "1. Written as 4³ - x³.\n2. Apply difference of cubes formula.\n3. Result: (4 - x)(16 + 4x + x²)."
+        },
+        {
+            category: "Identities",
+            expr: "125x³ + 1",
+            options: ["(5x + 1)(25x² - 5x + 1)", "(5x + 1)(25x² + 5x + 1)", "(5x - 1)(25x² + 5x + 1)", "(5x + 1)³"],
+            correct: 0,
+            step: "1. (5x)³ + 1³.\n2. Apply sum of cubes formula.\n3. Result: (5x + 1)(25x² - 5x + 1)."
+        },
+
+        // --- MIXED CHALLENGES & MULTI-STEP ---
+        {
+            category: "Common Factor",
+            expr: "3x² - 12",
+            options: ["3(x - 2)(x + 2)", "3(x² - 4)", "3(x - 2)²", "(3x - 6)(x + 2)"],
+            correct: 0,
+            step: "1. Factor GCF out first: 3(x² - 4).\n2. Factor the difference of squares inside: x² - 4 = (x - 2)(x + 2).\n3. Result: 3(x - 2)(x + 2)."
+        },
+        {
+            category: "Common Factor",
+            expr: "2x² - 18y²",
+            options: ["2(x - 3y)(x + 3y)", "2(x² - 9y²)", "2(x - 3y)²", "(2x - 6y)(x + 3y)"],
+            correct: 0,
+            step: "1. Pull out GCF: 2(x² - 9y²).\n2. Factor the difference of squares: (x - 3y)(x + 3y).\n3. Combined: 2(x - 3y)(x + 3y)."
+        },
+        {
+            category: "Common Factor",
+            expr: "5x³ - 5x",
+            options: ["5x(x - 1)(x + 1)", "5x(x² - 1)", "5(x³ - x)", "5x(x - 1)³"],
+            correct: 0,
+            step: "1. Factor out 5x: 5x(x² - 1).\n2. Factor the difference of squares: 5x(x - 1)(x + 1)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "x³ - x² - x + 1",
+            options: ["(x - 1)²(x + 1)", "(x² - 1)(x - 1)", "(x + 1)²(x - 1)", "(x - 1)³"],
+            correct: 0,
+            step: "1. Group: x²(x - 1) - 1(x - 1) = (x² - 1)(x - 1).\n2. Notice x² - 1 is a difference of squares: (x - 1)(x + 1).\n3. Combine terms: (x - 1)(x + 1)(x - 1) = (x - 1)²(x + 1)."
+        },
+        {
+            category: "Identities",
+            expr: "x⁴ - 16",
+            options: ["(x² + 4)(x - 2)(x + 2)", "(x² - 4)(x² + 4)", "(x - 2)²(x + 2)²", "(x - 2)⁴"],
+            correct: 0,
+            step: "1. (x²)² - 4² = (x² - 4)(x² + 4).\n2. Factor (x² - 4) further to (x - 2)(x + 2).\n3. Result: (x² + 4)(x - 2)(x + 2)."
+        },
+        {
+            category: "Common Factor",
+            expr: "ax² - ay²",
+            options: ["a(x - y)(x + y)", "a(x² - y²)", "ax(x - y)", "ay(x - y)"],
+            correct: 0,
+            step: "1. Pull out common factor 'a': a(x² - y²).\n2. Apply difference of squares inside: a(x - y)(x + y)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "x² - y² + x - y",
+            options: ["(x - y)(x + y + 1)", "(x - y)(x + y)", "(x + y)(x - y + 1)", "(x - y)²(x + y)"],
+            correct: 0,
+            step: "1. Group: (x² - y²) + (x - y).\n2. Factor the difference of squares: (x - y)(x + y) + 1(x - y).\n3. Factor out common (x - y): (x - y)(x + y + 1)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "y² - 4 + xy - 2x",
+            options: ["(y - 2)(y + 2 + x)", "(y - 2)(y + 2)", "(y + 2)(y - 2 + x)", "(y - 2)²"],
+            correct: 0,
+            step: "1. Group: (y² - 4) + (xy - 2x).\n2. Factor both: (y - 2)(y + 2) + x(y - 2).\n3. Pull out shared (y - 2): (y - 2)(y + 2 + x)."
+        },
+        {
+            category: "Identities",
+            expr: "a² - b² - 2bc - c²",
+            options: ["(a - b - c)(a + b + c)", "(a - b + c)(a + b - c)", "(a + b + c)(a - b + c)", "None of these"],
+            correct: 0,
+            step: "1. Group as: a² - (b² + 2bc + c²).\n2. Notice the perfect square trinomial: a² - (b + c)².\n3. Apply difference of squares: (a - (b + c))(a + (b + c)) = (a - b - c)(a + b + c)."
+        },
+        {
+            category: "Common Factor",
+            expr: "x⁴ - x²",
+            options: ["x²(x - 1)(x + 1)", "x²(x² - 1)", "x(x³ - x)", "x²(x - 1)²"],
+            correct: 0,
+            step: "1. Pull out GCF: x²(x² - 1).\n2. Difference of squares: x²(x - 1)(x + 1)."
+        },
+        {
+            category: "Identities",
+            expr: "a³b - ab³",
+            options: ["ab(a - b)(a + b)", "ab(a² - b²)", "ab(a - b)²", "a²b²(a - b)"],
+            correct: 0,
+            step: "1. Pull out GCF 'ab': ab(a² - b²).\n2. Difference of squares: ab(a - b)(a + b)."
+        },
+        {
+            category: "Grouping Terms",
+            expr: "x³ + 2x² - x - 2",
+            options: ["(x + 2)(x - 1)(x + 1)", "(x² - 1)(x + 2)", "(x + 2)(x - 1)²", "(x - 2)(x - 1)(x + 1)"],
+            correct: 0,
+            step: "1. Group: x²(x + 2) - 1(x + 2) = (x² - 1)(x + 2).\n2. Factor (x² - 1) to (x - 1)(x + 1).\n3. Combined: (x + 2)(x - 1)(x + 1)."
+        },
+        {
+            category: "Identities",
+            expr: "9x² - 12x + 4",
+            options: ["(3x - 2)²", "(3x + 2)²", "(3x - 2)(3x + 2)", "(9x - 2)²"],
+            correct: 0,
+            step: "1. (3x)² - 2(3x)(2) + 2².\n2. Matches the format (a - b)².\n3. Result: (3x - 2)²."
+        },
+        {
+            category: "Identities",
+            expr: "2x³ + 16",
+            options: ["2(x + 2)(x² - 2x + 4)", "2(x + 2)³", "2(x - 2)(x² + 2x + 4)", "2(x + 2)(x² + 2x + 4)"],
+            correct: 0,
+            step: "1. Pull out GCF first: 2(x³ + 8).\n2. Use Sum of Cubes formula on (x³ + 8).\n3. Result: 2(x + 2)(x² - 2x + 4)."
+        },
+        {
+            category: "Identities",
+            expr: "x⁶ - y⁶",
+            options: ["(x - y)(x + y)(x² - xy + y²)(x² + xy + y²)", "(x³ - y³)(x³ + y³)", "(x - y)⁶", "(x² - y²)(x + y)³"],
+            correct: 0,
+            step: "1. Written as (x³)² - (y³)² which becomes (x³ - y³)(x³ + y³).\n2. Factoring those cubes yields: (x - y)(x² + xy + y²) * (x + y)(x² - xy + y²).\n3. Reorganizing terms yields: (x - y)(x + y)(x² - xy + y²)(x² + xy + y²)."
+        }
+    ];
+
+    let score = 0;
+    let currentQuestionIndex = 0;
+    let questionsList = [];
+    let answered = false;
+    let shuffledOptions = []; // Holds the dynamically shuffled choices for current round
+
+    function startGame() {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        score = 0;
+        currentQuestionIndex = 0;
+        // Shuffle the whole database order so gameplay is randomized
+        questionsList = [...questionsDatabase].sort(() => Math.random() - 0.5);
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        answered = false;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('explanation').style.display = 'none';
+
+        // Infinite Loop Condition
+        if (currentQuestionIndex >= questionsList.length) {
+            currentQuestionIndex = 0;
+            questionsList = [...questionsDatabase].sort(() => Math.random() - 0.5);
+        }
+
+        const currentQuestion = questionsList[currentQuestionIndex];
+        
+        // Render stats
+        document.getElementById('score-display').innerText = `Score: ${score}`;
+        document.getElementById('progress-display').innerText = `Q: ${currentQuestionIndex + 1}/50`;
+        
+        // Render headers
+        document.getElementById('category').innerText = currentQuestion.category;
+        document.getElementById('expression').innerText = currentQuestion.expr;
+
+        // --- FIXED: Dynamically map and shuffle option placements ---
+        shuffledOptions = currentQuestion.options.map((opt, idx) => ({
+            text: opt,
+            isCorrect: idx === currentQuestion.correct
+        })).sort(() => Math.random() - 0.5);
+
+        // Render shuffled options
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        shuffledOptions.forEach((opt, idx) => {
+            const button = document.createElement('button');
+            button.className = 'btn';
+            button.innerText = opt.text;
+            button.onclick = () => selectOption(idx, button);
+            optionsContainer.appendChild(button);
+        });
+
+        // Set Step-by-Step explanation
+        document.getElementById('explanation-text').innerText = currentQuestion.step;
+    }
+
+    function selectOption(selectedIdx, buttonElement) {
+        if (answered) return; // Stop clicks
+        answered = true;
+
+        const buttons = document.querySelectorAll('#options-container .btn');
+        const selectedChoice = shuffledOptions[selectedIdx];
+
+        if (selectedChoice.isCorrect) {
+            buttonElement.classList.add('correct');
+            score += 10;
+            document.getElementById('score-display').innerText = `Score: ${score}`;
+        } else {
+            buttonElement.classList.add('incorrect');
+            // Find and highlight the correct button dynamically
+            shuffledOptions.forEach((opt, idx) => {
+                if (opt.isCorrect) {
+                    buttons[idx].classList.add('correct');
+                }
+            });
+        }
+
+        // Disable all buttons
+        buttons.forEach(btn => btn.disabled = true);
+
+        // Show Explanation & Next button
+        document.getElementById('explanation').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+        document.getElementById('next-btn').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+</script>
+
+</body>
+</html>
