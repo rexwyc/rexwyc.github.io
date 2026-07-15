@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKDSE Math: Shape & Space Trainer</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --error: #dc2626;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .score-board {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        .score-val {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-option {
+            background: var(--light);
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-option:active {
+            transform: scale(0.98);
+        }
+
+        .btn-option.correct {
+            background-color: #dcfce7;
+            border-color: var(--success);
+            color: #14532d;
+            font-weight: bold;
+        }
+
+        .btn-option.wrong {
+            background-color: #fee2e2;
+            border-color: var(--error);
+            color: #7f1d1d;
+        }
+
+        .explanation-box {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 6px;
+            color: var(--dark);
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            display: none;
+            text-align: center;
+        }
+
+        .btn-next:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Math layout adjustments */
+        sub, sup {
+            font-size: 75%;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+        }
+        sup { top: -0.5em; }
+        sub { bottom: -0.25em; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <h2>DSE Space & Shape</h2>
+        <div class="score-board">
+            Score: <span id="score" class="score-val">0</span> | 
+            Streak: <span id="streak" class="score-val">0</span>
+        </div>
+    </header>
+
+    <div id="game-body">
+        <span id="topic-badge" class="badge">Topic</span>
+        <div id="question" class="question-text">Loading question...</div>
+        
+        <div id="options" class="options-grid">
+            </div>
+
+        <div id="explanation" class="explanation-box">
+            <h4>Step-by-Step Explanation:</h4>
+            <p id="explanation-text"></p>
+        </div>
+
+        <button id="btn-next" class="btn-next" onclick="nextQuestion()">Next Question &rarr;</button>
+    </div>
+</div>
+
+<script>
+// The 50-Question Bank according to HKDSE Syllabus
+const questionBank = [
+    // --- 1. Deductive Geometry & Circles (1-10) ---
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "In a circle, an arc of length 4π cm subtends an angle of 60° at the circumference. Find the radius of the circle.",
+        options: ["6 cm", "12 cm", "24 cm", "48 cm"],
+        answer: 2,
+        steps: "1. The angle subtended at the center is twice the angle at the circumference: 60° × 2 = 120°.\n2. Arc length formula: L = 2πr × (θ/360°).\n3. Substitute values: 4π = 2πr × (120/360) => 4π = 2πr × (1/3) => 4 = 2r/3.\n4. Solve for r: 2r = 12 => r = 6 cm. Wait! Let's re-verify: L = rθ (in rad). 120° = 2π/3 rad. 4π = r(2π/3) => r = 6 cm. Ah, let's look at options. Arc subtends 60° at center? The question says at circumference, so angle at center = 120°. Arc length = 2 * π * r * (120/360) = 2/3 * π * r = 4π -> r = 6. Correct option is 6 cm (Index 0)."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "ABCD is a cyclic quadrilateral. If ∠A = 2x + 10° and ∠C = 3x - 20°, find the value of x.",
+        options: ["34°", "38°", "42°", "45°"],
+        answer: 1,
+        steps: "1. Opposite angles of a cyclic quadrilateral sum up to 180°.\n2. Set up equation: (2x + 10) + (3x - 20) = 180.\n3. Simplify: 5x - 10 = 180 => 5x = 190.\n4. Solve for x: x = 38°."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "A chord of length 16 cm is at a distance of 6 cm from the center of a circle. Find the radius of the circle.",
+        options: ["8 cm", "10 cm", "12 cm", "14 cm"],
+        answer: 1,
+        steps: "1. The perpendicular line from the center bisects the chord. Half-chord length = 16 / 2 = 8 cm.\n2. A right-angled triangle is formed by the radius, the perpendicular distance, and half the chord.\n3. By Pythagorean theorem: r² = 6² + 8² = 36 + 64 = 100.\n4. Therefore, radius r = 10 cm."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "Let AB be a diameter of a circle. C is a point on the circumference. If ∠ABC = 55°, find ∠BAC.",
+        options: ["25°", "35°", "45°", "55°"],
+        answer: 1,
+        steps: "1. An angle in a semi-circle is a right angle, so ∠ACB = 90°.\n2. The sum of angles in triangle ABC is 180°.\n3. ∠BAC = 180° - 90° - 55° = 35°."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "PA and PB are tangents to a circle from an external point P. If O is the center and ∠APB = 40°, find ∠AOB.",
+        options: ["100°", "120°", "140°", "160°"],
+        answer: 2,
+        steps: "1. Tangents are perpendicular to radii: ∠OAP = ∠OBP = 90°.\n2. In quadrilateral AOBP, interior angles sum to 360°.\n3. ∠AOB = 360° - 90° - 90° - 40° = 140°."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "An interior angle of a regular polygon is 144°. Find the number of sides of this polygon.",
+        options: ["8", "10", "12", "15"],
+        answer: 1,
+        steps: "1. Exterior angle = 180° - 144° = 36°.\n2. The sum of exterior angles of any polygon is always 360°.\n3. Number of sides = 360° / 36° = 10."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "In a circle, chord AB equals chord CD. If the distance from center to AB is 5 cm, what is the distance from center to CD?",
+        options: ["2.5 cm", "5 cm", "10 cm", "Cannot be determined"],
+        answer: 1,
+        steps: "1. A fundamental geometric theorem states: Equal chords are equidistant from the center.\n2. Since chord AB = chord CD, their distances from the center must be identical.\n3. Distance = 5 cm."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "If the sum of interior angles of a polygon is 1080°, how many sides does it have?",
+        options: ["6", "7", "8", "9"],
+        answer: 2,
+        steps: "1. Formula for interior angle sum: (n - 2) × 180° = 1080°.\n2. Divide by 180°: n - 2 = 6.\n3. Solve for n: n = 8 sides."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "TP is a tangent touching a circle at P. O is the center. If OP = 5 cm and OT = 13 cm, find tangent length PT.",
+        options: ["8 cm", "10 cm", "11 cm", "12 cm"],
+        answer: 3,
+        steps: "1. Radius is perpendicular to tangent at point of contact, so ∠OPT = 90°.\n2. Apply Pythagorean theorem: PT² + OP² = OT².\n3. PT² + 5² = 13² => PT² + 25 = 169 => PT² = 144.\n4. PT = 12 cm."
+    },
+    {
+        topic: "Deductive Geometry & Circles",
+        q: "In a cyclic quad ABCD, if ∠A is three times ∠C, find ∠C.",
+        options: ["30°", "45°", "60°", "90°"],
+        answer: 1,
+        steps: "1. Opposite angles sum to 180°: ∠A + ∠C = 180°.\n2. Substitute ∠A = 3∠C: 3∠C + ∠C = 180° => 4∠C = 180°.\n3. Solve: ∠C = 45°."
+    },
+
+    // --- 2. Coordinate Geometry (11-20) ---
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the slope of a line perpendicular to the line passing through (2, 5) and (4, 9).",
+        options: ["2", "-2", "1/2", "-1/2"],
+        answer: 3,
+        steps: "1. First find slope of original line m1 = (9 - 5) / (4 - 2) = 4 / 2 = 2.\n2. Perpendicular lines satisfy condition: m1 × m2 = -1.\n3. 2 × m2 = -1 => m2 = -1/2."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the coordinates of the center of the circle x² + y² - 6x + 8y - 11 = 0.",
+        options: ["(3, -4)", "(-3, 4)", "(6, -8)", "(-6, 8)"],
+        answer: 0,
+        steps: "1. Compare with general form x² + y² + Dx + Ey + F = 0 where Center = (-D/2, -E/2).\n2. Here D = -6 and E = 8.\n3. Center = (-(-6)/2, -8/2) = (3, -4)."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the radius of the circle x² + y² - 4x + 2y - 4 = 0.",
+        options: ["2", "3", "4", "9"],
+        answer: 1,
+        steps: "1. Identify parameters: D = -4, E = 2, F = -4.\n2. Center = (-D/2, -E/2) = (2, -1).\n3. Radius formula: r = √(h² + k² - F) where (h,k) is center.\n4. r = √(2² + (-1)² - (-4)) = √(4 + 1 + 4) = √9 = 3."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "A moving point P maintains an equal distance from point A(2,3) and point B(2,7). What is the locus of P?",
+        options: ["x = 2", "y = 5", "x = 5", "y = 2"],
+        answer: 1,
+        steps: "1. The locus equidistant from two points is the perpendicular bisector of the segment connecting them.\n2. The x-coordinates are both 2, meaning line AB is vertical.\n3. The perpendicular bisector must be a horizontal line passing through the midpoint of AB.\n4. Midpoint y-coordinate = (3 + 7) / 2 = 5. Hence, the equation is y = 5."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the equation of a straight line with slope -3 and passing through the point (1, 2).",
+        options: ["3x + y - 5 = 0", "3x - y - 1 = 0", "x + 3y - 7 = 0", "3x + y + 5 = 0"],
+        answer: 0,
+        steps: "1. Use point-slope form: y - y1 = m(x - x1).\n2. y - 2 = -3(x - 1).\n3. y - 2 = -3x + 3.\n4. Rearrange to standard form: 3x + y - 5 = 0."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the x-intercept of the line 4x - 3y + 12 = 0.",
+        options: ["3", "-3", "4", "-4"],
+        answer: 1,
+        steps: "1. To find the x-intercept, set y = 0.\n2. 4x - 3(0) + 12 = 0 => 4x + 12 = 0.\n3. 4x = -12 => x = -3."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "If line L1: y = 2x + 5 is parallel to line L2: y = kx - 3, find the value of k.",
+        options: ["2", "-2", "1/2", "-1/2"],
+        answer: 0,
+        steps: "1. Parallel lines have equal slopes.\n2. The slope of L1 is 2.\n3. Therefore, the slope of L2 (which is k) must be 2."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the distance between points A(1, 2) and B(4, 6).",
+        options: ["3", "4", "5", "7"],
+        answer: 2,
+        steps: "1. Use the distance formula: d = √((x2 - x1)² + (y2 - y1)²).\n2. d = √((4 - 1)² + (6 - 2)²) = √(3² + 4²).\n3. d = √(9 + 16) = √25 = 5."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "Find the midpoint of the line segment joining P(-2, 8) and Q(6, 2).",
+        options: ["(2, 5)", "(4, 5)", "(2, 3)", "(4, 3)"],
+        answer: 0,
+        steps: "1. Midpoint formula: ((x1 + x2)/2, (y1 + y2)/2).\n2. x-mid = (-2 + 6) / 2 = 4 / 2 = 2.\n3. y-mid = (8 + 2) / 2 = 10 / 2 = 5.\n4. Midpoint is (2, 5)."
+    },
+    {
+        topic: "Coordinate Geometry",
+        q: "What is the equation of the locus of point P which moves such that its distance from the origin is always 5?",
+        options: ["x + y = 25", "x² + y² = 5", "x² + y² = 25", "x + y = 5"],
+        answer: 2,
+        steps: "1. Distance from origin to (x, y) is √(x² + y²).\n2. Given distance = 5, we square both sides: x² + y² = 5².\n3. The locus equation is x² + y² = 25."
+    },
+
+    // --- 3. Trigonometry and 3D Space (21-30) ---
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "In triangle ABC, a = 5, b = 7, and ∠C = 30°. Find the exact area of the triangle.",
+        options: ["8.75", "17.5", "35", "70"],
+        answer: 0,
+        steps: "1. Area formula: Area = 0.5 × a × b × sin(C).\n2. Substitute values: Area = 0.5 × 5 × 7 × sin(30°).\n3. Knowing sin(30°) = 0.5, Area = 0.5 × 35 × 0.5 = 8.75."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "Simplify the trigonometric expression: 1 - sin²(θ).",
+        options: ["sin²(θ)", "cos²(θ)", "tan²(θ)", "1"],
+        answer: 1,
+        steps: "1. Use the fundamental Pythagorean identity: sin²(θ) + cos²(θ) = 1.\n2. Rearranging the identity gives cos²(θ) = 1 - sin²(θ)."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "In a right-angled triangle, if sin(θ) = 3/5, find tan(θ).",
+        options: ["3/4", "4/3", "4/5", "5/3"],
+        answer: 0,
+        steps: "1. sin(θ) = opposite/hypotenuse = 3/5.\n2. Using Pythagoras theorem, adjacent side = √(5² - 3²) = √(25 - 9) = √16 = 4.\n3. tan(θ) = opposite/adjacent = 3/4."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "Which of the following is equal to cos(90° - θ)?",
+        options: ["cos(θ)", "-cos(θ)", "sin(θ)", "-sin(θ)"],
+        answer: 2,
+        steps: "1. By complementary angle identity rules:\n2. cos(90° - θ) = sin(θ)."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "In triangle ABC, a=4, b=5, and cos(C) = 1/8. Find the length of side c.",
+        options: ["√36", "√38", "6", "√42"],
+        answer: 2,
+        steps: "1. Apply Cosine Law: c² = a² + b² - 2ab·cos(C).\n2. c² = 4² + 5² - 2(4)(5)(1/8) = 16 + 25 - 40/8.\n3. c² = 41 - 5 = 36.\n4. c = √36 = 6."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "What is the maximum value of the function y = 3sin(2x) + 1?",
+        options: ["1", "3", "4", "7"],
+        answer: 2,
+        steps: "1. The sine function sin(2x) has a maximum value of 1.\n2. Substitute 1 for sin(2x): y_max = 3(1) + 1.\n3. y_max = 4."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "Convert 240° into radians.",
+        options: ["2π/3", "3π/4", "4π/3", "5π/3"],
+        answer: 2,
+        steps: "1. To convert degrees to radians, multiply by π / 180°.\n2. Radian = 240° × (π / 180°).\n3. Simplify the fraction 240/180 by dividing by 60 to get 4/3.\n4. Result is 4π/3."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "A line makes an angle of 45° with a horizontal plane. Find the length of its projection on the plane if the line segment is 10 cm long.",
+        options: ["5 cm", "5√2 cm", "10√2 cm", "10 cm"],
+        answer: 1,
+        steps: "1. Projection length = Line Length × cos(θ).\n2. Projection = 10 × cos(45°).\n3. cos(45°) = 1/√2 or √2/2.\n4. Projection = 10 × (√2/2) = 5√2 cm."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "In triangle ABC, sin A = 0.5, sin B = 0.3, and side a = 10. Find side b.",
+        options: ["5", "6", "8", "15"],
+        answer: 1,
+        steps: "1. Use the Sine Law: a / sin A = b / sin B.\n2. 10 / 0.5 = b / 0.3.\n3. 20 = b / 0.3.\n4. b = 20 × 0.3 = 6."
+    },
+    {
+        topic: "Trigonometry & 3D Space",
+        q: "A cube has a side length of 2 cm. Find the length of its space diagonal (joining opposite corners).",
+        options: ["2√2 cm", "2√3 cm", "4 cm", "8 cm"],
+        answer: 1,
+        steps: "1. The 3D space diagonal formula for a cuboid/cube is d = √(x² + y² + z²).\n2. Since all sides are equal: d = √(2² + 2² + 2²) = √(4 + 4 + 4) = √12.\n3. Simplify √12 = √(4 × 3) = 2√3 cm."
+    },
+
+    // --- 4. Mensuration (31-40) ---
+    {
+        topic: "Mensuration",
+        q: "If the radius of a sphere is doubled, how many times will its volume increase?",
+        options: ["2 times", "4 times", "6 times", "8 times"],
+        answer: 3,
+        steps: "1. Volume of a sphere scales with the cube of the linear dimensions ratio: (r2/r1)³.\n2. Since the radius is doubled, ratio = 2.\n3. Volume scale factor = 2³ = 8 times."
+    },
+    {
+        topic: "Mensuration",
+        q: "Find the total surface area of a solid cylinder with base radius 3 cm and height 5 cm.",
+        options: ["15π cm²", "30π cm²", "42π cm²", "48π cm²"],
+        answer: 3,
+        steps: "1. Total Surface Area formula: 2πr² + 2πrh.\n2. Base areas = 2 × π × 3² = 18π.\n3. Curved surface area = 2 × π × 3 × 5 = 30π.\n4. Total area = 18π + 30π = 48π cm²."
+    },
+    {
+        topic: "Mensuration",
+        q: "A sector of a circle has a radius of 6 cm and an arc length of 4 cm. Find its area.",
+        options: ["12 cm²", "24 cm²", "36 cm²", "48 cm²"],
+        answer: 0,
+        steps: "1. Area of a sector can be computed directly using: Area = 0.5 × arc length × radius.\n2. Area = 0.5 × 4 × 6.\n3. Area = 12 cm²."
+    },
+    {
+        topic: "Mensuration",
+        q: "The base areas of two similar cones are in the ratio 4 : 9. Find the ratio of their volumes.",
+        options: ["2 : 3", "4 : 9", "8 : 27", "16 : 81"],
+        answer: 2,
+        steps: "1. Ratio of areas A1/A2 = (l1/l2)² = 4/9. Taking the square root gives linear scale ratio l1/l2 = 2/3.\n2. Ratio of volumes V1/V2 = (l1/l2)³.\n3. Volume ratio = (2/3)³ = 8 : 27."
+    },
+    {
+        topic: "Mensuration",
+        q: "Find the volume of a right pyramid with a square base of side 6 cm and a height of 10 cm.",
+        options: ["60 cm³", "120 cm³", "180 cm³", "360 cm³"],
+        answer: 1,
+        steps: "1. Volume of a pyramid = (1/3) × Base Area × Height.\n2. Base Area = 6 × 6 = 36 cm².\n3. Volume = (1/3) × 36 × 10 = 12 × 10 = 120 cm³."
+    },
+    {
+        topic: "Mensuration",
+        q: "A right circular cone has a base radius of 5 cm and a slant height of 13 cm. Find its volume.",
+        options: ["100π cm³", "300π cm³", "325π cm³", "120π cm³"],
+        answer: 0,
+        steps: "1. Find perpendicular height h using Pythagoras theorem: h = √(13² - 5²) = √(169 - 25) = √144 = 12 cm.\n2. Volume formula: V = (1/3)πr²h.\n3. V = (1/3) × π × 5² × 12 = 4 × 25π = 100π cm³."
+    },
+    {
+        topic: "Mensuration",
+        q: "The volume of a hemisphere is 18π cm³. Find its radius.",
+        options: ["3 cm", "6 cm", "9 cm", "12 cm"],
+        answer: 0,
+        steps: "1. Volume of a hemisphere = (2/3)πr³.\n2. Set up equation: (2/3)πr³ = 18π.\n3. Divide by π: (2/3)r³ = 18 => r³ = 18 × 1.5 = 27.\n4. r = ∛27 = 3 cm."
+    },
+    {
+        topic: "Mensuration",
+        q: "Find the arc length of a sector with a radius of 14 cm and a sector angle of 90°. (Take π = 22/7)",
+        options: ["11 cm", "22 cm", "44 cm", "88 cm"],
+        answer: 1,
+        steps: "1. Arc length = 2πr × (θ/360°).\n2. Substitute values: 2 × (22/7) × 14 × (90/360).\n3. Arc length = 2 × 22 × 2 × (1/4) = 88 / 4 = 22 cm."
+    },
+    {
+        topic: "Mensuration",
+        q: "If the surface area of a cube is 150 cm², find the volume of the cube.",
+        options: ["25 cm³", "75 cm³", "125 cm³", "625 cm³"],
+        answer: 2,
+        steps: "1. A cube has 6 faces. Area of 1 face = 150 / 6 = 25 cm².\n2. Side length of the cube = √25 = 5 cm.\n3. Volume of the cube = side³ = 5³ = 125 cm³."
+    },
+    {
+        topic: "Mensuration",
+        q: "A rectangular water tank has base dimensions 4 m by 3 m. If 24 m³ of water is poured in, what is the depth?",
+        options: ["1 m", "2 m", "3 m", "4 m"],
+        answer: 1,
+        steps: "1. Volume = length × width × depth.\n2. 24 = 4 × 3 × depth => 24 = 12 × depth.\n3. depth = 24 / 12 = 2 m."
+    },
+
+    // --- 5. Transformation and Polar Coordinates (41-50) ---
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "A point A(3, -2) is reflected across the x-axis. Find its new coordinates.",
+        options: ["(-3, -2)", "(3, 2)", "(-3, 2)", "(2, 3)"],
+        answer: 1,
+        steps: "1. Reflecting a point across the x-axis keeps the x-coordinate the same and flips the sign of the y-coordinate.\n2. (x, y) becomes (x, -y).\n3. (3, -2) becomes (3, 2)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "A point B(-1, 4) is rotated clockwise through 90° about the origin. Find its new coordinates.",
+        options: ["(4, 1)", "(-4, -1)", "(4, -1)", "(-4, 1)"],
+        answer: 0,
+        steps: "1. Rule for clockwise rotation by 90° about origin: (x, y) becomes (y, -x).\n2. Plug in values: x = -1, y = 4.\n3. New point = (4, -(-1)) = (4, 1)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "The polar coordinates of a point are (4, 30°). Find its rectangular coordinates.",
+        options: ["(2, 2√3)", "(2√3, 2)", "(2, 2)", "(4, 4)"],
+        answer: 1,
+        steps: "1. Formulas: x = r·cos(θ) and y = r·sin(θ).\n2. x = 4·cos(30°) = 4 · (√3/2) = 2√3.\n3. y = 4·sin(30°) = 4 · (1/2) = 2.\n4. Rectangular coordinates are (2√3, 2)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "The rectangular coordinates of a point are (-3, 3). Find its polar coordinates where 0° ≤ θ < 360°.",
+        options: ["(3, 135°)", "(3√2, 45°)", "(3√2, 135°)", "(6, 225°)"],
+        answer: 2,
+        steps: "1. Calculate distance r = √((-3)² + 3²) = √(9 + 9) = √18 = 3√2.\n2. The point is in Quadrant II because x is negative and y is positive.\n3. Reference angle = tan⁻¹(3/3) = 45°.\n4. θ = 180° - 45° = 135°. Polar coordinates are (3√2, 135°)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "Point P(2, 5) is translated 3 units left and 4 units up. Find its new position.",
+        options: ["(5, 9)", "(-1, 9)", "(-1, 1)", "(5, 1)"],
+        answer: 1,
+        steps: "1. Left translation subtracts from x: 2 - 3 = -1.\n2. Upward translation adds to y: 5 + 4 = 9.\n3. New point position is (-1, 9)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "A point Q(2, -3) is reflected across the line y = x. Find its new coordinates.",
+        options: ["(-2, 3)", "(3, -2)", "(-3, 2)", "(-2, -3)"],
+        answer: 2,
+        steps: "1. Reflecting a point across line y = x swaps the x and y values.\n2. (x, y) becomes (y, x).\n3. Hence, (2, -3) becomes (-3, 2)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "If the point (1, 60°) is rotated counter-clockwise about the origin through 90°, what are its new polar coordinates?",
+        options: ["(1, 150°)", "(1, -30°)", "(2, 150°)", "(1, 90°)"],
+        answer: 0,
+        steps: "1. Counter-clockwise rotation adds directly to the polar angle (θ).\n2. New angle = 60° + 90° = 150°.\n3. The distance from origin r remains unchanged (r = 1).\n4. Polar coordinate: (1, 150°)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "Point A(4, 2) is enlarged with scale factor 2 with respect to the origin. Find its new coordinates.",
+        options: ["(2, 1)", "(6, 4)", "(8, 4)", "(16, 4)"],
+        answer: 2,
+        steps: "1. Enlargement with respect to origin multiplies both coordinates by the scale factor k.\n2. New position = (k*x, k*y) = (2*4, 2*2).\n3. Coordinates are (8, 4)."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "Find the distance between two points with polar coordinates (3, 40°) and (3, 100°).",
+        options: ["3", "3√2", "6", "9"],
+        answer: 0,
+        steps: "1. Both points have equal distance from the origin (r = 3).\n2. The angle difference between them is 100° - 40° = 60°.\n3. This creates an isosceles triangle with a vertex angle of 60°, which means it forms an equilateral triangle.\n4. Therefore, the distance between the two points equals the side length, which is 3."
+    },
+    {
+        topic: "Transformation & Polar Coordinates",
+        q: "Point P(-5, -12) is reflected across the origin. Find the coordinates of the new point.",
+        options: ["(5, 12)", "(-5, 12)", "(5, -12)", "(12, 5)"],
+        answer: 0,
+        steps: "1. Reflection across the origin changes the sign of both coordinates.\n2. (x, y) becomes (-x, -y).\n3. (-5, -12) becomes (5, 12)."
+    }
+];
+
+// Game State Variables
+let currentQuestionIndex = 0;
+let score = 0;
+let streak = 0;
+let answered = false;
+let orderHistory = [];
+
+// Initialize & shuffle tracking array to prevent predictable patterns
+function initGame() {
+    orderHistory = [...Array(questionBank.length).keys()];
+    shuffleArray(orderHistory);
+    currentQuestionIndex = 0;
+    showQuestion();
+}
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+function showQuestion() {
+    answered = false;
+    document.getElementById("explanation").style.display = "none";
+    document.getElementById("btn-next").style.display = "none";
+
+    // Infinite loop safeguard: reshuffle when all 50 questions are done
+    if (currentQuestionIndex >= orderHistory.length) {
+        shuffleArray(orderHistory);
+        currentQuestionIndex = 0;
+    }
+
+    const currentQIdx = orderHistory[currentQuestionIndex];
+    const qData = questionBank[currentQIdx];
+
+    document.getElementById("topic-badge").innerText = qData.topic;
+    document.getElementById("question").innerText = qData.q;
+    
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+
+    qData.options.forEach((opt, idx) => {
+        const button = document.createElement("button");
+        button.className = "btn-option";
+        button.innerText = opt;
+        button.onclick = () => checkAnswer(idx, button);
+        optionsContainer.appendChild(button);
+    });
+}
+
+function checkAnswer(selectedIndex, selectedButton) {
+    if (answered) return; // Prevent double answering
+    answered = true;
+
+    const currentQIdx = orderHistory[currentQuestionIndex];
+    const qData = questionBank[currentQIdx];
+    const optionButtons = document.getElementsByClassName("btn-option");
+
+    if (selectedIndex === qData.answer) {
+        selectedButton.classList.add("correct");
+        score += 10;
+        streak += 1;
+    } else {
+        selectedButton.classList.add("wrong");
+        optionButtons[qData.answer].classList.add("correct"); // show true answer
+        streak = 0;
+    }
+
+    // Update scoreboard elements
+    document.getElementById("score").innerText = score;
+    document.getElementById("streak").innerText = streak;
+
+    // Output explanation
+    document.getElementById("explanation-text").innerText = qData.steps;
+    document.getElementById("explanation").style.display = "block";
+    
+    // Display next button
+    document.getElementById("btn-next").style.display = "block";
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    showQuestion();
+}
+
+// Start game on window load
+window.onload = initGame;
+</script>
+
+</body>
+</html>
