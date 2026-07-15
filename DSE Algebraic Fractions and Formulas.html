@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Exam Practice</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 12px;
+        }
+
+        .score-board {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .progress {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .question-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        /* Math Fraction Styling */
+        .fraction-container {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 4px;
+        }
+        .frac-num {
+            border-bottom: 2px solid var(--text);
+            padding-bottom: 2px;
+        }
+        .frac-den {
+            padding-top: 2px;
+        }
+        .math-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.35rem;
+            margin: 10px 0;
+        }
+
+        .question-subtext {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin-top: 4px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #ecfdf5;
+            border-color: var(--success);
+            color: #065f46;
+        }
+
+        .option-btn.wrong {
+            background-color: #fef2f2;
+            border-color: var(--error);
+            color: #991b1b;
+        }
+
+        .explanation-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 6px;
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <div class="score-board">Score: <span id="score">0</span></div>
+        <div class="progress">Question <span id="q-count">1</span></div>
+    </header>
+
+    <div class="question-box">
+        <div id="question" class="question-text">Loading...</div>
+        <div id="subtext" class="question-subtext"></div>
+    </div>
+
+    <div class="options-grid" id="options"></div>
+
+    <div class="explanation-box" id="explanation">
+        <div class="explanation-title">Step-by-Step Explanation:</div>
+        <div id="explanation-text"></div>
+    </div>
+
+    <button id="next-btn" class="next-btn" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+    let score = 0;
+    let questionIndex = 1;
+    let currentQuestion = null;
+    let answered = false;
+
+    // Helper to build HTML structures for clean vertical fractions
+    function buildFracHtml(num, den) {
+        return `<span class="fraction-container"><span class="frac-num">${num}</span><span class="frac-den">${den}</span></span>`;
+    }
+
+    const generators = [
+        // Type 1: Simplify Quadratic Algebraic Fraction (Like the prompt example)
+        function() {
+            const items = [
+                { num: 'x^2 - 9', den: 'x^2 + 5x + 6', correct: buildFracHtml('x - 3', 'x + 2'), step: 'Factorize both components:\nNumerator: x² - 9 = (x - 3)(x + 3)\nDenominator: x² + 5x + 6 = (x + 2)(x + 3)\nCancel out the common factor (x + 3).' },
+                { num: 'x^2 - 4', den: 'x^2 + 4x + 4', correct: buildFracHtml('x - 2', 'x + 2'), step: 'Factorize both components:\nNumerator: x² - 4 = (x - 2)(x + 2)\nDenominator: x² + 4x + 4 = (x + 2)(x + 2)\nCancel out the common factor (x + 2).' },
+                { num: 'x^2 - 1', den: 'x^2 - 2x + 1', correct: buildFracHtml('x + 1', 'x - 1'), step: 'Factorize both components:\nNumerator: x² - 1 = (x - 1)(x + 1)\nDenominator: x² - 2x + 1 = (x - 1)(x - 1)\nCancel out the common factor (x - 1).' }
+            ];
+            const chosen = items[Math.floor(Math.random() * items.length)];
+            
+            return {
+                html: `Simplify the fraction: <div class="math-display">${buildFracHtml(chosen.num, chosen.den)}</div>`,
+                subtext: "Factorize both numerator and denominator first",
+                answer: chosen.correct,
+                distractors: [buildFracHtml('x + 3', 'x - 2'), buildFracHtml('1', '5x + 6'), buildFracHtml('x - 3', 'x - 2')],
+                explanation: chosen.step
+            };
+        },
+
+        // Type 2: Simplify Basic Fraction
+        function() {
+            const variables = ['x', 'y', 'a', 'b'];
+            const v = variables[Math.floor(Math.random() * variables.length)];
+            const factor = Math.floor(Math.random() * 3) + 2; 
+            const numC = factor * 2;
+            const denC = factor * 3;
+            
+            return {
+                html: `Simplify completely: <div class="math-display">${buildFracHtml(`${numC}${v}^2`, `${denC}${v}`)}</div>`,
+                subtext: "Divide out the greatest common numeric and variable factors",
+                answer: buildFracHtml(`2${v}`, '3'),
+                distractors: [buildFracHtml(`2`, `3${v}`), buildFracHtml(`${numC}`, `${denC}`), buildFracHtml(`2${v}^2`, '3')],
+                explanation: `1. Divide numeric coefficients by their GCD (${factor}): ${numC}/${denC} simplifies to 2/3.\n2. Simplify variables: ${v}² / ${v} leaves ${v} in the numerator.`
+            };
+        },
+
+        // Type 3: Changing the subject
+        function() {
+            const m = Math.floor(Math.random() * 4) + 2;
+            const c = Math.floor(Math.random() * 7) + 1;
+            
+            return {
+                html: `Make x the subject of the formula: <div class="math-display">y = ${m}x + ${c}</div>`,
+                subtext: "Isolate x step-by-step",
+                answer: `x = ${buildFracHtml(`y - ${c}`, m)}`,
+                distractors: [`x = ${buildFracHtml(`y + ${c}`, m)}`, `x = y - ${c} - ${m}`, `x = ${buildFracHtml('y', m)} - ${c}`],
+                explanation: `1. Subtract ${c} from both sides: y - ${c} = ${m}x\n2. Divide both sides completely by ${m} to isolate x:\n   x = (y - ${c}) / ${m}`
+            };
+        },
+
+        // Type 4: Advanced Subject Change
+        function() {
+            return {
+                html: `Make x the subject of the formula: <div class="math-display">ax + bx = d</div>`,
+                subtext: "Factorize to isolate the target variable",
+                answer: `x = ${buildFracHtml('d', 'a + b')}`,
+                distractors: [`x = ${buildFracHtml('d', 'a - b')}`, `x = d - a - b`, `x = ${buildFracHtml('d - b', 'a')}`],
+                explanation: `1. Group the 'x' terms together by factoring out x: x(a + b) = d\n2. Divide the whole expression by the binomial group (a + b):\n   x = d / (a + b)`
+            }
+        }
+    ];
+
+    function generateQuestion() {
+        const generator = generators[Math.floor(Math.random() * generators.length)];
+        const qData = generator();
+        
+        let idCounter = 0;
+        const choices = [
+            { text: qData.answer, isCorrect: true, id: idCounter++ },
+            ...qData.distractors.map(d => ({ text: d, isCorrect: false, id: idCounter++ }))
+        ];
+        
+        choices.sort(() => Math.random() - 0.5);
+
+        return {
+            html: qData.html,
+            subtext: qData.subtext,
+            choices: choices,
+            explanation: qData.explanation
+        };
+    }
+
+    function renderQuestion() {
+        answered = false;
+        currentQuestion = generateQuestion();
+
+        document.getElementById('question').innerHTML = currentQuestion.html;
+        document.getElementById('subtext').innerText = currentQuestion.subtext;
+        document.getElementById('q-count').innerText = questionIndex;
+        
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = '';
+
+        currentQuestion.choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = choice.text;
+            btn.onclick = () => selectOption(btn, choice.isCorrect);
+            optionsDiv.appendChild(btn);
+        });
+
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedBtn, isCorrect) {
+        if (answered) return;
+        answered = true;
+
+        const allButtons = document.querySelectorAll('.option-btn');
+        
+        // Match buttons cleanly based on choice map
+        currentQuestion.choices.forEach((choice, index) => {
+            if (choice.isCorrect) {
+                allButtons[index].classList.add('correct');
+            } else if (allButtons[index] === selectedBtn) {
+                allButtons[index].classList.add('wrong');
+            }
+        });
+
+        if (isCorrect) {
+            score++;
+            document.getElementById('score').innerText = score;
+        }
+
+        const explanationDiv = document.getElementById('explanation');
+        const explanationText = document.getElementById('explanation-text');
+        explanationText.innerText = currentQuestion.explanation;
+        explanationDiv.style.display = 'block';
+
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        questionIndex++;
+        renderQuestion();
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>
