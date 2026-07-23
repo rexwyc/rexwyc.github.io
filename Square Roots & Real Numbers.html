@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square Roots & Real Numbers Challenge</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .game-container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eef3ff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #2b52dd;
+        }
+
+        .question-card {
+            background: #fafafa;
+            border: 2px solid #e4e6eb;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .opt-btn {
+            background: #ffffff;
+            border: 2px solid #3578e5;
+            color: #3578e5;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .opt-btn:active {
+            scale: 0.98;
+        }
+
+        .opt-btn.correct {
+            background: #42b72a !important;
+            border-color: #42b72a !important;
+            color: white !important;
+        }
+
+        .opt-btn.wrong {
+            background: #fa3e3e !important;
+            border-color: #fa3e3e !important;
+            color: white !important;
+        }
+
+        .explanation-box {
+            display: none;
+            background: #fff8e1;
+            border-left: 5px solid #ffc107;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .next-btn {
+            display: none;
+            background: #2b52dd;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .next-btn:active {
+            background: #1d3bb3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="header">
+        <span id="score">Score: 0</span>
+        <span id="streak">🔥 Streak: 0</span>
+    </div>
+
+    <div class="question-card">
+        <div class="question-text" id="question">Loading question...</div>
+    </div>
+
+    <div class="options-grid" id="options">
+        </div>
+
+    <div class="explanation-box" id="explanation">
+        </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question ➔</button>
+</div>
+
+<script>
+    let score = 0;
+    let streak = 0;
+    let currentQuestion = null;
+    let answered = false;
+
+    // Helper functions
+    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5);
+
+    // Infinite Question Generators
+    const generators = [
+        // 1. Identify Perfect Squares
+        function() {
+            const root = getRandomInt(1, 12);
+            const square = root * root;
+            return {
+                q: `What is &radic;${square}?`,
+                options: [root, root + getRandomInt(1, 3), Math.max(1, root - getRandomInt(1, 3)), root * 2],
+                correct: root,
+                explain: `<b>Step 1:</b> Find a number that multiplied by itself equals ${square}.<br><b>Step 2:</b> ${root} &times; ${root} = ${square}.<br><b>Answer:</b> &radic;${square} = ${root}`
+            };
+        },
+        // 2. Classify Rational vs Irrational
+        function() {
+            const isRational = Math.random() > 0.5;
+            let numText, correct, explain;
+
+            if (isRational) {
+                const types = [
+                    { t: "&radic;16", e: "&radic;16 = 4, which is an integer and a rational number." },
+                    { t: "0.75", e: "0.75 is a terminating decimal (3/4), so it is a rational number." },
+                    { t: "0.333...", e: "0.333... is a repeating decimal (1/3), so it is a rational number." },
+                    { t: "5/8", e: "It is written as a fraction of two integers, so it is a rational number." }
+                ];
+                const item = types[getRandomInt(0, types.length - 1)];
+                numText = item.t;
+                correct = "Rational";
+                explain = `<b>Step 1:</b> Check if the number can be written as a simple fraction.<br><b>Step 2:</b> ${item.e}`;
+            } else {
+                const types = [
+                    { t: "&pi; (Pi)", e: "&pi; has a non-terminating, non-repeating decimal expansion." },
+                    { t: "&radic;2", e: "2 is not a perfect square, so &radic;2 is an irrational number." },
+                    { t: "&radic;5", e: "5 is not a perfect square, so &radic;5 is an irrational number." },
+                    { t: "&radic;10", e: "10 is not a perfect square, so &radic;10 is an irrational number." }
+                ];
+                const item = types[getRandomInt(0, types.length - 1)];
+                numText = item.t;
+                correct = "Irrational";
+                explain = `<b>Step 1:</b> Check if the decimal pattern goes on forever without repeating.<br><b>Step 2:</b> ${item.e}`;
+            }
+
+            return {
+                q: `Is <b>${numText}</b> Rational or Irrational?`,
+                options: ["Rational", "Irrational"],
+                correct: correct,
+                explain: explain
+            };
+        },
+        // 3. Product Rule Simplification
+        function() {
+            const primes = [2, 3, 5, 7];
+            const p = primes[getRandomInt(0, primes.length - 1)];
+            const root = getRandomInt(2, 6);
+            const inside = (root * root) * p;
+
+            return {
+                q: `Simplify &radic;${inside}`,
+                options: [`${root}&radic;${p}`, `${p}&radic;${root}`, `${root * 2}&radic;${p}`, `${root}&radic;${p * 2}`],
+                correct: `${root}&radic;${p}`,
+                explain: `<b>Step 1:</b> Factor ${inside} using a perfect square: ${inside} = ${root * root} &times; ${p}.<br><b>Step 2:</b> Apply Product Rule: &radic;(${root * root} &times; ${p}) = &radic;${root * root} &times; &radic;${p}.<br><b>Step 3:</b> Simplify: ${root}&radic;${p}.`
+            };
+        },
+        // 4. Squaring a Square Root
+        function() {
+            const val = getRandomInt(2, 25);
+            return {
+                q: `What is (&radic;${val})<sup>2</sup>?`,
+                options: [val, val * val, Math.floor(val / 2), val + 2],
+                correct: val,
+                explain: `<b>Step 1:</b> Squaring and taking a square root are inverse operations.<br><b>Step 2:</b> (&radic;a)<sup>2</sup> = a.<br><b>Answer:</b> (&radic;${val})<sup>2</sup> = ${val}.`
+            };
+        },
+        // 5. Caution Rule True/False
+        function() {
+            const a = getRandomInt(2, 5);
+            const b = getRandomInt(2, 5);
+            return {
+                q: `True or False: &radic;(${a**2} + ${b**2}) = ${a} + ${b}?`,
+                options: ["True", "False"],
+                correct: "False",
+                explain: `<b>Step 1:</b> Simplify inside the root first: ${a**2} + ${b**2} = ${a**2 + b**2}.<br><b>Step 2:</b> Note that &radic;(${a**2 + b**2}) &ne; ${a + b}. The property &radic;(a + b) = &radic;a + &radic;b is <b>NEVER</b> true for positive numbers!`
+            };
+        }
+    ];
+
+    function generateQuestion() {
+        answered = false;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('explanation').style.display = 'none';
+
+        // Select a random generator
+        const randGen = generators[getRandomInt(0, generators.length - 1)];
+        currentQuestion = randGen();
+
+        // Ensure unique options
+        let uniqueOptions = [...new Set(currentQuestion.options)];
+        while(uniqueOptions.length < 2) {
+            uniqueOptions.push(getRandomInt(1, 30));
+            uniqueOptions = [...new Set(uniqueOptions)];
+        }
+        
+        // Shuffle options
+        uniqueOptions = shuffleArray(uniqueOptions);
+
+        // Render Question
+        document.getElementById('question').innerHTML = currentQuestion.q;
+        
+        // Render Options
+        const optionsGrid = document.getElementById('options');
+        optionsGrid.innerHTML = '';
+        uniqueOptions.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerHTML = opt;
+            btn.onclick = () => checkAnswer(opt, btn);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, selectedBtn) {
+        if (answered) return;
+        answered = true;
+
+        const allButtons = document.querySelectorAll('.opt-btn');
+        
+        if (String(selected) === String(currentQuestion.correct)) {
+            selectedBtn.classList.add('correct');
+            score += 10;
+            streak += 1;
+        } else {
+            selectedBtn.classList.add('wrong');
+            streak = 0;
+            // Highlight the correct answer
+            allButtons.forEach(btn => {
+                if (String(btn.innerHTML) === String(currentQuestion.correct)) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        // Update UI Score
+        document.getElementById('score').innerText = `Score: ${score}`;
+        document.getElementById('streak').innerText = `🔥 Streak: ${streak}`;
+
+        // Show Explanation and Next Button
+        const expBox = document.getElementById('explanation');
+        expBox.innerHTML = currentQuestion.explain;
+        expBox.style.display = 'block';
+
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        generateQuestion();
+    }
+
+    // Start Infinite Loop Game
+    generateQuestion();
+</script>
+
+</body>
+</html>
