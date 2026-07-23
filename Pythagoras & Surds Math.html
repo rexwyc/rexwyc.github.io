@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pythagoras & Surds Math Quest</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+      --correct: #22c55e;
+      --wrong: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .game-card {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .score-board {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .q-counter {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .question-box {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.4;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #334155;
+      color: var(--text);
+      border: 2px solid transparent;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn.correct {
+      background-color: rgba(34, 197, 94, 0.2);
+      border-color: var(--correct);
+      color: #4ade80;
+    }
+
+    .btn.wrong {
+      background-color: rgba(239, 68, 68, 0.2);
+      border-color: var(--wrong);
+      color: #f87171;
+    }
+
+    .explanation-box {
+      background-color: #0f172a;
+      border-left: 4px solid var(--accent);
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .explanation-box h4 {
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+
+    .action-btn {
+      background-color: var(--accent);
+      color: #0f172a;
+      font-weight: bold;
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      display: none;
+    }
+
+    .action-btn:hover {
+      background-color: var(--accent-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-card">
+    <div class="header">
+      <div class="score-board">Score: <span id="score">0</span></div>
+      <div class="q-counter">Question <span id="q-count">1</span></div>
+    </div>
+
+    <div class="question-box" id="question">Loading question...</div>
+
+    <div class="options-grid" id="options"></div>
+
+    <div class="explanation-box" id="explanation">
+      <h4>Step-by-Step Explanation:</h4>
+      <p id="explain-text"></p>
+    </div>
+
+    <button class="action-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+
+  <script>
+    let score = 0;
+    let questionCount = 1;
+    let currentQuestion = {};
+
+    // Helper utilities
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function simplifySurd(n) {
+      let outside = 1;
+      let inside = n;
+      for (let i = 2; i * i <= inside; i++) {
+        while (inside % (i * i) === 0) {
+          outside *= i;
+          inside /= i * i;
+        }
+      }
+      if (inside === 1) return `${outside}`;
+      if (outside === 1) return `√${inside}`;
+      return `${outside}√${inside}`;
+    }
+
+    function isPerfectSquare(n) {
+      return Math.sqrt(n) % 1 === 0;
+    }
+
+    // Question Generators
+    function generateHypotenuseQuestion() {
+      const a = getRandomInt(2, 8);
+      const b = getRandomInt(2, 8);
+      const cSq = a * a + b * b;
+      const ans = simplifySurd(cSq);
+      const isExact = isPerfectSquare(cSq);
+
+      return {
+        q: `A right-angled triangle has leg lengths $a = ${a}$ and $b = ${b}$. Find hypotenuse $c$.`,
+        options: generateOptions(ans, [
+          simplifySurd(cSq + getRandomInt(1, 4)),
+          simplifySurd(Math.abs(cSq - getRandomInt(1, 4))),
+          `${a + b}`
+        ]),
+        ans: ans,
+        explain: `1. Apply Pythagoras: $c^2 = a^2 + b^2$<br>` +
+                 `2. Substitute values: $c^2 = ${a}^2 + ${b}^2 = ${a*a} + ${b*b} = ${cSq}$<br>` +
+                 `3. Take the square root: $c = \\sqrt{${cSq}}$<br>` +
+                 `4. Simplify surd: $c = ${ans}$ (${isExact ? 'Rational' : 'Irrational'} number).`
+      };
+    }
+
+    function generateLegQuestion() {
+      const a = getRandomInt(2, 6);
+      const c = a + getRandomInt(2, 6);
+      const bSq = c * c - a * a;
+      const ans = simplifySurd(bSq);
+
+      return {
+        q: `A right triangle has hypotenuse $c = ${c}$ and leg $a = ${a}$. Find missing leg $b$.`,
+        options: generateOptions(ans, [
+          simplifySurd(bSq + getRandomInt(1, 5)),
+          simplifySurd(Math.abs(bSq - 3)),
+          `${c - a}`
+        ]),
+        ans: ans,
+        explain: `1. Rearrange Pythagoras: $b^2 = c^2 - a^2$<br>` +
+                 `2. Substitute values: $b^2 = ${c}^2 - ${a}^2 = ${c*c} - ${a*a} = ${bSq}$<br>` +
+                 `3. Take square root: $b = \\sqrt{${bSq}}$<br>` +
+                 `4. Simplify surd: $b = ${ans}$.`
+      };
+    }
+
+    function generateSurdSimplifyQuestion() {
+      const val = getRandomInt(8, 75);
+      const ans = simplifySurd(val);
+
+      return {
+        q: `Simplify the surd: $\\sqrt{${val}}$`,
+        options: generateOptions(ans, [
+          `\\sqrt{${val + 2}}`,
+          simplifySurd(val * 2),
+          `${getRandomInt(2, 5)}\\sqrt{${getRandomInt(2, 5)}}`
+        ]),
+        ans: ans,
+        explain: `1. Find the largest perfect square factor of ${val}.<br>` +
+                 `2. Express $\\sqrt{${val}}$ in simplified form.<br>` +
+                 `3. Result: $${ans}$.`
+      };
+    }
+
+    function generateOptions(correct, distractors) {
+      let set = new Set([correct]);
+      for (let d of distractors) {
+        if (d !== correct) set.add(d);
+      }
+      while (set.size < 4) {
+        set.add(`√${getRandomInt(2, 50)}`);
+      }
+      return Array.from(set).sort(() => Math.random() - 0.5);
+    }
+
+    function loadQuestion() {
+      document.getElementById('explanation').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+      
+      const generators = [generateHypotenuseQuestion, generateLegQuestion, generateSurdSimplifyQuestion];
+      const randomGen = generators[getRandomInt(0, generators.length - 1)];
+      currentQuestion = randomGen();
+
+      document.getElementById('question').innerHTML = currentQuestion.q;
+      const optionsBox = document.getElementById('options');
+      optionsBox.innerHTML = '';
+
+      currentQuestion.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.innerHTML = opt;
+        btn.onclick = () => selectAnswer(btn, opt);
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selectedBtn, selectedVal) {
+      const buttons = document.querySelectorAll('.options-grid .btn');
+      buttons.forEach(b => b.disabled = true);
+
+      if (selectedVal === currentQuestion.ans) {
+        selectedBtn.classList.add('correct');
+        score += 10;
+        document.getElementById('score').innerText = score;
+      } else {
+        selectedBtn.classList.add('wrong');
+        buttons.forEach(b => {
+          if (b.innerHTML === currentQuestion.ans) b.classList.add('correct');
+        });
+      }
+
+      document.getElementById('explain-text').innerHTML = currentQuestion.explain;
+      document.getElementById('explanation').style.display = 'block';
+      document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      questionCount++;
+      document.getElementById('q-count').innerText = questionCount;
+      loadQuestion();
+    }
+
+    // Start Game
+    loadQuestion();
+  </script>
+</body>
+</html>
