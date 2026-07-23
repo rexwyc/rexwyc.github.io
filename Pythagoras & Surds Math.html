@@ -65,9 +65,9 @@
     }
 
     .question-box {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.5;
       min-height: 60px;
       display: flex;
       align-items: center;
@@ -115,7 +115,7 @@
       padding: 12px;
       border-radius: 6px;
       font-size: 0.95rem;
-      line-height: 1.4;
+      line-height: 1.5;
       display: none;
     }
 
@@ -167,7 +167,6 @@
     let questionCount = 1;
     let currentQuestion = {};
 
-    // Helper utilities
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -186,11 +185,27 @@
       return `${outside}√${inside}`;
     }
 
+    function gcd(a, b) {
+      return b === 0 ? a : gcd(b, a % b);
+    }
+
+    function formatFraction(num, den) {
+      const divisor = gcd(num, den);
+      const simpNum = num / divisor;
+      const simpDen = den / divisor;
+      const dec = (num / den).toFixed(5);
+      const pct = ((num / den) * 100).toFixed(2);
+
+      if (divisor > 1 && simpDen !== 1) {
+        return `${num}/${den} = ${simpNum}/${simpDen} ≈ ${dec} (or ${pct}%)`;
+      }
+      return `${num}/${den} ≈ ${dec} (or ${pct}%)`;
+    }
+
     function isPerfectSquare(n) {
       return Math.sqrt(n) % 1 === 0;
     }
 
-    // Question Generators
     function generateHypotenuseQuestion() {
       const a = getRandomInt(2, 8);
       const b = getRandomInt(2, 8);
@@ -199,17 +214,17 @@
       const isExact = isPerfectSquare(cSq);
 
       return {
-        q: `A right-angled triangle has leg lengths $a = ${a}$ and $b = ${b}$. Find hypotenuse $c$.`,
+        q: `A right-angled triangle has leg lengths a = ${a} and b = ${b}. Find hypotenuse c.`,
         options: generateOptions(ans, [
           simplifySurd(cSq + getRandomInt(1, 4)),
           simplifySurd(Math.abs(cSq - getRandomInt(1, 4))),
           `${a + b}`
         ]),
         ans: ans,
-        explain: `1. Apply Pythagoras: $c^2 = a^2 + b^2$<br>` +
-                 `2. Substitute values: $c^2 = ${a}^2 + ${b}^2 = ${a*a} + ${b*b} = ${cSq}$<br>` +
-                 `3. Take the square root: $c = \\sqrt{${cSq}}$<br>` +
-                 `4. Simplify surd: $c = ${ans}$ (${isExact ? 'Rational' : 'Irrational'} number).`
+        explain: `1. Apply Pythagoras: c² = a² + b²<br>` +
+                 `2. Substitute values: c² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${cSq}<br>` +
+                 `3. Take the square root: c = √${cSq}<br>` +
+                 `4. Simplify surd: c = ${ans} (${isExact ? 'Rational' : 'Irrational'} number).`
       };
     }
 
@@ -220,35 +235,36 @@
       const ans = simplifySurd(bSq);
 
       return {
-        q: `A right triangle has hypotenuse $c = ${c}$ and leg $a = ${a}$. Find missing leg $b$.`,
+        q: `A right triangle has hypotenuse c = ${c} and leg a = ${a}. Find missing leg b.`,
         options: generateOptions(ans, [
           simplifySurd(bSq + getRandomInt(1, 5)),
           simplifySurd(Math.abs(bSq - 3)),
           `${c - a}`
         ]),
         ans: ans,
-        explain: `1. Rearrange Pythagoras: $b^2 = c^2 - a^2$<br>` +
-                 `2. Substitute values: $b^2 = ${c}^2 - ${a}^2 = ${c*c} - ${a*a} = ${bSq}$<br>` +
-                 `3. Take square root: $b = \\sqrt{${bSq}}$<br>` +
-                 `4. Simplify surd: $b = ${ans}$.`
+        explain: `1. Rearrange Pythagoras: b² = c² - a²<br>` +
+                 `2. Substitute values: b² = ${c}² - ${a}² = ${c*c} - ${a*a} = ${bSq}<br>` +
+                 `3. Take square root: b = √${bSq}<br>` +
+                 `4. Simplify surd: b = ${ans}.`
       };
     }
 
-    function generateSurdSimplifyQuestion() {
-      const val = getRandomInt(8, 75);
-      const ans = simplifySurd(val);
+    function generateFractionQuestion() {
+      const num = getRandomInt(12, 100);
+      const den = getRandomInt(100, 800);
+      const formattedAns = formatFraction(num, den);
 
       return {
-        q: `Simplify the surd: $\\sqrt{${val}}$`,
-        options: generateOptions(ans, [
-          `\\sqrt{${val + 2}}`,
-          simplifySurd(val * 2),
-          `${getRandomInt(2, 5)}\\sqrt{${getRandomInt(2, 5)}}`
+        q: `Simplify and convert the fraction: ${num}/${den}`,
+        options: generateOptions(formattedAns, [
+          formatFraction(num + 5, den),
+          formatFraction(num, den + 10),
+          formatFraction(num + 2, den - 5)
         ]),
-        ans: ans,
-        explain: `1. Find the largest perfect square factor of ${val}.<br>` +
-                 `2. Express $\\sqrt{${val}}$ in simplified form.<br>` +
-                 `3. Result: $${ans}$.`
+        ans: formattedAns,
+        explain: `1. Start with ${num}/${den}<br>` +
+                 `2. Reduce to lowest terms by dividing by common factors.<br>` +
+                 `3. Result: ${formattedAns}`
       };
     }
 
@@ -267,7 +283,7 @@
       document.getElementById('explanation').style.display = 'none';
       document.getElementById('next-btn').style.display = 'none';
       
-      const generators = [generateHypotenuseQuestion, generateLegQuestion, generateSurdSimplifyQuestion];
+      const generators = [generateHypotenuseQuestion, generateLegQuestion, generateFractionQuestion];
       const randomGen = generators[getRandomInt(0, generators.length - 1)];
       currentQuestion = randomGen();
 
@@ -310,7 +326,6 @@
       loadQuestion();
     }
 
-    // Start Game
     loadQuestion();
   </script>
 </body>
