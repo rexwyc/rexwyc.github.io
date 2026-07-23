@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangle Master: Congruence & Similarity</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .game-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+        }
+
+        .score-board {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #2e7d32;
+        }
+
+        .question-count {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.4;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-top: 5px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.correct {
+            background-color: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .btn.wrong {
+            background-color: #ffebee;
+            border-color: #ef5350;
+            color: #c62828;
+        }
+
+        .explanation-box {
+            display: none;
+            background-color: #f8f9fa;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #444;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 14px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .next-btn:active {
+            background-color: #1e88e5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <div class="header">
+        <span class="question-count" id="q-count">Question 1</span>
+        <span class="score-board" id="score">Score: 0</span>
+    </div>
+
+    <div class="question-text" id="question">Loading...</div>
+
+    <div class="options-container" id="options">
+        </div>
+
+    <div class="explanation-box" id="explanation">
+        </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+// Question Generator Concept Bank
+const conditions = {
+    congruence: [
+        { name: "SSS", desc: "All 3 corresponding sides are equal." },
+        { name: "SAS", desc: "2 sides and the included angle are equal." },
+        { name: "ASA", desc: "2 angles and the included side are equal." },
+        { name: "AAS", desc: "2 angles and a non-included side are equal." },
+        { name: "RHS", desc: "Right angle, hypotenuse, and one side are equal." }
+    ],
+    similarity: [
+        { name: "AAA Similarity", desc: "All 3 corresponding angles are equal." },
+        { name: "3 Sides Proportional (SSS~)", desc: "Ratio of all 3 corresponding sides is constant." },
+        { name: "2 Sides Proportional & Included Angle (SAS~)", desc: "Ratio of 2 sides is constant and included angle is equal." }
+    ]
+};
+
+let currentQuestion = {};
+let score = 0;
+let questionNum = 1;
+let answered = false;
+
+function generateQuestion() {
+    answered = false;
+    document.getElementById('explanation').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+    
+    // Choose pool type: 0 = Congruence condition, 1 = Similarity condition, 2 = Property test
+    const type = Math.floor(Math.random() * 3);
+    
+    if (type === 0) {
+        // Congruence Question
+        const target = conditions.congruence[Math.floor(Math.random() * conditions.congruence.length)];
+        const wrongOpts = conditions.similarity.map(s => s.name).concat(["SSA", "AAA Congruence"]);
+        
+        currentQuestion = {
+            text: `Which condition proves that two triangles are **CONGRUENT** based on: "${target.desc}"?`,
+            correct: target.name,
+            options: shuffle([target.name, ...shuffle(wrongOpts).slice(0, 3)]),
+            step: `**Step 1:** Identify the given information: ${target.desc}<br>**Step 2:** Match with congruence criteria (SSS, SAS, ASA, AAS, RHS).<br>**Step 3:** "${target.name}" is the valid congruence rule.`
+        };
+    } else if (type === 1) {
+        // Similarity Question
+        const target = conditions.similarity[Math.floor(Math.random() * conditions.similarity.length)];
+        const wrongOpts = ["SSA", "AAS Similarity", "RHS Similarity", "1 Side Proportional"];
+        
+        currentQuestion = {
+            text: `Which rule establishes that two triangles are **SIMILAR** based on: "${target.desc}"?`,
+            correct: target.name,
+            options: shuffle([target.name, ...shuffle(wrongOpts).slice(0, 3)]),
+            step: `**Step 1:** Note that similarity requires equal angles or proportional sides.<br>**Step 2:** Look at the given condition: ${target.desc}<br>**Step 3:** This satisfies **${target.name}**.`
+        };
+    } else {
+        // Misconception / True-False Style Question
+        const isCongruent = Math.random() > 0.5;
+        if (isCongruent) {
+            currentQuestion = {
+                text: "If two triangles have 3 corresponding angles equal (AAA), what can we definitively conclude?",
+                correct: "They are Similar, but not necessarily Congruent",
+                options: shuffle([
+                    "They are Similar, but not necessarily Congruent",
+                    "They are Congruent by AAA",
+                    "They are neither Similar nor Congruent",
+                    "They have equal areas"
+                ]),
+                step: "**Step 1:** Equal angles guarantee the same shape (Similarity).<br>**Step 2:** Equal angles do NOT guarantee equal size (Congruence).<br>**Step 3:** Therefore, AAA proves Similarity only."
+            };
+        } else {
+            currentQuestion = {
+                text: "Why is 'SSA' (Two sides and a non-included angle) NOT a valid congruence condition?",
+                correct: "It can create two different possible triangles (Ambiguous Case)",
+                options: shuffle([
+                    "It can create two different possible triangles (Ambiguous Case)",
+                    "It only works for right-angled triangles",
+                    "Sides must always be larger than angles",
+                    "It is actually a valid condition"
+                ]),
+                step: "**Step 1:** Recall the ambiguous case in trigonometry.<br>**Step 2:** Two sides and a non-included angle can form 2 non-congruent triangles.<br>**Step 3:** Hence, SSA is not a guaranteed congruence criterion."
+            };
+        }
+    }
+
+    renderQuestion();
+}
+
+function renderQuestion() {
+    document.getElementById('q-count').innerText = `Question ${questionNum}`;
+    document.getElementById('question').innerHTML = currentQuestion.text;
+    
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+
+    currentQuestion.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.innerText = option;
+        btn.onclick = () => checkAnswer(btn, option);
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function checkAnswer(selectedBtn, selectedOption) {
+    if (answered) return;
+    answered = true;
+
+    const allButtons = document.querySelectorAll('.btn');
+    
+    if (selectedOption === currentQuestion.correct) {
+        selectedBtn.classList.add('correct');
+        score += 10;
+        document.getElementById('score').innerText = `Score: ${score}`;
+    } else {
+        selectedBtn.classList.add('wrong');
+        allButtons.forEach(btn => {
+            if (btn.innerText === currentQuestion.correct) {
+                btn.classList.add('correct');
+            }
+        });
+    }
+
+    // Disable all options
+    allButtons.forEach(btn => btn.disabled = true);
+
+    // Show Explanation & Next Button
+    const expBox = document.getElementById('explanation');
+    expBox.innerHTML = `<strong>Explanation:</strong><br>${currentQuestion.step}`;
+    expBox.style.display = 'block';
+
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    questionNum++;
+    generateQuestion();
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+// Start Game
+generateQuestion();
+</script>
+
+</body>
+</html>
