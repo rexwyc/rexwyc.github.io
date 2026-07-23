@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Handling Master</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: #2d3748;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #3182ce;
+        }
+
+        .score-board {
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: #ebf8ff;
+            color: #2b6cb0;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .card {
+            background: #f7fafc;
+            border-left: 4px solid #3182ce;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .question-num {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-option {
+            width: 100%;
+            padding: 14px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-option:active {
+            transform: scale(0.98);
+        }
+
+        .btn-option.correct {
+            background-color: #c6f6d5;
+            border-color: #38a169;
+            color: #22543d;
+        }
+
+        .btn-option.wrong {
+            background-color: #fed7d7;
+            border-color: #e53e3e;
+            color: #742a2a;
+        }
+
+        .explanation {
+            display: none;
+            background: #fffaf0;
+            border: 1px solid #fbd38d;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #744210;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .btn-next {
+            display: none;
+            width: 100%;
+            padding: 14px;
+            background: #3182ce;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-next:active {
+            background: #2b6cb0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title">📊 Data Handling</div>
+        <div class="score-board">Score: <span id="score">0</span> | Round <span id="round">1</span></div>
+    </div>
+
+    <div class="card">
+        <div class="question-num" id="q-number">Question 1</div>
+        <div class="question-text" id="q-text">Loading question...</div>
+    </div>
+
+    <div class="options-grid" id="options-container"></div>
+
+    <div class="explanation" id="explanation-box">
+        <div class="explanation-title">Step-by-step Solution:</div>
+        <div id="explanation-text"></div>
+    </div>
+
+    <button class="btn-next" id="next-btn" onclick="nextQuestion()">Next Question ➔</button>
+</div>
+
+<script>
+// Generate 50 questions programmatically to ensure full coverage and correctness
+function generateQuestions() {
+    const questions = [];
+
+    // Generator 1: Mean
+    for (let i = 0; i < 10; i++) {
+        let nums = Array.from({length: 4}, () => Math.floor(Math.random() * 10) + 1);
+        let sum = nums.reduce((a, b) => a + b, 0);
+        let extra = (4 - (sum % 4)) % 4;
+        nums[3] += extra;
+        sum += extra;
+        let mean = sum / 4;
+        
+        questions.push({
+            q: `Find the **mean** (average) of these numbers: ${nums.join(", ")}`,
+            options: [mean.toString(), (mean + 2).toString(), Math.max(1, mean - 1).toString(), (mean + 3).toString()],
+            ans: mean.toString(),
+            exp: `1. Add all numbers: ${nums.join(" + ")} = ${sum}.<br>2. Count how many numbers there are: 4.<br>3. Divide total by count: ${sum} ÷ 4 = ${mean}.`
+        });
+    }
+
+    // Generator 2: Median
+    for (let i = 0; i < 10; i++) {
+        let nums = Array.from({length: 5}, () => Math.floor(Math.random() * 15) + 1);
+        let sorted = [...nums].sort((a,b) => a - b);
+        let median = sorted[2];
+
+        questions.push({
+            q: `Find the **median** of this data set: ${nums.join(", ")}`,
+            options: [median.toString(), sorted[1].toString(), sorted[3].toString(), (sorted[2] + 2).toString()],
+            ans: median.toString(),
+            exp: `1. Arrange numbers in ascending order: ${sorted.join(", ")}.<br>2. Find the middle value in the ordered set.<br>3. The 3rd number is ${median}.`
+        });
+    }
+
+    // Generator 3: Mode
+    for (let i = 0; i < 10; i++) {
+        let target = Math.floor(Math.random() * 10) + 1;
+        let nums = [target, target, target, Math.floor(Math.random() * 10) + 11, Math.floor(Math.random() * 10) + 21];
+        nums.sort(() => Math.random() - 0.5);
+
+        questions.push({
+            q: `Identify the **mode** of the given set: ${nums.join(", ")}`,
+            options: [target.toString(), (target + 1).toString(), nums[3].toString(), nums[4].toString()],
+            ans: target.toString(),
+            exp: `1. Count the frequency of each number.<br>2. The number ${target} appears 3 times, which is more than any other number.<br>3. Therefore, the mode is ${target}.`
+        });
+    }
+
+    // Generator 4: Range
+    for (let i = 0; i < 10; i++) {
+        let min = Math.floor(Math.random() * 10) + 1;
+        let max = min + Math.floor(Math.random() * 15) + 5;
+        let nums = [min, max, Math.floor((min + max) / 2), min + 2, max - 2];
+        nums.sort(() => Math.random() - 0.5);
+
+        questions.push({
+            q: `Calculate the **range** of the data: ${nums.join(", ")}`,
+            options: [(max - min).toString(), (max - min + 2).toString(), max.toString(), min.toString()],
+            ans: (max - min).toString(),
+            exp: `1. Find the maximum value: ${max}.<br>2. Find the minimum value: ${min}.<br>3. Subtract min from max: ${max} - ${min} = ${max - min}.`
+        });
+    }
+
+    // Generator 5: Probability
+    const marbles = [
+        {red: 3, blue: 7, total: 10, target: 'red', prob: '3/10'},
+        {red: 2, blue: 3, total: 5, target: 'blue', prob: '3/5'},
+        {red: 1, blue: 3, total: 4, target: 'red', prob: '1/4'},
+        {red: 5, blue: 5, total: 10, target: 'red', prob: '1/2'},
+        {red: 4, blue: 6, total: 10, target: 'blue', prob: '3/5'},
+        {red: 2, blue: 6, total: 8, target: 'red', prob: '1/4'},
+        {red: 3, blue: 9, total: 12, target: 'blue', prob: '3/4'},
+        {red: 6, blue: 4, total: 10, target: 'red', prob: '3/5'},
+        {red: 1, blue: 5, total: 6, target: 'blue', prob: '5/6'},
+        {red: 7, blue: 3, total: 10, target: 'blue', prob: '3/10'}
+    ];
+
+    marbles.forEach(m => {
+        let fav = m.target === 'red' ? m.red : m.blue;
+        questions.push({
+            q: `A bag contains ${m.red} red marbles and ${m.blue} blue marbles. What is the probability of picking a **${m.target}** marble?`,
+            options: [m.prob, '1/2', '2/5', '3/8'],
+            ans: m.prob,
+            exp: `1. Total marbles = ${m.red} + ${m.blue} = ${m.total}.<br>2. Favorable outcomes (${m.target}) = ${fav}.<br>3. Probability = ${fav}/${m.total} (simplified to ${m.prob}).`
+        });
+    });
+
+    return questions;
+}
+
+// Game State
+let questionBank = generateQuestions();
+let currentList = [];
+let currentIndex = 0;
+let score = 0;
+let round = 1;
+let answered = false;
+
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function initGame() {
+    currentList = shuffleArray(questionBank);
+    currentIndex = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    answered = false;
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('explanation-box').style.display = 'none';
+
+    let qData = currentList[currentIndex];
+    
+    document.getElementById('q-number').innerText = `Question ${currentIndex + 1} of ${currentList.length}`;
+    document.getElementById('q-text').innerHTML = qData.q;
+    
+    let optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+
+    // Shuffle options for uniqueness
+    let options = shuffleArray([...new Set(qData.options)]);
+    
+    options.forEach(opt => {
+        let btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, opt, qData.ans, qData.exp);
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function checkAnswer(selectedBtn, selectedOption, correctOption, explanation) {
+    if (answered) return;
+    answered = true;
+
+    let buttons = document.querySelectorAll('.btn-option');
+    
+    if (selectedOption === correctOption) {
+        selectedBtn.classList.add('correct');
+        score += 10;
+        document.getElementById('score').innerText = score;
+    } else {
+        selectedBtn.classList.add('wrong');
+        buttons.forEach(btn => {
+            if (btn.innerText === correctOption) {
+                btn.classList.add('correct');
+            }
+        });
+    }
+
+    buttons.forEach(btn => btn.disabled = true);
+
+    document.getElementById('explanation-text').innerHTML = explanation;
+    document.getElementById('explanation-box').style.display = 'block';
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    currentIndex++;
+    
+    // Infinite loop logic: shuffle and restart when 50 questions are done
+    if (currentIndex >= currentList.length) {
+        round++;
+        document.getElementById('round').innerText = round;
+        currentList = shuffleArray(questionBank);
+        currentIndex = 0;
+    }
+    
+    showQuestion();
+}
+
+// Start game on load
+initGame();
+</script>
+
+</body>
+</html>
