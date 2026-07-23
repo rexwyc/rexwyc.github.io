@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE Polygon Revision Game</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --error: #dc2626;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .game-container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .score-board {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .q-count {
+            font-size: 0.9rem;
+            color: #64748b;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        .question-box {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) {
+            .btn:hover:not(:disabled) {
+                background: #f1f5f9;
+                border-color: #cbd5e1;
+            }
+        }
+
+        .btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: var(--success) !important;
+            color: #14532d;
+            font-weight: 600;
+        }
+
+        .btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: var(--error) !important;
+            color: #7f1d1d;
+        }
+
+        .explanation-box {
+            display: none;
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .explanation-box h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+
+        .next-btn:active {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="header">
+        <div class="score-board">Score: <span id="score">0</span></div>
+        <div class="q-count">Question <span id="q-num">1</span></div>
+    </div>
+
+    <div class="question-box" id="question">Loading question...</div>
+
+    <div class="options-grid" id="options">
+        </div>
+
+    <div class="explanation-box" id="explanation">
+        <h4>Explanation:</h4>
+        <div id="expl-text"></div>
+    </div>
+
+    <button class="next-btn" id="next-button" onclick="nextQuestion()">Next Question &rarr;</button>
+</div>
+
+<script>
+    let score = 0;
+    let totalQuestionsAnswered = 0;
+    let currentQuestion = null;
+    let hasAnswered = false;
+
+    // Helper data structures to build dynamic variations out to infinity
+    const polygonNames = {
+        3: "triangle", 4: "quadrilateral", 5: "pentagon", 6: "hexagon", 
+        7: "heptagon", 8: "octagon", 9: "nonagon", 10: "decagon", 
+        12: "dodecagon", 15: "15-gon", 20: "20-gon"
+    };
+
+    function generateQuestion() {
+        // Randomly pick a question concept template type (1 to 4)
+        const type = Math.floor(Math.random() * 4) + 1;
+        
+        // Randomly choose variable sides for the generation pool
+        const sidesPool = [3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20];
+        const n = sidesPool[Math.floor(Math.random() * sidesPool.length)];
+        const name = polygonNames[n] || `${n}-gon`;
+
+        let questionText = "";
+        let correctAnswer = 0;
+        let explanation = "";
+        let unit = "";
+
+        switch(type) {
+            case 1: // Sum of interior angles
+                const sumInt = (n - 2) * 180;
+                questionText = `Find the sum of the interior angles of a convex ${name}.`;
+                correctAnswer = sumInt;
+                unit = "°";
+                explanation = `<strong>Step 1:</strong> Use the interior angle sum formula: Sum = (n - 2) &times; 180°.<br>` +
+                              `<strong>Step 2:</strong> Substitute n = ${n} (since a ${name} has ${n} sides).<br>` +
+                              `<strong>Step 3:</strong> (${n} - 2) &times; 180° = ${n-2} &times; 180° = <strong>${sumInt}°</strong>.`;
+                break;
+
+            case 2: // Find each interior angle of a regular polygon
+                if (n === 3 || n === 4) { 
+                    // Make it sound regular if it's a triangle/quad
+                    questionText = `Find the size of each interior angle of a regular ${n === 3 ? 'triangle (equilateral)' : 'quadrilateral (square)'}.`;
+                } else {
+                    questionText = `Find the size of each interior angle of a regular ${name}.`;
+                }
+                const eachInt = parseFloat((((n - 2) * 180) / n).toFixed(1));
+                correctAnswer = eachInt;
+                unit = "°";
+                explanation = `<strong>Step 1:</strong> Find the sum of interior angles first: (${n} - 2) &times; 180° = ${(n-2)*180}°.<br>` +
+                              `<strong>Step 2:</strong> Divide the total sum by the number of sides (n = ${n}) because it is a regular polygon.<br>` +
+                              `<strong>Step 3:</strong> ${(n-2)*180}° &divide; ${n} = <strong>${eachInt}°</strong>.`;
+                break;
+
+            case 3: // Find each exterior angle of a regular polygon
+                questionText = `Find the size of each exterior angle of a regular ${name}.`;
+                const eachExt = parseFloat((360 / n).toFixed(1));
+                correctAnswer = eachExt;
+                unit = "°";
+                explanation = `<strong>Step 1:</strong> Remember that the sum of all exterior angles of any convex polygon is always 360°.<br>` +
+                              `<strong>Step 2:</strong> Divide 360° by the number of sides (n = ${n}) to find each angle.<br>` +
+                              `<strong>Step 3:</strong> 360° &divide; ${n} = <strong>${eachExt}°</strong>.`;
+                break;
+
+            case 4: // Reverse engineered: Given each interior angle, find n
+                // Ensure nice clean numbers or controlled decimals
+                const extAngle = 360 / n;
+                const intAngle = 180 - extAngle;
+                
+                // Format decimal safely if it produces a rough float
+                const displayIntAngle = parseFloat(intAngle.toFixed(1));
+                
+                questionText = `Each interior angle of a regular polygon is ${displayIntAngle}°. Find the number of sides (n).`;
+                correctAnswer = n;
+                unit = "";
+                explanation = `<strong>Step 1 (DSE Shortcut Method):</strong> Find the adjacent exterior angle first using the linear relationship: 180° - Interior Angle.<br>` +
+                              `Exterior Angle = 180° - ${displayIntAngle}° = ${parseFloat(extAngle.toFixed(1))}°.<br>` +
+                              `<strong>Step 2:</strong> Use the exterior angle sum property (Total is always 360°): n = 360° &divide; Exterior Angle.<br>` +
+                              `<strong>Step 3:</strong> n = 360° &divide; ${parseFloat(extAngle.toFixed(1))}° = <strong>${n}</strong> sides.`;
+                break;
+        }
+
+        // Generate 3 wrong options safely without matching the true answer
+        let optionsSet = new Set([correctAnswer]);
+        while(optionsSet.size < 4) {
+            let offset;
+            if (type === 1) offset = (Math.floor(Math.random() * 5) - 2) * 180; // keep increments of 180 for sum traps
+            else if (type === 4) offset = Math.floor(Math.random() * 6) - 3;
+            else offset = (Math.floor(Math.random() * 6) - 3) * 5; 
+            
+            let wrongAns = correctAnswer + offset;
+            if (wrongAns > 0 && wrongAns !== correctAnswer) {
+                // Formatting consistency
+                if (type === 2 || type === 3) wrongAns = parseFloat(wrongAns.toFixed(1));
+                optionsSet.add(wrongAns);
+            }
+        }
+
+        // Convert set back to sorted array so options randomise naturally
+        const optionsArray = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+        return {
+            question: questionText,
+            options: optionsArray,
+            answer: correctAnswer,
+            explanation: explanation,
+            unit: unit
+        };
+    }
+
+    function renderQuestion() {
+        hasAnswered = false;
+        currentQuestion = generateQuestion();
+        
+        document.getElementById("question").innerHTML = currentQuestion.question;
+        document.getElementById("explanation").style.display = "none";
+        document.getElementById("next-button").style.display = "none";
+        document.getElementById("q-num").innerText = totalQuestionsAnswered + 1;
+
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+
+        currentQuestion.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "btn";
+            btn.innerHTML = `${opt}${currentQuestion.unit}`;
+            btn.onclick = () => checkAnswer(btn, opt);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedBtn, selectedValue) {
+        if (hasAnswered) return; // Block double clicking answers
+        hasAnswered = true;
+
+        const buttons = document.querySelectorAll(".options-grid .btn");
+        buttons.forEach(btn => btn.disabled = true); // Lock options
+
+        if (selectedValue === currentQuestion.answer) {
+            selectedBtn.classList.add("correct");
+            score++;
+            document.getElementById("score").innerText = score;
+        } else {
+            selectedBtn.classList.add("wrong");
+            // Highlight correct one
+            buttons.forEach(btn => {
+                if(btn.innerHTML === `${currentQuestion.answer}${currentQuestion.unit}`) {
+                    btn.classList.add("correct");
+                }
+            });
+        }
+
+        // Expose explanation markup & proceed trigger
+        document.getElementById("expl-text").innerHTML = currentQuestion.explanation;
+        document.getElementById("explanation").style.display = "block";
+        document.getElementById("next-button").style.display = "block";
+        
+        totalQuestionsAnswered++;
+    }
+
+    function nextQuestion() {
+        renderQuestion();
+    }
+
+    // Initialize Infinite Loop Game Loop Entry
+    renderQuestion();
+</script>
+
+</body>
+</html>

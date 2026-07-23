@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Self-Check Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #3b82f6;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .btn:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .explanation-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .next-btn, .restart-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s ease;
+        }
+
+        .next-btn:hover, .restart-btn:hover {
+            background-color: #2563eb;
+        }
+
+        .results-container {
+            text-align: center;
+            display: none;
+        }
+
+        .score-badge {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #3b82f6;
+            margin: 15px 0;
+        }
+
+        .result-description {
+            font-size: 1rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="quiz-screen">
+        <div class="header">
+            <span id="category" class="category-tag">Category</span>
+            <div class="progress-bar">
+                <div id="progress" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="question" class="question-text">Question goes here...</div>
+
+        <div id="options" class="options-container">
+            <button class="btn" onclick="selectAnswer(1)">Yes</button>
+            <button class="btn" onclick="selectAnswer(0)">No</button>
+        </div>
+
+        <div id="explanation" class="explanation-box"></div>
+
+        <button id="next-btn" class="next-btn" style="display: none;" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <div id="result-screen" class="results-container">
+        <h2>Your Stress Assessment</h2>
+        <div id="score" class="score-badge">0 / 20</div>
+        <p id="result-text" class="result-description"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Take Self-Check Again</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // Physical & Energy Indicators
+        {
+            category: "Physical & Energy",
+            text: "Have you been feeling unusually tired or drained, even after resting?",
+            explanation: "Chronic stress keeps your body in a high-alert state, depleting energy reserves even if you get physical sleep."
+        },
+        {
+            category: "Physical & Energy",
+            text: "Are you experiencing frequent headaches, muscle tension, or a clenched jaw?",
+            explanation: "Stress manifests physically as unconscious muscle contractions, especially in the neck, shoulders, and jaw."
+        },
+        {
+            category: "Physical & Energy",
+            text: "Has your sleep pattern changed (trouble falling asleep, waking up early, or sleeping too much)?",
+            explanation: "Elevated cortisol levels disrupt your circadian rhythm, making high-quality rest difficult to maintain."
+        },
+        {
+            category: "Physical & Energy",
+            text: "Have you noticed changes in your appetite (eating significantly more or less than usual)?",
+            explanation: "Stress hormones can either suppress appetite or trigger cravings for quick-energy foods like carbs and sugar."
+        },
+        {
+            category: "Physical & Energy",
+            text: "Do you feel physically restless or unable to sit still?",
+            explanation: "Adrenaline spikes caused by stress prepare your body for 'fight or flight', creating excess nervous energy."
+        },
+
+        // Mental & Emotional State
+        {
+            category: "Mental & Emotional",
+            text: "Do you find yourself overthinking or playing out worst-case scenarios in your head?",
+            explanation: "Anxious brains hyper-focus on perceived threats to prepare for potential future challenges."
+        },
+        {
+            category: "Mental & Emotional",
+            text: "Have you been feeling easily irritated, snapped at people, or lost your patience quickly?",
+            explanation: "When your emotional capacity is stretched thin by stress, your tolerance threshold drops significantly."
+        },
+        {
+            category: "Mental & Emotional",
+            text: "Do you feel overwhelmed by small tasks that usually don't bother you?",
+            explanation: "High mental load reduces your working memory and patience, making simple steps feel like huge obstacles."
+        },
+        {
+            category: "Mental & Emotional",
+            text: "Is it harder than usual to concentrate, focus, or make decisions?",
+            explanation: "Stress shifts brain activity away from logical processing areas, leading to brain fog and indecision."
+        },
+        {
+            category: "Mental & Emotional",
+            text: "Do you feel like you are constantly running out of time?",
+            explanation: "Time perception speeds up under pressure, causing a persistent feeling of urgency and anxiety."
+        },
+
+        // Work, School & Daily Life
+        {
+            category: "Daily Life & Commitments",
+            text: "Are you finding it difficult to start or finish tasks on your to-do list?",
+            explanation: "Procrastination and difficulty finishing work are often protective responses to burnout and fatigue."
+        },
+        {
+            category: "Daily Life & Commitments",
+            text: "Do you feel a sense of dread when thinking about the upcoming day or week?",
+            explanation: "Anticipatory anxiety occurs when you expect upcoming demands to exceed your coping capacity."
+        },
+        {
+            category: "Daily Life & Commitments",
+            text: "Have you been putting off important responsibilities because they feel like too much to handle?",
+            explanation: "Avoidance is a natural human defense mechanism to temporarily escape feeling overwhelmed."
+        },
+        {
+            category: "Daily Life & Commitments",
+            text: "Do you feel like your workload or commitments are completely out of your control?",
+            explanation: "A perceived loss of autonomy is one of the strongest drivers of long-term psychological stress."
+        },
+        {
+            category: "Daily Life & Commitments",
+            text: "Are you checking messages, emails, or notifications compulsively out of worry?",
+            explanation: "Hyper-vigilance keeps you stuck in a loop, continually searching for potential emergencies or demands."
+        },
+
+        // Social & Behavioral Signals
+        {
+            category: "Social & Behavioral",
+            text: "Have you been withdrawing from friends, family, or social activities?",
+            explanation: "Social isolation happens when your remaining energy is spent purely on basic daily survival tasks."
+        },
+        {
+            category: "Social & Behavioral",
+            text: "Are you finding it hard to relax or enjoy your hobbies without feeling guilty?",
+            explanation: "Chronic pressure makes non-productive downtime feel like a misuse of time, generating guilt."
+        },
+        {
+            category: "Social & Behavioral",
+            text: "Do you feel like no one truly understands how much pressure you are under?",
+            explanation: "Feeling isolated in your struggles amplifies stress and makes problems feel heavier than they are."
+        },
+        {
+            category: "Social & Behavioral",
+            text: "Have you been relying more on quick fixes (endless scrolling, caffeine) to get through the day?",
+            explanation: "Short-term coping habits often mask underlying exhaustion without addressing root causes."
+        },
+        {
+            category: "Social & Behavioral",
+            text: "When was the last time you took a break without thinking about what you 'should' be doing?",
+            explanation: "An inability to mentally step away prevents nervous system recovery, maintaining elevated stress levels."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let totalScore = 0;
+
+    const categoryEl = document.getElementById("category");
+    const progressEl = document.getElementById("progress");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const explanationEl = document.getElementById("explanation");
+    const nextBtn = document.getElementById("next-btn");
+    const quizScreen = document.getElementById("quiz-screen");
+    const resultScreen = document.getElementById("result-screen");
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        categoryEl.textContent = q.category;
+        questionEl.textContent = q.text;
+        
+        // Update Progress Bar
+        const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+        progressEl.style.width = `${progressPercentage}%`;
+
+        // Reset display
+        optionsEl.style.display = "flex";
+        explanationEl.style.display = "none";
+        nextBtn.style.display = "none";
+    }
+
+    function selectAnswer(points) {
+        totalScore += points;
+        const q = questions[currentQuestionIndex];
+        
+        // Show explanation
+        explanationEl.textContent = q.explanation;
+        explanationEl.style.display = "block";
+        
+        // Hide option buttons and show Next button
+        optionsEl.style.display = "none";
+        nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        quizScreen.style.display = "none";
+        resultScreen.style.display = "block";
+        
+        document.getElementById("score").textContent = `${totalScore} / 20`;
+        
+        const resultText = document.getElementById("result-text");
+        if (totalScore <= 5) {
+            resultText.textContent = "Your stress levels appear low. You seem to be managing current demands well!";
+        } else if (totalScore <= 12) {
+            resultText.textContent = "You are experiencing moderate stress. It might be time to integrate light boundary setting and recovery breaks into your schedule.";
+        } else {
+            resultText.textContent = "Your stress levels are currently high. Consider prioritizing self-care, reducing non-essential commitments, or speaking with a professional for support.";
+        }
+    }
+
+    function restartQuiz() {
+        // Infinite Loop mechanism
+        currentQuestionIndex = 0;
+        totalScore = 0;
+        resultScreen.style.display = "none";
+        quizScreen.style.display = "block";
+        loadQuestion();
+    }
+
+    // Start on page load
+    loadQuestion();
+</script>
+
+</body>
+</html>
