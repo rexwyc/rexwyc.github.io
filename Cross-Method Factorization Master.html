@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-Method Factorization Master</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #eef2f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .expression-box {
+            background: #2c3e50;
+            color: #ecf0f1;
+            font-size: 1.5em;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 10px;
+            font-size: 1em;
+            text-align: center;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+        }
+        input[type="number"]:focus {
+            border-color: #3b82f6;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            color: white;
+            background-color: #2563eb;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:active {
+            background-color: #1d4ed8;
+        }
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .cross-diagram {
+            background: #fff;
+            border: 1px dashed #cbd5e1;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            text-align: center;
+            white-space: pre;
+            border-radius: 6px;
+        }
+        .correct { color: #16a34a; font-weight: bold; }
+        .wrong { color: #dc2626; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="stats-bar">
+        <span>Question: <span id="q-num">1</span>/50</span>
+        <span>Score: <span id="score">0</span></span>
+        <span>Streak: <span id="streak">0</span></span>
+    </div>
+
+    <div class="expression-box" id="expression">
+        Loading...
+    </div>
+
+    <div class="input-group">
+        ( <input type="number" id="a1" placeholder="a1"> x + <input type="number" id="c1" placeholder="c1"> )
+        ( <input type="number" id="a2" placeholder="a2"> x + <input type="number" id="c2" placeholder="c2"> )
+    </div>
+
+    <button id="action-btn" onclick="checkAnswer()">Submit Answer</button>
+
+    <div id="explanation" class="explanation"></div>
+</div>
+
+<script>
+    let currentQ = 1;
+    let score = 0;
+    let streak = 0;
+    
+    // Target answer values
+    let target_a1, target_c1, target_a2, target_c2;
+    let target_A, target_B, target_C;
+
+    function generateQuestion() {
+        // Clear UI
+        document.getElementById("explanation").style.display = "none";
+        document.getElementById("action-btn").innerText = "Submit Answer";
+        document.getElementById("action-btn").onclick = checkAnswer;
+        document.getElementById("a1").value = "";
+        document.getElementById("c1").value = "";
+        document.getElementById("a2").value = "";
+        document.getElementById("c2").value = "";
+
+        // Generate factors: (a1*x + c1)(a2*x + c2)
+        // Keep coefficients reasonably small for mental math/phone play
+        target_a1 = Math.floor(Math.random() * 3) + 1; // 1 to 3
+        target_a2 = Math.floor(Math.random() * 3) + 1; // 1 to 3
+        
+        target_c1 = (Math.floor(Math.random() * 9) - 4); // -4 to 4
+        if (target_c1 === 0) target_c1 = 1;
+        
+        target_c2 = (Math.floor(Math.random() * 9) - 4); // -4 to 4
+        if (target_c2 === 0) target_c2 = -1;
+
+        // Quadratic coefficients: Ax^2 + Bx + C
+        target_A = target_a1 * target_a2;
+        target_B = (target_a1 * target_c2) + (target_a2 * target_c1);
+        target_C = target_c1 * target_c2;
+
+        // Format quadratic expression
+        let exprStr = "";
+        exprStr += (target_A === 1) ? "x²" : target_A + "x²";
+        
+        if (target_B > 0) exprStr += " + " + (target_B === 1 ? "" : target_B) + "x";
+        else if (target_B < 0) exprStr += " - " + (Math.abs(target_B) === 1 ? "" : Math.abs(target_B)) + "x";
+        
+        if (target_C > 0) exprStr += " + " + target_C;
+        else if (target_C < 0) exprStr += " - " + Math.abs(target_C);
+
+        document.getElementById("expression").innerText = exprStr;
+        document.getElementById("q-num").innerText = currentQ;
+    }
+
+    function checkAnswer() {
+        let u_a1 = parseInt(document.getElementById("a1").value) || 0;
+        let u_c1 = parseInt(document.getElementById("c1").value) || 0;
+        let u_a2 = parseInt(document.getElementById("a2").value) || 0;
+        let u_c2 = parseInt(document.getElementById("c2").value) || 0;
+
+        // Check if user expansion matches target quadratic polynomial
+        let user_A = u_a1 * u_a2;
+        let user_B = (u_a1 * u_c2) + (u_a2 * u_c1);
+        let user_C = u_c1 * u_c2;
+
+        let isCorrect = (user_A === target_A && user_B === target_B && user_C === target_C);
+
+        let expDiv = document.getElementById("explanation");
+        expDiv.style.display = "block";
+
+        if (isCorrect) {
+            score += 10 + (streak * 2); // Bonus points for streak
+            streak++;
+            expDiv.innerHTML = `<p class="correct">✓ Correct!</p>`;
+        } else {
+            streak = 0;
+            expDiv.innerHTML = `<p class="wrong">✗ Incorrect</p>`;
+        }
+
+        // Build step-by-step cross-method explanation
+        let crossDiagram = 
+`${target_a1}x   \\   /   ${target_c1}   -->   ${target_a2 * target_c1}x
+     \\ /
+      X
+     / \\
+${target_a2}x   /   \\   ${target_c2}   -->   ${target_a1 * target_c2}x
+----------------------------------
+Sum:                      ${target_B}x`;
+
+        expDiv.innerHTML += `
+            <b>Step-by-Step Explanation:</b><br>
+            1. Split $A=${target_A}$ into $(${target_a1}) \\times (${target_a2})$.<br>
+            2. Split $C=${target_C}$ into $(${target_c1}) \\times (${target_c2})$.<br>
+            3. Apply Cross-Multiplication:
+            <div class="cross-diagram">${crossDiagram}</div>
+            4. Check middle term: $(${target_a2 * target_c1}x) + (${target_a1 * target_c2}x) = ${target_B}x$.<br>
+            <b>Factored Form:</b> (${target_a1}x ${target_c1 >= 0 ? '+ ' + target_c1 : target_c1})(${target_a2}x ${target_c2 >= 0 ? '+ ' + target_c2 : target_c2})
+        `;
+
+        document.getElementById("score").innerText = score;
+        document.getElementById("streak").innerText = streak;
+
+        // Update button state for next step
+        let btn = document.getElementById("action-btn");
+        btn.innerText = "Next Question";
+        btn.onclick = nextQuestion;
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        // Infinite Loop Logic: When reaching past 50, cycle seamlessly
+        if (currentQ > 50) {
+            currentQ = 1;
+        }
+        generateQuestion();
+    }
+
+    // Initialize first question on load
+    generateQuestion();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number & Algebra Quest</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eef0f2;
+            padding-bottom: 10px;
+        }
+
+        .score-badge, .count-badge {
+            font-weight: bold;
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #dadce0;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #3c4043;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #e6f4ea;
+            border-color: #34a853;
+            color: #137333;
+        }
+
+        .option-btn.wrong {
+            background-color: #fce8e6;
+            border-color: #ea4335;
+            color: #c5221f;
+        }
+
+        .explanation-box {
+            background: #f1f3f4;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #3c4043;
+            display: none;
+        }
+
+        .explanation-box strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #202124;
+        }
+
+        .next-btn {
+            width: 100%;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+
+        .next-btn:active {
+            background: #1557b0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <span class="count-badge" id="question-count">Question: 1 / 50</span>
+        <span class="score-badge" id="score">Score: 0</span>
+    </div>
+
+    <div class="question-text" id="question">Loading...</div>
+
+    <div class="options-grid" id="options"></div>
+
+    <div class="explanation-box" id="explanation">
+        <strong>Explanation:</strong>
+        <span id="explanation-text"></span>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+    // Templates for generating standard Number and Algebra problems
+    const questionGenerators = [
+        // 1. Solving Linear Equations
+        () => {
+            const a = Math.floor(Math.random() * 8) + 2;
+            const x = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 15) + 1;
+            const c = a * x + b;
+            return {
+                q: `Solve for $x$: $$${a}x + ${b} = ${c}$$`,
+                textQ: `Solve for x: ${a}x + ${b} = ${c}`,
+                ans: x,
+                wrong: [x + 1, x - 1, x + 2],
+                step: `1. Subtract ${b} from both sides: ${a}x = ${c - b}\n2. Divide both sides by ${a}: x = ${x}`
+            };
+        },
+        // 2. Evaluating Algebraic Expressions
+        () => {
+            const x = Math.floor(Math.random() * 5) + 2;
+            const a = Math.floor(Math.random() * 4) + 2;
+            const b = Math.floor(Math.random() * 6) + 1;
+            const ans = a * (x * x) + b;
+            return {
+                textQ: `Evaluate ${a}x² + ${b} when x = ${x}`,
+                ans: ans,
+                wrong: [ans + x, ans - b, ans + 2],
+                step: `1. Substitute x = ${x}: ${a}(${x})² + ${b}\n2. Calculate exponent: ${a}(${x * x}) + ${b}\n3. Multiply and add: ${a * x * x} + ${b} = ${ans}`
+            };
+        },
+        // 3. Simple Percentage
+        () => {
+            const pct = (Math.floor(Math.random() * 8) + 1) * 10;
+            const num = (Math.floor(Math.random() * 10) + 1) * 20;
+            const ans = (pct / 100) * num;
+            return {
+                textQ: `What is ${pct}% of ${num}?`,
+                ans: ans,
+                wrong: [ans + 10, ans - 5, ans + 5],
+                step: `1. Convert percentage to fraction/decimal: ${pct}/100 = ${pct/100}\n2. Multiply: ${pct/100} × ${num} = ${ans}`
+            };
+        },
+        // 4. Exponents / Index Laws
+        () => {
+            const base = Math.floor(Math.random() * 4) + 2;
+            const m = Math.floor(Math.random() * 4) + 2;
+            const n = Math.floor(Math.random() * 3) + 1;
+            const ansPow = m + n;
+            return {
+                textQ: `Simplify: ${base}⁵ × ${base}² (Express as exponent index power total)`,
+                textQ: `According to index laws, what is the exponent of x in (x^${m}) × (x^${n})?`,
+                ans: ansPow,
+                wrong: [m * n, ansPow + 1, Math.abs(m - n)],
+                step: `1. Apply the product rule: xᵃ × xᵇ = xᵃ⁺ᵇ\n2. Add the exponents: ${m} + ${n} = ${ansPow}`
+            };
+        },
+        // 5. Ratio Problems
+        () => {
+            const r1 = Math.floor(Math.random() * 3) + 1;
+            const r2 = Math.floor(Math.random() * 3) + 2;
+            const multiplier = Math.floor(Math.random() * 5) + 2;
+            const total = (r1 + r2) * multiplier;
+            const ans = r1 * multiplier;
+            return {
+                textQ: `Divide $${total} in the ratio ${r1}:${r2}. What is the smaller share?`,
+                ans: ans,
+                wrong: [r2 * multiplier, total / r1, ans + 2],
+                step: `1. Total parts = ${r1} + ${r2} = ${r1 + r2}\n2. Value per part = $${total} ÷ ${r1 + r2} = $${multiplier}\n3. Smaller share (${r1} parts) = ${r1} × $${multiplier} = $${ans}`
+            };
+        }
+    ];
+
+    let currentQuestion = null;
+    let score = 0;
+    let questionCounter = 1;
+
+    function generateQuestion() {
+        const gen = questionGenerators[Math.floor(Math.random() * questionGenerators.length)];
+        const data = gen();
+
+        // Generate options array and shuffle
+        let options = [data.ans, ...data.wrong];
+        options = options.sort(() => Math.random() - 0.5);
+
+        currentQuestion = {
+            title: data.textQ,
+            options: options,
+            correct: data.ans,
+            step: data.step
+        };
+    }
+
+    function renderQuestion() {
+        generateQuestion();
+
+        document.getElementById('question-count').innerText = `Question: ${questionCounter} / 50`;
+        document.getElementById('question').innerText = currentQuestion.title;
+        
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        currentQuestion.options.forEach((opt) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(btn, opt);
+            optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedBtn, selectedVal) {
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+
+        if (selectedVal === currentQuestion.correct) {
+            selectedBtn.classList.add('correct');
+            score += 10;
+            document.getElementById('score').innerText = `Score: ${score}`;
+        } else {
+            selectedBtn.classList.add('wrong');
+            // Highlight the correct answer
+            allBtns.forEach(btn => {
+                if (btn.innerText == currentQuestion.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        // Show Explanation
+        document.getElementById('explanation-text').innerText = currentQuestion.step;
+        document.getElementById('explanation').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        questionCounter++;
+        // Infinite loop behavior: keeps incrementing beyond 50 seamlessly
+        renderQuestion();
+    }
+
+    // Start Game
+    renderQuestion();
+</script>
+
+</body>
+</html>

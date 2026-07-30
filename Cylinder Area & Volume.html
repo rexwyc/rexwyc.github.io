@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cylinder Area & Volume Quest</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 12px;
+        }
+
+        .score-box {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .badge {
+            background-color: #3182ce;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .question-box {
+            background-color: #ebf8ff;
+            border-left: 5px solid #3182ce;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-option {
+            background-color: #edf2f7;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .btn-option:active {
+            transform: scale(0.98);
+        }
+
+        .btn-option.correct {
+            background-color: #c6f6d5;
+            border-color: #38a169;
+            color: #22543d;
+        }
+
+        .btn-option.wrong {
+            background-color: #fed7d7;
+            border-color: #e53e3e;
+            color: #742a2a;
+        }
+
+        .explanation {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .explanation h4 {
+            color: #2b6cb0;
+            margin-bottom: 8px;
+        }
+
+        .explanation ol {
+            padding-left: 20px;
+        }
+
+        .explanation li {
+            margin-bottom: 6px;
+        }
+
+        .btn-next {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+        }
+
+        .btn-next:active {
+            background-color: #2b6cb0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <div class="score-box">
+            Score: <span id="score">0</span> / <span id="total">0</span>
+        </div>
+        <div class="badge" id="streak">Streak: 0 🔥</div>
+    </div>
+
+    <div class="question-box" id="question">
+        Loading question...
+    </div>
+
+    <div class="options-grid" id="options">
+        </div>
+
+    <div class="explanation" id="explanation">
+        <h4>Step-by-Step Solution:</h4>
+        <ol id="steps-list"></ol>
+    </div>
+
+    <button class="btn-next" id="next-btn" onclick="nextQuestion()">Next Question ➔</button>
+</div>
+
+<script>
+    let score = 0;
+    let total = 0;
+    let streak = 0;
+    let currentQuestion = {};
+
+    const PI = 3.14159;
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateQuestion() {
+        const types = ['curved_area', 'total_area', 'volume'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        
+        const r = getRandomInt(2, 12);
+        const h = getRandomInt(5, 20);
+
+        let questionText = "";
+        let correctAnswer = 0;
+        let steps = [];
+
+        if (type === 'curved_area') {
+            correctAnswer = 2 * Math.PI * r * h;
+            questionText = `A cylinder has a radius of <b>${r} cm</b> and a height of <b>${h} cm</b>.<br><br>Calculate its <b>curved surface area</b>. (Use π ≈ 3.14, round to 1 decimal place)`;
+            steps = [
+                `Formula: Curved Area = 2 × π × r × h`,
+                `Substitute values: 2 × 3.14 × ${r} × ${h}`,
+                `Calculation: 2 × 3.14 × ${r * h} = ${(2 * 3.14159 * r * h).toFixed(1)} cm²`
+            ];
+        } else if (type === 'total_area') {
+            correctAnswer = (2 * Math.PI * r * h) + (2 * Math.PI * r * r);
+            questionText = `A closed cylinder has a radius of <b>${r} cm</b> and a height of <b>${h} cm</b>.<br><br>Calculate its <b>total surface area</b>. (Use π ≈ 3.14, round to 1 decimal place)`;
+            steps = [
+                `Formula: Total Area = 2πrh + 2πr²`,
+                `Curved area: 2 × π × ${r} × ${h} = ${(2 * Math.PI * r * h).toFixed(1)}`,
+                `Two base areas: 2 × π × ${r}² = ${(2 * Math.PI * r * r).toFixed(1)}`,
+                `Total: ${(2 * Math.PI * r * h).toFixed(1)} + ${(2 * Math.PI * r * r).toFixed(1)} = ${correctAnswer.toFixed(1)} cm²`
+            ];
+        } else if (type === 'volume') {
+            correctAnswer = Math.PI * r * r * h;
+            questionText = `A cylinder has a radius of <b>${r} cm</b> and a height of <b>${h} cm</b>.<br><br>Calculate its <b>volume</b>. (Use π ≈ 3.14, round to 1 decimal place)`;
+            steps = [
+                `Formula: Volume = π × r² × h`,
+                `Base Area (πr²): 3.14 × ${r}² = ${(Math.PI * r * r).toFixed(1)}`,
+                `Multiply by height: ${(Math.PI * r * r).toFixed(1)} × ${h} = ${correctAnswer.toFixed(1)} cm³`
+            ];
+        }
+
+        const formattedCorrect = parseFloat(correctAnswer.toFixed(1));
+
+        // Generate wrong choices
+        let optionsSet = new Set();
+        optionsSet.add(formattedCorrect);
+
+        while (optionsSet.size < 4) {
+            let offset = (Math.random() * 40 - 20).toFixed(1);
+            let wrongAns = parseFloat((formattedCorrect + parseFloat(offset)).toFixed(1));
+            if (wrongAns > 0 && wrongAns !== formattedCorrect) {
+                optionsSet.add(wrongAns);
+            }
+        }
+
+        const optionsArray = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+        return {
+            text: questionText,
+            correct: formattedCorrect,
+            options: optionsArray,
+            steps: steps
+        };
+    }
+
+    function renderQuestion() {
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+
+        currentQuestion = generateQuestion();
+
+        document.getElementById('question').innerHTML = currentQuestion.text;
+
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        currentQuestion.options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.innerHTML = `${option}`;
+            btn.onclick = () => checkAnswer(option, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, selectedBtn) {
+        const allButtons = document.querySelectorAll('.btn-option');
+        allButtons.forEach(btn => btn.disabled = true);
+
+        total++;
+        if (selected === currentQuestion.correct) {
+            selectedBtn.classList.add('correct');
+            score++;
+            streak++;
+        } else {
+            selectedBtn.classList.add('wrong');
+            streak = 0;
+            allButtons.forEach(btn => {
+                if (parseFloat(btn.innerHTML) === currentQuestion.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        document.getElementById('score').innerText = score;
+        document.getElementById('total').innerText = total;
+        document.getElementById('streak').innerText = `Streak: ${streak} 🔥`;
+
+        // Render explanation
+        const stepsList = document.getElementById('steps-list');
+        stepsList.innerHTML = '';
+        currentQuestion.steps.forEach(step => {
+            const li = document.createElement('li');
+            li.innerText = step;
+            stepsList.appendChild(li);
+        });
+
+        document.getElementById('explanation').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        renderQuestion();
+    }
+
+    // Start game on load
+    renderQuestion();
+</script>
+
+</body>
+</html>

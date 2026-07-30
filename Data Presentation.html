@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Presentation Mastery</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary: #4a90e2;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --text: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .score-board {
+            color: var(--primary);
+        }
+
+        .question-box {
+            font-size: 1.05rem;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background-color: #f0f3f6;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 0.95rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+            width: 100%;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #e8f8f0;
+            border-color: var(--success);
+            color: #1e7e44;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background-color: #fdeaea;
+            border-color: var(--danger);
+            color: #b02a1e;
+            font-weight: bold;
+        }
+
+        .explanation-box {
+            background-color: #eef6fc;
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+        }
+
+        .next-btn:active {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <span id="q-count">Question 1</span>
+        <span class="score-board">Score: <span id="score">0</span></span>
+    </div>
+
+    <div class="question-box" id="question">Loading question...</div>
+
+    <div class="options-grid" id="options"></div>
+
+    <div class="explanation-box" id="explanation"></div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<script>
+    // 50 Core Concept Questions on Histograms, Polygons, and Cumulative Frequency
+    const baseQuestions = [
+        // Histograms
+        { q: "In a histogram, what does the area of each bar represent?", options: ["Class width", "Frequency", "Cumulative frequency", "Mean"], a: 1, e: "In a histogram, the area of a bar is proportional to the frequency of the class interval." },
+        { q: "What is plotted on the vertical axis of a standard histogram with unequal class widths?", options: ["Frequency", "Frequency Density", "Cumulative Frequency", "Midpoint"], a: 1, e: "When class widths vary, Frequency Density is plotted on the vertical axis (Frequency Density = Frequency ÷ Class Width)." },
+        { q: "How is Frequency Density calculated?", options: ["Frequency × Class Width", "Class Width ÷ Frequency", "Frequency ÷ Class Width", "Midpoint ÷ Frequency"], a: 2, e: "Frequency Density formula is: Frequency ÷ Class Width." },
+        { q: "Are there gaps between bars in a histogram for continuous data?", options: ["Yes, always", "No, never", "Only for equal widths", "Only for large datasets"], a: 1, e: "Histograms display continuous data, so there are no spaces between adjacent bars." },
+        { q: "What boundary is used for the horizontal axis in a histogram?", options: ["Class Midpoints", "Class Boundaries", "Class Frequencies", "Cumulative Frequencies"], a: 1, e: "The horizontal axis uses exact class boundaries (lower and upper) to mark the width of the bars." },
+        { q: "If class width is 5 and frequency is 20, what is the frequency density?", options: ["100", "4", "0.25", "15"], a: 1, e: "Frequency Density = Frequency ÷ Class Width = 20 ÷ 5 = 4." },
+        { q: "If frequency density is 3 and class width is 10, what is the frequency?", options: ["30", "3.33", "0.3", "13"], a: 0, e: "Frequency = Frequency Density × Class Width = 3 × 10 = 30." },
+        { q: "Which type of data is best represented by a histogram?", options: ["Qualitative data", "Discrete data only", "Continuous numerical data", "Categorical data"], a: 2, e: "Histograms are designed for continuous quantitative data split into intervals." },
+        { q: "If class boundaries are 10 to 20, what is the class width?", options: ["10", "15", "30", "200"], a: 0, e: "Class Width = Upper Boundary - Lower Boundary = 20 - 10 = 10." },
+        { q: "In a histogram with equal class widths, what is height proportional to?", options: ["Frequency", "Class boundary", "Total sample size", "Median"], a: 0, e: "When class widths are equal, the height of the bar is directly proportional to the frequency." },
+
+        // Frequency Polygons
+        { q: "What points are plotted to create a Frequency Polygon?", options: ["(Upper limit, Frequency)", "(Midpoint, Frequency)", "(Lower limit, Cumulative Frequency)", "(Midpoint, Class Width)"], a: 1, e: "Frequency polygons are constructed by plotting the class midpoint against the class frequency." },
+        { q: "How do you calculate the midpoint of the class interval 20 – 30?", options: ["(30 - 20) / 2", "(20 + 30) / 2", "30 - 20", "20 × 30"], a: 1, e: "Midpoint = (Lower Limit + Upper Limit) ÷ 2 = (20 + 30) ÷ 2 = 25." },
+        { q: "How are points connected in a frequency polygon?", options: ["Smooth curves", "Straight lines", "Dotted arches", "Horizontal bars"], a: 1, e: "Points in a frequency polygon are joined strictly using straight lines (using a ruler)." },
+        { q: "To close a frequency polygon, where should it touch the horizontal axis?", options: ["At the ends of the graph", "At midpoints of hypothetical outer classes", "At zero always", "At the maximum frequency point"], a: 1, e: "A frequency polygon is closed by anchoring its ends to the midpoints of empty adjacent classes with frequency zero." },
+        { q: "Can two frequency polygons be overlaid to compare distributions?", options: ["Yes", "No", "Only if sample sizes are identical", "Only for discrete data"], a: 0, e: "Overlaying frequency polygons on the same axes is a common method to compare two or more distributions." },
+        { q: "What is the midpoint for the class interval 0 < x ≤ 10?", options: ["0", "5", "10", "2.5"], a: 1, e: "Midpoint = (0 + 10) / 2 = 5." },
+        { q: "Which feature is essential when constructing a frequency polygon?", options: ["Equal height bars", "Straight line segments connecting midpoints", "Plotting cumulative totals", "Shading the bars"], a: 1, e: "Frequency polygons rely on straight line segments joining (Midpoint, Frequency) coordinates." },
+        { q: "What shape does a frequency polygon approximate as sample size increases and class widths decrease?", options: ["A frequency curve", "A straight horizontal line", "A histogram", "A scatter plot"], a: 0, e: "As class intervals become infinitely small, a smooth frequency curve is formed." },
+        { q: "What is the midpoint of 15 to 25?", options: ["20", "10", "40", "17.5"], a: 0, e: "Midpoint = (15 + 25) / 2 = 20." },
+        { q: "In a frequency polygon, what goes on the horizontal (x) axis?", options: ["Frequency", "Midpoints of class intervals", "Cumulative frequency", "Class width"], a: 1, e: "The x-axis represents the variable values via class midpoints." },
+
+        // Cumulative Frequency Curves (Ogive)
+        { q: "What is plotted on the vertical (y) axis for a cumulative frequency curve?", options: ["Frequency Density", "Class Midpoint", "Cumulative Frequency", "Class Width"], a: 2, e: "The y-axis always plots the cumulative (running total) frequency." },
+        { q: "What point coordinates are plotted on a cumulative frequency graph?", options: ["(Midpoint, Cumulative Frequency)", "(Upper Class Boundary, Cumulative Frequency)", "(Lower Boundary, Frequency)", "(Class Width, Frequency)"], a: 1, e: "Points are plotted using the Upper Class Boundary (x) and Cumulative Frequency (y)." },
+        { q: "What is another common name for a cumulative frequency curve?", options: ["Histogram", "Ogive", "Box plot", "Pie chart"], a: 1, e: "A cumulative frequency curve is widely known as an Ogive." },
+        { q: "How is the Median estimated from a cumulative frequency curve?", options: ["Value at 50% of Total Cumulative Frequency", "Value at 25% of Total Cumulative Frequency", "Value at 75% of Total Cumulative Frequency", "Highest point on the curve"], a: 0, e: "Median is found by taking 50% (n/2) of total cumulative frequency on the y-axis and reading the x-value." },
+        { q: "How is the Interquartile Range (IQR) calculated?", options: ["Upper Quartile - Lower Quartile", "Median - Lower Quartile", "Maximum - Minimum", "Upper Quartile + Lower Quartile"], a: 0, e: "Interquartile Range (IQR) = Upper Quartile ($Q_3$) minus Lower Quartile ($Q_1$)." },
+        { q: "At what percentile is the Lower Quartile ($Q_1$) located?", options: ["50%", "25%", "75%", "100%"], a: 1, e: "The Lower Quartile ($Q_1$) represents the 25th percentile of the total data." },
+        { q: "At what percentile is the Upper Quartile ($Q_3$) located?", options: ["25%", "50%", "75%", "90%"], a: 2, e: "The Upper Quartile ($Q_3$) represents the 75th percentile of the total data." },
+        { q: "What shape does a typical cumulative frequency curve form?", options: ["U-shape", "S-shape (Sigmoid)", "Inverted V-shape", "Straight vertical line"], a: 1, e: "An Ogive usually displays an 'S-like' (sigmoid) curve, starting slowly, steepening, then flattening out." },
+        { q: "Where does the cumulative frequency curve start on the x-axis?", options: ["At zero frequency, at the lower boundary of the first class", "At the median value", "At the maximum boundary", "At the mean"], a: 0, e: "It begins at (Lower Boundary of first class, 0)." },
+        { q: "If total frequency $N = 80$, what cumulative frequency value corresponds to the median?", options: ["20", "40", "60", "80"], a: 1, e: "Median position = $N / 2 = 80 / 2 = 40$." },
+        { q: "If total frequency $N = 120$, what cumulative frequency value corresponds to the Upper Quartile?", options: ["30", "60", "90", "100"], a: 2, e: "Upper Quartile position = $0.75 \\times 120 = 90$." },
+        { q: "If total frequency $N = 200$, what cumulative frequency gives the Lower Quartile?", options: ["50", "100", "150", "25"], a: 0, e: "Lower Quartile position = $0.25 \\times 200 = 50$." },
+        { q: "Can a cumulative frequency curve ever slope downwards?", options: ["Yes, if frequencies are negative", "No, it is always non-decreasing", "Yes, after reaching the median", "Only for continuous data"], a: 1, e: "Since cumulative frequency adds positive quantities, the curve never goes down (it is monotonic)." },
+        { q: "Which value cannot be directly estimated from a cumulative frequency curve?", options: ["Median", "Interquartile Range", "Percentiles", "Mean"], a: 3, e: "The Mean cannot be directly read off an Ogive; only position-based measures (Median, Quartiles, Percentiles) are read directly." },
+        { q: "What does a steep slope on a cumulative frequency curve indicate?", options: ["Low frequency in that interval", "High frequency in that interval", "Zero data points", "A large class width"], a: 1, e: "A steep slope means a large amount of data (high frequency) is concentrated within that specific interval." },
+
+        // Curves and Mixed Concepts
+        { q: "In a frequency curve, what does the area under the curve represent?", options: ["Total frequency", "The range", "The standard deviation", "Class width"], a: 0, e: "The total area under a frequency curve represents the total frequency (or 100% of data)." },
+        { q: "If a frequency distribution has a long tail to the right, it is described as:", options: ["Symmetrical", "Positively Skewed", "Negatively Skewed", "Uniform"], a: 1, e: "A distribution with a longer right tail is Positively Skewed." },
+        { q: "If a frequency distribution has a long tail to the left, it is described as:", options: ["Symmetrical", "Positively Skewed", "Negatively Skewed", "Bimodal"], a: 2, e: "A distribution with a longer left tail is Negatively Skewed." },
+        { q: "What is the mode of a dataset when represented in a histogram?", options: ["The class width of the shortest bar", "The modal class with the highest frequency density", "The point where cumulative frequency is 50%", "The midpoint of the first interval"], a: 1, e: "The modal class corresponds to the bar with the highest height (frequency density)." },
+        { q: "If continuous data is grouped into classes 10-19, 20-29, what is the upper boundary of class 10-19?", options: ["19", "19.5", "20", "18.5"], a: 1, e: "For discrete intervals 10-19 and 20-29, the continuous boundary between them is (19 + 20) / 2 = 19.5." },
+        { q: "For class intervals 1-5, 6-10, 11-15, what is the lower boundary of 6-10?", options: ["6", "5.5", "5", "6.5"], a: 1, e: "The lower boundary is halfway between 5 and 6, which is 5.5." },
+        { q: "How do you find the 90th percentile on an Ogive with $N = 200$?", options: ["Find x-value at $y = 90$", "Find x-value at $y = 180$", "Find x-value at $y = 100$", "Find x-value at $y = 20$"], a: 1, e: "$90\\% \\text{ of } 200 = 0.90 \\times 200 = 180$. Look up $y = 180$ to find $x$." },
+        { q: "What is the primary difference between a Frequency Polygon and a Frequency Curve?", options: ["Polygons use straight lines; curves use smooth continuous lines", "Curves plot cumulative frequencies", "Polygons use bars", "Curves use lower class limits"], a: 0, e: "Polygons connect points with rigid straight lines; frequency curves smooth out these connections." },
+        { q: "What is cumulative frequency?", options: ["The sum of class widths", "The running total of frequencies up to a boundary", "Frequency divided by total", "The difference between upper and lower limits"], a: 1, e: "Cumulative frequency adds each class frequency to the running total of all preceding classes." },
+        { q: "If frequencies are 3, 7, 12, 8, what is the cumulative frequency of the 3rd class?", options: ["12", "10", "22", "30"], a: 2, e: "Cumulative frequency = 3 + 7 + 12 = 22." },
+        { q: "Which graph is constructed using lower boundaries set to 0 initial frequency and upper boundaries to cumulative sums?", options: ["Histogram", "Frequency Polygon", "Cumulative Frequency Curve", "Bar Chart"], a: 2, e: "This defines the standard plotting process of a Cumulative Frequency Curve (Ogive)." },
+        { q: "What parameter does $Q_3 - Q_1$ calculate?", options: ["Semi-interquartile range", "Interquartile Range (IQR)", "Full Range", "Variance"], a: 1, e: "$Q_3 - Q_1$ gives the Interquartile Range." },
+        { q: "What parameter does $(Q_3 - Q_1) / 2$ calculate?", options: ["Interquartile Range", "Semi-Interquartile Range", "Mid-range", "Standard Deviation"], a: 1, e: "Half of the Interquartile Range is called the Semi-Interquartile Range." },
+        { q: "In a symmetric frequency curve, where are the Mean, Median, and Mode located?", options: ["At different ends", "All at the center point", "Mode is highest, Mean is lowest", "Mean is at zero"], a: 1, e: "In a perfectly symmetrical distribution, Mean = Median = Mode, situated at the central peak." },
+        { q: "If $Q_1 = 15$ and $Q_3 = 35$, what is the Interquartile Range?", options: ["20", "50", "25", "10"], a: 0, e: "$\text{IQR} = Q_3 - Q_1 = 35 - 15 = 20$." }
+    ];
+
+    // State Variables
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    // Shuffle Array Helper
+    function shuffle(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function initGame() {
+        currentQuestions = shuffle(baseQuestions);
+        currentIndex = 0;
+        score = 0;
+        document.getElementById('score').innerText = score;
+        showQuestion();
+    }
+
+    function showQuestion() {
+        answered = false;
+        const qData = currentQuestions[currentIndex];
+        
+        document.getElementById('q-count').innerText = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+        document.getElementById('question').innerText = qData.q;
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        qData.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(selectedIndex) {
+        if (answered) return;
+        answered = true;
+
+        const qData = currentQuestions[currentIndex];
+        const buttons = document.querySelectorAll('.option-btn');
+        const expBox = document.getElementById('explanation');
+
+        if (selectedIndex === qData.a) {
+            buttons[selectedIndex].classList.add('correct');
+            score++;
+            document.getElementById('score').innerText = score;
+            expBox.innerHTML = `<strong>Correct!</strong><br>${qData.e}`;
+        } else {
+            buttons[selectedIndex].classList.add('incorrect');
+            buttons[qData.a].classList.add('correct');
+            expBox.innerHTML = `<strong>Incorrect.</strong><br>${qData.e}`;
+        }
+
+        // Disable all buttons after selection
+        buttons.forEach(btn => btn.style.pointerEvents = 'none');
+
+        expBox.style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        
+        // Infinite Loop handling: Reshuffle when 50 questions are completed
+        if (currentIndex >= currentQuestions.length) {
+            currentQuestions = shuffle(baseQuestions);
+            currentIndex = 0;
+        }
+        
+        showQuestion();
+    }
+
+    // Start Game on Page Load
+    window.onload = initGame;
+</script>
+
+</body>
+</html>
