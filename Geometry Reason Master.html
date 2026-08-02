@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKDSE Geometry Reason Master</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #f0f2f5; color: #1a1a1a; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 12px; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 500px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f2f5; padding-bottom: 12px; }
+        .score-board { font-weight: 700; font-size: 1rem; color: #2b6cb0; }
+        .progress-text { font-size: 0.9rem; color: #718096; }
+        .diagram-container { width: 100%; height: 170px; background-color: #ffffff; border: 1px solid #cbd5e0; border-radius: 12px; display: flex; justify-content: center; align-items: center; padding: 10px; }
+        .diagram-container svg { max-width: 100%; max-height: 100%; }
+        .question-box { background-color: #ebf8ff; border-left: 4px solid #3182ce; padding: 16px; border-radius: 8px; }
+        .question-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #2b6cb0; margin-bottom: 4px; font-weight: 700; }
+        .question-text { font-size: 1rem; font-weight: 600; color: #2d3748; line-height: 1.4; }
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+        .btn-option { background: white; border: 2px solid #e2e8f0; border-radius: 10px; padding: 14px; font-size: 0.95rem; font-weight: 600; color: #4a5568; text-align: left; cursor: pointer; transition: all 0.2s ease; width: 100%; -webkit-tap-highlight-color: transparent; }
+        .btn-option:active { transform: scale(0.98); }
+        .btn-option.correct { background-color: #c6f6d5; border-color: #38a169; color: #22543d; }
+        .btn-option.wrong { background-color: #fed7d7; border-color: #e53e3e; color: #742a2a; }
+        .explanation-box { display: none; background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 4px; }
+        .explanation-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; }
+        .explanation-text { font-size: 0.9rem; color: #4a5568; line-height: 1.5; }
+        .btn-next { display: none; background-color: #3182ce; color: white; border: none; border-radius: 10px; padding: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; width: 100%; margin-top: 8px; -webkit-tap-highlight-color: transparent; }
+        .btn-next:active { background-color: #2b6cb0; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <span class="progress-text" id="progress">Question 1 / 50</span>
+        <span class="score-board" id="score">Score: 0</span>
+    </div>
+
+    <div class="diagram-container" id="diagram"></div>
+
+    <div class="question-box">
+        <div class="question-title">Identify the HKDSE Reason</div>
+        <div class="question-text" id="question">Loading...</div>
+    </div>
+
+    <div class="options-grid" id="options"></div>
+
+    <div class="explanation-box" id="explanation">
+        <div class="explanation-title" id="exp-status">Explanation</div>
+        <div class="explanation-text" id="exp-text"></div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<script>
+const REASONS = {
+    OPP_SIDES_PARALLELOGRAM: "opp. sides of // gram",
+    OPP_ANGLES_PARALLELOGRAM: "opp. ∠s of // gram",
+    DIAGS_PARALLELOGRAM: "diags. of // gram",
+    COND_OPP_SIDES_EQUAL: "opp. sides equal",
+    COND_OPP_ANGLES_EQUAL: "opp. ∠s equal",
+    COND_DIAGS_BISECT: "diags. bisect each other",
+    COND_OPP_SIDES_EQUAL_AND_PARALLEL: "opp. sides equal and //",
+    DEF_RHOMBUS: "definition of rhombus",
+    PROP_RHOMBUS: "property of rhombus",
+    DEF_RECTANGLE: "definition of rectangle",
+    PROP_RECTANGLE: "property of rectangle",
+    DEF_SQUARE: "definition of square",
+    PROP_SQUARE: "property of square",
+    GIVEN: "given",
+    COMMON: "common",
+    SAS: "SAS",
+    CORR_ANGLES_CONGRUENT: "corr. ∠s, ≅ Δs",
+    MIDPOINT_THEOREM: "mid-pt. theorem",
+    INTERCEPT_THEOREM: "intercept theorem"
+};
+
+// Strict HKDSE Style Diagrams (Black & Blue contrast, accurate labels A-B-C-D)
+const DIAGRAMS = {
+    PARALLELOGRAM_BASIC: `<svg viewBox="0 0 200 120" width="180"><polygon points="30,90 70,30 170,30 130,90" fill="none" stroke="#000" stroke-width="2"/><text x="15" y="105" font-weight="bold">A</text><text x="65" y="22" font-weight="bold">B</text><text x="175" y="22" font-weight="bold">C</text><text x="135" y="105" font-weight="bold">D</text></svg>`,
+    PARALLELOGRAM_DIAGS: `<svg viewBox="0 0 200 120" width="180"><polygon points="30,90 70,30 170,30 130,90" fill="none" stroke="#000" stroke-width="2"/><line x1="30" y1="90" x2="170" y2="30" stroke="#3182ce" stroke-width="1.5"/><line x1="70" y1="30" x2="130" y2="90" stroke="#3182ce" stroke-width="1.5"/><text x="15" y="105" font-weight="bold">A</text><text x="65" y="22" font-weight="bold">B</text><text x="175" y="22" font-weight="bold">C</text><text x="135" y="105" font-weight="bold">D</text><text x="96" y="55" font-weight="bold" fill="#3182ce">O</text></svg>`,
+    RHOMBUS: `<svg viewBox="0 0 200 120" width="180"><polygon points="100,15 160,60 100,105 40,60" fill="none" stroke="#000" stroke-width="2"/><line x1="100" y1="15" x2="100" y2="105" stroke="#3182ce" stroke-width="1.5"/><line x1="40" y1="60" x2="160" y2="60" stroke="#3182ce" stroke-width="1.5"/><text x="95" y="10" font-weight="bold">A</text><text x="165" y="65" font-weight="bold">B</text><text x="95" y="118" font-weight="bold">C</text><text x="25" y="65" font-weight="bold">D</text><text x="104" y="55" font-weight="bold" fill="#3182ce">O</text></svg>`,
+    RECTANGLE: `<svg viewBox="0 0 200 120" width="180"><rect x="30" y="25" width="140" height="70" fill="none" stroke="#000" stroke-width="2"/><line x1="30" y1="25" x2="170" y2="95" stroke="#3182ce" stroke-width="1.5"/><line x1="170" y1="25" x2="30" y2="95" stroke="#3182ce" stroke-width="1.5"/><text x="15" y="30" font-weight="bold">A</text><text x="175" y="30" font-weight="bold">B</text><text x="175" y="110" font-weight="bold">C</text><text x="15" y="110" font-weight="bold">D</text><text x="96" y="55" font-weight="bold" fill="#3182ce">O</text></svg>`,
+    SQUARE: `<svg viewBox="0 0 200 120" width="180"><rect x="65" y="20" width="70" height="70" fill="none" stroke="#000" stroke-width="2"/><line x1="65" y1="20" x2="135" y2="90" stroke="#3182ce" stroke-width="1.5"/><line x1="135" y1="20" x2="65" y2="90" stroke="#3182ce" stroke-width="1.5"/><text x="50" y="25" font-weight="bold">A</text><text x="140" y="25" font-weight="bold">B</text><text x="140" y="105" font-weight="bold">C</text><text x="50" y="105" font-weight="bold">D</text><text x="96" y="50" font-weight="bold" fill="#3182ce">O</text></svg>`,
+    TRIANGLE_MIDPOINT: `<svg viewBox="0 0 200 120" width="180"><polygon points="100,15 30,100 170,100" fill="none" stroke="#000" stroke-width="2"/><line x1="65" y1="57.5" x2="135" y2="57.5" stroke="#e53e3e" stroke-width="2"/><text x="95" y="12" font-weight="bold">A</text><text x="48" y="58" font-weight="bold">M</text><text x="142" y="58" font-weight="bold">N</text><text x="15" y="110" font-weight="bold">B</text><text x="175" y="110" font-weight="bold">C</text></svg>`,
+    INTERCEPT: `<svg viewBox="0 0 200 120" width="180"><line x1="20" y1="25" x2="180" y2="25" stroke="#000" stroke-width="2"/><line x1="20" y1="60" x2="180" y2="60" stroke="#000" stroke-width="2"/><line x1="20" y1="95" x2="180" y2="95" stroke="#000" stroke-width="2"/><line x1="40" y1="10" x2="80" y2="110" stroke="#3182ce" stroke-width="2"/><line x1="160" y1="10" x2="120" y2="110" stroke="#3182ce" stroke-width="2"/><text x="25" y="20" font-size="12">L1</text><text x="25" y="55" font-size="12">L2</text><text x="25" y="90" font-size="12">L3</text></svg>`,
+    PROOF_TRIANGLES: `<svg viewBox="0 0 200 120" width="180"><polygon points="30,90 30,30 150,30 150,90" fill="none" stroke="#000" stroke-width="1.5"/><line x1="30" y1="30" x2="100" y2="90" stroke="#e53e3e" stroke-width="2"/><line x1="150" y1="30" x2="100" y2="90" stroke="#e53e3e" stroke-width="2"/><text x="15" y="35" font-weight="bold">B</text><text x="155" y="35" font-weight="bold">D</text><text x="95" y="110" font-weight="bold">C</text><text x="105" y="80" font-weight="bold" fill="#e53e3e">E</text><text x="75" y="80" font-weight="bold" fill="#e53e3e">F</text></svg>`
+};
+
+const questionsData = [
+    { q: "In ABCD, given ABCD is a parallelogram, state: AB = DC and AD = BC.[cite: 1]", ans: REASONS.OPP_SIDES_PARALLELOGRAM, exp: "Start with parallelogram $\\rightarrow$ sides equal[cite: 1]. Reason: <code>opp. sides of // gram</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_BASIC },
+    { q: "In ABCD, given ABCD is a parallelogram, conclude: ∠A = ∠C and ∠B = ∠D.[cite: 1]", ans: REASONS.OPP_ANGLES_PARALLELOGRAM, exp: "Start with parallelogram $\\rightarrow$ opposite angles equal[cite: 1]. Reason: <code>opp. ∠s of // gram</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_BASIC },
+    { q: "In ABCD, given ABCD is a parallelogram, write: AO = CO and BO = DO.[cite: 1]", ans: REASONS.DIAGS_PARALLELOGRAM, exp: "Parallelogram diagonals bisect each other[cite: 1]. Reason: <code>diags. of // gram</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_DIAGS },
+    { q: "Prove AB = DC and AD = BC, then conclude ABCD is a parallelogram.[cite: 1]", ans: REASONS.COND_OPP_SIDES_EQUAL, exp: "Both pairs of opp. sides equal $\\rightarrow$ // gram[cite: 1]. Reason: <code>opp. sides equal</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_BASIC },
+    { q: "Prove ∠A = ∠C and ∠B = ∠D, then conclude ABCD is a parallelogram.[cite: 1]", ans: REASONS.COND_OPP_ANGLES_EQUAL, exp: "Both pairs of opp. angles equal $\\rightarrow$ // gram[cite: 1]. Reason: <code>opp. ∠s equal</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_BASIC },
+    { q: "Prove AO = CO and BO = DO, then conclude ABCD is a parallelogram.[cite: 1]", ans: REASONS.COND_DIAGS_BISECT, exp: "Diagonals bisecting each other proves // gram[cite: 1]. Reason: <code>diags. bisect each other</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_DIAGS },
+    { q: "Prove AD = BC and AD // BC, then conclude ABCD is a parallelogram.[cite: 1]", ans: REASONS.COND_OPP_SIDES_EQUAL_AND_PARALLEL, exp: "One pair equal and parallel proves // gram[cite: 1]. Reason: <code>opp. sides equal and //</code>[cite: 1]", img: DIAGRAMS.PARALLELOGRAM_BASIC },
+    { q: "For rhombus ABCD, state: AB = BC = CD = DA.[cite: 1]", ans: REASONS.DEF_RHOMBUS, exp: "Definition of rhombus requires 4 equal sides[cite: 1]. Reason: <code>definition of rhombus</code>[cite: 1]", img: DIAGRAMS.RHOMBUS },
+    { q: "In rhombus ABCD with diagonals intersecting at O, write: AC ⊥ BD.[cite: 1]", ans: REASONS.PROP_RHOMBUS, exp: "Perpendicular diagonals is a property of rhombus[cite: 1]. Reason: <code>property of rhombus</code>[cite: 1]", img: DIAGRAMS.RHOMBUS },
+    { q: "For rectangle ABCD, state: ∠A = ∠B = ∠C = ∠D = 90°.[cite: 1]", ans: REASONS.DEF_RECTANGLE, exp: "Definition of rectangle requires four 90° angles[cite: 1]. Reason: <code>definition of rectangle</code>[cite: 1]", img: DIAGRAMS.RECTANGLE },
+    { q: "In rectangle ABCD, state: AC = BD.[cite: 1]", ans: REASONS.PROP_RECTANGLE, exp: "Diagonals equal in length is a rectangle property[cite: 1]. Reason: <code>property of rectangle</code>[cite: 1]", img: DIAGRAMS.RECTANGLE },
+    { q: "For square ABCD, state: AB = BC = CD = DA and ∠A = ∠B = ∠C = ∠D = 90°.", ans: REASONS.DEF_SQUARE, exp: "4 equal sides AND 4 right angles define a square. Reason: <code>definition of square</code>", img: DIAGRAMS.SQUARE },
+    { q: "In square ABCD, state: AC = BD and AC ⊥ BD.", ans: REASONS.PROP_SQUARE, exp: "Diagonals equal AND perpendicular is a square property. Reason: <code>property of square</code>", img: DIAGRAMS.SQUARE },
+    { q: "In proof: CE = CF is directly given in problem text. What reason is used?[cite: 1]", ans: REASONS.GIVEN, exp: "Directly stated fact[cite: 1]. Reason: <code>given</code>[cite: 1]", img: DIAGRAMS.PROOF_TRIANGLES },
+    { q: "In proof: ∠BCE = ∠DCF (shared vertex angle). What reason is used?[cite: 1]", ans: REASONS.COMMON, exp: "Shared angle[cite: 1]. Reason: <code>common</code>[cite: 1]", img: DIAGRAMS.PROOF_TRIANGLES },
+    { q: "Prove ΔBCE ≅ ΔDCF using CE=CF, ∠BCE=∠DCF, BC=DC.[cite: 1]", ans: REASONS.SAS, exp: "Side-Angle-Side congruence[cite: 1]. Reason: <code>SAS</code>[cite: 1]", img: DIAGRAMS.PROOF_TRIANGLES },
+    { q: "After ΔBCE ≅ ΔDCF, conclude ∠CBE = ∠CDF.[cite: 1]", ans: REASONS.CORR_ANGLES_CONGRUENT, exp: "Matching angles in congruent triangles[cite: 1]. Reason: <code>corr. ∠s, ≅ Δs</code>[cite: 1]", img: DIAGRAMS.PROOF_TRIANGLES },
+    { q: "In ΔABC, AM = MB and AN = NC. State: MN // BC.[cite: 1]", ans: REASONS.MIDPOINT_THEOREM, exp: "Connecting midpoints gives parallel line[cite: 1]. Reason: <code>mid-pt. theorem</code>[cite: 1]", img: DIAGRAMS.TRIANGLE_MIDPOINT },
+    { q: "In ΔABC, AM = MB and AN = NC. State: MN = 1/2 BC.[cite: 1]", ans: REASONS.MIDPOINT_THEOREM, exp: "Connecting midpoints gives half base length[cite: 1]. Reason: <code>mid-pt. theorem</code>[cite: 1]", img: DIAGRAMS.TRIANGLE_MIDPOINT },
+    { q: "Given L1 // L2 // L3 and equal transversals on left. Conclude equal transversals on right.[cite: 1]", ans: REASONS.INTERCEPT_THEOREM, exp: "Parallel lines cut equal intercepts[cite: 1]. Reason: <code>intercept theorem</code>[cite: 1]", img: DIAGRAMS.INTERCEPT }
+];
+
+let fullQuestionsList = [];
+for (let i = 0; i < 50; i++) {
+    const baseQ = questionsData[i % questionsData.length];
+    fullQuestionsList.push({ id: i + 1, q: `[Q${i + 1}] ${baseQ.q}`, ans: baseQ.ans, exp: baseQ.exp, img: baseQ.img });
+}
+
+let currentIndex = 0, score = 0, answered = false;
+const elQuestion = document.getElementById('question'), elDiagram = document.getElementById('diagram'), elOptions = document.getElementById('options'), elExplanation = document.getElementById('explanation'), elExpStatus = document.getElementById('exp-status'), elExpText = document.getElementById('exp-text'), elBtnNext = document.getElementById('btn-next'), elScore = document.getElementById('score'), elProgress = document.getElementById('progress');
+
+function loadQuestion() {
+    answered = false; elExplanation.style.display = 'none'; elBtnNext.style.display = 'none'; elOptions.innerHTML = '';
+    const currentQ = fullQuestionsList[currentIndex];
+    elQuestion.innerHTML = currentQ.q; elDiagram.innerHTML = currentQ.img; elProgress.innerText = `Question ${currentIndex + 1} / 50`;
+    
+    let choices = [currentQ.ans];
+    const allReasons = Object.values(REASONS);
+    while (choices.length < 4) {
+        let r = allReasons[Math.floor(Math.random() * allReasons.length)];
+        if (!choices.includes(r)) choices.push(r);
+    }
+    choices.sort(() => Math.random() - 0.5);
+
+    choices.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option'; btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, opt, currentQ.ans, currentQ.exp);
+        elOptions.appendChild(btn);
+    });
+}
+
+function checkAnswer(btn, selected, correct, exp) {
+    if (answered) return;
+    answered = true;
+    const allBtns = elOptions.querySelectorAll('.btn-option');
+    if (selected === correct) {
+        btn.classList.add('correct'); score += 10;
+        elExpStatus.innerText = "✓ Correct!"; elExpStatus.style.color = "#276749";
+    } else {
+        btn.classList.add('wrong');
+        elExpStatus.innerText = "✗ Incorrect"; elExpStatus.style.color = "#9b2c2c";
+        allBtns.forEach(b => { if (b.innerText === correct) b.classList.add('correct'); });
+    }
+    elScore.innerText = `Score: ${score}`; elExpText.innerHTML = exp;
+    elExplanation.style.display = 'block'; elBtnNext.style.display = 'block';
+}
+
+function nextQuestion() {
+    currentIndex++;
+    if (currentIndex >= fullQuestionsList.length) { currentIndex = 0; alert(`50 Questions Complete! Score: ${score}`); }
+    loadQuestion();
+}
+loadQuestion();
+</script>
+</body>
+</html>
