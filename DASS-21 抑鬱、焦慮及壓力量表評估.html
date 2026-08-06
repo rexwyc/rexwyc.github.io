@@ -440,7 +440,7 @@ function getSeverity(score, type) {
         if (score <= 9) return { text: "輕微 (Mild)", class: "sev-mild" };
         if (score <= 14) return { text: "中度 (Moderate)", class: "sev-moderate" };
         if (score <= 19) return { text: "嚴重 (Severe)", class: "sev-severe" };
-        return { text: "極嚴重 (Extremely Severe)", class: "sev-extremely-severe" };
+        return { text: "極嚴重 (Extremely Severe)", class: "sev-extremely-severe" };          
     }
     if (type === 'S') {
         if (score <= 14) return { text: "正常 (Normal)", class: "sev-normal" };
