@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Triangle Centers Quiz & Diagram Game</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --primary-dark: #357abd;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --background: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 550px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 2px;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background: #edf2f7;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .scoreboard span {
+            color: var(--primary-dark);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* SVG Diagram Box */
+        .diagram-box {
+            width: 100%;
+            height: 180px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 6px;
+        }
+
+        .diagram-box svg {
+            width: 100%;
+            height: 100%;
+            max-height: 170px;
+        }
+
+        .question-card {
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.35;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-option {
+            background: #f8fafc;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-option:active {
+            transform: scale(0.98);
+        }
+
+        .btn-option.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724 !important;
+        }
+
+        .btn-option.incorrect {
+            background-color: #f8d7da !important;
+            border-color: var(--error) !important;
+            color: #721c24 !important;
+        }
+
+        .btn-option:disabled {
+            cursor: default;
+        }
+
+        .explanation-card {
+            display: none;
+            background: #ebf8ff;
+            border-left: 4px solid var(--primary);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            line-height: 1.35;
+        }
+
+        .explanation-card h4 {
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
+
+        .timestamp {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 0.75rem;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .btn-next {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s ease;
+        }
+
+        .btn-next:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="header">
+        <h1>Geometry Centers Quiz</h1>
+        <p>Dynamic Diagrams • 50 Questions • Infinite Loop</p>
+    </div>
+
+    <div class="scoreboard">
+        <div>Score: <span id="score">0</span></div>
+        <div>Streak: <span id="streak">0</span> 🔥</div>
+        <div>Best: <span id="high-score">0</span></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <!-- Dynamic SVG Diagram Viewport -->
+    <div class="diagram-box" id="diagram-container">
+        <!-- SVG rendered here -->
+    </div>
+
+    <div class="question-card" id="question">
+        Loading Question...
+    </div>
+
+    <div class="options-grid" id="options">
+        <!-- Dynamic Options -->
+    </div>
+
+    <div class="explanation-card" id="explanation">
+        <h4>Step-by-Step Explanation:</h4>
+        <p id="explanation-text"></p>
+        <div class="timestamp" id="timestamp-text"></div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next Question ➔</button>
+</div>
+
+<script>
+// --- SVG DIAGRAM ENGINE ---
+function getDiagramSVG(type) {
+    switch(type) {
+        case 'incenter':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Triangle -->
+                <polygon points="150,20 40,170 260,170" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Angle Bisectors -->
+                <line x1="150" y1="20" x2="150" y2="170" stroke="#e67e22" stroke-width="2" stroke-dasharray="4"/>
+                <line x1="40" y1="170" x2="205" y2="95" stroke="#e67e22" stroke-width="2" stroke-dasharray="4"/>
+                <line x1="260" y1="170" x2="95" y2="95" stroke="#e67e22" stroke-width="2" stroke-dasharray="4"/>
+                <!-- Incircle -->
+                <circle cx="150" cy="120" r="50" fill="rgba(230,126,34,0.15)" stroke="#e67e22" stroke-width="2"/>
+                <!-- Incenter Point -->
+                <circle cx="150" cy="120" r="6" fill="#e74c3c"/>
+                <text x="160" y="125" font-size="14" font-weight="bold" fill="#e74c3c">Incenter (I)</text>
+                <text x="140" y="15" font-size="12" fill="#2c3e50">A</text>
+                <text x="25" y="180" font-size="12" fill="#2c3e50">B</text>
+                <text x="268" y="180" font-size="12" fill="#2c3e50">C</text>
+            </svg>`;
+
+        case 'centroid':
+            return `
+            <svg viewBox="0 0 300 200">
+                <polygon points="150,20 30,170 270,170" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Medians to Midpoints -->
+                <line x1="150" y1="20" x2="150" y2="170" stroke="#27ae60" stroke-width="2"/>
+                <line x1="30" y1="170" x2="210" y2="95" stroke="#27ae60" stroke-width="2"/>
+                <line x1="270" y1="170" x2="90" y2="95" stroke="#27ae60" stroke-width="2"/>
+                <!-- Midpoints -->
+                <circle cx="150" cy="170" r="4" fill="#27ae60"/>
+                <circle cx="210" cy="95" r="4" fill="#27ae60"/>
+                <circle cx="90" cy="95" r="4" fill="#27ae60"/>
+                <!-- Centroid -->
+                <circle cx="150" cy="120" r="6" fill="#e74c3c"/>
+                <text x="160" y="120" font-size="14" font-weight="bold" fill="#e74c3c">Centroid (G)</text>
+                <text x="145" y="185" font-size="11" fill="#27ae60">Midpoint D</text>
+            </svg>`;
+
+        case 'centroid_ratio':
+            return `
+            <svg viewBox="0 0 300 200">
+                <polygon points="150,20 40,170 260,170" fill="none" stroke="#cbd5e0" stroke-width="2"/>
+                <!-- Highlighted Median AE -->
+                <line x1="150" y1="20" x2="150" y2="170" stroke="#27ae60" stroke-width="3"/>
+                <!-- Vertex A, Midpoint E, Centroid P -->
+                <circle cx="150" cy="20" r="5" fill="#2c3e50"/>
+                <circle cx="150" cy="170" r="5" fill="#27ae60"/>
+                <circle cx="150" cy="120" r="6" fill="#e74c3c"/>
+                <text x="155" y="25" font-size="13" font-weight="bold">A (Vertex)</text>
+                <text x="155" y="125" font-size="13" font-weight="bold" fill="#e74c3c">P (Centroid)</text>
+                <text x="155" y="185" font-size="13" fill="#27ae60">E (Midpoint)</text>
+                <!-- Ratio Labels -->
+                <text x="110" y="75" font-size="14" font-weight="bold" fill="#2980b9">2x (Longer)</text>
+                <text x="110" y="150" font-size="14" font-weight="bold" fill="#8e44ad">1x (Shorter)</text>
+            </svg>`;
+
+        case 'orthocenter_acute':
+            return `
+            <svg viewBox="0 0 300 200">
+                <polygon points="150,20 40,170 260,170" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Altitudes -->
+                <line x1="150" y1="20" x2="150" y2="170" stroke="#2980b9" stroke-width="2"/>
+                <line x1="40" y1="170" x2="202" y2="101" stroke="#2980b9" stroke-width="2"/>
+                <line x1="260" y1="170" x2="98" y2="101" stroke="#2980b9" stroke-width="2"/>
+                <!-- 90 deg square indicators -->
+                <rect x="150" y="158" width="12" height="12" fill="none" stroke="#2980b9"/>
+                <!-- Orthocenter -->
+                <circle cx="150" cy="115" r="6" fill="#e74c3c"/>
+                <text x="160" y="115" font-size="14" font-weight="bold" fill="#e74c3c">Orthocenter (H)</text>
+                <text x="15" y="110" font-size="12" fill="#2980b9">Altitudes (90°)</text>
+            </svg>`;
+
+        case 'orthocenter_right':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Right Triangle -->
+                <polygon points="60,30 60,160 240,160" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <rect x="60" y="145" width="15" height="15" fill="none" stroke="#2980b9" stroke-width="2"/>
+                <!-- Altitude from hypotenuse to right angle -->
+                <line x1="60" y1="160" x2="132" y2="104" stroke="#2980b9" stroke-width="2" stroke-dasharray="3"/>
+                <!-- Orthocenter at vertex -->
+                <circle cx="60" cy="160" r="7" fill="#e74c3c"/>
+                <text x="75" y="165" font-size="13" font-weight="bold" fill="#e74c3c">Orthocenter is at 90° Vertex!</text>
+            </svg>`;
+
+        case 'orthocenter_obtuse':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Obtuse Triangle -->
+                <polygon points="100,50 30,140 220,140" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Extended line sides -->
+                <line x1="30" y1="140" x2="270" y2="140" stroke="#cbd5e0" stroke-dasharray="3"/>
+                <line x1="100" y1="50" x2="10" y2="165" stroke="#cbd5e0" stroke-dasharray="3"/>
+                <!-- Altitudes extending outside -->
+                <line x1="100" y1="50" x2="100" y2="180" stroke="#2980b9" stroke-width="2"/>
+                <line x1="220" y1="140" x2="100" y2="180" stroke="#2980b9" stroke-width="2"/>
+                <!-- Orthocenter Outside -->
+                <circle cx="100" cy="180" r="6" fill="#e74c3c"/>
+                <text x="112" y="185" font-size="13" font-weight="bold" fill="#e74c3c">Orthocenter (Outside)</text>
+            </svg>`;
+
+        case 'circumcenter_acute':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Outer Circumcircle -->
+                <circle cx="150" cy="105" r="85" fill="rgba(142,68,173,0.08)" stroke="#8e44ad" stroke-width="2"/>
+                <!-- Triangle -->
+                <polygon points="150,20 67,145 233,145" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Perpendicular Bisectors -->
+                <line x1="150" y1="145" x2="150" y2="20" stroke="#8e44ad" stroke-width="2" stroke-dasharray="4"/>
+                <line x1="108" y1="82" x2="192" y2="128" stroke="#8e44ad" stroke-width="2" stroke-dasharray="4"/>
+                <line x1="192" y1="82" x2="108" y2="128" stroke="#8e44ad" stroke-width="2" stroke-dasharray="4"/>
+                <!-- Circumcenter -->
+                <circle cx="150" cy="105" r="6" fill="#e74c3c"/>
+                <text x="160" y="110" font-size="13" font-weight="bold" fill="#e74c3c">Circumcenter (O)</text>
+            </svg>`;
+
+        case 'circumcenter_right':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Circumcircle -->
+                <circle cx="140" cy="100" r="90" fill="rgba(142,68,173,0.08)" stroke="#8e44ad" stroke-width="2"/>
+                <!-- Right Triangle -->
+                <polygon points="50,100 50,164 230,36" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Circumcenter on Hypotenuse Midpoint -->
+                <circle cx="140" cy="100" r="7" fill="#e74c3c"/>
+                <text x="110" y="85" font-size="13" font-weight="bold" fill="#e74c3c">Midpoint of Hypotenuse</text>
+            </svg>`;
+
+        case 'circumcenter_obtuse':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Circumcircle -->
+                <circle cx="150" cy="140" r="100" fill="rgba(142,68,173,0.08)" stroke="#8e44ad" stroke-width="2"/>
+                <!-- Obtuse Triangle -->
+                <polygon points="150,40 70,120 230,120" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <!-- Circumcenter Outside -->
+                <circle cx="150" cy="140" r="6" fill="#e74c3c"/>
+                <text x="160" y="145" font-size="13" font-weight="bold" fill="#e74c3c">Circumcenter (Outside)</text>
+            </svg>`;
+
+        case 'inscribed_vs_circumscribed':
+            return `
+            <svg viewBox="0 0 300 200">
+                <!-- Left: Incircle -->
+                <g transform="translate(0,0)">
+                    <polygon points="75,30 20,150 130,150" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                    <circle cx="75" cy="110" r="40" fill="none" stroke="#e67e22" stroke-width="2"/>
+                    <circle cx="75" cy="110" r="4" fill="#e74c3c"/>
+                    <text x="35" y="175" font-size="12" font-weight="bold" fill="#e67e22">Inscribed (Incenter)</text>
+                </g>
+                <!-- Right: Circumcircle -->
+                <g transform="translate(150,0)">
+                    <circle cx="75" cy="95" r="65" fill="none" stroke="#8e44ad" stroke-width="2"/>
+                    <polygon points="75,30 20,140 130,140" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                    <circle cx="75" cy="95" r="4" fill="#e74c3c"/>
+                    <text x="15" y="175" font-size="12" font-weight="bold" fill="#8e44ad">Circumscribed (Circumcenter)</text>
+                </g>
+            </svg>`;
+
+        default:
+            return `
+            <svg viewBox="0 0 300 200">
+                <polygon points="150,30 40,160 260,160" fill="none" stroke="#2c3e50" stroke-width="3"/>
+                <circle cx="150" cy="117" r="6" fill="#e74c3c"/>
+                <text x="110" y="100" font-size="14" font-weight="bold" fill="#e74c3c">Triangle Center</text>
+            </svg>`;
+    }
+}
+
+// --- GAME QUESTIONS WITH MATCHED DIAGRAM TYPES ---
+const questions = [
+    // Incenter Questions
+    { q: "What lines intersect to form the incenter of a triangle?", a: ["Angle Bisectors", "Medians", "Altitudes", "Perpendicular Bisectors"], c: 0, d: "incenter", e: "The incenter is formed by the intersection of the three angle bisectors.", t: "[00:00:36]" },
+    { q: "The incenter is the center of which circle?", a: ["Inscribed circle (Incircle)", "Circumscribed circle", "Unit circle", "Nine-point circle"], c: 0, d: "inscribed_vs_circumscribed", e: "The incenter is always the center of the inscribed circle (incircle).", t: "[00:01:26]" },
+    { q: "Where is the incenter located in an obtuse triangle?", a: ["Always Inside", "Outside", "On the hypotenuse", "At the right angle"], c: 0, d: "incenter", e: "The incenter always lies INSIDE the triangle regardless of the triangle type.", t: "[00:00:27]" },
+    { q: "If a circle fits perfectly inside a triangle touching all 3 sides, its center is the:", a: ["Incenter", "Circumcenter", "Centroid", "Orthocenter"], c: 0, d: "incenter", e: "The incenter is the center of an inscribed circle.", t: "[00:01:26]" },
+    { q: "An angle bisector divides an angle into:", a: ["Two equal angles", "Two perpendicular lines", "A 2:1 ratio", "A right angle"], c: 0, d: "incenter", e: "An angle bisector cuts an interior angle into two congruent angles.", t: "[00:01:05]" },
+
+    // Centroid Questions
+    { q: "What lines intersect to form the centroid of a triangle?", a: ["Medians", "Altitudes", "Angle Bisectors", "Perpendicular Bisectors"], c: 0, d: "centroid", e: "The centroid is the point of intersection of the three medians.", t: "[00:01:50]" },
+    { q: "A median connects a vertex of a triangle to:", a: ["The midpoint of the opposite side", "The opposite angle bisector", "A 90-degree corner", "The circumcenter"], c: 0, d: "centroid", e: "A median is a segment drawn from a vertex to the midpoint of the opposite side.", t: "[00:01:59]" },
+    { q: "The centroid divides each median into segments with what ratio?", a: ["2 : 1", "1 : 1", "3 : 1", "3 : 2"], c: 0, d: "centroid_ratio", e: "The segment from the vertex to the centroid is twice as long as the segment from centroid to midpoint (2:1 ratio).", t: "[00:02:46]" },
+    { q: "If a median has a total length of 15, how long is the segment from vertex to centroid?", a: ["10", "5", "7.5", "12"], c: 0, d: "centroid_ratio", e: "The longer segment is 2/3 of the total length: 2/3 * 15 = 10.", t: "[00:03:17]" },
+    { q: "If the short segment of a median (centroid to midpoint) is 5, how long is the longer segment?", a: ["10", "5", "15", "2.5"], c: 0, d: "centroid_ratio", e: "The vertex segment is twice the length of the short segment: 5 * 2 = 10.", t: "[00:02:56]" },
+    { q: "If the segment from vertex to centroid is 8, how long is the short segment from centroid to midpoint?", a: ["4", "8", "16", "2"], c: 0, d: "centroid_ratio", e: "The short segment is half of the long segment: 8 / 2 = 4.", t: "[00:03:00]" },
+    { q: "Where is the centroid located in an obtuse triangle?", a: ["Always Inside", "Outside", "On the longest side", "At the vertex"], c: 0, d: "centroid", e: "Like the incenter, the centroid ALWAYS lies inside the triangle.", t: "[00:02:21]" },
+    { q: "If point D is the midpoint of side AC, then line BD is a:", a: ["Median", "Altitude", "Angle Bisector", "Perpendicular Bisector"], c: 0, d: "centroid", e: "A line connecting a vertex to a midpoint on the opposite side is a median.", t: "[00:03:40]" },
+    { q: "If PE = 6 in median AE, what is the length of AP (vertex to centroid)?", a: ["12", "6", "18", "3"], c: 0, d: "centroid_ratio", e: "AP is twice PE: 6 * 2 = 12.", t: "[00:03:08]" },
+    { q: "If AP = 14 in median AE, what is total length AE?", a: ["21", "7", "28", "14"], c: 0, d: "centroid_ratio", e: "PE = 14 / 2 = 7. Total length AE = AP + PE = 14 + 7 = 21.", t: "[00:03:17]" },
+
+    // Orthocenter Questions
+    { q: "What lines intersect to form the orthocenter?", a: ["Altitudes", "Medians", "Perpendicular Bisectors", "Angle Bisectors"], c: 0, d: "orthocenter_acute", e: "The orthocenter is the point where the three altitudes intersect.", t: "[00:05:00]" },
+    { q: "An altitude of a triangle is a line segment that is:", a: ["Perpendicular to the opposite side", "Connecting midpoints", "Bisecting an angle", "Equal to half the base"], c: 0, d: "orthocenter_acute", e: "An altitude is drawn from a vertex perpendicular (90 degrees) to the opposite side.", t: "[00:05:09]" },
+    { q: "Where is the orthocenter located in a RIGHT triangle?", a: ["At the vertex of the right angle", "Inside the triangle", "On the hypotenuse midpoint", "Outside"], c: 0, d: "orthocenter_right", e: "The orthocenter of a right triangle is located directly on the right-angle vertex.", t: "[00:07:31]" },
+    { q: "Where is the orthocenter located in an OBTUSE triangle?", a: ["Outside the triangle", "Inside the triangle", "On the longest side", "At the vertex"], c: 0, d: "orthocenter_obtuse", e: "For an obtuse triangle, the altitudes extend to meet OUTSIDE the triangle.", t: "[00:09:24]" },
+    { q: "Where is the orthocenter located in an ACUTE triangle?", a: ["Inside the triangle", "Outside the triangle", "On a side", "At a vertex"], c: 0, d: "orthocenter_acute", e: "In an acute triangle, the orthocenter lies INSIDE the triangle.", t: "[00:05:54]" },
+    { q: "Which triangle center can be situated at one of the triangle's vertices?", a: ["Orthocenter", "Centroid", "Incenter", "Circumcenter"], c: 0, d: "orthocenter_right", e: "The orthocenter lies on the vertex of the 90-degree angle in a right triangle.", t: "[00:07:31]" },
+
+    // Circumcenter Questions
+    { q: "What lines intersect to form the circumcenter?", a: ["Perpendicular Bisectors", "Altitudes", "Medians", "Angle Bisectors"], c: 0, d: "circumcenter_acute", e: "The circumcenter is formed by the intersection of the three perpendicular bisectors.", t: "[00:10:35]" },
+    { q: "The circumcenter is the center of which circle?", a: ["Circumscribed circle", "Inscribed circle", "Inner circle", "Tangential circle"], c: 0, d: "inscribed_vs_circumscribed", e: "The circumcenter is the center of a circle circumscribed about (outside) the triangle.", t: "[00:12:41]" },
+    { q: "Where is the circumcenter located in a RIGHT triangle?", a: ["At the midpoint of the hypotenuse", "At the right angle vertex", "Outside the triangle", "Inside"], c: 0, d: "circumcenter_right", e: "The circumcenter of a right triangle is located at the midpoint of the hypotenuse.", t: "[00:14:01]" },
+    { q: "Where is the circumcenter located in an OBTUSE triangle?", a: ["Outside the triangle", "Inside the triangle", "At a vertex", "On the shortest side"], c: 0, d: "circumcenter_obtuse", e: "The circumcenter of an obtuse triangle lies OUTSIDE the triangle.", t: "[00:15:48]" },
+    { q: "Where is the circumcenter located in an ACUTE triangle?", a: ["Inside the triangle", "Outside the triangle", "On a side", "At the midpoint"], c: 0, d: "circumcenter_acute", e: "The circumcenter of an acute triangle lies INSIDE the triangle.", t: "[00:12:29]" },
+    { q: "A perpendicular bisector combines properties of which two line types?", a: ["Altitude and Median", "Median and Angle Bisector", "Altitude and Bisector", "Radius and Diameter"], c: 0, d: "circumcenter_acute", e: "It acts like a median (passes through midpoint) and an altitude (meets at 90°).", t: "[00:11:31]" },
+    { q: "Does a perpendicular bisector always pass through a vertex of the triangle?", a: ["No, not necessarily", "Yes, always", "Only in right triangles", "Only in obtuse triangles"], c: 0, d: "circumcenter_acute", e: "A perpendicular bisector passes through the midpoint at 90°, not necessarily the vertex.", t: "[00:11:40]" },
+
+    // Comparative & Application Questions
+    { q: "Which two centers ALWAYS lie inside the triangle regardless of shape?", a: ["Incenter & Centroid", "Orthocenter & Circumcenter", "Incenter & Orthocenter", "Centroid & Circumcenter"], c: 0, d: "incenter", e: "Incenter and Centroid ALWAYS lie inside every triangle.", t: "[00:02:21]" },
+    { q: "Which two centers can lie OUTSIDE an obtuse triangle?", a: ["Orthocenter & Circumcenter", "Incenter & Centroid", "Centroid & Orthocenter", "Incenter & Circumcenter"], c: 0, d: "orthocenter_obtuse", e: "Both Orthocenter and Circumcenter lie outside obtuse triangles.", t: "[00:09:24]" },
+    { q: "Which center is the center of mass or balancing point of a triangle?", a: ["Centroid", "Incenter", "Orthocenter", "Circumcenter"], c: 0, d: "centroid", e: "The centroid represents the center of mass (geometric center) of a triangle.", t: "[00:01:39]" },
+    { q: "If all 3 vertices of a triangle lie on a circle, that circle is:", a: ["Circumscribed", "Inscribed", "Centered", "Intersected"], c: 0, d: "inscribed_vs_circumscribed", e: "A circle passing through all 3 vertices is circumscribed around the triangle.", t: "[00:12:41]" },
+    { q: "The word 'Incenter' is associated with an ______ circle.", a: ["Inscribed", "Circumscribed", "Outer", "Extended"], c: 0, d: "inscribed_vs_circumscribed", e: "Incenter = Inscribed circle.", t: "[00:01:26]" },
+    { q: "The word 'Circumcenter' is associated with a ______ circle.", a: ["Circumscribed", "Inscribed", "Interior", "Tangent"], c: 0, d: "inscribed_vs_circumscribed", e: "Circumcenter = Circumscribed circle.", t: "[00:12:41]" },
+    { q: "If line segment AF = FB, point F must be a:", a: ["Midpoint", "Vertex", "Altitude", "Angle bisector"], c: 0, d: "centroid", e: "If AF = FB, point F divides segment AB into two equal parts, so it is a midpoint.", t: "[00:04:12]" },
+    { q: "Which center is formed by lines perpendicular to sides passing through midpoints?", a: ["Circumcenter", "Orthocenter", "Centroid", "Incenter"], c: 0, d: "circumcenter_acute", e: "Perpendicular bisectors create the circumcenter.", t: "[00:10:35]" },
+    { q: "Which center is formed by lines perpendicular to sides passing through opposite vertices?", a: ["Orthocenter", "Centroid", "Incenter", "Circumcenter"], c: 0, d: "orthocenter_acute", e: "Altitudes pass through vertices perpendicular to opposite sides, forming the orthocenter.", t: "[00:05:00]" },
+    { q: "In a right triangle, the circumcenter is on the midpoint of the:", a: ["Hypotenuse", "Shortest leg", "Right angle", "Altitude"], c: 0, d: "circumcenter_right", e: "The circumcenter of a right triangle is at the midpoint of its hypotenuse.", t: "[00:14:01]" },
+    { q: "In a right triangle, the orthocenter is located at the:", a: ["Vertex of the 90° angle", "Midpoint of hypotenuse", "Centroid point", "Outside area"], c: 0, d: "orthocenter_right", e: "The orthocenter of a right triangle is at the right-angled vertex.", t: "[00:07:31]" },
+    { q: "If a median is divided into 1/3 and 2/3 sections, the dividing point is the:", a: ["Centroid", "Incenter", "Orthocenter", "Circumcenter"], c: 0, d: "centroid_ratio", e: "The centroid cuts medians into 1/3 and 2/3 ratios.", t: "[00:02:46]" },
+    { q: "Lines that bisect angles and meet at a point form the:", a: ["Incenter", "Circumcenter", "Orthocenter", "Centroid"], c: 0, d: "incenter", e: "Angle bisectors meet at the incenter.", t: "[00:00:36]" },
+    { q: "Lines connecting vertices to midpoints are called:", a: ["Medians", "Altitudes", "Bisectors", "Hypotenuses"], c: 0, d: "centroid", e: "Medians connect vertices to midpoints.", t: "[00:01:50]" },
+    { q: "Lines meeting sides at 90-degree angles from vertices are called:", a: ["Altitudes", "Medians", "Angle Bisectors", "Radii"], c: 0, d: "orthocenter_acute", e: "Altitudes meet opposite sides at 90 degrees.", t: "[00:05:09]" },
+    { q: "If PE = 3 in median AE, what is the length of AE?", a: ["9", "6", "12", "3"], c: 0, d: "centroid_ratio", e: "Short = 3, Long = 6. Total AE = 3 + 6 = 9.", t: "[00:03:17]" },
+    { q: "If AE = 24, what is the length of short segment PE?", a: ["8", "16", "12", "6"], c: 0, d: "centroid_ratio", e: "Short segment is 1/3 of total: 24 / 3 = 8.", t: "[00:03:30]" },
+    { q: "If AE = 18, what is the length of long segment AP?", a: ["12", "6", "9", "15"], c: 0, d: "centroid_ratio", e: "Long segment is 2/3 of total: (2/3) * 18 = 12.", t: "[00:03:17]" },
+    { q: "What type of triangle has an orthocenter outside its perimeter?", a: ["Obtuse", "Acute", "Right", "Equilateral"], c: 0, d: "orthocenter_obtuse", e: "Obtuse triangles have orthocenters located outside.", t: "[00:09:24]" },
+    { q: "What type of triangle has a circumcenter outside its perimeter?", a: ["Obtuse", "Acute", "Right", "Isosceles"], c: 0, d: "circumcenter_obtuse", e: "Obtuse triangles have circumcenters located outside.", t: "[00:15:48]" },
+    { q: "The point where angle bisectors meet is equidistant from the triangle's:", a: ["Three sides", "Three vertices", "Midpoints", "Altitudes"], c: 0, d: "incenter", e: "The incenter is equidistant from all three sides of the triangle.", t: "[00:01:26]" },
+    { q: "The circumcenter is equidistant from the triangle's:", a: ["Three vertices", "Three sides", "Midpoints", "Angles"], c: 0, d: "circumcenter_acute", e: "Since it is the center of the circumscribed circle, it is equidistant to all 3 vertices.", t: "[00:12:41]" },
+    { q: "Which line segment is associated with the Centroid?", a: ["Median", "Altitude", "Angle Bisector", "Perpendicular Bisector"], c: 0, d: "centroid", e: "Centroid = Medians.", t: "[00:16:47]" },
+    { q: "Which line segment is associated with the Orthocenter?", a: ["Altitude", "Median", "Angle Bisector", "Perpendicular Bisector"], c: 0, d: "orthocenter_acute", e: "Orthocenter = Altitudes.", t: "[00:16:57]" },
+    { q: "Which line segment is associated with the Incenter?", a: ["Angle Bisector", "Median", "Altitude", "Perpendicular Bisector"], c: 0, d: "incenter", e: "Incenter = Angle Bisectors.", t: "[00:16:30]" },
+    { q: "Which line segment is associated with the Circumcenter?", a: ["Perpendicular Bisector", "Median", "Altitude", "Angle Bisector"], c: 0, d: "circumcenter_acute", e: "Circumcenter = Perpendicular Bisectors.", t: "[00:17:06]" }
+];
+
+let currentIndex = 0;
+let score = 0;
+let streak = 0;
+let highScore = 0;
+let shuffledQuestions = [];
+
+function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function initGame() {
+    shuffledQuestions = shuffle(questions);
+    currentIndex = 0;
+    score = 0;
+    streak = 0;
+    updateScoreboard();
+    showQuestion();
+}
+
+function showQuestion() {
+    // Infinite Loop Reshuffle
+    if (currentIndex >= shuffledQuestions.length) {
+        shuffledQuestions = shuffle(questions);
+        currentIndex = 0;
+    }
+
+    const q = shuffledQuestions[currentIndex];
+    
+    // Progress Bar
+    const progressPercent = ((currentIndex % questions.length) / questions.length) * 100;
+    document.getElementById('progress').style.width = `${progressPercent}%`;
+
+    // Render Diagram
+    document.getElementById('diagram-container').innerHTML = getDiagramSVG(q.d);
+
+    // Render Question Text
+    document.getElementById('question').innerText = `${(currentIndex % questions.length) + 1}. ${q.q}`;
+    
+    // Render Choices
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+
+    let choices = q.a.map((text, index) => ({ text, isCorrect: index === q.c }));
+    choices = shuffle(choices);
+
+    choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = choice.text;
+        btn.onclick = () => selectOption(btn, choice.isCorrect);
+        optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById('explanation').style.display = 'none';
+    document.getElementById('btn-next').style.display = 'none';
+}
+
+function selectOption(selectedBtn, isCorrect) {
+    const buttons = document.querySelectorAll('.btn-option');
+    buttons.forEach(btn => btn.disabled = true);
+
+    const q = shuffledQuestions[currentIndex];
+
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        score += 10 + (streak * 2);
+        streak++;
+        if (score > highScore) highScore = score;
+    } else {
+        selectedBtn.classList.add('incorrect');
+        streak = 0;
+        buttons.forEach(btn => {
+            if (btn.innerText === q.a[q.c]) {
+                btn.classList.add('correct');
+            }
+        });
+    }
+
+    updateScoreboard();
+
+    // Show Explanation
+    document.getElementById('explanation-text').innerText = q.e;
+    document.getElementById('timestamp-text').innerText = `Video Reference: ${q.t}`;
+    document.getElementById('explanation').style.display = 'block';
+    document.getElementById('btn-next').style.display = 'block';
+}
+
+function nextQuestion() {
+    currentIndex++;
+    showQuestion();
+}
+
+function updateScoreboard() {
+    document.getElementById('score').innerText = score;
+    document.getElementById('streak').innerText = streak;
+    document.getElementById('high-score').innerText = highScore;
+}
+
+window.onload = initGame;
+</script>
+
+</body>
+</html>
