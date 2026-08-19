@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classic Pong with Auto-Playing Music!</title>
+    <title>Neon Cyber Pong</title>
     <style>
         body {
-            background-color: #222;
-            color: #eee;
+            background-color: #0b0b16;
+            color: #00ffff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -18,18 +18,19 @@
         }
 
         #game-title {
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
         }
 
-        #inventor-note {
-            color: #aaa;
-            margin-top: 0px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            text-align: center;
-            line-height: 1.4;
+        #subtitle {
+            color: #ff00ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px #ff00ff;
         }
 
         #controls {
@@ -40,40 +41,39 @@
         }
 
         button {
-            background: #444;
-            color: #0f0;
-            border: 2px solid #0f0;
+            background: #111;
+            color: #00ffff;
+            border: 2px solid #00ffff;
             padding: 8px 16px;
             font-weight: bold;
             cursor: pointer;
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            transition: 0.2s;
         }
 
         button:hover {
-            background: #0f0;
-            color: #111;
+            background: #00ffff;
+            color: #0b0b16;
+            box-shadow: 0 0 20px #00ffff;
         }
 
         #gameCanvas {
-            border: 4px solid #fff;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
-            background-color: #000;
+            border: 4px solid #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), inset 0 0 20px rgba(0, 255, 255, 0.2);
+            background-color: #020208;
             cursor: crosshair;
         }
     </style>
 </head>
 <body>
 
-    <h1 id="game-title">Arcade Pong</h1>
-    <!-- Inventor Text Added Here -->
-    <p id="inventor-note">
-        Invented in 1972 by electrical engineer <strong>Allan Alcorn</strong><br>
-        <span style="font-size: 12px; color: #888;">(Fun fact: Though games like Connect 4 were made by psychologists, Pong was pure engineering!)</span>
-    </p>
+    <h1 id="game-title">Neon Cyber Pong</h1>
+    <p id="subtitle">Created by Allan Alcorn (1972) • Upgraded with Arcade Juice & Synthwave</p>
 
     <div id="controls">
-        <p style="margin:0; color: #aaa;">Move mouse to control your paddle.</p>
+        <p style="margin:0; color: #888;">Move mouse to control paddle.</p>
         <button id="musicBtn">🎵 Music: ON</button>
     </div>
     
@@ -95,12 +95,12 @@
         let currentNote = 0;
         let musicTimerID;
 
-        // Fast-paced arcade bassline (Frequencies in Hz)
+        // Synthwave Bassline
         const bassline = [
             110.00, 110.00, 130.81, 110.00, 
             146.83, 110.00, 130.81, 123.47  
         ];
-        const tempo = 140; 
+        const tempo = 150; 
         const lookahead = 25.0; 
         const scheduleAheadTime = 0.1; 
 
@@ -113,7 +113,6 @@
             }
         }
 
-        // --- BACKGROUND MUSIC SCHEDULER ---
         function nextNote() {
             const secondsPerBeat = 60.0 / tempo;
             nextNoteTime += secondsPerBeat * 0.25; 
@@ -127,21 +126,19 @@
             osc.type = 'sawtooth';
             osc.frequency.value = bassline[currentNote];
             
-            gain.gain.setValueAtTime(0.05, time);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+            gain.gain.setValueAtTime(0.04, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
 
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
             osc.start(time);
-            osc.stop(time + 0.1);
+            osc.stop(time + 0.12);
         }
 
         function scheduler() {
             while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
-                if (isMusicPlaying) {
-                    playMusicNote(nextNoteTime);
-                }
+                if (isMusicPlaying) playMusicNote(nextNoteTime);
                 nextNote();
             }
             musicTimerID = setTimeout(scheduler, lookahead);
@@ -157,56 +154,91 @@
         function toggleMusic() {
             isMusicPlaying = !isMusicPlaying;
             musicBtn.innerText = isMusicPlaying ? "🎵 Music: ON" : "🎵 Music: OFF";
-            musicBtn.style.color = isMusicPlaying ? "#0f0" : "#ff0000";
-            musicBtn.style.borderColor = isMusicPlaying ? "#0f0" : "#ff0000";
+            musicBtn.style.color = isMusicPlaying ? "#00ffff" : "#ff0055";
+            musicBtn.style.borderColor = isMusicPlaying ? "#00ffff" : "#ff0055";
         }
 
-        // --- SOUND EFFECTS ---
+        // Particle System for Explosions
+        let particles = [];
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 15; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    radius: Math.random() * 3 + 1,
+                    alpha: 1,
+                    color: color
+                });
+            }
+        }
+
+        function updateAndDrawParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.03;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    context.save();
+                    context.globalAlpha = p.alpha;
+                    context.fillStyle = p.color;
+                    context.shadowBlur = 10;
+                    context.shadowColor = p.color;
+                    context.beginPath();
+                    context.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    context.fill();
+                    context.restore();
+                }
+            }
+        }
+
+        // Sound Effects
         function playSound(type, extraParam = 0) {
             if (!audioCtx || !isMusicPlaying) return;
             const time = audioCtx.currentTime + 0.01;
-
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
 
             if (type === 'hit') {
-                const baseFreq = 440;
-                const speedBonus = (extraParam - 7) * 40; 
+                const baseFreq = 523.25; // C5
+                const speedBonus = (extraParam - 7) * 45; 
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(Math.min(baseFreq + speedBonus, 1000), time);
-                gain.gain.setValueAtTime(0.1, time);
-                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+                osc.frequency.setValueAtTime(Math.min(baseFreq + speedBonus, 1200), time);
+                gain.gain.setValueAtTime(0.08, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
                 osc.start(time);
-                osc.stop(time + 0.1);
-
+                osc.stop(time + 0.08);
             } else if (type === 'wall') {
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(220, time);
-                gain.gain.setValueAtTime(0.1, time);
-                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+                osc.frequency.setValueAtTime(261.63, time); // C4
+                gain.gain.setValueAtTime(0.08, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
                 osc.start(time);
-                osc.stop(time + 0.1);
-
+                osc.stop(time + 0.08);
             } else if (type === 'score') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(500, time);
-                osc.frequency.exponentialRampToValueAtTime(100, time + 0.4);
-                gain.gain.setValueAtTime(0.2, time);
-                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(400, time);
+                osc.frequency.exponentialRampToValueAtTime(100, time + 0.3);
+                gain.gain.setValueAtTime(0.12, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
                 osc.start(time);
-                osc.stop(time + 0.4);
+                osc.stop(time + 0.3);
             }
         }
 
         // Game objects
-        const ball = { x: 400, y: 300, radius: 10, velocityX: 5, velocityY: 5, speed: 7, color: '#fff' };
-        const user = { x: 0, y: 250, width: 10, height: 100, score: 0, color: '#0f0' };
-        const com = { x: 790, y: 250, width: 10, height: 100, score: 0, color: '#ff0000' };
-        const net = { x: 399, y: 0, height: 10, width: 2, color: '#444' };
+        const ball = { x: 400, y: 300, radius: 10, velocityX: 6, velocityY: 6, speed: 7.5, color: '#ffffff' };
+        const user = { x: 15, y: 250, width: 12, height: 100, score: 0, color: '#00ffff' };
+        const com = { x: 773, y: 250, width: 12, height: 100, score: 0, color: '#ff00ff' };
+        const net = { x: 399, y: 0, height: 15, width: 2, color: '#222244' };
 
-        // Event Listeners
         musicBtn.addEventListener("click", toggleMusic);
 
         canvas.addEventListener("mousemove", (event) => {
@@ -216,7 +248,6 @@
 
         canvas.addEventListener("click", () => {
             initAudio(); 
-            
             if (gameState === 'START') {
                 gameState = 'PLAYING';
                 startMusic(); 
@@ -228,28 +259,44 @@
             }
         });
 
-        // Drawing Functions
         function drawRect(x, y, w, h, color) {
             context.fillStyle = color;
             context.fillRect(x, y, w, h);
         }
 
-        function drawBall(x, y, r, color) {
+        function drawGlowingBall(x, y, r, color) {
+            context.save();
+            context.shadowBlur = 20;
+            context.shadowColor = color;
             context.fillStyle = color;
             context.beginPath();
             context.arc(x, y, r, 0, Math.PI * 2, true);
             context.closePath();
             context.fill();
+            context.restore();
         }
 
-        function drawText(text, x, y, font = "75px 'Courier New'") {
-            context.fillStyle = '#fff';
+        function drawGlowingRect(x, y, w, h, color) {
+            context.save();
+            context.shadowBlur = 15;
+            context.shadowColor = color;
+            context.fillStyle = color;
+            context.fillRect(x, y, w, h);
+            context.restore();
+        }
+
+        function drawText(text, x, y, font = "75px 'Courier New'", color = "#fff") {
+            context.save();
+            context.shadowBlur = 10;
+            context.shadowColor = color;
+            context.fillStyle = color;
             context.font = font;
             context.fillText(text, x, y);
+            context.restore();
         }
 
         function drawNet() {
-            for (let i = 0; i <= canvas.height; i += 20) {
+            for (let i = 0; i <= canvas.height; i += 25) {
                 drawRect(net.x, net.y + i, net.width, net.height, net.color);
             }
         }
@@ -272,7 +319,7 @@
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
             ball.velocityX = -ball.velocityX;
-            ball.speed = 7;
+            ball.speed = 7.5;
         }
 
         function update() {
@@ -281,32 +328,37 @@
             ball.x += ball.velocityX;
             ball.y += ball.velocityY;
 
-            // Computer AI
-            com.y += ((ball.y - (com.y + com.height / 2))) * 0.08;
+            // Smooth AI tracking with slight reaction lag
+            com.y += ((ball.y - (com.y + com.height / 2))) * 0.09;
 
-            // Wall collisions
+            // Wall collisions (Top/Bottom)
             if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
                 ball.velocityY = -ball.velocityY;
                 playSound('wall');
+                createParticles(ball.x, ball.y, '#ffffff');
             }
 
             let player = (ball.x + ball.radius < canvas.width / 2) ? user : com;
 
+            // Paddle collisions
             if (collision(ball, player)) {
                 playSound('hit', ball.speed);
+                createParticles(ball.x, ball.y, player.color);
+
                 let collidePoint = (ball.y - (player.y + player.height / 2)) / (player.height / 2);
                 let angleRad = (Math.PI / 4) * collidePoint;
                 let direction = (ball.x + ball.radius < canvas.width / 2) ? 1 : -1;
 
                 ball.velocityX = direction * ball.speed * Math.cos(angleRad);
                 ball.velocityY = ball.speed * Math.sin(angleRad);
-                ball.speed += 0.3; // Speed up
+                ball.speed += 0.35; // Progressive speed boost
             }
 
-            // Scoring
+            // Scoring logic
             if (ball.x - ball.radius < 0) {
                 com.score++;
                 playSound('score');
+                createParticles(0, ball.y, '#ff00ff');
                 if (com.score >= 5) {
                     gameState = 'GAMEOVER';
                     winnerText = "CPU WINS";
@@ -314,6 +366,7 @@
             } else if (ball.x + ball.radius > canvas.width) {
                 user.score++;
                 playSound('score');
+                createParticles(canvas.width, ball.y, '#00ffff');
                 if (user.score >= 5) {
                     gameState = 'GAMEOVER';
                     winnerText = "YOU WIN!";
@@ -322,29 +375,31 @@
         }
 
         function draw() {
-            drawRect(0, 0, canvas.width, canvas.height, '#000');
+            drawRect(0, 0, canvas.width, canvas.height, '#020208');
             
             if (gameState === 'START') {
-                drawText("ARCADE PONG", canvas.width / 2 - 230, canvas.height / 2 - 40, "70px 'Courier New'");
-                
+                drawText("NEON PONG", canvas.width / 2 - 200, canvas.height / 2 - 40, "65px 'Courier New'", "#00ffff");
                 if (Math.floor(Date.now() / 500) % 2 === 0) {
-                    drawText("CLICK HERE TO START", canvas.width / 2 - 160, canvas.height / 2 + 30, "25px 'Courier New'");
+                    drawText("CLICK TO START GAME", canvas.width / 2 - 170, canvas.height / 2 + 30, "22px 'Courier New'", "#ff00ff");
                 }
                 return; 
             }
 
             drawNet();
-            drawText(user.score, canvas.width / 4, canvas.height / 5);
-            drawText(com.score, 3 * canvas.width / 4, canvas.height / 5);
-            drawRect(user.x, user.y, user.width, user.height, user.color);
-            drawRect(com.x, com.y, com.width, com.height, com.color);
-            drawBall(ball.x, ball.y, ball.radius, ball.color);
+            drawText(user.score, canvas.width / 4, canvas.height / 5, "75px 'Courier New'", "#00ffff");
+            drawText(com.score, 3 * canvas.width / 4, canvas.height / 5, "75px 'Courier New'", "#ff00ff");
+            
+            drawGlowingRect(user.x, user.y, user.width, user.height, user.color);
+            drawGlowingRect(com.x, com.y, com.width, com.height, com.color);
+            
+            updateAndDrawParticles();
+            drawGlowingBall(ball.x, ball.y, ball.radius, ball.color);
 
             if (gameState === 'GAMEOVER') {
-                context.fillStyle = "rgba(0, 0, 0, 0.8)";
+                context.fillStyle = "rgba(2, 2, 8, 0.85)";
                 context.fillRect(0, 0, canvas.width, canvas.height);
-                drawText(winnerText, canvas.width / 2 - 150, canvas.height / 2, "60px 'Courier New'");
-                drawText("CLICK TO RESTART", canvas.width / 2 - 120, canvas.height / 2 + 50, "25px 'Courier New'");
+                drawText(winnerText, canvas.width / 2 - 150, canvas.height / 2, "60px 'Courier New'", winnerText.includes("WIN") ? "#00ffff" : "#ff00ff");
+                drawText("CLICK TO PLAY AGAIN", canvas.width / 2 - 130, canvas.height / 2 + 50, "22px 'Courier New'", "#ffffff");
             }
         }
 

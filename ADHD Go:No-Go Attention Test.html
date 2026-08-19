@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADHD Go/No-Go Attention Test (Spacebar Enabled)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .instructions {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .stimulus-box {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            font-weight: 900;
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            border-radius: 0.75rem;
+            user-select: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        button.action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button.action-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        button.action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-summary {
+            display: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Go/No-Go Attention & Impulse Test</h1>
+    
+    <div class="instructions" id="instructions-text">
+        <b>Rules:</b> Letters flash on screen. Press your keyboard <b>Spacebar</b> or tap the button below for every letter <b>EXCEPT 'X'</b>. When an 'X' appears, do <b>NOT</b> press anything!
+    </div>
+
+    <div class="stimulus-box" id="stimulus-display">-</div>
+
+    <div class="stats-grid">
+        <div class="stat-card">Trial: <span id="trial-count">0 / 20</span></div>
+        <div class="stat-card">Omissions (Missed): <span id="omission-count">0</span></div>
+        <div class="stat-card">Commissions (False Alarm): <span id="commission-count">0</span></div>
+        <div class="stat-card">Avg Speed: <span id="avg-speed">0ms</span></div>
+    </div>
+
+    <button class="action-btn" id="go-btn" onclick="handleGoPress()" disabled>PRESS (SPACEBAR OR TAP)</button>
+    <button class="action-btn" id="start-btn" onclick="startTest()">Start Test</button>
+
+    <div class="result-summary" id="result-summary"></div>
+</div>
+
+<script>
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'H', 'K', 'L', 'M', 'X'];
+    let currentTrial = 0;
+    let totalTrials = 20;
+    let currentLetter = '';
+    let isTarget = false;
+    let testActive = false;
+    
+    let omissions = 0; // missed targets
+    let commissions = 0; // pressed on X
+    let reactionTimes = [];
+    let trialStartTime = 0;
+    let timeoutId = null;
+    let respondedThisTrial = false;
+
+    // Listen for Spacebar presses globally
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault(); // Stop page scrolling
+            handleGoPress();
+        }
+    });
+
+    function startTest() {
+        currentTrial = 0;
+        omissions = 0;
+        commissions = 0;
+        reactionTimes = [];
+        testActive = true;
+        document.getElementById('start-btn').style.display = 'none';
+        document.getElementById('go-btn').disabled = false;
+        document.getElementById('result-summary').style.display = 'none';
+        runNextTrial();
+    }
+
+    function runNextTrial() {
+        if (currentTrial >= totalTrials) {
+            endTest();
+            return;
+        }
+
+        currentTrial++;
+        document.getElementById('trial-count').innerText = `${currentTrial} / ${totalTrials}`;
+        respondedThisTrial = false;
+
+        // Pick random letter (30% chance for 'X' to test impulse inhibition)
+        const isX = Math.random() < 0.3;
+        currentLetter = isX ? 'X' : letters[Math.floor(Math.random() * (letters.length - 1))];
+        isTarget = !isX;
+
+        document.getElementById('stimulus-display').innerText = currentLetter;
+        document.getElementById('stimulus-display').style.color = isX ? 'var(--danger)' : 'var(--text-main)';
+        
+        trialStartTime = Date.now();
+
+        // Stimulus visible for 900ms, followed by blank gap
+        timeoutId = setTimeout(() => {
+            if (isTarget && !respondedThisTrial) {
+                omissions++;
+                document.getElementById('omission-count').innerText = omissions;
+            }
+            runNextTrial();
+        }, 1100);
+    }
+
+    function handleGoPress() {
+        if (!testActive) return;
+        if (respondedThisTrial) return; // Prevent multiple triggers in a single trial
+
+        respondedThisTrial = true;
+        const rt = Date.now() - trialStartTime;
+
+        if (isTarget) {
+            reactionTimes.push(rt);
+            const avg = Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length);
+            document.getElementById('avg-speed').innerText = `${avg}ms`;
+        } else {
+            // Commission error: user pressed on 'X'
+            commissions++;
+            document.getElementById('commission-count').innerText = commissions;
+        }
+    }
+
+    function endTest() {
+        testActive = false;
+        clearTimeout(timeoutId);
+        document.getElementById('stimulus-display').innerText = '✓';
+        document.getElementById('stimulus-display').style.color = 'var(--success)';
+        document.getElementById('go-btn').disabled = true;
+        document.getElementById('start-btn').style.display = 'block';
+        document.getElementById('start-btn').innerText = 'Restart Test';
+
+        const summary = document.getElementById('result-summary');
+        summary.style.display = 'block';
+        summary.innerHTML = `<b>Test Completed — Clinical Summary:</b><br>` +
+            `- <b>Omission Errors (${omissions}):</b> Missed targets indicate lapses in sustained attention.<br>` +
+            `- <b>Commission Errors (${commissions}):</b> False responses on 'X' indicate inhibitory control issues (impulsivity).<br>` +
+            `- <b>Average Reaction Time:</b> ${reactionTimes.length ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) : 0}ms.`;
+    }
+</script>
+
+</body>
+</html>

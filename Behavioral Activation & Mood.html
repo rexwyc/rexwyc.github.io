@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT & Depression Simulator (Randomized Choices)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --mood-color: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .status-panel {
+            background: #f1f5f9;
+            padding: 0.85rem;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+        }
+
+        .stats-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .meter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .meter-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 50%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .scenario-box {
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.5;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        button.choice-btn {
+            background: white;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+
+        button.choice-btn:hover {
+            background: #f1f5f9;
+            border-color: var(--primary);
+        }
+
+        .explanation-box {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            display: none;
+        }
+
+        button.action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            display: none;
+        }
+
+        button.action-btn:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>CBT & Depression Simulator</h1>
+        <p>Behavioral Activation, Mood Tracking & Randomized Choices</p>
+    </header>
+
+    <div class="status-panel">
+        <div class="stats-top">
+            <span id="progress-text">Scenario 1 / 50</span>
+            <span id="score-text">Resilience: 0</span>
+        </div>
+        <div class="meter-group">
+            <span>Energy Reserve: <span id="energy-val">50</span>%</span>
+            <div class="meter-bar"><div class="meter-fill" id="energy-fill" style="width: 50%;"></div></div>
+        </div>
+        <div class="meter-group">
+            <span>Mood / Activation Level: <span id="mood-val">40</span>%</span>
+            <div class="meter-bar"><div class="meter-fill" id="mood-fill" style="width: 40%; background: var(--mood-color);"></div></div>
+        </div>
+    </div>
+
+    <div class="scenario-box" id="scenario-text">Loading scenario...</div>
+
+    <div class="choices-container" id="choices-container"></div>
+
+    <div class="explanation-box" id="explanation-box"></div>
+
+    <button class="action-btn" id="next-btn" onclick="nextScenario()">Next Scenario</button>
+</div>
+
+<script>
+    // Web Audio API Synthesizer
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playSound(type) {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'success') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'warning') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.setValueAtTime(185, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        }
+    }
+
+    // State variables
+    let energy = 50;
+    let mood = 40;
+    let score = 0;
+    let currentIndex = 0;
+
+    // 10 Core Structured Scenarios (Loops infinitely through 50 steps)
+    const scenarios = [
+        {
+            s: "You wake up feeling heavy inertia and fatigue. The thought says: 'Today is going to be terrible, why bother getting up?'",
+            c1: { text: "Stay in bed and pull the covers over your head to avoid everything.", score: -10, energyDelta: -5, moodDelta: -10, type: 'warning', exp: "Step 1: Yielding to avoidance reinforces depressive inertia. Step 2: Isolation compounds negative thoughts." },
+            c2: { text: "Acknowledge the heavy feeling, but sit up on the edge of the bed and drink water.", score: 15, energyDelta: 10, moodDelta: 15, type: 'success', exp: "Step 1: Behavioral Activation principle. Step 2: Micro-actions bypass executive paralysis without needing high initial energy." }
+        },
+        {
+            s: "You look at your messy room and feel overwhelmed, thinking: 'It's too dirty, I'll never clean it all.'",
+            c1: { text: "Close the bedroom door and ignore it entirely.", score: -5, energyDelta: -2, moodDelta: -5, type: 'warning', exp: "Step 1: Avoidance provides short-term relief but increases long-term anxiety and guilt." },
+            c2: { text: "Pick up just 3 items and put them away as a micro-goal.", score: 10, energyDelta: 5, moodDelta: 12, type: 'success', exp: "Step 1: Chunking tasks breaks down cognitive overload. Step 2: Small momentum builds self-efficacy." }
+        },
+        {
+            s: "A friend invites you to a brief coffee meetup, but your mind whispers: 'They only asked out of pity, you'll just drag them down.'",
+            c1: { text: "Cancel via text and stay home alone.", score: -10, energyDelta: -5, moodDelta: -12, type: 'warning', exp: "Step 1: Mind reading (cognitive distortion). Step 2: Withdrawal deepens depressive loops." },
+            c2: { text: "Go for 20 minutes; allow yourself to leave early if needed.", score: 20, energyDelta: 10, moodDelta: 20, type: 'success', exp: "Step 1: Behavioral experiment. Step 2: Testing assumptions against reality rather than accepting thoughts as facts." }
+        },
+        {
+            s: "You make a minor mistake on a work or school task and think: 'I am completely incompetent at everything.'",
+            c1: { text: "Spiral into self-criticism and give up on the rest of the project.", score: -15, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: All-or-nothing thinking. Step 2: Labeling errors as total identity failure." },
+            c2: { text: "Separate the specific mistake from your overall capability and correct it.", score: 15, energyDelta: 5, moodDelta: 15, type: 'success', exp: "Step 1: Cognitive reframing. Step 2: Recognizing that mistakes are isolated events, not global traits." }
+        },
+        {
+            s: "Your evening is approaching and you haven't accomplished much. You feel deep guilt.",
+            c1: { text: "Spend hours scrolling social media to numb the negative emotions.", score: -10, energyDelta: -15, moodDelta: -10, type: 'warning', exp: "Step 1: Numbing behaviors prevent processing emotions and drain mental energy." },
+            c2: { text: "List even the smallest thing you did today (like eating or breathing) as a valid win.", score: 15, energyDelta: 8, moodDelta: 18, type: 'success', exp: "Step 1: Self-compassion. Step 2: Redefining productivity during low-energy periods." }
+        },
+        {
+            s: "You feel sudden anxiety about an upcoming task next week and your mind starts catastrophizing.",
+            c1: { text: "Worry continuously and replay worst-case scenarios in your head.", score: -10, energyDelta: -10, moodDelta: -10, type: 'warning', exp: "Step 1: Rumination loops amplify perceived threat levels." },
+            c2: { text: "Write down the specific fear and identify one single controllable step you can take now.", score: 20, energyDelta: 10, moodDelta: 20, type: 'success', exp: "Step 1: Externalizing anxiety. Step 2: Shifting from passive worry to active problem-solving." }
+        },
+        {
+            s: "You haven't been outside in two days. Fresh air and sunlight are available.",
+            c1: { text: "Stay indoors behind closed blinds; indoor lighting is fine.", score: -5, energyDelta: -2, moodDelta: -5, type: 'warning', exp: "Step 1: Sensory deprivation can subtly depress mood regulation." },
+            c2: { text: "Step outside onto the porch or near an open window for 5 minutes.", score: 15, energyDelta: 12, moodDelta: 18, type: 'success', exp: "Step 1: Environmental shift. Step 2: Natural light and gentle sensory changes stimulate neurochemical balance." }
+        },
+        {
+            s: "You compare your current slow pace to someone else's high productivity.",
+            c1: { text: "Conclude that you are lazy and broken compared to them.", score: -15, energyDelta: -5, moodDelta: -15, type: 'warning', exp: "Step 1: Unfair upward comparison ignoring individual baselines and energy reserves." },
+            c2: { text: "Remind yourself that healing and recovery require different pacing than peak output.", score: 15, energyDelta: 5, moodDelta: 15, type: 'success', exp: "Step 1: Validating personal context. Step 2: Releasing unrealistic self-expectations." }
+        },
+        {
+            s: "You feel an urge to isolate and stop replying to messages.",
+            c1: { text: "Ghost everyone to avoid the pressure of communication.", score: -10, energyDelta: -5, moodDelta: -10, type: 'warning', exp: "Step 1: Isolation feels safe initially but breeds loneliness and depressive reinforcement." },
+            c2: { text: "Send a low-effort text to one trusted person: 'Low energy today, but thinking of you.'", score: 15, energyDelta: 8, moodDelta: 15, type: 'success', exp: "Step 1: Maintaining connection without demanding high emotional performance." }
+        },
+        {
+            s: "A negative automatic thought pops up repeatedly throughout the day.",
+            c1: { text: "Fight aggressively with the thought, getting angry at yourself for having it.", score: -10, energyDelta: -10, moodDelta: -10, type: 'warning', exp: "Step 1: Thought suppression often backfires, making the thought stickier." },
+            c2: { text: "Practice cognitive diffusion: 'I notice I am having the thought that I am failing.'", score: 20, energyDelta: 10, moodDelta: 22, type: 'success', exp: "Step 1: Defusion technique. Step 2: Creating psychological distance between you and the thought." }
+        },
+        {
+            s: "You need to start a daunting assignment, but looking at it makes your chest tight.",
+            c1: { text: "Procrastinate by reorganizing your entire desk or cleaning the kitchen.", score: -5, energyDelta: -10, moodDelta: -5, type: 'warning', exp: "Step 1: Productive procrastination avoids the core stressor. Step 2: Anxiety remains unresolved." },
+            c2: { text: "Set a timer for 10 minutes and commit to working on just the outline, then stop if needed.", score: 18, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: The 10-minute rule lowers activation energy. Step 2: Permission to stop removes pressure." }
+        },
+        {
+            s: "You feel a wave of intense sadness and want to suppress it to stay 'strong'.",
+            c1: { text: "Bury it down, distract yourself with a screen, and force a smile.", score: -10, energyDelta: -8, moodDelta: -10, type: 'warning', exp: "Step 1: Emotional suppression increases physiological stress. Step 2: Emotions demand expression." },
+            c2: { text: "Allow yourself to cry or feel the sadness for 10 minutes in a safe space.", score: 15, energyDelta: 5, moodDelta: 12, type: 'success', exp: "Step 1: Emotional processing allows feelings to pass. Step 2: Acceptance reduces secondary suffering." }
+        },
+        {
+            s: "Your inner critic tells you that you are a burden to everyone around you.",
+            c1: { text: "Agree with the critic and apologize repeatedly to people for existing.", score: -15, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Internalizing shame. Step 2: Reassurance-seeking behaviors can strain relationships." },
+            c2: { text: "Challenge the thought: 'What evidence do I have that I am a burden versus what evidence shows I am valued?'", score: 18, energyDelta: 8, moodDelta: 18, type: 'success', exp: "Step 1: Evidence examination. Step 2: Countering cognitive distortion with objective facts." }
+        },
+        {
+            s: "You wake up in the middle of the night with racing thoughts about money and the future.",
+            c1: { text: "Lie awake tossing and turning while calculating worst-case financial outcomes.", score: -12, energyDelta: -15, moodDelta: -12, type: 'warning', exp: "Step 1: Nighttime problem-solving is skewed by fatigue. Step 2: Reinforces insomnia loops." },
+            c2: { text: "Get out of bed, write the thoughts down on a notepad to 'park' them, and read a dull book.", score: 15, energyDelta: 5, moodDelta: 15, type: 'success', exp: "Step 1: Brain dump offloads cognitive load. Step 2: Breaking the bed-worry association." }
+        },
+        {
+            s: "You feel physically tense, jaw clenched, shoulders shrugged up toward your ears.",
+            c1: { text: "Ignore your body and push through your current activity.", score: -5, energyDelta: -5, moodDelta: -5, type: 'warning', exp: "Step 1: Disconnecting from somatic cues maintains chronic stress cycles." },
+            c2: { text: "Take 3 deep, slow belly breaths and consciously drop your shoulders.", score: 12, energyDelta: 10, moodDelta: 14, type: 'success', exp: "Step 1: Somatic regulation. Step 2: Activating the parasympathetic nervous system via breath." }
+        },
+        {
+            s: "Someone gives you constructive feedback, but your immediate emotional reaction is severe defensiveness.",
+            c1: { text: "Snap back at them or dismiss their feedback entirely to protect your ego.", score: -12, energyDelta: -8, moodDelta: -10, type: 'warning', exp: "Step 1: Ego-defense blocks personal growth. Step 2: Damages interpersonal trust." },
+            c2: { text: "Pause for five seconds, take a breath, and say: 'Thank you for sharing, let me reflect on that.'", score: 16, energyDelta: 6, moodDelta: 16, type: 'success', exp: "Step 1: Creating a gap between stimulus and response. Step 2: Preserving emotional maturity." }
+        },
+        {
+            s: "You have a free afternoon, but low energy makes everything feel gray and unappealing.",
+            c1: { text: "Lie motionless on the couch staring at the ceiling for four hours.", score: -10, energyDelta: -10, moodDelta: -12, type: 'warning', exp: "Step 1: Sensory deprivation and rumination foster depressive states." },
+            c2: { text: "Put on a comforting podcast or instrumental music while doing a gentle stretch or puzzle.", score: 15, energyDelta: 10, moodDelta: 16, type: 'success', exp: "Step 1: Low-demand engagement. Step 2: Gentle stimulation without performance pressure." }
+        },
+        {
+            s: "You experience a sudden wave of imposter syndrome right before a meeting or presentation.",
+            c1: { text: "Convince yourself everyone will see right through you and panic quietly.", score: -12, energyDelta: -10, moodDelta: -12, type: 'warning', exp: "Step 1: Amplifying self-doubt through catastrophic forecasting." },
+            c2: { text: "Review a short list of past accomplishments or positive feedback you've previously received.", score: 18, energyDelta: 8, moodDelta: 18, type: 'success', exp: "Step 1: Fact-checking self-doubt. Step 2: Grounding identity in past competence." }
+        },
+        {
+            s: "You notice you've been eating poorly, skipping meals, and neglecting basic hydration.",
+            c1: { text: "Keep ignoring nutrition because cooking feels like an impossible mountain.", score: -8, energyDelta: -12, moodDelta: -8, type: 'warning', exp: "Step 1: Poor physical fuel directly impacts mood stability and cognitive function." },
+            c2: { text: "Eat the easiest possible nourishing option (like toast with peanut butter) and drink a full glass of water.", score: 15, energyDelta: 12, moodDelta: 14, type: 'success', exp: "Step 1: Prioritizing baseline physiological needs. Step 2: Self-care without perfectionism." }
+        },
+        {
+            s: "You catch yourself catastrophizing over a minor scheduling mix-up.",
+            c1: { text: "Assume everything is ruined and ruin the rest of your day out of frustration.", score: -12, energyDelta: -8, moodDelta: -14, type: 'warning', exp: "Step 1: Catastrophizing blows minor inconveniences out of proportion." },
+            c2: { text: "Ask yourself: 'Will this matter in a month?' and look for a simple work-around.", score: 16, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: Perspective-taking. Step 2: Problem-focused coping." }
+        },
+        {
+            s: "You feel burned out from work or studies, but guilt tells you that resting makes you lazy.",
+            c1: { text: "Push through exhaustion until you experience complete physical or mental burnout.", score: -15, energyDelta: -20, moodDelta: -15, type: 'warning', exp: "Step 1: Ignoring burnout signals leads to forced system shutdowns (illness/severe crashes)." },
+            c2: { text: "Intentionally schedule a guilt-free rest block, recognizing rest as a biological necessity.", score: 20, energyDelta: 15, moodDelta: 20, type: 'success', exp: "Step 1: Rest reframed as productivity maintenance. Step 2: Dismantling toxic productivity culture." }
+        },
+        {
+            s: "You feel lonely in a crowded room or social setting, amplifying feelings of alienation.",
+            c1: { text: "Withdraw into a corner, scroll your phone defensively, and leave early in bitterness.", score: -10, energyDelta: -5, moodDelta: -12, type: 'warning', exp: "Step 1: Defensive withdrawal prevents authentic connection and reinforces isolation." },
+            c2: { text: "Focus on one genuine, curious question to ask someone near you.", score: 16, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: Shifting focus outward from self-consciousness. Step 2: Fostering micro-connections." }
+        },
+        {
+            s: "You feel paralyzed by having too many choices for what to do next.",
+            c1: { text: "Keep analyzing all options until you are too exhausted to do anything.", score: -8, energyDelta: -10, moodDelta: -8, type: 'warning', exp: "Step 1: Analysis paralysis leads to decision fatigue and inertia." },
+            c2: { text: "Flip a coin or arbitrarily pick one option just to break the deadlock.", score: 14, energyDelta: 8, moodDelta: 14, type: 'success', exp: "Step 1: Breaking decision loops through random action. Step 2: Action precedes motivation." }
+        },
+        {
+            s: "You harbor a lingering resentment toward someone who hurt or slighted you.",
+            c1: { text: "Replay the scenario in your mind repeatedly, stoking the anger like fuel.", score: -12, energyDelta: -12, moodDelta: -12, type: 'warning', exp: "Step 1: Rumination keeps the emotional wound fresh and drains your own energy." },
+            c2: { text: "Acknowledge the hurt, but consciously decide to release the mental grip for your own peace.", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Radical acceptance. Step 2: Letting go as an act of self-preservation, not condoning." }
+        },
+        {
+            s: "You feel like your progress toward your goals is painfully slow and invisible.",
+            c1: { text: "Conclude that you are getting nowhere and consider quitting entirely.", score: -15, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Discounting gradual progress. Step 2: Impatience blinding you to compounding growth." },
+            c2: { text: "Look back at where you were three months ago and list three subtle improvements.", score: 18, energyDelta: 8, moodDelta: 20, type: 'success', exp: "Step 1: Macro-perspective check. Step 2: Recognizing slow progress is still progress." }
+        },
+        {
+            s: "You experience an unexpected rejection or setback in a personal or professional goal.",
+            c1: { text: "Internalize it as proof that you are fundamentally unlovable or incapable.", score: -15, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Personalization cognitive distortion. Step 2: Tying external outcomes to internal worth." },
+            c2: { text: "Allow yourself to feel disappointed, but separate external fit from internal value.", score: 18, energyDelta: 6, moodDelta: 16, type: 'success', exp: "Step 1: Emotional validation. Step 2: Protecting self-worth from situational mismatches." }
+        },
+        {
+            s: "You notice your screen time has skyrocketed and you feel numb and foggy-headed.",
+            c1: { text: "Keep tapping and scrolling mindlessly because opening a book feels too hard.", score: -10, energyDelta: -12, moodDelta: -10, type: 'warning', exp: "Step 1: Digital doomscrolling exacerbates brain fog and dopamine depletion." },
+            c2: { text: "Set your phone across the room, lie down, and close your eyes in silence for 10 minutes.", score: 15, energyDelta: 12, moodDelta: 15, type: 'success', exp: "Step 1: Dopamine fasting/sensory rest. Step 2: Clearing mental clutter through quietude." }
+        },
+        {
+            s: "You feel an overwhelming urge to achieve perfection on a task, causing severe delay.",
+            c1: { text: "Keep tweaking minor details endlessly, terrified of putting out imperfect work.", score: -12, energyDelta: -15, moodDelta: -10, type: 'warning', exp: "Step 1: Perfectionism disguised as high standards. Step 2: Paralysis by analysis." },
+            c2: { text: "Adopt the 'done is better than perfect' mindset and ship the current version.", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Overcoming perfectionist paralysis. Step 2: Releasing the fear of judgment." }
+        },
+        {
+            s: "You feel irritable and snappy at minor inconveniences, realizing your patience is thin.",
+            c1: { text: "Snap at people around you and justify your irritability because 'everyone is annoying'.", score: -10, energyDelta: -8, moodDelta: -10, type: 'warning', exp: "Step 1: Externalizing emotional dysregulation damages relationships." },
+            c2: { text: "Step away briefly, take a breath, and recognize that irritability is a sign of internal depletion.", score: 16, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: Self-awareness of fatigue cues. Step 2: Pausing before reacting." }
+        },
+        {
+            s: "You feel a deep sense of loneliness and feel awkward reaching out to anyone.",
+            c1: { text: "Assume nobody wants to talk to you and isolate further in silence.", score: -12, energyDelta: -5, moodDelta: -12, type: 'warning', exp: "Step 1: Loneliness reinforced by avoidance loops." },
+            c2: { text: "Engage in a low-stakes public interaction, like smiling at a cashier or petting a neighbor's dog.", score: 15, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: Micro-belonging. Step 2: Fostering gentle community connection without high demands." }
+        },
+        {
+            s: "You wake up feeling anxious with no specific reason or identifiable trigger.",
+            c1: { text: "Scour your mind frantically trying to find 'what is wrong' until you invent a problem.", score: -10, energyDelta: -10, moodDelta: -10, type: 'warning', exp: "Step 1: Searching for phantom triggers creates unnecessary psychological stress." },
+            c2: { text: "Treat it as harmless physiological static: 'My nervous system is activated, but I am safe right now.'", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: De-escalating somatic anxiety. Step 2: Acceptance over frantic problem-solving." }
+        },
+        {
+            s: "You catch yourself engaging in intense self-blame over a past mistake you cannot change.",
+            c1: { text: "Beat yourself up mentally, believing punishment will somehow fix the past.", score: -15, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Retrospective guilt is entirely useless and emotionally draining." },
+            c2: { text: "Practice self-forgiveness: 'I did the best I could with the awareness I had at that time.'", score: 18, energyDelta: 10, moodDelta: 20, type: 'success', exp: "Step 1: Compassionate re-evaluation. Step 2: Releasing unchangeable history." }
+        },
+        {
+            s: "You have multiple important tasks due soon, and panic makes your mind go blank.",
+            c1: { text: "Freeze entirely, freeze out communications, and stare blankly at your screen.", score: -15, energyDelta: -12, moodDelta: -15, type: 'warning', exp: "Step 1: Fight-or-flight freeze response locks executive functioning." },
+            c2: { text: "Brain-dump everything onto a paper list, then pick just the single most urgent item to start.", score: 20, energyDelta: 10, moodDelta: 20, type: 'success', exp: "Step 1: Externalizing chaos. Step 2: Restoring executive control through prioritization." }
+        },
+        {
+            s: "You feel uninspired and creatively blocked on a project you usually love.",
+            c1: { text: "Force yourself to sit there staring at a blank page for hours in frustration.", score: -10, energyDelta: -12, moodDelta: -10, type: 'warning', exp: "Step 1: Forced output against a block breeds resentment toward the work." },
+            c2: { text: "Step away to do something completely unrelated (like washing dishes or walking) to let the subconscious process.", score: 16, energyDelta: 10, moodDelta: 16, type: 'success', exp: "Step 1: Incubation period principle. Step 2: Engaging default mode network for creative breakthroughs." }
+        },
+        {
+            s: "You feel like you are falling behind your peers in life milestones (career, relationships, etc.).",
+            c1: { text: "Conclude your life is a failure and spiral into deep despair.", score: -15, energyDelta: -8, moodDelta: -15, type: 'warning', exp: "Step 1: Societal timeline pressure creates artificial inadequacy." },
+            c2: { text: "Remind yourself that life is not a linear race and everyone unfolds at their own unique pace.", score: 16, energyDelta: 6, moodDelta: 18, type: 'success', exp: "Step 1: Reframing timelines. Step 2: Releasing comparative suffering." }
+        },
+        {
+            s: "You feel physical exhaustion from a long week, but your mind is still buzzing with worries.",
+            c1: { text: "Drink coffee or energy drinks to stay wired and keep worrying.", score: -15, energyDelta: -15, moodDelta: -12, type: 'warning', exp: "Step 1: Stimulants amplify anxiety when the body desperately needs rest." },
+            c2: { text: "Take a warm shower, dim the lights, and let your body rest even if your mind is still active.", score: 16, energyDelta: 12, moodDelta: 16, type: 'success', exp: "Step 1: Signaling safety to the body. Step 2: Allowing physical recovery to precede mental calm." }
+        },
+        {
+            s: "You receive harsh criticism online or in person that triggers deep insecurity.",
+            c1: { text: "Retaliate aggressively or ruminate on the comment for the rest of the day.", score: -12, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Giving critics rent-free space in your mind. Step 2: Reactivity drains personal power." },
+            c2: { text: "Ask yourself if there is any objective truth to learn from it, then discard the toxic delivery.", score: 16, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: Separating signal from noise in feedback. Step 2: Emotional resilience." }
+        },
+        {
+            s: "You feel stuck in a monotonous routine and every day feels completely identical and gray.",
+            c1: { text: "Resign yourself to the monotony and numb yourself with routine scrolling.", score: -10, energyDelta: -10, moodDelta: -10, type: 'warning', exp: "Step 1: Passive resignation deepens lethargy." },
+            c2: { text: "Introduce one tiny novelty: take a new walking route, eat a different snack, or wear a brighter color.", score: 16, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Micro-novelty stimulates dopamine. Step 2: Breaking psychological stagnation." }
+        },
+        {
+            s: "You feel a strong urge to check your phone for notifications every two minutes.",
+            c1: { text: "Keep refreshing apps compulsively, feeding the variable-reward loop.", score: -10, energyDelta: -10, moodDelta: -10, type: 'warning', exp: "Step 1: Intermittent reinforcement keeps anxiety and distraction high." },
+            c2: { text: "Put your phone in another room for 30 minutes and sit with the initial phantom itch.", score: 15, energyDelta: 10, moodDelta: 16, type: 'success', exp: "Step 1: Urge surfing. Step 2: Reclaiming attention span from algorithmic hooks." }
+        },
+        {
+            s: "You make plans to see friends, but as the time approaches, intense social anxiety hits.",
+            c1: { text: "Invent a fake emergency excuse at the last minute to get out of going.", score: -10, energyDelta: -5, moodDelta: -10, type: 'warning', exp: "Step 1: Avoidance reinforces the fear that social situations are dangerous." },
+            c2: { text: "Acknowledge the anxiety, get dressed anyway, and remind yourself you can leave after 30 minutes.", score: 18, energyDelta: 8, moodDelta: 18, type: 'success', exp: "Step 1: Courage over comfort. Step 2: Graded exposure to reduce social anxiety." }
+        },
+        {
+            s: "You feel an intense wave of self-hatred because of a physical or mental limitation today.",
+            c1: { text: "Berate your body or mind for not performing the way you demand.", score: -15, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Hostility toward self intensifies suffering. Step 2: Piling pain onto pain." },
+            c2: { text: "Place a hand on your chest and speak to yourself with the gentleness you'd offer a sick child.", score: 20, energyDelta: 10, moodDelta: 22, type: 'success', exp: "Step 1: Radical self-compassion. Step 2: Softening internal friction through kindness." }
+        },
+        {
+            s: "You have a difficult conversation you need to have, but you keep postponing it out of fear.",
+            c1: { text: "Let resentment build in silence while avoiding the person entirely.", score: -12, energyDelta: -10, moodDelta: -12, type: 'warning', exp: "Step 1: Unexpressed conflict festers and creates toxic emotional distance." },
+            c2: { text: "Write down your key points in advance and initiate the conversation with 'I' statements.", score: 18, energyDelta: 8, moodDelta: 18, type: 'success', exp: "Step 1: Prepared communication. Step 2: Assertive boundary-setting reduces anticipatory dread." }
+        },
+        {
+            s: "You wake up feeling unmotivated and realize you have a mountain of chores waiting.",
+            c1: { text: "Complain about how hard life is and refuse to do anything all day.", score: -10, energyDelta: -8, moodDelta: -10, type: 'warning', exp: "Step 1: Complaining reinforces helplessness. Step 2: Mess accumulates and fuels future anxiety." },
+            c2: { text: "Play upbeat music and do a '5-minute tidy' blitz, stopping happily when the timer rings.", score: 16, energyDelta: 10, moodDelta: 16, type: 'success', exp: "Step 1: Gamifying mundane chores. Step 2: Music shifts emotional baseline and energy." }
+        },
+        {
+            s: "You feel a sudden spike of jealousy seeing someone else's success or happiness.",
+            c1: { text: "Criticize them or belittle their achievement in your head to feel better.", score: -10, energyDelta: -8, moodDelta: -12, type: 'warning', exp: "Step 1: Resentment poisons your own outlook. Step 2: Scarcity mindset trap." },
+            c2: { text: "Acknowledge the envy as a sign of what *you* desire, then use it as quiet inspiration.", score: 16, energyDelta: 8, moodDelta: 16, type: 'success', exp: "Step 1: Envy as data. Step 2: Converting comparison fuel into self-directed ambition." }
+        },
+        {
+            s: "You feel utterly drained from dealing with a toxic environment or difficult person.",
+            c1: { text: "Absorb the stress internally and vent endlessly without looking for solutions.", score: -12, energyDelta: -15, moodDelta: -12, type: 'warning', exp: "Step 1: Emotional absorption without boundaries leads to secondary exhaustion." },
+            c2: { text: "Establish a strict mental boundary: 'Their behavior belongs to them, I choose not to carry it.'", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Emotional detachment and sovereignty. Step 2: Protecting your personal energy field." }
+        },
+        {
+            s: "You experience a minor health symptom and your mind immediately jumps to a scary diagnosis.",
+            c1: { text: "Go down a deep online symptom-searching rabbit hole for hours.", score: -15, energyDelta: -15, moodDelta: -15, type: 'warning', exp: "Step 1: Cyberchondria drastically amplifies health anxiety and panic loops." },
+            c2: { text: "Close the search engine, ground yourself in your physical senses, and consult a professional if needed.", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Halting compulsive reassurance-seeking. Step 2: Grounding in reality." }
+        },
+        {
+            s: "You feel like you've lost your sense of purpose and nothing you do matters.",
+            c1: { text: "Exist in a state of existential apathy, neglecting all basic responsibilities.", score: -12, energyDelta: -10, moodDelta: -15, type: 'warning', exp: "Step 1: Nihilistic surrender deepens depressive detachment." },
+            c2: { text: "Focus on micro-purpose: make someone else smile today or care for a single living plant.", score: 18, energyDelta: 10, moodDelta: 20, type: 'success', exp: "Step 1: Creating meaning through small acts of service. Step 2: Purpose is built, not found." }
+        },
+        {
+            s: "You feel an old, familiar pattern or bad habit creeping back into your life.",
+            c1: { text: "Despair and think, 'I'll never change, I'm right back where I started.'", score: -15, energyDelta: -8, moodDelta: -15, type: 'warning', exp: "Step 1: All-or-nothing thinking ignores past growth and learning." },
+            c2: { text: "Recognize that recovery is non-linear: 'I slipped into an old pattern, but I can catch it faster now.'", score: 20, energyDelta: 10, moodDelta: 20, type: 'success', exp: "Step 1: Reframing relapses as data points. Step 2: Honoring cumulative growth over perfection." }
+        },
+        {
+            s: "You are having an overwhelmingly stressful day where everything seems to go wrong.",
+            c1: { text: "Let out a torrent of frustration, scream into a pillow, and rage against the universe.", score: -8, energyDelta: -12, moodDelta: -8, type: 'warning', exp: "Step 1: Venting without grounding can heighten physiological arousal." },
+            c2: { text: "Pause, drop your shoulders, scale down expectations for the rest of the day, and take it one hour at a time.", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Triage mindset. Step 2: Lowering the bar during high-stress episodes for survival." }
+        },
+        {
+            s: "You find yourself replaying an awkward social interaction from years ago with a cringe reaction.",
+            c1: { text: "Cringe physically and beat yourself up for being so awkward back then.", score: -10, energyDelta: -8, moodDelta: -10, type: 'warning', exp: "Step 1: Ruminating over unchangeable past ghosts wastes current mental bandwidth." },
+            c2: { text: "Laugh gently at your past self: 'Everyone is too busy thinking about themselves to remember that.'", score: 18, energyDelta: 10, moodDelta: 18, type: 'success', exp: "Step 1: Humor and self-compassion. Step 2: Recognizing the spotlight effect." }
+        }
+    ];
+
+    function updateMeters() {
+        energy = Math.max(0, Math.min(100, energy));
+        mood = Math.max(0, Math.min(100, mood));
+
+        document.getElementById('energy-val').innerText = energy;
+        document.getElementById('energy-fill').style.width = energy + '%';
+
+        document.getElementById('mood-val').innerText = mood;
+        document.getElementById('mood-fill').style.width = mood + '%';
+
+        document.getElementById('score-text').innerText = `Resilience: ${score}`;
+    }
+
+    function loadScenario() {
+        const item = scenarios[currentIndex % scenarios.length];
+        const displayNum = (currentIndex % 50) + 1;
+        
+        document.getElementById('progress-text').innerText = `Scenario ${displayNum} / 50 (Infinite Loop)`;
+        document.getElementById('scenario-text').innerText = item.s;
+
+        // Randomize the order of choices so the positive/negative choices swap positions randomly
+        let currentChoices = [item.c1, item.c2];
+        if (Math.random() < 0.5) {
+            currentChoices = [item.c2, item.c1];
+        }
+
+        const container = document.getElementById('choices-container');
+        container.innerHTML = '';
+        document.getElementById('explanation-box').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+
+        currentChoices.forEach((choice, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerText = `${String.fromCharCode(65 + idx)}. ${choice.text}`;
+            btn.onclick = () => selectChoice(choice);
+            container.appendChild(btn);
+        });
+        updateMeters();
+    }
+
+    function selectChoice(choice) {
+        playSound(choice.type);
+        score += choice.score;
+        energy += choice.energyDelta;
+        mood += choice.moodDelta;
+        updateMeters();
+
+        const container = document.getElementById('choices-container');
+        container.innerHTML = ''; // Hide choices
+
+        const expBox = document.getElementById('explanation-box');
+        expBox.style.display = 'block';
+        expBox.innerHTML = `<b>Step-by-Step Psychological Rationale:</b><br>${choice.exp}`;
+
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextScenario() {
+        currentIndex++;
+        loadScenario();
+    }
+
+    window.onload = loadScenario;
+</script>
+
+</body>
+</html>
