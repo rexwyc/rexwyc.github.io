@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Trig Mastery Quiz</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --correct: #10b981;
+      --wrong: #ef4444;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header & Scoreboard */
+    header {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--subtext);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .streak-val {
+      color: #f59e0b;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    /* Question Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--subtext);
+      font-weight: 600;
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* Options Grid */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 16px;
+      background: #0f172a;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:active {
+      transform: scale(0.98);
+    }
+
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    .option-btn.wrong {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* Explanation Box */
+    .explanation-box {
+      display: none;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .explanation-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .explanation-step {
+      font-size: 0.875rem;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .explanation-step:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Next Button */
+    .next-btn {
+      display: none;
+      width: 100%;
+      min-height: 52px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      transition: background 0.2s;
+    }
+
+    .next-btn:active {
+      background: var(--accent-hover);
+    }
+
+    /* Round Banner */
+    .round-banner {
+      display: none;
+      text-align: center;
+      background: #f59e0b;
+      color: #000;
+      padding: 8px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <div class="stat-box">
+      <span class="stat-label">Score</span>
+      <span class="stat-value" id="score">0</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">Streak</span>
+      <span class="stat-value streak-val" id="streak">🔥 0</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">High Score</span>
+      <span class="stat-value" id="high-score">0</span>
+    </div>
+  </header>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress"></div>
+  </div>
+
+  <div class="round-banner" id="round-banner">
+    🎉 Loop Complete! Round <span id="round-num">2</span> starting with bonus points!
+  </div>
+
+  <main class="card">
+    <div class="question-meta">
+      <span id="question-count">Question 1 / 50</span>
+      <span id="round-indicator">Round 1</span>
+    </div>
+
+    <div class="question-text" id="question-text">Loading question...</div>
+
+    <div class="options-grid" id="options-container"></div>
+
+    <div class="explanation-box" id="explanation-box">
+      <div class="explanation-title">💡 Step-by-Step Explanation:</div>
+      <div id="explanation-content"></div>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question ➔</button>
+  </main>
+</div>
+
+<script>
+  // Complete 50-Question Bank
+  const baseQuestions = [
+    { q: "What is the reciprocal of cos(θ)?", options: ["sec(θ)", "csc(θ)", "cot(θ)", "tan(θ)"], answer: 0, steps: ["Step 1: Cosine is Adjacent / Hypotenuse.", "Step 2: Flip the ratio to Hypotenuse / Adjacent.", "Step 3: Hypotenuse / Adjacent is defined as Secant (sec)."] },
+    { q: "What is the reciprocal of sin(θ)?", options: ["sec(θ)", "csc(θ)", "cot(θ)", "tan(θ)"], answer: 1, steps: ["Step 1: Sine is Opposite / Hypotenuse.", "Step 2: Take the reciprocal ratio: Hypotenuse / Opposite.", "Step 3: This reciprocal is Cosecant (csc)."] },
+    { q: "What is the reciprocal of tan(θ)?", options: ["cot(θ)", "sec(θ)", "csc(θ)", "cos(θ)"], answer: 0, steps: ["Step 1: Tangent is Opposite / Adjacent.", "Step 2: Flip the ratio to Adjacent / Opposite.", "Step 3: Adjacent / Opposite is Cotangent (cot)."] },
+    { q: "Express tan(θ) in terms of sin(θ) and cos(θ).", options: ["cos(θ) / sin(θ)", "sin(θ) / cos(θ)", "1 / cos(θ)", "1 / sin(θ)"], answer: 1, steps: ["Step 1: tan = Opp / Adj.", "Step 2: Divide both Opp and Adj by Hypotenuse.", "Step 3: (Opp/Hyp) / (Adj/Hyp) = sin(θ) / cos(θ)."] },
+    { q: "Express cot(θ) in terms of sin(θ) and cos(θ).", options: ["cos(θ) / sin(θ)", "sin(θ) / cos(θ)", "1 / tan(θ)", "Both 1st & 3rd"], answer: 3, steps: ["Step 1: Cotangent is the reciprocal of Tangent.", "Step 2: Since tan = sin/cos, cot = cos/sin.", "Step 3: Therefore, both cos/sin and 1/tan are correct."] },
+    { q: "What is the exact value of sin(30°)?", options: ["1/2", "√3/2", "√2/2", "1"], answer: 0, steps: ["Step 1: Consider a 30-60-90 special right triangle.", "Step 2: The side opposite 30° is 1 and the hypotenuse is 2.", "Step 3: sin(30°) = 1 / 2."] },
+    { q: "What is the exact value of cos(60°)?", options: ["√3/2", "1/2", "√2/2", "0"], answer: 1, steps: ["Step 1: In a 30-60-90 triangle, side adjacent to 60° is 1.", "Step 2: Hypotenuse is 2.", "Step 3: cos(60°) = Adj / Hyp = 1 / 2."] },
+    { q: "What is the exact value of sin(90°)?", options: ["0", "1", "Undefined", "1/2"], answer: 1, steps: ["Step 1: On the unit circle, sin(θ) represents the y-coordinate.", "Step 2: At 90° (0, 1), the y-coordinate is 1.", "Step 3: Therefore, sin(90°) = 1."] },
+    { q: "What is the exact value of cos(0°)?", options: ["0", "1", "-1", "Undefined"], answer: 1, steps: ["Step 1: On the unit circle, cos(θ) represents the x-coordinate.", "Step 2: At 0° (1, 0), the x-coordinate is 1.", "Step 3: Therefore, cos(0°) = 1."] },
+    { q: "What is the value of tan(45°)?", options: ["1", "0", "√3", "Undefined"], answer: 0, steps: ["Step 1: tan(45°) = sin(45°) / cos(45°).", "Step 2: Both sin(45°) and cos(45°) equal √2/2.", "Step 3: (√2/2) / (√2/2) = 1."] },
+    { q: "Evaluate sec(0°).", options: ["0", "1", "Undefined", "-1"], answer: 1, steps: ["Step 1: sec(θ) = 1 / cos(θ).", "Step 2: cos(0°) = 1.", "Step 3: sec(0°) = 1 / 1 = 1."] },
+    { q: "Evaluate csc(90°).", options: ["1", "0", "Undefined", "1/2"], answer: 0, steps: ["Step 1: csc(θ) = 1 / sin(θ).", "Step 2: sin(90°) = 1.", "Step 3: csc(90°) = 1 / 1 = 1."] },
+    { q: "Evaluate cot(45°).", options: ["1", "0", "√3", "1/2"], answer: 0, steps: ["Step 1: cot(45°) = 1 / tan(45°).", "Step 2: tan(45°) = 1.", "Step 3: cot(45°) = 1 / 1 = 1."] },
+    { q: "Which fundamental identity is correct?", options: ["sin²(θ) + cos²(θ) = 1", "1 + tan²(θ) = csc²(θ)", "sin(θ) + cos(θ) = 1", "tan²(θ) + 1 = cot²(θ)"], answer: 0, steps: ["Step 1: Derived from Pythagorean theorem a² + b² = c² on unit circle x² + y² = 1.", "Step 2: Substitute x = cos(θ) and y = sin(θ).", "Step 3: Get sin²(θ) + cos²(θ) = 1."] },
+    { q: "What is 1 + tan²(θ) equal to?", options: ["sec²(θ)", "csc²(θ)", "cot²(θ)", "sin²(θ)"], answer: 0, steps: ["Step 1: Start with sin²(θ) + cos²(θ) = 1.", "Step 2: Divide all terms by cos²(θ).", "Step 3: (sin²/cos²) + (cos²/cos²) = 1/cos² → tan²(θ) + 1 = sec²(θ)."] },
+    { q: "What is 1 + cot²(θ) equal to?", options: ["csc²(θ)", "sec²(θ)", "tan²(θ)", "cos²(θ)"], answer: 0, steps: ["Step 1: Start with sin²(θ) + cos²(θ) = 1.", "Step 2: Divide all terms by sin²(θ).", "Step 3: 1 + (cos²/sin²) = 1/sin² → 1 + cot²(θ) = csc²(θ)."] },
+    { q: "Convert 180° into radians.", options: ["π", "2π", "π/2", "π/4"], answer: 0, steps: ["Step 1: Conversion factor is (π rad / 180°).", "Step 2: 180° × (π / 180°).", "Step 3: 180 cancels out, leaving π radians."] },
+    { q: "Convert 90° into radians.", options: ["π/2", "π/3", "π/4", "π/6"], answer: 0, steps: ["Step 1: 90° × (π / 180°).", "Step 2: Simplify 90 / 180 = 1/2.", "Step 3: Result is π/2 radians."] },
+    { q: "Convert 45° into radians.", options: ["π/4", "π/6", "π/3", "3π/4"], answer: 0, steps: ["Step 1: 45° × (π / 180°).", "Step 2: 45/180 simplifies to 1/4.", "Step 3: Result is π/4 radians."] },
+    { q: "Convert 60° into radians.", options: ["π/3", "π/6", "2π/3", "π/2"], answer: 0, steps: ["Step 1: 60° × (π / 180°).", "Step 2: 60/180 simplifies to 1/3.", "Step 3: Result is π/3 radians."] },
+    { q: "Convert 30° into radians.", options: ["π/6", "π/4", "π/3", "π/8"], answer: 0, steps: ["Step 1: 30° × (π / 180°).", "Step 2: 30/180 simplifies to 1/6.", "Step 3: Result is π/6 radians."] },
+    { q: "In SOH CAH TOA, what does SOH stand for?", options: ["sin = Opp / Hyp", "sin = Adj / Hyp", "sin = Opp / Adj", "sec = Opp / Hyp"], answer: 0, steps: ["Step 1: S = Sine, O = Opposite, H = Hypotenuse.", "Step 2: Connect ratio: Sine = Opposite / Hypotenuse."] },
+    { q: "In SOH CAH TOA, what does CAH stand for?", options: ["cos = Adj / Hyp", "cos = Opp / Hyp", "cos = Opp / Adj", "csc = Adj / Hyp"], answer: 0, steps: ["Step 1: C = Cosine, A = Adjacent, H = Hypotenuse.", "Step 2: Connect ratio: Cosine = Adjacent / Hypotenuse."] },
+    { q: "In SOH CAH TOA, what does TOA stand for?", options: ["tan = Opp / Adj", "tan = Adj / Opp", "tan = Opp / Hyp", "cot = Opp / Adj"], answer: 0, steps: ["Step 1: T = Tangent, O = Opposite, A = Adjacent.", "Step 2: Connect ratio: Tangent = Opposite / Adjacent."] },
+    { q: "Hypotenuse / Opposite defines which trig function?", options: ["csc(θ)", "sec(θ)", "cot(θ)", "sin(θ)"], answer: 0, steps: ["Step 1: Opp / Hyp is Sine.", "Step 2: Taking reciprocal (Hyp / Opp) gives Cosecant (csc)."] },
+    { q: "Hypotenuse / Adjacent defines which trig function?", options: ["sec(θ)", "csc(θ)", "cot(θ)", "cos(θ)"], answer: 0, steps: ["Step 1: Adj / Hyp is Cosine.", "Step 2: Taking reciprocal (Hyp / Adj) gives Secant (sec)."] },
+    { q: "Adjacent / Opposite defines which trig function?", options: ["cot(θ)", "tan(θ)", "csc(θ)", "sec(θ)"], answer: 0, steps: ["Step 1: Opp / Adj is Tangent.", "Step 2: Taking reciprocal (Adj / Opp) gives Cotangent (cot)."] },
+    { q: "What is the period of the function f(x) = sin(x)?", options: ["2π", "π", "π/2", "4π"], answer: 0, steps: ["Step 1: Sine repeats its values every full unit circle rotation.", "Step 2: One full turn is 360° or 2π radians."] },
+    { q: "What is the period of the function f(x) = tan(x)?", options: ["π", "2π", "π/2", "3π/2"], answer: 0, steps: ["Step 1: Tangent repeats twice as fast as Sine and Cosine.", "Step 2: Its values repeat every 180° or π radians."] },
+    { q: "In Quadrant II (90° to 180°), which main trig function is POSITIVE?", options: ["sin(θ)", "cos(θ)", "tan(θ)", "None"], answer: 0, steps: ["Step 1: Use ASTC rule (All Students Take Calculus).", "Step 2: Quadrant II has positive y (Opposite) and negative x (Adjacent).", "Step 3: sin = y/r, so Sine (and Cosecant) is positive."] },
+    { q: "In Quadrant III (180° to 270°), which function is POSITIVE?", options: ["tan(θ)", "sin(θ)", "cos(θ)", "sec(θ)"], answer: 0, steps: ["Step 1: Quadrant III has negative x and negative y.", "Step 2: tan = y/x = (-)/(-) = (+).", "Step 3: Tangent (and Cotangent) is positive."] },
+    { q: "In Quadrant IV (270° to 360°), which function is POSITIVE?", options: ["cos(θ)", "sin(θ)", "tan(θ)", "csc(θ)"], answer: 0, steps: ["Step 1: Quadrant IV has positive x and negative y.", "Step 2: cos = x/r = (+)/(+) = (+).", "Step 3: Cosine (and Secant) is positive."] },
+    { q: "What is sin(0°)?", options: ["0", "1", "Undefined", "-1"], answer: 0, steps: ["Step 1: On unit circle, angle 0° corresponds to (1, 0).", "Step 2: sin(0°) is the y-value, which is 0."] },
+    { q: "What is cos(90°)?", options: ["0", "1", "Undefined", "-1"], answer: 0, steps: ["Step 1: On unit circle, 90° corresponds to (0, 1).", "Step 2: cos(90°) is the x-value, which is 0."] },
+    { q: "What is tan(0°)?", options: ["0", "1", "Undefined", "-1"], answer: 0, steps: ["Step 1: tan(0°) = sin(0°) / cos(0°).", "Step 2: 0 / 1 = 0."] },
+    { q: "What is sec(60°)?", options: ["2", "1/2", "√3", "2/√3"], answer: 0, steps: ["Step 1: sec(60°) = 1 / cos(60°).", "Step 2: cos(60°) = 1/2.", "Step 3: 1 / (1/2) = 2."] },
+    { q: "What is csc(30°)?", options: ["2", "1/2", "√3", "2/√3"], answer: 0, steps: ["Step 1: csc(30°) = 1 / sin(30°).", "Step 2: sin(30°) = 1/2.", "Step 3: 1 / (1/2) = 2."] },
+    { q: "What is cot(30°)?", options: ["√3", "1/√3", "1", "√3/2"], answer: 0, steps: ["Step 1: cot(30°) = cos(30°) / sin(30°).", "Step 2: (√3/2) / (1/2).", "Step 3: Simplifies to √3."] },
+    { q: "What is tan(60°)?", options: ["√3", "1/√3", "1", "1/2"], answer: 0, steps: ["Step 1: tan(60°) = sin(60°) / cos(60°).", "Step 2: (√3/2) / (1/2).", "Step 3: Simplifies to √3."] },
+    { q: "What is sin(45°)?", options: ["√2/2", "1/2", "√3/2", "1"], answer: 0, steps: ["Step 1: In a 45-45-90 triangle with hypotenuse 1, sides are 1/√2.", "Step 2: Rationalize 1/√2 = √2/2."] },
+    { q: "What is cos(45°)?", options: ["√2/2", "1/2", "√3/2", "0"], answer: 0, steps: ["Step 1: In 45-45-90 isosceles right triangle, Opp = Adj.", "Step 2: cos(45°) = sin(45°) = √2/2."] },
+    { q: "What is sin(90° - θ) equal to?", options: ["cos(θ)", "sin(θ)", "tan(θ)", "csc(θ)"], answer: 0, steps: ["Step 1: Co-function identity for complementary angles.", "Step 2: The sine of an angle equals cosine of its complement.", "Step 3: sin(90° - θ) = cos(θ)."] },
+    { q: "What is tan(90° - θ) equal to?", options: ["cot(θ)", "tan(θ)", "sec(θ)", "cos(θ)"], answer: 0, steps: ["Step 1: Co-function identity for tangent.", "Step 2: tan(90° - θ) = cot(θ)."] },
+    { q: "What is sec(90° - θ) equal to?", options: ["csc(θ)", "sec(θ)", "sin(θ)", "cos(θ)"], answer: 0, steps: ["Step 1: Co-function identity for secant.", "Step 2: sec(90° - θ) = csc(θ)."] },
+    { q: "Is cos(-θ) equal to cos(θ) or -cos(θ)?", options: ["cos(θ) (Even Function)", "-cos(θ) (Odd Function)", "sin(θ)", "-sin(θ)"], answer: 0, steps: ["Step 1: Cosine is an EVEN function: f(-x) = f(x).", "Step 2: Graph is symmetric about y-axis.", "Step 3: cos(-θ) = cos(θ)."] },
+    { q: "Is sin(-θ) equal to sin(θ) or -sin(θ)?", options: ["-sin(θ) (Odd Function)", "sin(θ) (Even Function)", "cos(θ)", "-cos(θ)"], answer: 0, steps: ["Step 1: Sine is an ODD function: f(-x) = -f(x).", "Step 2: Graph has origin symmetry.", "Step 3: sin(-θ) = -sin(θ)."] },
+    { q: "Is tan(-θ) equal to tan(θ) or -tan(θ)?", options: ["-tan(θ) (Odd Function)", "tan(θ) (Even Function)", "cot(θ)", "-cot(θ)"], answer: 0, steps: ["Step 1: tan(-θ) = sin(-θ) / cos(-θ).", "Step 2: = -sin(θ) / cos(θ).", "Step 3: = -tan(θ)."] },
+    { q: "If sin(θ) = 3/5 in Quadrant I, what is cos(θ)?", options: ["4/5", "3/4", "5/4", "2/5"], answer: 0, steps: ["Step 1: Use 3-4-5 Pythagorean triple (Opp=3, Hyp=5, Adj=4).", "Step 2: cos(θ) = Adj / Hyp = 4 / 5."] },
+    { q: "If sin(θ) = 3/5 in Quadrant I, what is sec(θ)?", options: ["5/4", "4/5", "5/3", "4/3"], answer: 0, steps: ["Step 1: Find cos(θ) = 4/5.", "Step 2: sec(θ) = 1 / cos(θ) = 5 / 4."] },
+    { q: "If cos(θ) = 1/2 in Quadrant I, what is csc(θ)?", options: ["2/√3", "2", "√3/2", "1/√3"], answer: 0, steps: ["Step 1: sin(θ) = √(1 - cos²(θ)) = √(1 - 1/4) = √3/2.", "Step 2: csc(θ) = 1 / sin(θ) = 2 / √3."] }
+  ];
+
+  // Game Engine State Variables
+  let questions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let streak = 0;
+  let highScore = localStorage.getItem("trig_high_score") || 0;
+  let currentRound = 1;
+  let answered = false;
+
+  document.getElementById("high-score").innerText = highScore;
+
+  function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function initGame() {
+    questions = shuffleArray(baseQuestions);
+    currentIndex = 0;
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    answered = false;
+    document.getElementById("explanation-box").style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+
+    // Infinite Loop Logic - trigger next round when bank completed
+    if (currentIndex >= questions.length) {
+      currentRound++;
+      questions = shuffleArray(baseQuestions);
+      currentIndex = 0;
+
+      const banner = document.getElementById("round-banner");
+      document.getElementById("round-num").innerText = currentRound;
+      banner.style.display = "block";
+      setTimeout(() => { banner.style.display = "none"; }, 4000);
+    }
+
+    const qData = questions[currentIndex];
+    document.getElementById("question-count").innerText = `Question ${currentIndex + 1} / ${questions.length}`;
+    document.getElementById("round-indicator").innerText = `Round ${currentRound}`;
+    document.getElementById("question-text").innerText = qData.q;
+
+    // Progress bar calculation
+    const progressPct = ((currentIndex + 1) / questions.length) * 100;
+    document.getElementById("progress").style.width = `${progressPct}%`;
+
+    // Render option buttons
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+
+    qData.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerHTML = `<span style="opacity: 0.6; margin-right: 10px;">${String.fromCharCode(65 + idx)}.</span> ${opt}`;
+      btn.onclick = () => selectOption(idx);
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function selectOption(selectedIdx) {
+    if (answered) return;
+    answered = true;
+
+    const qData = questions[currentIndex];
+    const optionBtns = document.querySelectorAll(".option-btn");
+
+    optionBtns.forEach(btn => btn.disabled = true);
+
+    if (selectedIdx === qData.answer) {
+      optionBtns[selectedIdx].classList.add("correct");
+      streak++;
+      const gainedScore = 100 + (streak * 20) * currentRound;
+      score += gainedScore;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("trig_high_score", highScore);
+        document.getElementById("high-score").innerText = highScore;
+      }
+    } else {
+      optionBtns[selectedIdx].classList.add("wrong");
+      optionBtns[qData.answer].classList.add("correct");
+      streak = 0;
+    }
+
+    document.getElementById("score").innerText = score;
+    document.getElementById("streak").innerText = `🔥 ${streak}`;
+
+    // Render step-by-step explanation
+    const expContent = document.getElementById("explanation-content");
+    expContent.innerHTML = qData.steps.map(step => `<div class="explanation-step">${step}</div>`).join("");
+    document.getElementById("explanation-box").style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    renderQuestion();
+  }
+
+  // Launch game
+  initGame();
+</script>
+
+</body>
+</html>

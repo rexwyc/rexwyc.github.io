@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sequence Memory Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .info-box {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px 20px;
+      max-width: 480px;
+      margin-bottom: 24px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .info-box h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      color: #222;
+    }
+
+    .info-box p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #555;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    #status {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 120px);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn.active {
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    #red { background-color: #ff4d4d; }
+    #blue { background-color: #4d94ff; }
+    #green { background-color: #4dff88; }
+    #yellow { background-color: #ffdb4d; }
+
+    #start-btn {
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #333;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #start-btn:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Historical & Psychological Context -->
+  <div class="info-box">
+    <h2>About This Test</h2>
+    <p>
+      This four-color format was invented as the game <strong>Simon</strong> in 1978 by 
+      <strong>Ralph H. Baer</strong> and <strong>Howard J. Morrison</strong>. 
+      It is based on sequential working-memory tests used in cognitive psychology and 
+      neuropsychology (such as those studied by <strong>Alexander Luria</strong>) to evaluate 
+      task sequencing and working memory capacity.
+    </p>
+  </div>
+
+  <h1>Sequence Test</h1>
+  <div id="status">Click "Start Game" to begin</div>
+
+  <div class="grid">
+    <button class="btn" id="red"></button>
+    <button class="btn" id="blue"></button>
+    <button class="btn" id="green"></button>
+    <button class="btn" id="yellow"></button>
+  </div>
+
+  <button id="start-btn" onclick="startGame()">Start Game</button>
+
+  <script>
+    const colors = ['red', 'blue', 'green', 'yellow'];
+    let sequence = [];
+    let playerSequence = [];
+    let score = 0;
+    let isPlaying = false;
+
+    const statusText = document.getElementById('status');
+    const startBtn = document.getElementById('start-btn');
+
+    function startGame() {
+      sequence = [];
+      playerSequence = [];
+      score = 0;
+      isPlaying = true;
+      startBtn.style.display = 'none';
+      nextRound();
+    }
+
+    function nextRound() {
+      playerSequence = [];
+      score++;
+      statusText.textContent = `Score: ${score - 1} | Watch the sequence...`;
+
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      sequence.push(randomColor);
+
+      playSequence();
+    }
+
+    function playSequence() {
+      let delay = 600;
+      disableButtons(true);
+
+      sequence.forEach((color, index) => {
+        setTimeout(() => {
+          flashButton(color);
+        }, (index + 1) * delay);
+      });
+
+      setTimeout(() => {
+        statusText.textContent = `Score: ${score - 1} | Your turn!`;
+        disableButtons(false);
+      }, (sequence.length + 1) * delay);
+    }
+
+    function flashButton(color) {
+      const btn = document.getElementById(color);
+      btn.classList.add('active');
+      setTimeout(() => {
+        btn.classList.remove('active');
+      }, 300);
+    }
+
+    function handlePlayerClick(color) {
+      if (!isPlaying) return;
+
+      flashButton(color);
+      playerSequence.push(color);
+
+      const currentIndex = playerSequence.length - 1;
+
+      if (playerSequence[currentIndex] !== sequence[currentIndex]) {
+        gameOver();
+        return;
+      }
+
+      if (playerSequence.length === sequence.length) {
+        disableButtons(true);
+        setTimeout(nextRound, 1000);
+      }
+    }
+
+    function gameOver() {
+      isPlaying = false;
+      statusText.textContent = `Game Over! Final Score: ${score - 1}`;
+      startBtn.textContent = 'Play Again';
+      startBtn.style.display = 'inline-block';
+      disableButtons(true);
+    }
+
+    function disableButtons(disable) {
+      colors.forEach(color => {
+        const btn = document.getElementById(color);
+        btn.style.pointerEvents = disable ? 'none' : 'auto';
+      });
+    }
+
+    colors.forEach(color => {
+      document.getElementById(color).addEventListener('click', () => handlePlayerClick(color));
+    });
+
+    disableButtons(true);
+  </script>
+</body>
+</html>
